@@ -83,8 +83,10 @@ Das Modul ist ab Werk auf 4-Wire-SPI eingestellt.
 ## Feinabstimmung in `config.h`
 | Parameter | Wirkung |
 |---|---|
-| `USE_FAST_DAC` | `1` = direkte Registerzugriffe (schnell). `0` = `dacWrite()` wie im Original (langsamer, flimmert eher) |
-| `DOT_DELAY_CYCLES` | Wartezeit pro Bildpunkt. Erhöhen, wenn Ziffern verzerrt aussehen. Verringern, wenn das Bild flimmert |
+| `BEAM_NS_PER_UNIT` | Strahlgeschwindigkeit. Größer = hellere Linien, weniger Bilder/s (Standard 3000 ≈ 210 Bilder/s) |
+| `JUMP_SPEED` | Geschwindigkeit der Sprünge zwischen Linien. Größer = schwächere Rücklaufspur. Kleiner für sehr alte Oszis. 0 = harter Sprung |
+| `HAND_BRIGHT_PCT` | Helligkeit von Stunden- und Minutenzeiger im Verhältnis zum Rest (Standard 67 %, wirkt dann gleich hell) |
+| `USE_FAST_DAC` | `1` = direkte Registerzugriffe (Standard). `0` = `dacWrite()`, nur als Notlösung |
 | `DIAL_STYLE` | Zifferblatt: 0 = 1–12, 1 = 13–24, 2 = römisch |
 | `TZ_INFO` | Zeitzone inkl. Sommerzeitregel (Standard: Mitteleuropa) |
 | `OLED_SHIFT_EVERY_S` | Pixel-Shift gegen OLED-Einbrennen |

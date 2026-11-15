@@ -38,14 +38,43 @@
 #define DAC_X_PIN 25
 #define DAC_Y_PIN 26
 
-// 1 = direkte Registerzugriffe (sehr schnell, mehr Bilder pro Sekunde, weniger Flimmern)
-// 0 = Arduino dacWrite() (langsamer, wie das Original – zum Vergleich/Debuggen)
+// 1 = direkte Registerzugriffe (Standard)
+// 0 = Arduino dacWrite() – nur als Notlösung, falls die Registerzugriffe mit
+//     einer künftigen Core-Version nicht funktionieren. dacWrite() ist langsamer
+//     als ein Schritt (s.u.), das Bild wird dann dunkler und flimmert eher.
 #define USE_FAST_DAC 1
 
-// Zusätzliche Wartezeit pro Bildpunkt in CPU-Takten (240 MHz -> 240 Takte = 1 µs).
-// Erhöhen, falls Linien "verwaschen" oder Ziffern verzerrt aussehen (DAC-Einschwingzeit
-// + Kabelkapazität). Verringern, falls das Bild flimmert. Startwert 0, typ. 0…200.
-#define DOT_DELAY_CYCLES 0
+// ---- Strahlgeschwindigkeit (gleichmäßige Helligkeit) -----------------------
+// Der Strahl bewegt sich auf ALLEN Linien gleich schnell: 1 DAC-Einheit
+// (≈ 12,5 mV, 1/255 des Bildes) pro BEAM_NS_PER_UNIT Nanosekunden.
+// Ein Bild hat ca. 1.500–1.700 Schritte (römisches Zifferblatt ca. 2.300).
+//
+//   BEAM_NS_PER_UNIT   Bildfrequenz          Hinweis
+//                      (1–12 / römisch)
+//        2000          ~310 Hz / ~220 Hz     moderne/schnelle Oszis
+//        3000          ~210 Hz / ~150 Hz     Standard, passt für fast alle Röhren
+//        5000          ~125 Hz /  ~90 Hz     sehr alte/langsame Röhren, hellere Spur
+//        8000           ~75 Hz /  ~55 Hz     Untergrenze – darunter flimmert es
+//
+// Größer = langsamer = hellere Linien, aber niedrigere Bildfrequenz.
+#define BEAM_NS_PER_UNIT 3000
+
+// Sprünge zwischen Linienzügen (der ESP32 kann den Strahl nicht dunkeltasten)
+// werden so viel schneller gefahren wie geschrieben. Die Rücklaufspur ist um
+// diesen Faktor schwächer (8 → 1/8 der Linienhelligkeit).
+//   8      Standard: schwache, gleichmäßige Rücklaufspur, für alle Röhren sicher
+//   16     schwächere Rücklaufspur, für Oszis mit ≥ 1 MHz X/Y-Bandbreite
+//   4      sehr alte/langsame Oszis, wenn Linienanfänge "Haken" zeigen
+//   0      harter Sprung wie im Original: auf schnellen Oszis praktisch
+//          unsichtbar, bei langsamen evtl. Über-/Nachschwingen
+#define JUMP_SPEED 8
+
+// Stunden- und Minutenzeiger sind schmale Rauten: Ihre beiden Kanten liegen
+// nur 0–4 DAC-Einheiten auseinander und verschmelzen auf dem Schirm zu einer
+// Linie, die bei voller Helligkeit deutlich heller wäre als der Rest.
+// Mit 67 % wirken sie in der Simulation so hell wie Zifferblatt und
+// Sekundenzeiger (Abweichung < 15 %). 100 = Zeiger heller hervorheben.
+#define HAND_BRIGHT_PCT 67
 
 // Kernzuordnung. Nicht ändern: Der WLAN-Stack des ESP32 läuft auf Core 0,
 // die Strahlausgabe braucht Core 1 exklusiv.

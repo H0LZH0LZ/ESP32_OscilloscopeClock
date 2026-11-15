@@ -6,7 +6,9 @@
   Basiert auf: ESP32 Oscilloscope Clock v1.0
                Mauro Pintus, Milano 2018/05/25
                https://github.com/maurohh/ESP32_OscilloscopeClock
-               (Linien-/Tabellenlogik und DataTable.h aus v1.0 übernommen)
+               (Vektordaten DataTable.h aus v1.0 übernommen; die Zeichen-
+               routine ist neu: konstante Strahlgeschwindigkeit, damit alle
+               Linien gleich hell sind – siehe "Vektor-Engine")
 
   ---------------------------------------------------------------------------
   Funktionsprinzip
@@ -17,7 +19,10 @@
   (GPIO25 = X, GPIO26 = Y, je 0…255 ≙ ca. 0…3,2 V) und "fährt" damit das
   Zifferblatt und die Zeiger Punkt für Punkt ab. Weil das Bild auf dem
   Schirm nur kurz nachleuchtet, muss es ohne Pause immer wieder neu
-  gezeichnet werden – sonst flimmert es oder es entstehen helle Punkte.
+  gezeichnet werden (~200×/s) – sonst flimmert es oder es entstehen helle
+  Punkte. Wie hell eine Linie leuchtet, hängt davon ab, wie lange der Strahl
+  auf ihr verweilt; die Vektor-Engine sorgt deshalb für überall gleiche
+  Strahlgeschwindigkeit.
 
   ---------------------------------------------------------------------------
   Aufgabenteilung auf die beiden Kerne (FreeRTOS)
@@ -133,14 +138,51 @@ static TaskHandle_t wifiTaskHandle  = nullptr;
 static WiFiMulti    wifiMulti;
 
 //*****************************************************************************
-// DAC-Ausgabe (Core 1)
+// Vektor-Engine (Core 1)
 //*****************************************************************************
-// Alle Funktionen im Zeichenpfad tragen IRAM_ATTR: Sie liegen im internen RAM
-// und laufen auch dann weiter, wenn der Flash-Cache kurz gesperrt ist (z.B.
-// während der WLAN-Stack Daten ins NVS schreibt). Sonst würde das Bild stocken.
+// Ziel: ALLE Linien und Punkte gleich hell – auch auf älteren Röhren-Oszis.
+//
+// Die Helligkeit einer Spur auf dem Schirm hängt davon ab, wie lange der
+// Strahl auf jedem Stück Weg verweilt (Energie pro Länge). Gleich hell heißt
+// also: überall dieselbe Verweilzeit pro Längeneinheit. Daraus folgen die Regeln:
+//
+//  1. Gleiche Abstände: Jede Linie wird in Schritte von genau 1 DAC-Einheit
+//     Länge zerlegt – gemessen entlang der Linie (euklidisch). Bresenham im
+//     Original setzt bei 45° nur 0,71 Punkte pro Einheit; schräge Linien waren
+//     dort bis zu ~20 % dunkler als waagerechte.
+//  2. Gleiche Verweilzeit: Jeder Schreibschritt dauert genau BEAM_NS_PER_UNIT.
+//     Jeder Schritt hat dazu einen festen Zieltermin auf dem CPU-Taktzähler;
+//     verzögert ein Interrupt einen Schritt, werden die folgenden kürzer.
+//  3. Kein Verweilen an Ecken: Der Endpunkt einer Linie ist der Startpunkt
+//     der nächsten und wird nur EINMAL ausgegeben (Original: doppelt → helle
+//     Punkte an jeder Ecke).
+//  4. Rundungsrest: Kurze Linien (in den Ziffern oft nur 1–2 Einheiten) werden
+//     nicht einzeln gerundet; der Rest wandert in die nächste Linie. Ein ganzer
+//     Linienzug bekommt so exakt seine Länge an Verweilzeit.
+//  5. Sprünge zwischen Linienzügen: Der ESP32 kann den Strahl nicht dunkel
+//     tasten. Sprünge werden deshalb ebenfalls in 1-Einheit-Schritten gefahren,
+//     aber mit JUMP_SPEED-fach kürzerer Verweilzeit: Es bleibt eine
+//     gleichmäßige, sehr schwache Rücklaufspur statt heller Punkte, und auch
+//     langsame X/Y-Verstärker alter Oszis können folgen (ein harter Sprung
+//     würde dort über- oder nachschwingen). JUMP_SPEED 0 = harter Sprung wie
+//     im Original (für schnelle Oszis, Rücklauf praktisch unsichtbar).
+//  6. Kurze Sprünge: Jeder Linienzug wird von dem Ende aus gezeichnet, das
+//     näher am Strahl liegt (z.B. Minutenstriche abwechselnd außen→innen und
+//     innen→außen). Die Rücklaufwege werden dadurch deutlich kürzer.
+//  7. Begrenzte Geschwindigkeit: 1 DAC-Einheit (≈ 12,5 mV) pro 3 µs beim
+//     Schreiben bzw. ~0,4 µs beim Springen ist für jede Röhre langsam genug.
+//
+// Alle Funktionen hier tragen IRAM_ATTR und die Tabellen liegen im RAM:
+// So gibt es keine Flash-Cache-Fehlzugriffe (Nachladen aus dem Flash dauert
+// unterschiedlich lange), die das Timing und damit die Helligkeit stören.
 
-// Zuletzt ausgegebene Werte – unveränderte Achsen werden nicht neu geschrieben.
+// Aktuell ausgegebene DAC-Werte (= Strahlposition)
 static int lastx = -1, lasty = -1;
+
+// Zeitsteuerung in CPU-Takten
+static uint32_t s_stepCycles = 0;   // Verweilzeit eines Schreibschritts (BEAM_NS_PER_UNIT)
+static uint32_t s_jumpCycles = 0;   // Verweilzeit eines Sprungschritts (÷ JUMP_SPEED)
+static uint32_t s_deadline   = 0;   // Zieltermin des aktuellen Schritts
 
 // Schreibt einen 8-Bit-Wert auf den X-DAC (GPIO25).
 // USE_FAST_DAC: direkter Registerzugriff, nur wenige CPU-Takte.
@@ -162,176 +204,145 @@ static inline void IRAM_ATTR dacOutY(uint8_t v) {
 #endif
 }
 
-// Schaltet beide DACs ein. dacWrite() übernimmt die komplette Pad-Konfiguration
-// (Power-up, Kosinusgenerator aus) für ESP-IDF 4 und 5; danach schreiben
-// dacOutX/Y nur noch den Ausgangswert ins Register. Startwert = Bildmitte.
+// Schaltet beide DACs ein und berechnet die Schrittdauern. dacWrite()
+// übernimmt die komplette Pad-Konfiguration (Power-up, Kosinusgenerator aus)
+// für ESP-IDF 4 und 5; danach schreiben dacOutX/Y nur noch ins Register.
 static void dacInit() {
   dacWrite(DAC_X_PIN, 0x80);
   dacWrite(DAC_Y_PIN, 0x80);
+  lastx = lasty = 0x80;
+  s_stepCycles = (uint32_t)((uint64_t)BEAM_NS_PER_UNIT * getCpuFrequencyMhz() / 1000ULL);
+  if (s_stepCycles < 1) s_stepCycles = 1;
+#if JUMP_SPEED > 0
+  s_jumpCycles = s_stepCycles / JUMP_SPEED;
+  if (s_jumpCycles < 1) s_jumpCycles = 1;
+#endif
+  s_deadline = ESP.getCycleCount();
 }
 
-//*****************************************************************************
-// Dot – setzt den Strahl auf einen Punkt (x, y), je 0…255
-//*****************************************************************************
-static inline void IRAM_ATTR Dot(int x, int y)
+// Gibt einen Strahlpunkt aus und hält ihn 'cycles' CPU-Takte lang.
+// Die DACs werden nur bei Änderung beschrieben; X und Y unmittelbar
+// nacheinander, damit kein sichtbarer Zwischenpunkt entsteht.
+static inline void IRAM_ATTR beamPoint(int x, int y, uint32_t cycles)
 {
-  if (lastx != x) {
-    lastx = x;
-    dacOutX((uint8_t)x);
-  }
-  if (lasty != y) {
-    lasty = y;
-    dacOutY((uint8_t)y);
-  }
-#if DOT_DELAY_CYCLES > 0
-  // Optionale Verweildauer pro Punkt, damit der DAC-Ausgang (inkl. Kabel-
-  // kapazität) einschwingen kann. Aktives Warten auf den CPU-Taktzähler,
-  // da vTaskDelay() viel zu grob (1 ms) wäre.
-  uint32_t t0 = ESP.getCycleCount();
-  while ((uint32_t)(ESP.getCycleCount() - t0) < (uint32_t)DOT_DELAY_CYCLES) { }
-#endif
+  if (x != lastx) { lastx = x; dacOutX((uint8_t)x); }
+  if (y != lasty) { lasty = y; dacOutY((uint8_t)y); }
 #if defined EXCEL
-  // Diagnosemodus: jeden Punkt seriell ausgeben (siehe config.h)
+  (void)cycles;
   Serial.printf("0x%02X,0x%02X,\n", x & 0xFF, y & 0xFF);
+#else
+  s_deadline += cycles;
+  // Mehr als 64 Schreibschritte im Verzug (z.B. Core 1 wurde für einen
+  // Flash-Zugriff kurz angehalten)? Dann nicht "nachholen" – sonst würde eine
+  // Strecke im Zeitraffer und damit zu dunkel gezeichnet. Zeitplan neu setzen.
+  if ((int32_t)(ESP.getCycleCount() - s_deadline) > (int32_t)(64 * s_stepCycles))
+    s_deadline = ESP.getCycleCount();
+  while ((int32_t)(ESP.getCycleCount() - s_deadline) < 0) { }
 #endif
 }
 
-//*****************************************************************************
-// Line – zeichnet eine Strecke von (x1,y1) nach (x2,y2)
-//*****************************************************************************
-// Bresenham-/DDA-Verfahren aus v1.0: Der Strahl wird in 1er-Schritten entlang
-// der längeren Achse bewegt; der Akkumulator "acc" entscheidet, wann die
-// kürzere Achse einen Schritt nachzieht. Für Geschwindigkeit gibt es für jeden
-// der 8 Oktanten (4 Quadranten × flach/steil) eine eigene Schleife, so dass
-// in der inneren Schleife keine Vorzeichen-Fallunterscheidungen nötig sind.
-// Jeder Schritt erzeugt einen Dot() – die Helligkeit einer Linie hängt also
-// von ihrer Länge in Punkten und von DOT_DELAY_CYCLES ab.
-static void IRAM_ATTR Line(byte x1, byte y1, byte x2, byte y2)
+// Ganzzahlige Quadratwurzel (für Längen; ohne Gleitkomma und ohne libm aus
+// dem Flash, damit der Zeichenpfad vollständig im IRAM bleibt).
+static inline uint32_t IRAM_ATTR isqrt32(uint32_t v)
 {
-    int acc;
-    if (y1 < y2) { // Quadrant 1 oder 2 (nach oben)
-        byte dy = y2 - y1;
-        if (x1 < x2) { // Quadrant 1 (nach rechts oben)
-            byte dx = x2 - x1;
-            if (dx > dy) { // flach (< 45°): x ist die schnelle Achse
-                acc = (dx >> 1);
-                for (; x1 <= x2; x1++) {
-                    Dot(x1, y1);
-                    acc -= dy;
-                    if (acc < 0) { y1++; acc += dx; }
-                }
-            }
-            else {   // steil (> 45°): y ist die schnelle Achse
-                acc = dy >> 1;
-                for (; y1 <= y2; y1++) {
-                    Dot(x1, y1);
-                    acc -= dx;
-                    if (acc < 0) { x1++; acc += dy; }
-                }
-            }
-        }
-        else {  // Quadrant 2 (nach links oben)
-            byte dx = x1 - x2;
-            if (dx > dy) { // flach
-                acc = dx >> 1;
-                for (; x1 >= x2; x1--) {
-                    Dot(x1, y1);
-                    acc -= dy;
-                    if (acc < 0) { y1++; acc += dx; }
-                }
-            }
-            else {  // steil
-                acc = dy >> 1;
-                for (; y1 <= y2; y1++) {
-                    Dot(x1, y1);
-                    acc -= dx;
-                    if (acc < 0) { x1--; acc += dy; }
-                }
-            }
-        }
-    }
-    else { // Quadrant 3 oder 4 (nach unten bzw. waagerecht)
-        byte dy = y1 - y2;
-        if (x1 < x2) { // Quadrant 4 (nach rechts unten)
-            byte dx = x2 - x1;
-            if (dx > dy) {  // flach
-                acc = dx >> 1;
-                for (; x1 <= x2; x1++) {
-                    Dot(x1, y1);
-                    acc -= dy;
-                    if (acc < 0) { y1--; acc += dx; }
-                }
-            }
-            else {  // steil
-                acc = dy >> 1;
-                for (; y1 >= y2; y1--) {
-                    Dot(x1, y1);
-                    acc -= dx;
-                    if (acc < 0) { x1++; acc += dy; }
-                }
-            }
-        }
-        else {  // Quadrant 3 (nach links unten)
-            byte dx = x1 - x2;
-            if (dx > dy) { // flach
-                acc = dx >> 1;
-                for (; x1 >= x2; x1--) {
-                    Dot(x1, y1);
-                    acc -= dy;
-                    if (acc < 0) { y1--; acc += dx; }
-                }
-            }
-            else {  // steil
-                acc = dy >> 1;
-                for (; y1 >= y2; y1--) {
-                    Dot(x1, y1);
-                    acc -= dx;
-                    if (acc < 0) { x1--; acc += dy; }
-                }
-            }
-        }
-    }
+  uint32_t r = 0, bit = 1UL << 30;
+  while (bit > v) bit >>= 2;
+  while (bit) {
+    if (v >= r + bit) { v -= r + bit; r = (r >> 1) + bit; }
+    else              { r >>= 1; }
+    bit >>= 2;
+  }
+  return r;
+}
+
+// Fährt den Strahl von (x1,y1) nach (x2,y2) in Schritten von 1 DAC-Einheit
+// Länge; jeder Schritt verweilt 'cycles' CPU-Takte.
+// Der Startpunkt wird NICHT ausgegeben (er ist der aktuelle Strahlpunkt),
+// der Endpunkt schon.
+//
+// carry16: Rundungsrest in 1/16 Einheiten, der von Linie zu Linie eines
+// Linienzugs weitergereicht wird (Regel 4). nullptr = Sprung: mindestens ein
+// Schritt, kein Übertrag. Linien kürzer als ½ Einheit können mit Übertrag
+// 0 Schritte bekommen – ihr Anteil wandert dann in die nächste Linie.
+static void IRAM_ATTR beamMove(int x1, int y1, int x2, int y2, uint32_t cycles, int32_t *carry16)
+{
+  const int dx = x2 - x1, dy = y2 - y1;
+  // Länge in 1/16 Einheiten: sqrt((dx²+dy²)·256) = 16·Länge
+  int32_t len16 = (int32_t)isqrt32((uint32_t)(dx * dx + dy * dy) << 8);
+  int n;
+  if (carry16) {
+    len16 += *carry16;
+    n = (len16 + 8) / 16;                        // gerundet, kann 0 sein
+    if (n < 0) n = 0;
+    *carry16 = len16 - n * 16;
+    if (n == 0) return;
+  } else {
+    n = (len16 + 8) / 16;
+    if (n < 1) n = 1;
+  }
+  // Zwischenpunkte in Festkomma 16.16 (+0,5 für korrektes Runden)
+  int32_t fx = x1 * 65536 + 0x8000, fy = y1 * 65536 + 0x8000;
+  const int32_t ix = dx * 65536 / n, iy = dy * 65536 / n;   // dx, dy dürfen negativ sein
+  for (int k = 1; k < n; k++) {
+    fx += ix; fy += iy;
+    beamPoint(fx >> 16, fy >> 16, cycles);
+  }
+  beamPoint(x2, y2, cycles);             // exakt auf dem Endpunkt landen
 }
 
 //*****************************************************************************
-// PlotTable – zeichnet einen Polygonzug aus einer Tabelle in DataTable.h
+// PlotTable – zeichnet Linienzüge aus einer Tabelle in DataTable.h
 //*****************************************************************************
-// Tabellenformat: Folge von Punkten (x, y), je 1 Byte. Aufeinanderfolgende
-// Punkte werden mit Linien verbunden.
+// Tabellenformat (unverändert aus v1.0, Details in DataTable.h):
+//   Punkte (x, y) je 1 Byte; aufeinanderfolgende Punkte = Linie.
+//   'sep' (0x00) trennt Linienzüge, 0xFF beendet die Tabelle bzw. bei den
+//   Zeigern eine Zeigerstellung.
 //
-//   SubTable      Tabelle (Bytes)
-//   SubTableSize  Länge der Tabelle in Bytes (sizeof)
-//   skip          Trennwert zwischen zwei Polygonzügen:
-//                   0x00 bei Zifferblatt/Ziffern  (x=0 kommt als Koordinate
-//                        deshalb dort nicht vor),
-//                   0xFF bei den Zeigern
-//   opt           0 = normal
-//                 1 = nach einem Trenner einen evtl. zweiten Trenner
-//                     überspringen (für das Format der Ziffern-Tabellen)
-//                 2 = jede Linie hin UND zurück zeichnen (Strahl endet wieder
-//                     am Startpunkt, vermeidet sichtbare Sprunglinien;
-//                     im Original für Tests verwendet)
-//   offset        Start-Index in Bytes. Bei den Zeigertabellen wählt er die
-//                 Zeigerstellung aus (siehe scopeTask).
+//   table       Tabelle
+//   size        Länge in Bytes (sizeof)
+//   sep         Trennwert: 0x00 bei Zifferblatt/Ziffern, 0xFF bei Zeigern
+//   offset      Start in Bytes; bei Zeigern = Stellung × Eintragslänge
+//   brightPct   Helligkeit in Prozent (100 = normal). Verkürzt bzw. verlängert
+//               die Verweilzeit pro Schritt – für Motive, deren Linien so dicht
+//               nebeneinander liegen, dass sie auf dem Schirm verschmelzen
+//               (Stunden-/Minutenzeiger, siehe HAND_BRIGHT_PCT in config.h).
 //
-// Ende: sobald die x-Koordinate des NÄCHSTEN Punktes 0xFF ist.
-// Hinweis: Zwischen zwei Polygonzügen springt der Strahl ohne Dunkeltastung
-// (der ESP32 hat keinen Z-Ausgang) – der Sprung ist schnell und daher kaum
-// sichtbar.
-static void IRAM_ATTR PlotTable(byte *SubTable, int SubTableSize, int skip, int opt, int offset)
+// Pro Linienzug: Sprung zum näheren Ende (schwache Rücklaufspur), dort einen
+// normalen Schritt verweilen, dann alle Linien – ggf. in umgekehrter
+// Reihenfolge (Regel 6; die Helligkeit ist richtungsunabhängig). Linienzüge
+// aus nur einem Punkt werden wie im Original nicht gezeichnet. Die
+// Tabellengrenze wird immer geprüft, auch wenn ein Endzeichen fehlt.
+static void IRAM_ATTR PlotTable(const byte *table, int size, byte sep, int offset, int brightPct = 100)
 {
+  const uint32_t cycles = (uint32_t)((uint64_t)s_stepCycles * brightPct / 100);
   int i = offset;
-  while (i < SubTableSize) {
-    if (SubTable[i+2] == skip) {                 // nächster Eintrag ist ein Trenner:
-      i = i + 3;                                 //   aktuellen Punkt + Trenner überspringen
-      if (opt == 1) if (SubTable[i] == skip) i++;
+  while (i + 1 < size && table[i] != 0xFF) {
+    if (table[i] == sep) { i++; continue; }            // (mehrere) Trenner überspringen
+
+    // Linienzug abgrenzen: Punkte bei i, i+2, …, end-2
+    int end = i;
+    while (end + 1 < size && table[end] != sep && table[end] != 0xFF) end += 2;
+    const int points = (end - i) / 2;
+
+    if (points >= 2) {
+      // Näheres Ende wählen (quadratischer Abstand reicht zum Vergleich)
+      const int last = end - 2;
+      const int ds = (table[i] - lastx)    * (table[i] - lastx)    + (table[i + 1] - lasty)    * (table[i + 1] - lasty);
+      const int de = (table[last] - lastx) * (table[last] - lastx) + (table[last + 1] - lasty) * (table[last + 1] - lasty);
+      const int first = (de < ds) ? last : i;
+      const int dir   = (de < ds) ? -2 : 2;
+
+      // Sprung zum Startpunkt
+#if JUMP_SPEED > 0
+      beamMove(lastx, lasty, table[first], table[first + 1], s_jumpCycles, nullptr);
+#endif
+      beamPoint(table[first], table[first + 1], cycles);   // Startpunkt wie jeder andere Punkt
+
+      int32_t carry16 = 0;                                  // Rundungsrest je Linienzug
+      for (int n = 0, k = first; n < points - 1; n++, k += dir)
+        beamMove(table[k], table[k + 1], table[k + dir], table[k + dir + 1], cycles, &carry16);
     }
-    Line(SubTable[i], SubTable[i+1], SubTable[i+2], SubTable[i+3]);
-    if (opt == 2) {
-      Line(SubTable[i+2], SubTable[i+3], SubTable[i], SubTable[i+1]);
-    }
-    i = i + 2;                                   // nächster Punkt
-    if (SubTable[i+2] == 0xFF) break;            // Ende des Polygonzugs/Zeigers
+    i = end;
   }
 }
 
@@ -366,17 +377,17 @@ static void scopeTask(void *)
     // je 12 Minuten – er wandert also wie bei einer echten Uhr mit.
     const int hpos = (h % 12) * 5 + m / 12;
 
-    PlotTable(DialData, sizeof(DialData), 0x00, 1, 0);              // Ring + Striche
+    PlotTable(DialData, sizeof(DialData), 0x00, 0);                 // Ring + Striche
 #if DIAL_STYLE == 1
-    PlotTable(DialDigits24, sizeof(DialDigits24), 0x00, 1, 0);      // Ziffern 24h
+    PlotTable(DialDigits24, sizeof(DialDigits24), 0x00, 0);         // Ziffern 13-24
 #elif DIAL_STYLE == 2
-    PlotTable(DialDigitsRoman, sizeof(DialDigitsRoman), 0x00, 1, 0);// röm. Ziffern
+    PlotTable(DialDigitsRoman, sizeof(DialDigitsRoman), 0x00, 0);   // röm. Ziffern
 #else
-    PlotTable(DialDigits12, sizeof(DialDigits12), 0x00, 1, 0);      // Ziffern 1-12
+    PlotTable(DialDigits12, sizeof(DialDigits12), 0x00, 0);         // Ziffern 1-12
 #endif
-    PlotTable(HrPtrData,  sizeof(HrPtrData),  0xFF, 0, 9 * hpos);   // Stundenzeiger
-    PlotTable(MinPtrData, sizeof(MinPtrData), 0xFF, 0, 9 * m);      // Minutenzeiger
-    PlotTable(SecPtrData, sizeof(SecPtrData), 0xFF, 0, 5 * s);      // Sekundenzeiger
+    PlotTable(HrPtrData,  sizeof(HrPtrData),  0xFF, 9 * hpos, HAND_BRIGHT_PCT); // Stundenzeiger
+    PlotTable(MinPtrData, sizeof(MinPtrData), 0xFF, 9 * m,    HAND_BRIGHT_PCT); // Minutenzeiger
+    PlotTable(SecPtrData, sizeof(SecPtrData), 0xFF, 5 * s);         // Sekundenzeiger
 
 #if defined EXCEL
     // Diagnosemodus: nach einem Bild anhalten (alle Punkte wurden ausgegeben)

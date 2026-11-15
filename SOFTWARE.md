@@ -34,9 +34,9 @@ Diese Datei beschreibt, wie die Firmware aufgebaut ist. Für Verdrahtung und Geh
   einen 32-Bit-Wert. Der Idle-Watchdog von Core 1 ist deshalb abgeschaltet (`disableCore1WDT()`).
 - **Core 0** übernimmt alles andere. WLAN und I2C werden im `uiTask` initialisiert,
   damit ihre Interrupts auf Core 0 laufen.
-- Die Funktionen des Zeichenpfads (`Dot`, `Line`, `PlotTable`, DAC-Zugriffe) liegen per `IRAM_ATTR`
-  im internen RAM, die Tabellen in `DataTable.h` ebenfalls. So stockt das Bild nicht, wenn der
-  Flash-Cache kurz gesperrt ist, zum Beispiel während der WLAN-Stack Daten ins NVS schreibt.
+- Die Funktionen des Zeichenpfads (`beamPoint`, `beamMove`, `PlotTable`, DAC-Zugriffe) liegen per
+  `IRAM_ATTR` im internen RAM, die Tabellen in `DataTable.h` ebenfalls. Es gibt dadurch keine
+  Flash-Cache-Fehlzugriffe, die das Timing und damit die Helligkeit ungleichmäßig machen würden.
 
 ### Gemeinsame Daten
 
@@ -101,11 +101,46 @@ WLAN Gastzugang           Font 5x8, max. 25 Zeichen (sonst mit ".." gekürzt)
 - **Positionen nachjustieren:** `Y_TIME`, `Y_DATE`, `Y_SSID`, `Y_RSSI` am Anfang von `oledUpdate()`.
   Text wird in U8g2 an der **Grundlinie** positioniert, nicht an der Oberkante.
 
+## Vektor-Engine: gleiche Helligkeit für alle Linien
+
+Wie hell eine Spur auf dem Schirm leuchtet, hängt davon ab, wie lange der Strahl pro Wegstück
+verweilt. Die Zeichenroutine aus v1.0 (Bresenham, gleiche Zeit pro Rasterpunkt) hatte deshalb
+sichtbare Helligkeitsunterschiede. v2.0 ersetzt sie durch eine Vektor-Engine mit konstanter
+Strahlgeschwindigkeit:
+
+| Regel | Umsetzung | Original v1.0 |
+|---|---|---|
+| Gleiche Abstände | Jede Linie in Schritte von genau 1 DAC-Einheit **Länge** zerlegt (euklidisch) | Bresenham: bei 45° nur 0,71 Punkte pro Einheit, schräge Linien dunkler |
+| Gleiche Verweilzeit | Jeder Schritt genau `BEAM_NS_PER_UNIT`, über den CPU-Taktzähler. Wird ein Schritt durch einen Interrupt verzögert, werden die folgenden kürzer | Zeit pro Punkt je nach Treiberaufruf |
+| Ecken | Endpunkt einer Linie = Startpunkt der nächsten, wird nur **einmal** ausgegeben | doppelt, helle Punkte an Ecken |
+| Kurze Linien | Rundungsrest wird an die nächste Linie weitergereicht, ein Linienzug bekommt exakt seine Länge an Zeit | jede Linie für sich gerundet |
+| Sprünge | in 1-Einheit-Schritten mit `JUMP_SPEED`-fach kürzerer Verweilzeit, das ergibt eine schwache, gleichmäßige Rücklaufspur. Alte Verstärker können folgen | harter Sprung |
+| Sprungwege | jeder Linienzug wird vom näheren Ende aus gezeichnet | immer vom Tabellenanfang |
+| Zeiger-Rauten | Stunden- und Minutenzeiger mit `HAND_BRIGHT_PCT` (67 %), weil ihre zwei dicht liegenden Kanten verschmelzen | doppelt so hell |
+| Tabellengrenzen | immer geprüft | Lesezugriff hinter das Tabellenende, wenn ein Endzeichen fehlt |
+
+Ergebnis der Simulation (Leuchtspur mit ca. 2,4 Einheiten Strahldurchmesser, Helligkeit relativ
+zu den Zifferblatt-Strichen, mehrere Uhrzeiten):
+
+| | Original v1.0 | v2.0 |
+|---|---|---|
+| Sekundenzeiger | 0,80 – 1,00 | 0,92 – 1,07 |
+| Minutenzeiger | 1,23 – 1,65 | 0,95 – 1,07 |
+| Stundenzeiger | 1,25 – 1,71 | 0,99 – 1,19 |
+| Verweilzeit pro Länge, Sekundenzeiger in allen 60 Stellungen | 0,73 – 1,00 | 0,98 – 1,00 |
+
+Liegen zwei Zeiger genau übereinander, ist die Stelle naturgemäß heller.
+
+**Geschwindigkeit und alte Röhren:** Ein Bild hat ca. 1.500 Schritte, bei 3 µs pro Schritt sind
+das etwa 210 Bilder/s (römisch ca. 150). Beim Schreiben bewegt sich der Strahl mit
+ca. 4 mV/µs, bei Sprüngen mit ca. 33 mV/µs. Das ist langsam genug für jede Röhre. Bei sehr alten
+Geräten `BEAM_NS_PER_UNIT` erhöhen (hellere Spur, weniger Bilder/s) und `JUMP_SPEED` verringern.
+
 ## Oszilloskop-Bild: Tabellenformat (`DataTable.h`)
 
 - Ein Punkt besteht aus 2 Bytes `(x, y)`, Wertebereich 0–255 = DAC-Wert. `(0x80, 0x80)` ist die
   Bildmitte, y wächst nach oben.
-- Aufeinanderfolgende Punkte werden mit Linien verbunden (`Line()`, Bresenham-Verfahren).
+- Aufeinanderfolgende Punkte werden mit Linien verbunden (`beamMove()`, siehe Vektor-Engine).
 - `0x00` trennt bei Zifferblatt und Ziffern zwei Linienzüge. `x = 0` kommt dort daher nicht als
   Koordinate vor. `0xFF` beendet eine Zeigerstellung.
 - Zeiger: je 60 vorberechnete Stellungen, beginnend bei 12 Uhr im Uhrzeigersinn.
@@ -113,7 +148,7 @@ WLAN Gastzugang           Font 5x8, max. 25 Zeichen (sonst mit ".." gekürzt)
   Der Offset `Stellung × Länge` wählt die Stellung aus. Der Stundenzeiger rückt alle 12 Minuten
   einen Schritt weiter: `hpos = (h % 12) * 5 + m / 12`.
 - Eigene Motive lassen sich als weitere Tabelle im selben Format ergänzen und im `scopeTask`
-  mit `PlotTable(Tabelle, sizeof(Tabelle), 0x00, 1, 0)` zeichnen. Zum Prüfen ohne Oszilloskop
+  mit `PlotTable(Tabelle, sizeof(Tabelle), 0x00, 0)` zeichnen. Zum Prüfen ohne Oszilloskop
   dient der `EXCEL`-Modus in `config.h`: Er gibt alle Punkte seriell aus, die Liste lässt sich
   als XY-Diagramm darstellen.
 
@@ -121,8 +156,12 @@ WLAN Gastzugang           Font 5x8, max. 25 Zeichen (sonst mit ".." gekürzt)
 
 | Symptom | Stellschraube (`config.h`) |
 |---|---|
-| Ziffern verzerrt, Ecken verrundet, Linien verwaschen | `DOT_DELAY_CYCLES` erhöhen (z. B. 50, 100, 200) |
-| Bild flimmert | `DOT_DELAY_CYCLES` verringern. Prüfen, ob `USE_FAST_DAC 1` gesetzt ist |
+| Bild flimmert | `BEAM_NS_PER_UNIT` verringern (z. B. 2000) |
+| Linien zu dunkel | `BEAM_NS_PER_UNIT` erhöhen (z. B. 5000) oder Intensität am Oszi erhöhen |
+| Ecken verrundet, Ziffern verwaschen (Oszi zu langsam) | `BEAM_NS_PER_UNIT` erhöhen |
+| Linienanfänge mit kleinen „Haken“ | `JUMP_SPEED` verringern (z. B. 4) |
+| Rücklaufspuren zwischen den Linien sichtbar | `JUMP_SPEED` erhöhen (16) oder `0` (harter Sprung, für schnelle Oszis) |
+| Zeiger heller/dunkler als das Zifferblatt | `HAND_BRIGHT_PCT` anpassen |
 | Zeit falsch um ganze Stunden | `TZ_INFO` prüfen |
 | OLED-Bild 2 px versetzt | in der `.ino` `NONAME0` → `NONAME2` |
 | OLED bleibt dunkel | I2C-Adresse (`OLED_I2C_ADDR`), Pull-ups, Brücken für den I2C-Modus (siehe HARDWARE.md) |

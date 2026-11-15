@@ -39,8 +39,9 @@
   (Sekunden) bzw. n × 9 (Minuten/Stunden).
 
   v2.0: PROGMEM entfernt. Die Tabellen sind bewusst NICHT const und liegen damit
-  im internen RAM (DRAM). So stockt die Strahlausgabe auf Core 1 nicht, wenn der
-  Flash-Cache kurzzeitig gesperrt ist (z.B. NVS-Schreibzugriffe des WLAN-Stacks).
+  im internen RAM (DRAM). Lesezugriffe dauern so immer gleich lang (keine
+  Flash-Cache-Fehlzugriffe) – wichtig für das exakte Timing der Strahlausgabe.
+  Zeichenroutine: PlotTable() in der .ino (Vektor-Engine).
   Belegung: ca. 3,3 KB RAM.
 *********************************************************************************/
 
