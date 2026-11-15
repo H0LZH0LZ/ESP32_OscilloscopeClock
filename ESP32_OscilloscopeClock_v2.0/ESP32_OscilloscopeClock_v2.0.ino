@@ -460,8 +460,8 @@ static void fitText(char *buf, size_t maxChars)
 //  Zeile 1 : Wochentag (kurz), Datum, ISO-Kalenderwoche (Font 6x10)
 //  Mitte   : HH:MM:SS, 24h, 7-Segment-Stil (11x20 px je Ziffer)
 //  Zeile 3 : Netzwerkname (SSID)                  (Font 5x8, max. 25 Zeichen, zentriert)
-//  Zeile 4 : Signalstärke in dBm + Bewertung
-//  Zeile 5 : Zeitpunkt der letzten NTP-Synchronisierung
+//  Zeile 4 : Signalstärke in dBm
+//  Zeile 5 : "NTP-Sync TT.MM. hh:mm:ss" = Zeitpunkt der letzten NTP-Synchronisierung
 static void oledUpdate()
 {
   static const char *WD[] = { "So", "Mo", "Di", "Mi", "Do", "Fr", "Sa" };
@@ -503,9 +503,7 @@ static void oledUpdate()
 
   // Signalstärke
   if (connected) {
-    const int rssi = WiFi.RSSI();
-    const char *q = rssi > -55 ? "sehr gut" : rssi > -67 ? "gut" : rssi > -75 ? "maessig" : "schwach";
-    snprintf(buf, sizeof(buf), "Signal %d dBm (%s)", rssi, q);
+    snprintf(buf, sizeof(buf), "Signal %d dBm", (int)WiFi.RSSI());
   } else if (wifiConfigured()) {
     snprintf(buf, sizeof(buf), "keine Verbindung");
   } else {
@@ -519,12 +517,12 @@ static void oledUpdate()
     struct tm st;
     time_t e = g_lastSyncEpoch;
     localtime_r(&e, &st);
-    snprintf(buf, sizeof(buf), "Sync %02d.%02d. %02d:%02d:%02d",
+    snprintf(buf, sizeof(buf), "NTP-Sync %02d.%02d. %02d:%02d:%02d",
              st.tm_mday, st.tm_mon + 1, st.tm_hour, st.tm_min, st.tm_sec);
   } else if (wifiConfigured()) {
-    snprintf(buf, sizeof(buf), "Sync ausstehend");
+    snprintf(buf, sizeof(buf), "NTP-Sync ausstehend");
   } else {
-    snprintf(buf, sizeof(buf), "Sync aus (Startzeit)");
+    snprintf(buf, sizeof(buf), "NTP-Sync aus");
   }
   drawCentered(buf, 60 + dy, dx);
 
