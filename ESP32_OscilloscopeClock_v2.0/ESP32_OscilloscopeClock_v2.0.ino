@@ -33,6 +33,7 @@
 
 #include <Arduino.h>
 #include <WiFi.h>
+#include <WiFiMulti.h>
 #include <Wire.h>
 #include <time.h>
 #include <esp_sntp.h>
@@ -41,11 +42,23 @@
 #include <U8g2lib.h>
 
 #include "config.h"
+
+// Ein WLAN-Eintrag (SSID + Passwort). Die Liste WIFI_NETWORKS[] steht in secrets.h.
+struct WifiCredential {
+  const char *ssid;
+  const char *password;
+};
 #if __has_include("secrets.h")
   #include "secrets.h"
 #else
   #include "secrets_example.h"
 #endif
+// Kompatibilität: alte secrets.h mit nur WIFI_SSID / WIFI_PASSWORD
+#if defined(WIFI_SSID) && !defined(WIFI_NETWORKS_DEFINED)
+static const WifiCredential WIFI_NETWORKS[] = { { WIFI_SSID, WIFI_PASSWORD } };
+#endif
+static const size_t WIFI_NETWORK_COUNT = sizeof(WIFI_NETWORKS) / sizeof(WIFI_NETWORKS[0]);
+
 #include "DataTable.h"
 
 #if !defined(CONFIG_IDF_TARGET_ESP32)
@@ -71,6 +84,8 @@ static volatile time_t   g_lastSyncEpoch = 0;   // Zeitpunkt der letzten NTP-Syn
 
 static TaskHandle_t scopeTaskHandle = nullptr;
 static TaskHandle_t uiTaskHandle    = nullptr;
+static TaskHandle_t wifiTaskHandle  = nullptr;
+static WiFiMulti    wifiMulti;
 
 //*****************************************************************************
 // DAC-Ausgabe
@@ -307,7 +322,25 @@ static void publishTime()
 //*****************************************************************************
 // WLAN
 //*****************************************************************************
-static bool wifiConfigured() { return strlen(WIFI_SSID) > 0; }
+// true, sobald mindestens ein Netz mit nicht-leerer SSID eingetragen ist
+static bool wifiConfigured()
+{
+  for (size_t i = 0; i < WIFI_NETWORK_COUNT; i++)
+    if (WIFI_NETWORKS[i].ssid && WIFI_NETWORKS[i].ssid[0]) return true;
+  return false;
+}
+
+// Eigener Task (Core 0) für den Verbindungsaufbau: WiFiMulti::run() scannt und
+// blockiert dabei einige Sekunden – so bleibt die OLED-Anzeige flüssig.
+static void wifiTask(void *)
+{
+  for (;;) {
+    if (WiFi.status() != WL_CONNECTED) {
+      wifiMulti.run(10000);               // stärkstes bekanntes Netz suchen + verbinden
+    }
+    vTaskDelay(pdMS_TO_TICKS(2000));
+  }
+}
 
 static void wifiStart()
 {
@@ -318,14 +351,21 @@ static void wifiStart()
   }
   WiFi.mode(WIFI_STA);
   WiFi.setHostname(WIFI_HOSTNAME);
-  WiFi.setAutoReconnect(true);
-  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-  Serial.printf("[WiFi] verbinde mit \"%s\" ...\n", WIFI_SSID);
+
+  for (size_t i = 0; i < WIFI_NETWORK_COUNT; i++) {
+    const WifiCredential &n = WIFI_NETWORKS[i];
+    if (!n.ssid || !n.ssid[0]) continue;
+    wifiMulti.addAP(n.ssid, n.password);
+    Serial.printf("[WiFi] bekanntes Netz: \"%s\"\n", n.ssid);   // Passwort wird nie ausgegeben
+  }
 
   // SNTP: läuft im Hintergrund, synchronisiert periodisch nach.
   sntp_set_time_sync_notification_cb(onNtpSync);
   sntp_set_sync_interval(NTP_SYNC_INTERVAL_MS);
   configTzTime(TZ_INFO, NTP_SERVER_1, NTP_SERVER_2, NTP_SERVER_3);
+
+  // Muss von Core 0 aus gestartet werden (WLAN-Interrupts auf Core 0).
+  xTaskCreatePinnedToCore(wifiTask, "wifi", 4096, nullptr, 1, &wifiTaskHandle, UI_CORE);
 }
 
 static void wifiLogChanges()
@@ -336,8 +376,8 @@ static void wifiLogChanges()
   wl_status_t st = WiFi.status();
   if (st != last) {
     if (st == WL_CONNECTED)
-      Serial.printf("[WiFi] verbunden, IP %s, RSSI %d dBm\n",
-                    WiFi.localIP().toString().c_str(), WiFi.RSSI());
+      Serial.printf("[WiFi] verbunden mit \"%s\", IP %s, RSSI %d dBm\n",
+                    WiFi.SSID().c_str(), WiFi.localIP().toString().c_str(), WiFi.RSSI());
     else if (last == WL_CONNECTED)
       Serial.println("[WiFi] Verbindung verloren – versuche erneut");
     last = st;
@@ -518,7 +558,7 @@ static void oledUpdate()
   // Netzwerkname
   if (!wifiConfigured())  snprintf(buf, sizeof(buf), "WLAN aus");
   else if (connected)     snprintf(buf, sizeof(buf), "WLAN %s", WiFi.SSID().c_str());
-  else                    snprintf(buf, sizeof(buf), "WLAN %s ...", WIFI_SSID);
+  else                    snprintf(buf, sizeof(buf), "WLAN suche ...");
   fitText(buf, LINE_CHARS);
   drawCentered(buf, Y_SSID + dy, dx);
 

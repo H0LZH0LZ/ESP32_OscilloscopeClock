@@ -21,7 +21,9 @@ Hardware angepasst: **ESP32-WROOM-32U DevKitC V4**, **Waveshare 2.42" OLED (I2C)
 1. Boardverwalter: **esp32 by Espressif** (2.0.x oder 3.x) installieren, Board **ESP32 Dev Module**.
 2. Bibliotheksverwalter: **U8g2** (by oliver) installieren.
 3. Im Ordner `ESP32_OscilloscopeClock_v2.0/` die Datei `secrets_example.h` nach `secrets.h`
-   kopieren und WLAN-SSID und Passwort eintragen.
+   kopieren und ein oder mehrere WLANs eintragen (eine Zeile `{ "SSID", "Passwort" },` pro Netz).
+   Die Uhr verbindet sich automatisch mit dem stärksten bekannten Netz in Reichweite.
+   `secrets.h` wird nicht eingecheckt.
 4. `ESP32_OscilloscopeClock_v2.0.ino` öffnen und hochladen. Seriellen Monitor auf 115200 Baud stellen.
 5. Oszilloskop in den X/Y-Modus schalten, 0,5 V/Div, DC-Kopplung (Details in HARDWARE.md).
 
