@@ -53,8 +53,9 @@
 // gesprungen; analog wird gebremst gesprungen (JUMP_SPEED usw., s.u.).
 //
 // UMSCHALTEN OHNE NEU ZU KOMPILIEREN: BOOT-Taster am ESP32 im Betrieb
-// BUTTON_LONG_MS lang halten. Das OLED zeigt das neue Profil, es wird im
-// Flash gespeichert und gilt auch nach einem Neustart.
+// BUTTON_LONG_MS lang halten. Das OLED zeigt dabei den Wechsel (z.B.
+// "DIGITAL > ANALOG") mit Countdown 3, 2, 1; vorher loslassen bricht ab.
+// Das Profil wird im Flash gespeichert und gilt auch nach einem Neustart.
 // SCOPE_PROFILE ist nur der Startwert, solange noch nichts gespeichert ist.
 // (Nicht beim Einschalten drücken – dann startet der Download-Modus.)
 #define SCOPE_PROFILE 1

@@ -17,6 +17,10 @@ Hardware angepasst: **ESP32-WROOM-32U DevKitC V4**, **Waveshare 2.42" OLED (I2C)
 - OLED als reine Textanzeige: Uhrzeit (24h) im 7-Segment-Stil, Kalenderwoche, Datum, Netzwerkname und Signalstärke (dBm), alles horizontal und vertikal zentriert, mit Pixel-Shift gegen Einbrennen.
 - Jede NTP-Synchronisierung wird mit Datum und Uhrzeit auf der seriellen Konsole (115200 Baud) gemeldet, ebenso eine Warnung, falls sie ausbleibt.
 - Ohne WLAN-Zugangsdaten läuft die Uhr offline ab einer festen Startzeit, wie im Original.
+- Mehrere WLANs: Die Uhr verbindet sich automatisch mit dem stärksten bekannten Netz.
+- Eine Firmware für alle Oszilloskope: Das Profil DIGITAL (ab Werk) bzw. ANALOG wird im Betrieb
+  per BOOT-Taster umgeschaltet und bleibt gespeichert. Getestet werden soll an Tektronix TDS3012,
+  HP 54200A und Digilent Analog Discovery 2.
 
 ### Schnellstart (Arduino IDE 2.x)
 1. Boardverwalter: **esp32 by Espressif** (2.0.x oder 3.x) installieren, Board **ESP32 Dev Module**.
@@ -30,12 +34,22 @@ Hardware angepasst: **ESP32-WROOM-32U DevKitC V4**, **Waveshare 2.42" OLED (I2C)
    auf ca. 1 ms/Div und den Trigger auf Auto stellen (Details in HARDWARE.md).
 6. **Oszilloskop-Profil per BOOT-Taster:** Ab Werk ist das Profil DIGITAL eingestellt (digitale
    Oszilloskope). Für ein analoges Röhren-Oszilloskop den BOOT-Taster im Betrieb 3 s halten, das
-   OLED zeigt dabei „DIGITAL > ANALOG“ mit Countdown. Die Einstellung bleibt gespeichert, es ist kein neues Hochladen nötig.
+   OLED zeigt dabei „DIGITAL > ANALOG“ mit Countdown 3, 2, 1. Die Einstellung bleibt gespeichert,
+   es ist kein neues Hochladen nötig.
    (Den Taster nicht beim Einschalten drücken, sonst startet der ESP32 im Download-Modus.)
 
 Alternativ mit PlatformIO: `pio run -t upload` (siehe `platformio.ini`).
 
-Einstellungen (Zeitzone, Pins, Zifferblatt, DAC-Timing) stehen in `ESP32_OscilloscopeClock_v2.0/config.h`.
+Einstellungen (Zeitzone, Pins, Zifferblatt, Strahlgeschwindigkeit, Oszilloskop-Profil) stehen in
+`ESP32_OscilloscopeClock_v2.0/config.h`.
+
+### Stand und Tests
+Die Firmware ist bisher **nur auf dem PC geprüft**: Syntaxprüfung gegen nachgebildete
+Arduino-/ESP32-Schnittstellen, Simulation des Strahlverlaufs (Helligkeit, Rücklaufspuren,
+Bildrate), Simulation des OLED-Inhalts, des BOOT-Tasters und der Kalenderwoche sowie Prüfung auf
+Speicherfehler (AddressSanitizer). Mit der echten ESP32-Toolchain kompiliert und auf echter Hardware
+getestet ist sie noch nicht. Typische Stellschrauben für den ersten Test stehen in
+[HARDWARE.md](HARDWARE.md) und [SOFTWARE.md](SOFTWARE.md).
 
 ---
 

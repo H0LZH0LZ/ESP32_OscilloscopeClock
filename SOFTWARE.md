@@ -8,7 +8,7 @@ Diese Datei beschreibt, wie die Firmware aufgebaut ist. Für Verdrahtung und Geh
 | Datei | Inhalt |
 |---|---|
 | `ESP32_OscilloscopeClock_v2.0/ESP32_OscilloscopeClock_v2.0.ino` | Firmware (Tasks, DAC, Zeit, WLAN, OLED) |
-| `ESP32_OscilloscopeClock_v2.0/config.h` | Alle Einstellungen: Zeitzone, NTP, Pins, OLED, DAC-Timing, Zifferblatt |
+| `ESP32_OscilloscopeClock_v2.0/config.h` | Alle Einstellungen: Zeitzone, NTP, Pins, OLED, Strahlgeschwindigkeit, Oszilloskop-Profil, Zifferblatt |
 | `ESP32_OscilloscopeClock_v2.0/secrets.h` | WLAN-Liste, **nur lokal** (steht in `.gitignore`) |
 | `ESP32_OscilloscopeClock_v2.0/secrets_example.h` | Vorlage für `secrets.h`. Wird verwendet, wenn `secrets.h` fehlt (dann Offline-Betrieb) |
 | `ESP32_OscilloscopeClock_v2.0/DataTable.h` | Vektordaten für Zifferblatt, Ziffern und Zeiger (aus v1.0) |
@@ -21,11 +21,14 @@ Diese Datei beschreibt, wie die Firmware aufgebaut ist. Für Verdrahtung und Geh
  ┌──────────────────────────┐          ┌────────────────────────────────────────┐
  │ scopeTask                │          │ uiTask (alle 10 ms)                    │
  │  endlos:                 │  g_time  │  publishTime()  → g_timePacked         │
- │   Zeit lesen  ◄──────────┼──Packed──┤  oledUpdate()   alle 200 ms (I2C)      │
- │   Zifferblatt + Ziffern  │ (32 Bit) │  wifiLogChanges() jede Sekunde (Serial)│
- │   3 Zeiger               │          ├────────────────────────────────────────┤
- │   → DAC GPIO25 / GPIO26  │          │ wifiTask: WiFiMulti, Verbindung halten │
- └──────────────────────────┘          │ System:   WLAN-Stack, SNTP-Client      │
+ │   Zeit lesen  ◄──────────┼──Packed──┤  buttonPoll()   → g_scopeProfile       │
+ │   Stunden-, Minutenzeiger│ (32 Bit) │  oledUpdate()   alle 200 ms (I2C)      │
+ │   Sekundenzeiger hin     │          │  wifiLogChanges() jede Sekunde (Serial)│
+ │   Rundtour Zifferblatt   │ g_scope- │                                        │
+ │   Sekundenzeiger zurück  │◄─Profile─┤                                        │
+ │   → DAC GPIO25 / GPIO26  │ (1 Byte) ├────────────────────────────────────────┤
+ └──────────────────────────┘          │ wifiTask: WiFiMulti, Verbindung halten │
+                                       │ System:   WLAN-Stack, SNTP-Client      │
                                        └────────────────────────────────────────┘
 ```
 
@@ -43,6 +46,7 @@ Diese Datei beschreibt, wie die Firmware aufgebaut ist. Für Verdrahtung und Geh
 | Variable | Schreiber | Leser | Absicherung |
 |---|---|---|---|
 | `g_timePacked` (Std/Min/Sek) | uiTask | scopeTask | 32-Bit-Zugriff ist atomar |
+| `g_scopeProfile` (ANALOG/DIGITAL) | uiTask (BOOT-Taster), `setup()` | scopeTask (`beamJump`) | 1 Byte, atomar |
 | `g_ntpSynced` | SNTP-Callback | uiTask | `bool`, atomar |
 | `g_lastSyncEpoch` | SNTP-Callback | uiTask | Spinlock (`time_t` ist 64 Bit) |
 
@@ -68,12 +72,23 @@ Diese Datei beschreibt, wie die Firmware aufgebaut ist. Für Verdrahtung und Geh
 ## BOOT-Taster: Oszilloskop-Profil
 
 `buttonPoll()` im `uiTask` fragt den BOOT-Taster (GPIO0, gedrückt = LOW) alle 10 ms ab.
-Nach 3 s Halten wird `g_scopeProfile` umgeschaltet. Das ist ein Byte und damit atomar,
-`beamJump()` auf Core 1 liest es beim nächsten Sprung. Danach wird das Profil im NVS
-gespeichert. Pro Tastendruck wird nur einmal umgeschaltet, auch wenn der Taster länger gehalten
-wird. `oledProfileOverlay()` zeigt während des Haltens den Wechsel (z. B. „DIGITAL > ANALOG“)
-mit Countdown, danach erscheint sofort wieder die normale Anzeige. `setup()` lädt das Profil vor dem Start des `scopeTask`. Ist noch nichts
-gespeichert, gilt `SCOPE_PROFILE` aus `config.h`.
+Nach `BUTTON_LONG_MS` (3 s) Halten wird `g_scopeProfile` umgeschaltet. Das ist ein Byte und
+damit atomar, `beamJump()` auf Core 1 liest es beim nächsten Sprung. Danach wird das Profil im
+NVS gespeichert (`Preferences`, Namensraum `scopeclock`, Schlüssel `profile`). Pro Tastendruck
+wird nur einmal umgeschaltet, auch wenn der Taster länger gehalten wird. Wer vorher loslässt,
+bricht ab. `setup()` lädt das Profil vor dem Start des `scopeTask`. Ist noch nichts gespeichert,
+gilt `SCOPE_PROFILE` aus `config.h`.
+
+Während des Haltens (ab 0,3 s) ersetzt `oledProfileOverlay()` die normale Anzeige:
+
+```
+ Oszilloskop-Profil       Font 6x10
+  DIGITAL > ANALOG        Font 7x14 fett: aktuelles > neues Profil
+         3                Countdown 3, 2, 1 als 7-Segment-Ziffer (9×16 px, drawSegDigit)
+```
+
+Eine „1“ besteht nur aus den rechten Segmenten und wird im Countdown deshalb optisch zur Mitte
+gerückt. Nach der Umschaltung erscheint sofort wieder die normale Anzeige.
 
 ## Konsolenausgaben (115200 Baud)
 
@@ -83,6 +98,7 @@ CPU: 240 MHz
 [Scope] Profil: DIGITAL – BOOT-Taster 3 s halten zum Umschalten
 [UI] laeuft auf Core 0
 [Scope] laeuft auf Core 1
+[Scope] Rundtour: 76 Linienzuege, Spruenge gesamt 1033 DAC-Einheiten
 [WiFi] bekanntes Netz: "Gastzugang"
 [WiFi] bekanntes Netz: "iPhone SE"
 [WiFi] verbunden mit "Gastzugang", IP 192.168.1.23, RSSI -61 dBm

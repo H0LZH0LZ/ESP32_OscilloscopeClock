@@ -19,7 +19,7 @@
   (GPIO25 = X, GPIO26 = Y, je 0…255 ≙ ca. 0…3,2 V) und "fährt" damit das
   Zifferblatt und die Zeiger Punkt für Punkt ab. Weil das Bild auf dem
   Schirm nur kurz nachleuchtet, muss es ohne Pause immer wieder neu
-  gezeichnet werden (~200×/s) – sonst flimmert es oder es entstehen helle
+  gezeichnet werden (~230×/s) – sonst flimmert es oder es entstehen helle
   Punkte. Wie hell eine Linie leuchtet, hängt davon ab, wie lange der Strahl
   auf ihr verweilt; die Vektor-Engine sorgt deshalb für überall gleiche
   Strahlgeschwindigkeit.
@@ -27,22 +27,33 @@
   ---------------------------------------------------------------------------
   Aufgabenteilung auf die beiden Kerne (FreeRTOS)
   ---------------------------------------------------------------------------
-    Core 1 │ scopeTask  │ zeichnet endlos Zifferblatt + Zeiger über die DACs
+    Core 1 │ scopeTask  │ zeichnet endlos Zeiger + Zifferblatt über die DACs
+           │            │ (Vektor-Engine, Rundtour, s.u.)
     ───────┼────────────┼────────────────────────────────────────────────────
     Core 0 │ uiTask     │ Uhrzeit berechnen + an Core 1 übergeben (alle 10 ms),
-           │            │ OLED aktualisieren (alle 200 ms), Konsolen-Log (1 s)
+           │            │ BOOT-Taster abfragen (10 ms), OLED (200 ms),
+           │            │ Konsolen-Log (1 s)
            │ wifiTask   │ WLAN-Verbindung aufbauen/halten (WiFiMulti)
            │ (System)   │ WLAN-Stack, SNTP (NTP-Client des ESP-IDF)
 
-  Zwischen den Kernen wird nur ein einziges 32-Bit-Wort ausgetauscht
-  (g_timePacked = Stunde/Minute/Sekunde). Der Zeichenpfad auf Core 1 liest
-  es einmal pro Bild und muss nie auf Core 0 warten.
+  Von Core 0 nach Core 1 gehen nur zwei Werte, beide atomar lesbar:
+  g_timePacked (32 Bit: Stunde/Minute/Sekunde, einmal pro Bild gelesen) und
+  g_scopeProfile (1 Byte: ANALOG/DIGITAL). Der Zeichenpfad muss nie warten.
+
+  ---------------------------------------------------------------------------
+  Bedienung
+  ---------------------------------------------------------------------------
+  BOOT-Taster im Betrieb 3 s halten → Oszilloskop-Profil wechselt
+  (DIGITAL ↔ ANALOG, siehe config.h: SCOPE_PROFILE). Das OLED zeigt dabei
+  "DIGITAL > ANALOG" und einen Countdown 3, 2, 1; das Profil wird im Flash
+  gespeichert. Nicht beim Einschalten drücken (Download-Modus).
 
   ---------------------------------------------------------------------------
   Dateien
   ---------------------------------------------------------------------------
     ESP32_OscilloscopeClock_v2.0.ino  dieser Sketch
-    config.h                          Pins, Zeitzone, NTP, OLED, DAC-Timing
+    config.h                          Pins, Zeitzone, NTP, OLED, Strahl-
+                                      geschwindigkeit, Oszilloskop-Profil
     secrets.h                         WLAN-Liste (lokal, nicht im Git)
     secrets_example.h                 Vorlage für secrets.h
     DataTable.h                       Vektordaten: Zifferblatt, Ziffern, Zeiger
