@@ -20,7 +20,7 @@
    - Schnelle DAC-Ausgabe über direkte Registerzugriffe (weniger Flimmern)
    - Waveshare 2.42" OLED (SSD1309, 128x64) im I2C-Modus mit U8g2:
      reine Textanzeige – Uhrzeit (24h) im 7-Segment-Stil, Wochentag + Datum,
-     Kalenderwoche, Netzwerkname, Signalstärke, letzte NTP-Synchronisierung,
+     Kalenderwoche, Netzwerkname, Signalstärke (NTP-Sync auf der Konsole),
      Pixel-Shift gegen Einbrennen
    - Läuft ohne WLAN mit der Startzeit aus config.h weiter (wie das Original)
 
@@ -331,7 +331,8 @@ static void wifiStart()
 static void wifiLogChanges()
 {
   static wl_status_t last = WL_IDLE_STATUS;
-  static bool lastSynced = false;
+  static time_t lastLoggedSync = 0;
+  static bool   overdueLogged  = false;
   wl_status_t st = WiFi.status();
   if (st != last) {
     if (st == WL_CONNECTED)
@@ -341,11 +342,22 @@ static void wifiLogChanges()
       Serial.println("[WiFi] Verbindung verloren – versuche erneut");
     last = st;
   }
-  if (g_ntpSynced && !lastSynced) {
-    struct tm t; currentTime(t);
-    Serial.printf("[NTP] synchronisiert: %02d.%02d.%04d %02d:%02d:%02d\n",
-                  t.tm_mday, t.tm_mon + 1, t.tm_year + 1900, t.tm_hour, t.tm_min, t.tm_sec);
-    lastSynced = true;
+  // Jede NTP-Synchronisierung (erste + stündliche) auf der Konsole melden
+  const time_t syncEpoch = g_lastSyncEpoch;
+  if (g_ntpSynced && syncEpoch != lastLoggedSync) {
+    struct tm st;
+    localtime_r(&syncEpoch, &st);
+    Serial.printf("[NTP] Sync %02d.%02d.%04d %02d:%02d:%02d, naechster in ca. %lu min\n",
+                  st.tm_mday, st.tm_mon + 1, st.tm_year + 1900, st.tm_hour, st.tm_min, st.tm_sec,
+                  (unsigned long)(NTP_SYNC_INTERVAL_MS / 60000UL));
+    lastLoggedSync = syncEpoch;
+    overdueLogged  = false;
+  }
+  // Warnung, wenn die Synchronisierung deutlich überfällig ist
+  if (g_ntpSynced && !overdueLogged &&
+      time(nullptr) - syncEpoch > (time_t)(2 * NTP_SYNC_INTERVAL_MS / 1000UL)) {
+    Serial.println("[NTP] Warnung: letzter Sync liegt mehr als 2 Intervalle zurueck");
+    overdueLogged = true;
   }
 }
 
@@ -457,12 +469,13 @@ static void fitText(char *buf, size_t maxChars)
 }
 
 // ---- Bildaufbau ----------------------------------------------------------------
-//  y  1-21 : HH:MM:SS, 24h, 7-Segment-Stil (11x20 px je Ziffer)
-//  y ~26-33: Wochentag (kurz), Datum, ISO-Kalenderwoche  (Font 6x10)
-//  y ~37-43: Netzwerkname (SSID)                          (Font 5x8, max. 25 Zeichen)
-//  y ~46-52: Signalstärke in dBm
-//  y ~55-61: "NTP-Sync TT.MM. hh:mm:ss" = letzte NTP-Synchronisierung
-//  Alle Zeilen horizontal zentriert; +0..1 px vertikaler Pixel-Shift.
+// Vier Zeilen, horizontal UND vertikal zentriert (Block ca. y 6…57):
+//  HH:MM:SS, 24h, 7-Segment-Stil (11x20 px je Ziffer)
+//  Wochentag (kurz), Datum, ISO-Kalenderwoche          (Font 6x10)
+//  Netzwerkname (SSID)                                 (Font 5x8, max. 25 Zeichen)
+//  Signalstärke in dBm
+// Der NTP-Sync wird nur auf der seriellen Konsole ausgegeben (wifiLogChanges).
+// Pixel-Shift: +0..3 px horizontal, +0..1 px vertikal.
 static void oledUpdate()
 {
   static const char *WD[] = { "So", "Mo", "Di", "Mi", "Do", "Fr", "Sa" };
@@ -480,8 +493,11 @@ static void oledUpdate()
   char buf[48];
   u8g2.clearBuffer();
 
+  // Vertikale Positionen relativ zum Blockanfang Y0
+  const int Y0 = 6;
+
   // Uhrzeit (24h) – oben
-  drawSegTime(1 + dy, t.tm_hour, t.tm_min, t.tm_sec, dx);
+  drawSegTime(Y0 + dy, t.tm_hour, t.tm_min, t.tm_sec, dx);
 
   // Datum + Kalenderwoche
   u8g2.setFont(u8g2_font_6x10_tf);
@@ -490,7 +506,7 @@ static void oledUpdate()
              t.tm_mon + 1, t.tm_year + 1900, isoWeek(t));   // 20 Zeichen = 120 px
   else
     snprintf(buf, sizeof(buf), "Datum unbekannt");
-  drawCentered(buf, 33 + dy, dx);
+  drawCentered(buf, Y0 + 31 + dy, dx);
 
   u8g2.setFont(u8g2_font_5x8_tf);
   const bool connected = wifiConfigured() && WiFi.status() == WL_CONNECTED;
@@ -500,7 +516,7 @@ static void oledUpdate()
   else if (connected)     snprintf(buf, sizeof(buf), "WLAN %s", WiFi.SSID().c_str());
   else                    snprintf(buf, sizeof(buf), "WLAN %s ...", WIFI_SSID);
   fitText(buf, LINE_CHARS);
-  drawCentered(buf, 43 + dy, dx);
+  drawCentered(buf, Y0 + 41 + dy, dx);
 
   // Signalstärke
   if (connected) {
@@ -511,21 +527,7 @@ static void oledUpdate()
     snprintf(buf, sizeof(buf), "Offline-Betrieb");
   }
   fitText(buf, LINE_CHARS);
-  drawCentered(buf, 52 + dy, dx);
-
-  // Letzte NTP-Synchronisierung
-  if (g_ntpSynced) {
-    struct tm st;
-    time_t e = g_lastSyncEpoch;
-    localtime_r(&e, &st);
-    snprintf(buf, sizeof(buf), "NTP-Sync %02d.%02d. %02d:%02d:%02d",
-             st.tm_mday, st.tm_mon + 1, st.tm_hour, st.tm_min, st.tm_sec);
-  } else if (wifiConfigured()) {
-    snprintf(buf, sizeof(buf), "NTP-Sync ausstehend");
-  } else {
-    snprintf(buf, sizeof(buf), "NTP-Sync aus");
-  }
-  drawCentered(buf, 61 + dy, dx);
+  drawCentered(buf, Y0 + 50 + dy, dx);
 
   u8g2.sendBuffer();
 }
