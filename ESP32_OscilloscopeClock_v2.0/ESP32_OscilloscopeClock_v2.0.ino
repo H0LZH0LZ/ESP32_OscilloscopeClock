@@ -80,6 +80,22 @@
 #include "config.h"
 
 //*****************************************************************************
+// Datentypen
+//*****************************************************************************
+// Alle eigenen Typen stehen hier vor der ersten Funktion: Die Arduino-IDE
+// erzeugt vor dem Kompilieren automatisch Prototypen aller Funktionen und
+// setzt sie an diese Stelle – Typen, die erst weiter unten definiert sind,
+// wären für diese Prototypen noch unbekannt.
+
+// Ein Stroke ist ein zusammenhängender Linienzug in einer Tabelle aus
+// DataTable.h: Punkte bei den Byte-Offsets a, a±2, …, b. Ist b < a, wird er
+// rückwärts gezeichnet (Helligkeit ist richtungsunabhängig).
+struct Stroke {
+  const uint8_t *t;
+  int16_t a, b;
+};
+
+//*****************************************************************************
 // WLAN-Zugangsdaten
 //*****************************************************************************
 // Ein WLAN-Eintrag. secrets.h definiert daraus das Array WIFI_NETWORKS[],
@@ -209,7 +225,9 @@ static uint32_t s_stepCycles = 0;   // Verweilzeit eines Schreibschritts (BEAM_N
 // Verweilzeit eines Sprungschritts abhängig vom Restweg r (0 … JUMP_RAMP):
 // r = JUMP_RAMP und mehr → volle Sprunggeschwindigkeit, r = 0 → JUMP_LANDING
 static uint32_t s_jumpCycles[JUMP_RAMP + 1];
+#if ZBLANK_PIN >= 0
 static uint32_t s_settleCycles = 0; // Einschwingzeit bei Dunkeltastung
+#endif
 static uint32_t s_deadline   = 0;   // Zieltermin des aktuellen Schritts
 
 // Schreibt einen 8-Bit-Wert auf den X-DAC (GPIO25).
@@ -378,13 +396,8 @@ static void IRAM_ATTR beamJump(int x2, int y2)
 //*****************************************************************************
 // Linienzüge ("Strokes")
 //*****************************************************************************
-// Ein Stroke ist ein zusammenhängender Linienzug in einer Tabelle aus
-// DataTable.h: Punkte bei den Byte-Offsets a, a±2, …, b. Ist b < a, wird er
-// rückwärts gezeichnet (Helligkeit ist richtungsunabhängig).
-struct Stroke {
-  const byte *t;
-  int16_t a, b;
-};
+// (Struktur "Stroke" siehe Dateianfang – sie muss dort stehen, weil die
+// Arduino-IDE vor dem Kompilieren Funktionsprototypen an den Anfang setzt.)
 
 static inline int strokeX(const Stroke &st, bool end) { return st.t[end ? st.b : st.a]; }
 static inline int strokeY(const Stroke &st, bool end) { return st.t[(end ? st.b : st.a) + 1]; }
@@ -551,7 +564,9 @@ static void buildTour(const byte *digits, int digitsSize)
 //   HrPtrData, MinPtrData: 60 × 9 Byte  (4 Punkte = schmale Raute + 0xFF)
 //   SecPtrData:            60 × 5 Byte  (2 Punkte Spitze, Mitte + 0xFF)
 // Der Offset "Stellung × Eintragslänge" wählt die passende Stellung aus.
-static void scopeTask(void *)
+// IRAM_ATTR: Der Compiler setzt PlotTable()/nextStroke() hier inline ein –
+// damit auch diese Bildschleife ohne Flash-Cache-Zugriffe gleichmäßig läuft.
+static void IRAM_ATTR scopeTask(void *)
 {
   // Dieser Task gibt Core 1 nie frei (kein vTaskDelay). Der Idle-Task von
   // Core 1 kommt daher nie dran – falls dessen Watchdog in der verwendeten

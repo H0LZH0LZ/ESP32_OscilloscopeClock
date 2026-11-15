@@ -42,7 +42,8 @@
   im internen RAM (DRAM). Lesezugriffe dauern so immer gleich lang (keine
   Flash-Cache-Fehlzugriffe) – wichtig für das exakte Timing der Strahlausgabe.
   Zeichenroutine: PlotTable() in der .ino (Vektor-Engine).
-  Belegung: ca. 3,3 KB RAM.
+  Belegung: Der Linker übernimmt nur die tatsächlich verwendeten Tabellen
+  (Standard DIAL_STYLE 0: Zifferblatt, Ziffern 1–12, drei Zeiger = 1.805 Byte RAM).
 *********************************************************************************/
 
 byte DialData[] = {

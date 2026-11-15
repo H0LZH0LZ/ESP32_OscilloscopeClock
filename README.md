@@ -44,11 +44,21 @@ Einstellungen (Zeitzone, Pins, Zifferblatt, Strahlgeschwindigkeit, Oszilloskop-P
 `ESP32_OscilloscopeClock_v2.0/config.h`.
 
 ### Stand und Tests
-Die Firmware ist bisher **nur auf dem PC geprüft**: Syntaxprüfung gegen nachgebildete
-Arduino-/ESP32-Schnittstellen, Simulation des Strahlverlaufs (Helligkeit, Rücklaufspuren,
-Bildrate), Simulation des OLED-Inhalts, des BOOT-Tasters und der Kalenderwoche sowie Prüfung auf
-Speicherfehler (AddressSanitizer). Mit der echten ESP32-Toolchain kompiliert und auf echter Hardware
-getestet ist sie noch nicht. Typische Stellschrauben für den ersten Test stehen in
+**Echter Build** mit Arduino-CLI 1.6.0, Board „ESP32 Dev Module“, Standard-Partitionsschema
+(1,25 MB Programm), alle Warnungen eingeschaltet. Er läuft ohne Fehler und ohne Warnungen durch:
+
+| Board-Paket | Programmspeicher | Globale Variablen (RAM) | IRAM (Code) |
+|---|---|---|---|
+| esp32 3.3.12 | 1.050.910 Byte (80 %) | 53.716 Byte (16 %) | 90.499 von 131.072 Byte |
+| esp32 2.0.17 | 778.265 Byte (59 %) | 49.552 Byte (15 %) | – |
+
+Alle Konfigurationsvarianten (Profil ANALOG/DIGITAL, Z-Dunkeltastung, Zifferblatt 0/1/2,
+`USE_FAST_DAC 0`, EXCEL-Modus) kompilieren ebenfalls ohne Warnungen und liegen bei 80 %.
+Wird der Programmspeicher einmal knapp: Werkzeuge → Partition Scheme → „Huge APP (3MB No OTA)“.
+
+Zusätzlich auf dem PC simuliert: Strahlverlauf (Helligkeit, Rücklaufspuren, Bildrate),
+OLED-Inhalt, BOOT-Taster, Kalenderwoche, Speicherzugriffe (AddressSanitizer).
+**Noch nicht auf echter Hardware getestet.** Typische Stellschrauben für den ersten Test stehen in
 [HARDWARE.md](HARDWARE.md) und [SOFTWARE.md](SOFTWARE.md).
 
 ---
