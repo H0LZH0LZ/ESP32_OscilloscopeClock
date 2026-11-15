@@ -122,7 +122,7 @@ static inline uint32_t packTime(int h, int m, int s) {
 // NTP-Status. Schreiber: SNTP-Callback (läuft im lwIP-Task auf Core 0),
 // Leser: uiTask. time_t ist auf aktuellen ESP32-Cores 64 Bit breit und damit
 // NICHT atomar – daher der Spinlock für den Zeitstempel.
-// Oszilloskop-Profil: 0 = analoges Röhren-Oszilloskop, 1 = digitales Oszilloskop / USB-Oszilloskop.
+// Oszilloskop-Profil: 0 = analoges Röhren-Oszilloskop, 1 = digitales Oszilloskop.
 // Startwert aus dem Flash (NVS), im Betrieb per BOOT-Taster umschaltbar.
 // Schreiber: uiTask (Core 0), Leser: beamJump (Core 1). 1 Byte = atomar.
 static volatile uint8_t g_scopeProfile = SCOPE_PROFILE;
@@ -911,7 +911,7 @@ static bool     s_btnHandled   = false;  // Umschaltung für diesen Tastendruck 
 static uint32_t s_overlayUntil = 0;      // Profil-Hinweis auf dem OLED bis zu diesem Zeitpunkt
 
 static const char *profileName(uint8_t p)  { return p == 1 ? "DIGITAL" : "ANALOG"; }
-static const char *profileHint(uint8_t p)  { return p == 1 ? "Digital-/USB-Oszilloskop" : "Roehren-Oszilloskop"; }
+static const char *profileHint(uint8_t p)  { return p == 1 ? "Digital-Oszilloskop" : "Roehren-Oszilloskop"; }
 
 static void saveProfile(uint8_t p)
 {

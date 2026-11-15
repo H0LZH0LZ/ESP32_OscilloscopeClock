@@ -80,7 +80,7 @@ gespeichert, gilt `SCOPE_PROFILE` aus `config.h`.
 ```
 ESP32 Oscilloscope Clock v2.0
 CPU: 240 MHz
-[Scope] Profil: DIGITAL (Digital-/USB-Oszilloskop) – BOOT-Taster 2 s halten zum Umschalten
+[Scope] Profil: DIGITAL (Digital-Oszilloskop) – BOOT-Taster 2 s halten zum Umschalten
 [UI] laeuft auf Core 0
 [Scope] laeuft auf Core 1
 [WiFi] bekanntes Netz: "Gastzugang"

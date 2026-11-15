@@ -28,8 +28,7 @@ Hardware angepasst: **ESP32-WROOM-32U DevKitC V4**, **Waveshare 2.42" OLED (I2C)
 4. `ESP32_OscilloscopeClock_v2.0.ino` öffnen und hochladen. Seriellen Monitor auf 115200 Baud stellen.
 5. Oszilloskop in den X/Y-Modus schalten, 0,5 V/Div, DC-Kopplung. Bei digitalen Oszilloskopen die Zeitbasis
    auf ca. 1 ms/Div und den Trigger auf Auto stellen (Details in HARDWARE.md).
-6. **Oszilloskop-Profil per BOOT-Taster:** Ab Werk ist das Profil DIGITAL eingestellt (digitale Oszilloskope und
-   USB-Oszilloskope). Für ein analoges Röhren-Oszilloskop den BOOT-Taster im Betrieb 2 s halten, das OLED zeigt
+6. **Oszilloskop-Profil per BOOT-Taster:** Ab Werk ist das Profil DIGITAL eingestellt (digitale Oszilloskope). Für ein analoges Röhren-Oszilloskop den BOOT-Taster im Betrieb 2 s halten, das OLED zeigt
    ANALOG. Die Einstellung bleibt gespeichert, es ist kein neues Hochladen nötig.
    (Den Taster nicht beim Einschalten drücken, sonst startet der ESP32 im Download-Modus.)
 

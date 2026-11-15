@@ -46,7 +46,7 @@
 
 // ---- Oszilloskop-Typ ---------------------------------------------------------
 //   0 = analoges Röhren-Oszilloskop (Strahl zeichnet direkt, z.B. Hameg HM203, Tek 2213)
-//   1 = digitales Oszilloskop / Speicher-Oszilloskop / USB-Oszilloskop (tastet ab und zeigt Punkte,
+//   1 = digitales Oszilloskop / Speicher-Oszilloskop (tastet ab und zeigt Punkte,
 //       z.B. Tektronix TDS3012, HP 54200A, Digilent Analog Discovery 2)
 // Wirkt sich auf die Sprünge zwischen Linienzügen aus: Digitale Oszilloskope zeigen
 // jeden Abtastwert eines gefahrenen Sprungs als Punkt – dort wird hart

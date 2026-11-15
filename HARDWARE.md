@@ -101,7 +101,7 @@ aufblitzen (Schreibzugriff auf den Flash).
 
 | Profil | für | Sprünge zwischen Linien |
 |---|---|---|
-| DIGITAL (ab Werk) | digitale Oszilloskope, Speicher-Oszilloskope, USB-Oszilloskope | hart, damit keine Abtastpunkte unterwegs entstehen |
+| DIGITAL (ab Werk) | digitale Oszilloskope, Speicher-Oszilloskope | hart, damit keine Abtastpunkte unterwegs entstehen |
 | ANALOG | analoge Röhren-Oszilloskope | schnell und vor dem Ziel gebremst, schwache Rücklaufspur |
 
 ### Analoges Röhren-Oszilloskop (Profil ANALOG)
@@ -110,7 +110,7 @@ aufblitzen (Schreibzugriff auf den Flash).
 - Mit den Position-Reglern auf Bildmitte schieben (DAC-Mitte ≈ 1,6 V).
 - Helligkeit/Intensität eher gering, Fokus nachstellen.
 
-### Digitales Oszilloskop / USB-Oszilloskop (Profil DIGITAL, ab Werk)
+### Digitales Oszilloskop (Profil DIGITAL, ab Werk)
 Ein digitales Oszilloskop zeigt im X/Y-Modus nur die Abtastwerte **einer Aufnahme**. Damit die ganze Uhr
 zu sehen ist, muss das Aufnahmefenster (10 × Zeitbasis) mindestens ein Uhrenbild abdecken.
 Ein Bild dauert ca. 4,3 ms, mit römischen Ziffern ca. 6,2 ms.
