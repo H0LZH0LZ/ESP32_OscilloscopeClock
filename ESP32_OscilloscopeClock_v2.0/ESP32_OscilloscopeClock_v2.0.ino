@@ -64,6 +64,7 @@
 #include <soc/rtc_io_reg.h>   // Registeradressen der DAC-Pads
 #include <soc/gpio_reg.h>     // GPIO-Setzen/Löschen für die optionale Dunkeltastung
 #include <U8g2lib.h>          // OLED-Treiber
+#include <Preferences.h>      // dauerhafte Einstellungen im Flash (NVS): Oszi-Profil
 
 #include "config.h"
 
@@ -121,6 +122,11 @@ static inline uint32_t packTime(int h, int m, int s) {
 // NTP-Status. Schreiber: SNTP-Callback (läuft im lwIP-Task auf Core 0),
 // Leser: uiTask. time_t ist auf aktuellen ESP32-Cores 64 Bit breit und damit
 // NICHT atomar – daher der Spinlock für den Zeitstempel.
+// Oszi-Profil: 0 = analoges Röhren-Oszi, 1 = digitales Oszi / USB-Oszi.
+// Startwert aus dem Flash (NVS), im Betrieb per BOOT-Taster umschaltbar.
+// Schreiber: uiTask (Core 0), Leser: beamJump (Core 1). 1 Byte = atomar.
+static volatile uint8_t g_scopeProfile = SCOPE_PROFILE;
+
 static volatile bool g_ntpSynced     = false;  // true nach dem ersten erfolgreichen Sync
 static time_t        g_lastSyncEpoch = 0;      // Unix-Zeit der letzten Synchronisierung
 static portMUX_TYPE  g_syncMux       = portMUX_INITIALIZER_UNLOCKED;
@@ -322,6 +328,11 @@ static inline void IRAM_ATTR zBlank(bool dark)
 #endif
 
 // Sprung (Rücklauf) zum Punkt (x2,y2) – siehe Regel 5.
+// Die Sprungart hängt vom Oszi-Profil ab (BOOT-Taster, g_scopeProfile):
+//   digital → harter Sprung: ein digitales Oszi würde jeden Zwischenpunkt
+//             eines gefahrenen Sprungs als hellen Abtastpunkt zeigen.
+//   analog  → gebremster Sprung (JUMP_SPEED/JUMP_LANDING/JUMP_RAMP).
+// Mit Z-Dunkeltastung (ZBLANK_PIN) wird immer im Dunkeln hart gesprungen.
 static void IRAM_ATTR beamJump(int x2, int y2)
 {
   if (x2 == lastx && y2 == lasty) return;
@@ -330,11 +341,13 @@ static void IRAM_ATTR beamJump(int x2, int y2)
   zBlank(true);
   beamPoint(x2, y2, s_settleCycles);
   zBlank(false);
-#elif JUMP_SPEED == 0
-  // Harter Sprung wie im Original (ohne Verweilzeit)
-  if (x2 != lastx) { lastx = x2; dacOutX((uint8_t)x2); }
-  if (y2 != lasty) { lasty = y2; dacOutY((uint8_t)y2); }
 #else
+  if (g_scopeProfile == 1 || JUMP_SPEED == 0) {
+    // Harter Sprung wie im Original (ohne Verweilzeit)
+    if (x2 != lastx) { lastx = x2; dacOutX((uint8_t)x2); }
+    if (y2 != lasty) { lasty = y2; dacOutY((uint8_t)y2); }
+    return;
+  }
   // Schnell fahren, auf den letzten JUMP_RAMP Einheiten abbremsen
   const int x1 = lastx, y1 = lasty, dx = x2 - x1, dy = y2 - y1;
   const int32_t len16 = (int32_t)isqrt32((uint32_t)(dx * dx + dy * dy) << 8);
@@ -886,8 +899,91 @@ static void fitText(char *buf, size_t maxChars)
 //
 // Pixel-Shift gegen Einbrennen: alle OLED_SHIFT_EVERY_S Sekunden wird das
 // gesamte Bild um 0…3 px nach rechts und 0…1 px nach unten versetzt.
+// ---- BOOT-Taster: Oszi-Profil umschalten -------------------------------------
+// BOOT-Taster des DevKitC (GPIO0, gedrückt = LOW) mindestens BUTTON_LONG_MS
+// halten → Profil wechselt (analog ↔ digital), wird im Flash gespeichert und
+// gilt sofort, auch nach dem nächsten Neustart. Während des Haltens und
+// danach zeigt das OLED kurz einen Hinweis.
+// Achtung: GPIO0 ist ein Boot-Pin. Beim EINSCHALTEN bzw. Reset gedrückt
+// gehalten, startet der ESP32 im Download-Modus statt der Uhr.
+static uint32_t s_btnDownSince = 0;      // millis() beim Drücken, 0 = losgelassen
+static bool     s_btnHandled   = false;  // Umschaltung für diesen Tastendruck erledigt
+static uint32_t s_overlayUntil = 0;      // Profil-Hinweis auf dem OLED bis zu diesem Zeitpunkt
+
+static const char *profileName(uint8_t p)  { return p == 1 ? "DIGITAL" : "ANALOG"; }
+static const char *profileHint(uint8_t p)  { return p == 1 ? "Digital-/USB-Oszi" : "Roehren-Oszi"; }
+
+static void saveProfile(uint8_t p)
+{
+  // Schreiben ins Flash hält Core 1 für wenige ms an (einmaliger kurzer
+  // Lichtpunkt auf dem Oszi) – passiert nur bei der Umschaltung.
+  Preferences prefs;
+  if (prefs.begin("scopeclock", false)) {
+    prefs.putUChar("profile", p);
+    prefs.end();
+  }
+}
+
+static uint8_t loadProfile()
+{
+  Preferences prefs;
+  uint8_t p = SCOPE_PROFILE;                  // Startwert aus config.h
+  if (prefs.begin("scopeclock", true)) {      // nur lesen
+    p = prefs.getUChar("profile", SCOPE_PROFILE);
+    prefs.end();
+  }
+  return p > 1 ? SCOPE_PROFILE : p;
+}
+
+// Wird alle 10 ms aus dem uiTask aufgerufen.
+static void buttonPoll()
+{
+  const bool down = digitalRead(BOOT_BUTTON_PIN) == LOW;
+  const uint32_t now = millis();
+  if (!down) { s_btnDownSince = 0; s_btnHandled = false; return; }
+  if (s_btnDownSince == 0) { s_btnDownSince = now ? now : 1; return; }
+  if (!s_btnHandled && now - s_btnDownSince >= BUTTON_LONG_MS) {
+    s_btnHandled = true;
+    const uint8_t p = g_scopeProfile ? 0 : 1;
+    g_scopeProfile = p;                       // gilt ab dem nächsten Sprung
+    saveProfile(p);
+    s_overlayUntil = now + 2500;
+    Serial.printf("[Scope] Profil umgeschaltet: %s (%s), gespeichert\n", profileName(p), profileHint(p));
+  }
+}
+
+// Profil-Hinweis statt der normalen Anzeige. Liefert true, wenn gezeichnet.
+static bool oledProfileOverlay()
+{
+  const uint32_t now = millis();
+  const bool holding = s_btnDownSince && !s_btnHandled && now - s_btnDownSince >= 300;
+  if (!holding && (int32_t)(s_overlayUntil - now) <= 0) return false;
+
+  u8g2.clearBuffer();
+  u8g2.setFont(u8g2_font_6x10_tf);
+  if (holding) {
+    // Countdown bis zur Umschaltung
+    const uint32_t left = (BUTTON_LONG_MS - (now - s_btnDownSince) + 999) / 1000;
+    char buf[24];
+    drawCentered("Oszi-Profil wechseln", 20, 1);
+    snprintf(buf, sizeof(buf), "weiter halten: %lu s", (unsigned long)left);
+    drawCentered(buf, 38, 1);
+    drawCentered(g_scopeProfile == 1 ? "-> ANALOG" : "-> DIGITAL", 56, 1);
+  } else {
+    drawCentered("Oszi-Profil", 16, 1);
+    u8g2.setFont(u8g2_font_7x14B_tf);
+    drawCentered(profileName(g_scopeProfile), 36, 1);
+    u8g2.setFont(u8g2_font_5x8_tf);
+    drawCentered(profileHint(g_scopeProfile), 54, 1);
+  }
+  u8g2.sendBuffer();
+  return true;
+}
+
 static void oledUpdate()
 {
+  if (oledProfileOverlay()) return;
+
   const size_t LINE_CHARS = 25;     // 5x8-Font: 125 px Breite + 3 px Shift-Reserve
   struct tm t;
   const bool valid = currentTime(t);
@@ -949,6 +1045,7 @@ static void oledUpdate()
 //*****************************************************************************
 // Einfacher Zeitplan ohne weitere Tasks:
 //   alle  10 ms  publishTime()    → Sekundenzeiger springt max. 10 ms zu spät
+//                buttonPoll()     → BOOT-Taster (Oszi-Profil)
 //   alle 200 ms  oledUpdate()     → Sekundenanzeige auf dem OLED flüssig
 //   alle   1 s   wifiLogChanges() → Statusmeldungen auf der Konsole
 static void uiTask(void *)
@@ -958,10 +1055,12 @@ static void uiTask(void *)
   Serial.printf("[UI] laeuft auf Core %d\n", xPortGetCoreID());
   oledInit();
   wifiStart();
+  pinMode(BOOT_BUTTON_PIN, INPUT_PULLUP);    // DevKitC hat zusätzlich einen externen Pull-up
 
   uint32_t lastOled = 0, lastLog = 0;
   for (;;) {
     publishTime();
+    buttonPoll();
 
     const uint32_t now = millis();
     if (now - lastOled >= OLED_REFRESH_MS) {
@@ -991,6 +1090,12 @@ void setup()
 
   // Bis zum ersten publishTime() die Startzeit anzeigen
   g_timePacked = packTime(FALLBACK_H, FALLBACK_M, FALLBACK_S);
+
+  // Gespeichertes Oszi-Profil laden (vor dem Start des scopeTask)
+  g_scopeProfile = loadProfile();
+  Serial.printf("[Scope] Profil: %s (%s) – BOOT-Taster %u s halten zum Umschalten\n",
+                profileName(g_scopeProfile), profileHint(g_scopeProfile),
+                (unsigned)(BUTTON_LONG_MS / 1000));
 
   //                      Funktion   Name     Stack  Param    Prio Handle           Kern
   xTaskCreatePinnedToCore(uiTask,    "ui",    8192, nullptr, 1,   &uiTaskHandle,    UI_CORE);

@@ -48,10 +48,18 @@
 //   0 = analoges Röhren-Oszi (Strahl zeichnet direkt, z.B. Hameg HM203, Tek 2213)
 //   1 = digitales Oszi / Speicher-Oszi / USB-Oszi (tastet ab und zeigt Punkte,
 //       z.B. Tektronix TDS3012, HP 54200A, Digilent Analog Discovery 2)
-// Wirkt sich auf die Sprünge zwischen Linienzügen aus (JUMP_SPEED, s.u.):
-// Digitale Oszis zeigen jeden Abtastwert eines gefahrenen Sprungs als Punkt –
-// dort ist ein harter Sprung besser (nur 0–1 Abtastwerte unterwegs).
+// Wirkt sich auf die Sprünge zwischen Linienzügen aus: Digitale Oszis zeigen
+// jeden Abtastwert eines gefahrenen Sprungs als Punkt – dort wird hart
+// gesprungen; analog wird gebremst gesprungen (JUMP_SPEED usw., s.u.).
+//
+// UMSCHALTEN OHNE NEU ZU KOMPILIEREN: BOOT-Taster am ESP32 im Betrieb
+// BUTTON_LONG_MS lang halten. Das OLED zeigt das neue Profil, es wird im
+// Flash gespeichert und gilt auch nach einem Neustart.
+// SCOPE_PROFILE ist nur der Startwert, solange noch nichts gespeichert ist.
+// (Nicht beim Einschalten drücken – dann startet der Download-Modus.)
 #define SCOPE_PROFILE 1
+#define BOOT_BUTTON_PIN 0        // BOOT-Taster des DevKitC (gedrückt = LOW)
+#define BUTTON_LONG_MS  2000     // so lange halten zum Umschalten
 
 // ---- Strahlgeschwindigkeit (gleichmäßige Helligkeit) -----------------------
 // Der Strahl bewegt sich auf ALLEN Linien gleich schnell: 1 DAC-Einheit
@@ -75,19 +83,15 @@
 // JUMP_RAMP Einheiten auf JUMP_LANDING ab, damit auch langsame
 // X/Y-Verstärker alter Oszis genau am Linienanfang ankommen.
 //
-//   JUMP_SPEED  24   Standard analog: Spur ca. 1/24, für Oszis ab ~0,5 MHz X/Y-Bandbreite
+// Diese Werte gelten im Profil ANALOG (im Profil DIGITAL wird immer hart gesprungen):
+//   JUMP_SPEED  24   Standard: Spur ca. 1/24, für Oszis ab ~0,5 MHz X/Y-Bandbreite
 //               12   sehr alte/langsame Oszis (Spur heller, aber sicher)
-//                0   harter Sprung wie im Original – Standard für digitale Oszis;
-//                    auf schnellen Analog-Oszis praktisch unsichtbar, bei
-//                    langsamen Über-/Nachschwingen
+//                0   harter Sprung wie im Original – auf schnellen Analog-Oszis
+//                    praktisch unsichtbar, bei langsamen Über-/Nachschwingen
 //   JUMP_LANDING 8   Geschwindigkeit beim Ankommen (kleiner = sanfter)
 //   JUMP_RAMP    4   Bremsweg in DAC-Einheiten
 // Zeigen Linienanfänge kleine "Haken", JUMP_SPEED oder JUMP_LANDING verkleinern.
-#if SCOPE_PROFILE == 1
-  #define JUMP_SPEED  0          // digitales Oszi: harter Sprung
-#else
-  #define JUMP_SPEED 24          // analoges Röhren-Oszi
-#endif
+#define JUMP_SPEED   24          // gilt im Profil ANALOG; DIGITAL springt immer hart
 #define JUMP_LANDING  8
 #define JUMP_RAMP     4
 

@@ -26,9 +26,12 @@ Hardware angepasst: **ESP32-WROOM-32U DevKitC V4**, **Waveshare 2.42" OLED (I2C)
    Die Uhr verbindet sich automatisch mit dem stärksten bekannten Netz in Reichweite.
    `secrets.h` wird nicht eingecheckt.
 4. `ESP32_OscilloscopeClock_v2.0.ino` öffnen und hochladen. Seriellen Monitor auf 115200 Baud stellen.
-5. Oszilloskop in den X/Y-Modus schalten, 0,5 V/Div, DC-Kopplung. In `config.h` `SCOPE_PROFILE` wählen:
-   `1` für digitale Oszis und USB-Oszis (Standard), `0` für analoge Röhrenoszis. Bei digitalen
-   Oszis die Zeitbasis auf ca. 1 ms/Div und den Trigger auf Auto stellen (Details in HARDWARE.md).
+5. Oszilloskop in den X/Y-Modus schalten, 0,5 V/Div, DC-Kopplung. Bei digitalen Oszis die Zeitbasis
+   auf ca. 1 ms/Div und den Trigger auf Auto stellen (Details in HARDWARE.md).
+6. **Oszi-Profil per BOOT-Taster:** Ab Werk ist das Profil DIGITAL eingestellt (digitale Oszis und
+   USB-Oszis). Für ein analoges Röhren-Oszi den BOOT-Taster im Betrieb 2 s halten, das OLED zeigt
+   ANALOG. Die Einstellung bleibt gespeichert, es ist kein neues Hochladen nötig.
+   (Den Taster nicht beim Einschalten drücken, sonst startet der ESP32 im Download-Modus.)
 
 Alternativ mit PlatformIO: `pio run -t upload` (siehe `platformio.ini`).
 
