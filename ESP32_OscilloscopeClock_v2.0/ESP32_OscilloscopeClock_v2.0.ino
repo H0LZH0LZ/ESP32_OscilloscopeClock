@@ -902,13 +902,12 @@ static void fitText(char *buf, size_t maxChars)
 // ---- BOOT-Taster: Oszilloskop-Profil umschalten ------------------------------
 // BOOT-Taster des DevKitC (GPIO0, gedrückt = LOW) mindestens BUTTON_LONG_MS
 // halten → Profil wechselt (analog ↔ digital), wird im Flash gespeichert und
-// gilt sofort, auch nach dem nächsten Neustart. Während des Haltens und
-// danach zeigt das OLED kurz einen Hinweis.
+// gilt sofort, auch nach dem nächsten Neustart. Während des Haltens zeigt
+// das OLED den Wechsel mit Countdown; Loslassen vorher bricht ab.
 // Achtung: GPIO0 ist ein Boot-Pin. Beim EINSCHALTEN bzw. Reset gedrückt
 // gehalten, startet der ESP32 im Download-Modus statt der Uhr.
 static uint32_t s_btnDownSince = 0;      // millis() beim Drücken, 0 = losgelassen
 static bool     s_btnHandled   = false;  // Umschaltung für diesen Tastendruck erledigt
-static uint32_t s_overlayUntil = 0;      // Profil-Hinweis auf dem OLED bis zu diesem Zeitpunkt
 
 static const char *profileName(uint8_t p)  { return p == 1 ? "DIGITAL" : "ANALOG"; }
 
@@ -946,50 +945,36 @@ static void buttonPoll()
     const uint8_t p = g_scopeProfile ? 0 : 1;
     g_scopeProfile = p;                       // gilt ab dem nächsten Sprung
     saveProfile(p);
-    s_overlayUntil = now + 2500;
     Serial.printf("[Scope] Profil umgeschaltet: %s, gespeichert\n", profileName(p));
   }
 }
 
-// Umschaltbildschirm statt der normalen Anzeige. Liefert true, wenn gezeichnet.
-// Nur Text, alle Zeilen zentriert:
+// Umschaltbildschirm statt der normalen Anzeige, solange der BOOT-Taster
+// gehalten wird (ab 0,3 s bis zur Umschaltung). Liefert true, wenn gezeichnet.
+// Nach der Umschaltung erscheint sofort wieder die normale Anzeige.
 //
-//   Während des Haltens (ab 0,3 s):     Nach dem Umschalten (2,5 s lang):
-//
-//      Oszilloskop-Profil                   Oszilloskop-Profil
-//     DIGITAL -> ANALOG     (fett)               ANALOG          (fett)
-//       noch 2 s halten                        gespeichert
-//    loslassen = abbrechen
+//      Oszilloskop-Profil
+//     DIGITAL -> ANALOG       (fett)
+//             2 s             (Countdown)
 static bool oledProfileOverlay()
 {
   const uint32_t now = millis();
   const bool holding = s_btnDownSince && !s_btnHandled && now - s_btnDownSince >= 300;
-  if (!holding && (int32_t)(s_overlayUntil - now) <= 0) return false;
+  if (!holding) return false;
 
+  const uint8_t  cur  = g_scopeProfile;
+  const uint8_t  next = cur ? 0 : 1;
+  const uint32_t left = (BUTTON_LONG_MS - (now - s_btnDownSince) + 999) / 1000;   // aufgerundet
   char buf[24];
+
   u8g2.clearBuffer();
   u8g2.setFont(u8g2_font_6x10_tf);
-  if (holding) {
-    const uint8_t cur  = g_scopeProfile;
-    const uint8_t next = cur ? 0 : 1;
-    const uint32_t left = (BUTTON_LONG_MS - (now - s_btnDownSince) + 999) / 1000;   // aufgerundet
-
-    drawCentered("Oszilloskop-Profil", 12, 1);                     // 18 Zeichen = 108 px
-    u8g2.setFont(u8g2_font_7x14B_tf);
-    snprintf(buf, sizeof(buf), "%s -> %s", profileName(cur), profileName(next));
-    drawCentered(buf, 32, 1);                                      // max. 17 Zeichen = 119 px
-    u8g2.setFont(u8g2_font_6x10_tf);
-    snprintf(buf, sizeof(buf), "noch %lu s halten", (unsigned long)left);
-    drawCentered(buf, 48, 1);
-    u8g2.setFont(u8g2_font_5x8_tf);
-    drawCentered("loslassen = abbrechen", 61, 1);                  // 21 Zeichen = 105 px
-  } else {
-    drawCentered("Oszilloskop-Profil", 18, 1);
-    u8g2.setFont(u8g2_font_7x14B_tf);
-    drawCentered(profileName(g_scopeProfile), 38, 1);
-    u8g2.setFont(u8g2_font_6x10_tf);
-    drawCentered("gespeichert", 55, 1);
-  }
+  drawCentered("Oszilloskop-Profil", 16, 1);                       // 18 Zeichen = 108 px
+  u8g2.setFont(u8g2_font_7x14B_tf);
+  snprintf(buf, sizeof(buf), "%s -> %s", profileName(cur), profileName(next));
+  drawCentered(buf, 37, 1);                                        // max. 17 Zeichen = 119 px
+  snprintf(buf, sizeof(buf), "%lu s", (unsigned long)left);
+  drawCentered(buf, 58, 1);
   u8g2.sendBuffer();
   return true;
 }

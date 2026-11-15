@@ -71,8 +71,8 @@ Diese Datei beschreibt, wie die Firmware aufgebaut ist. Für Verdrahtung und Geh
 Nach 2 s Halten wird `g_scopeProfile` umgeschaltet. Das ist ein Byte und damit atomar,
 `beamJump()` auf Core 1 liest es beim nächsten Sprung. Danach wird das Profil im NVS
 gespeichert. Pro Tastendruck wird nur einmal umgeschaltet, auch wenn der Taster länger gehalten
-wird. `oledProfileOverlay()` zeigt während des Haltens einen Countdown und danach 2,5 s lang
-das neue Profil. `setup()` lädt das Profil vor dem Start des `scopeTask`. Ist noch nichts
+wird. `oledProfileOverlay()` zeigt während des Haltens den Wechsel (z. B. „DIGITAL -> ANALOG“)
+mit Countdown, danach erscheint sofort wieder die normale Anzeige. `setup()` lädt das Profil vor dem Start des `scopeTask`. Ist noch nichts
 gespeichert, gilt `SCOPE_PROFILE` aus `config.h`.
 
 ## Konsolenausgaben (115200 Baud)

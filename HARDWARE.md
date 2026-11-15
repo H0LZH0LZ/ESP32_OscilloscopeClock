@@ -94,7 +94,7 @@ Das Modul ist ab Werk auf 4-Wire-SPI eingestellt.
 
 Die Firmware kennt zwei Oszilloskop-Profile. Umgeschaltet wird im Betrieb mit dem **BOOT-Taster** des
 ESP32: **2 s halten**. Das OLED zeigt dabei den Wechsel (z. B. „DIGITAL -> ANALOG“) mit Countdown.
-Wer vorher loslässt, bricht ab. Danach zeigt es das neue Profil mit „gespeichert“. Die Einstellung wird im Flash gespeichert und gilt auch nach einem Neustart.
+Wer vorher loslässt, bricht ab. Die Einstellung wird im Flash gespeichert und gilt auch nach einem Neustart.
 Ein neues Hochladen ist nicht nötig. Den Taster **nicht beim Einschalten** drücken, sonst
 startet der ESP32 im Download-Modus. Beim Umschalten kann einmal kurz ein Lichtpunkt auf dem Oszilloskop
 aufblitzen (Schreibzugriff auf den Flash).
