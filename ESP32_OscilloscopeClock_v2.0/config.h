@@ -45,10 +45,10 @@
 #define USE_FAST_DAC 1
 
 // ---- Oszilloskop-Typ ---------------------------------------------------------
-//   0 = analoges Röhren-Oszi (Strahl zeichnet direkt, z.B. Hameg HM203, Tek 2213)
-//   1 = digitales Oszi / Speicher-Oszi / USB-Oszi (tastet ab und zeigt Punkte,
+//   0 = analoges Röhren-Oszilloskop (Strahl zeichnet direkt, z.B. Hameg HM203, Tek 2213)
+//   1 = digitales Oszilloskop / Speicher-Oszilloskop / USB-Oszilloskop (tastet ab und zeigt Punkte,
 //       z.B. Tektronix TDS3012, HP 54200A, Digilent Analog Discovery 2)
-// Wirkt sich auf die Sprünge zwischen Linienzügen aus: Digitale Oszis zeigen
+// Wirkt sich auf die Sprünge zwischen Linienzügen aus: Digitale Oszilloskope zeigen
 // jeden Abtastwert eines gefahrenen Sprungs als Punkt – dort wird hart
 // gesprungen; analog wird gebremst gesprungen (JUMP_SPEED usw., s.u.).
 //
@@ -68,7 +68,7 @@
 //
 //   BEAM_NS_PER_UNIT   Bildfrequenz          Hinweis
 //                      (1–12 / römisch)
-//        2000          ~350 Hz / ~240 Hz     moderne/schnelle Oszis
+//        2000          ~350 Hz / ~240 Hz     moderne/schnelle Oszilloskope
 //        3000          ~230 Hz / ~160 Hz     Standard, passt für fast alle Röhren
 //        5000          ~140 Hz / ~100 Hz     sehr alte/langsame Röhren, hellere Spur
 //        8000           ~90 Hz /  ~60 Hz     Untergrenze – darunter flimmert es
@@ -81,12 +81,12 @@
 // Sprünge fahren mit JUMP_SPEED-facher Schreibgeschwindigkeit (Spur =
 // 1/JUMP_SPEED so hell wie eine Linie) und bremsen auf den letzten
 // JUMP_RAMP Einheiten auf JUMP_LANDING ab, damit auch langsame
-// X/Y-Verstärker alter Oszis genau am Linienanfang ankommen.
+// X/Y-Verstärker alter Oszilloskope genau am Linienanfang ankommen.
 //
 // Diese Werte gelten im Profil ANALOG (im Profil DIGITAL wird immer hart gesprungen):
-//   JUMP_SPEED  24   Standard: Spur ca. 1/24, für Oszis ab ~0,5 MHz X/Y-Bandbreite
-//               12   sehr alte/langsame Oszis (Spur heller, aber sicher)
-//                0   harter Sprung wie im Original – auf schnellen Analog-Oszis
+//   JUMP_SPEED  24   Standard: Spur ca. 1/24, für Oszilloskope ab ~0,5 MHz X/Y-Bandbreite
+//               12   sehr alte/langsame Oszilloskope (Spur heller, aber sicher)
+//                0   harter Sprung wie im Original – auf schnellen Analog-Oszilloskopen
 //                    praktisch unsichtbar, bei langsamen Über-/Nachschwingen
 //   JUMP_LANDING 8   Geschwindigkeit beim Ankommen (kleiner = sanfter)
 //   JUMP_RAMP    4   Bremsweg in DAC-Einheiten
@@ -96,13 +96,13 @@
 #define JUMP_RAMP     4
 
 // ---- Optional: Dunkeltastung über den Z-Eingang -----------------------------
-// Viele Röhren-Oszis haben hinten eine BNC-Buchse "Z" / "Z-Mod" / "Intensity".
+// Viele Röhren-Oszilloskope haben hinten eine BNC-Buchse "Z" / "Z-Mod" / "Intensity".
 // Ein Logikpegel dort schaltet den Strahl aus. Mit einem dritten Kabel
 // (GPIO → Z-Eingang) verschwinden die Rücklaufspuren dann vollständig.
 //   ZBLANK_PIN         GPIO für den Z-Ausgang, -1 = nicht verwendet (Standard)
 //                      Empfehlung: 27 (frei, kein Boot-Pin)
 //   ZBLANK_ACTIVE_HIGH 1 = High-Pegel (3,3 V) macht dunkel (z.B. viele Hameg)
-//                      0 = Low-Pegel macht dunkel – im Handbuch des Oszis prüfen
+//                      0 = Low-Pegel macht dunkel – im Handbuch des Oszilloskops prüfen
 //   ZBLANK_SETTLE_NS   Wartezeit im Dunkeln nach dem Sprung, bis X/Y stehen
 #define ZBLANK_PIN         -1
 #define ZBLANK_ACTIVE_HIGH  1

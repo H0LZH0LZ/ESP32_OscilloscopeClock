@@ -65,7 +65,7 @@ Diese Datei beschreibt, wie die Firmware aufgebaut ist. Für Verdrahtung und Geh
   im eigenen Task und das OLED läuft weiter.
 - Ein älteres `secrets.h` mit nur `WIFI_SSID`/`WIFI_PASSWORD` wird weiterhin akzeptiert.
 
-## BOOT-Taster: Oszi-Profil
+## BOOT-Taster: Oszilloskop-Profil
 
 `buttonPoll()` im `uiTask` fragt den BOOT-Taster (GPIO0, gedrückt = LOW) alle 10 ms ab.
 Nach 2 s Halten wird `g_scopeProfile` umgeschaltet. Das ist ein Byte und damit atomar,
@@ -80,7 +80,7 @@ gespeichert, gilt `SCOPE_PROFILE` aus `config.h`.
 ```
 ESP32 Oscilloscope Clock v2.0
 CPU: 240 MHz
-[Scope] Profil: DIGITAL (Digital-/USB-Oszi) – BOOT-Taster 2 s halten zum Umschalten
+[Scope] Profil: DIGITAL (Digital-/USB-Oszilloskop) – BOOT-Taster 2 s halten zum Umschalten
 [UI] laeuft auf Core 0
 [Scope] laeuft auf Core 1
 [WiFi] bekanntes Netz: "Gastzugang"
@@ -89,7 +89,7 @@ CPU: 240 MHz
 [NTP] Sync 15.11.2026 21:15:06, naechster in ca. 60 min
 [WiFi] Verbindung verloren – versuche erneut
 [NTP] Warnung: letzter Sync liegt mehr als 2 Intervalle zurueck
-[Scope] Profil umgeschaltet: ANALOG (Roehren-Oszi), gespeichert
+[Scope] Profil umgeschaltet: ANALOG (Roehren-Oszilloskop), gespeichert
 ```
 
 Passwörter werden nie ausgegeben.
@@ -126,12 +126,12 @@ Strahlgeschwindigkeit:
 | Gleiche Verweilzeit | Jeder Schritt genau `BEAM_NS_PER_UNIT`, über den CPU-Taktzähler. Wird ein Schritt durch einen Interrupt verzögert, werden die folgenden kürzer | Zeit pro Punkt je nach Treiberaufruf |
 | Ecken | Endpunkt einer Linie = Startpunkt der nächsten, wird nur **einmal** ausgegeben | doppelt, helle Punkte an Ecken |
 | Kurze Linien | Rundungsrest wird an die nächste Linie weitergereicht, ein Linienzug bekommt exakt seine Länge an Zeit | jede Linie für sich gerundet |
-| Oszi-Profil | DIGITAL: harte Sprünge, sonst zeigt ein abtastendes Oszi Zwischenpunkte. ANALOG: gebremste Sprünge (siehe nächste Zeile). Umschalten im Betrieb per BOOT-Taster (2 s), gespeichert im NVS (`Preferences`, Namensraum `scopeclock`) | – |
+| Oszilloskop-Profil | DIGITAL: harte Sprünge, sonst zeigt ein abtastendes Oszilloskop Zwischenpunkte. ANALOG: gebremste Sprünge (siehe nächste Zeile). Umschalten im Betrieb per BOOT-Taster (2 s), gespeichert im NVS (`Preferences`, Namensraum `scopeclock`) | – |
 | Sprünge (ANALOG) | in 1-Einheit-Schritten mit 24-facher Geschwindigkeit (`JUMP_SPEED`), auf den letzten 4 Einheiten bremsend (`JUMP_LANDING`, `JUMP_RAMP`). Die Rücklaufspur hat ca. 1/24 der Linienhelligkeit, alte Verstärker landen trotzdem genau | harter Sprung |
 | Reihenfolge | Zifferblatt und Ziffern werden beim Start einmal zu einer Rundtour mit minimalen Sprüngen sortiert (Nächster-Nachbar + 2-opt), Einstieg dort, wo der Sekundenzeiger endet | Tabellenreihenfolge |
 | Sekundenzeiger | hin und zurück mit je halber Helligkeit gezeichnet, dadurch entfällt der lange Sprung vom Rand zur Mitte | – |
 | Richtung | jeder Linienzug wird vom näheren Ende aus gezeichnet | immer vom Tabellenanfang |
-| Dunkeltastung | optional über den Z-Eingang des Oszis (`ZBLANK_PIN`), dann gibt es gar keine Rücklaufspur mehr | – |
+| Dunkeltastung | optional über den Z-Eingang des Oszilloskops (`ZBLANK_PIN`), dann gibt es gar keine Rücklaufspur mehr | – |
 | Zeiger-Rauten | Stunden- und Minutenzeiger mit `HAND_BRIGHT_PCT` (67 %), weil ihre zwei dicht liegenden Kanten verschmelzen | doppelt so hell |
 | Tabellengrenzen | immer geprüft | Lesezugriff hinter das Tabellenende, wenn ein Endzeichen fehlt |
 
@@ -152,7 +152,7 @@ Liegen zwei Zeiger genau übereinander, ist die Stelle naturgemäß heller.
 das etwa 230 Bilder/s (römisch ca. 160). Beim Schreiben bewegt sich der Strahl mit
 ca. 4 mV/µs, bei Sprüngen mit bis zu ca. 100 mV/µs, beim Ankommen mit ca. 33 mV/µs. Dazu kommt
 am Linienanfang ein voller Schritt (3 µs) Verweilzeit, in dem der Strahl sich setzen kann. Das reicht
-für Oszis ab etwa 0,5 MHz X/Y-Bandbreite. Bei sehr alten Geräten `JUMP_SPEED` auf 12 senken,
+für Oszilloskope ab etwa 0,5 MHz X/Y-Bandbreite. Bei sehr alten Geräten `JUMP_SPEED` auf 12 senken,
 bei Bedarf `BEAM_NS_PER_UNIT` erhöhen (hellere Spur, weniger Bilder/s).
 
 ## Oszilloskop-Bild: Tabellenformat (`DataTable.h`)
@@ -176,10 +176,10 @@ bei Bedarf `BEAM_NS_PER_UNIT` erhöhen (hellere Spur, weniger Bilder/s).
 | Symptom | Stellschraube (`config.h`) |
 |---|---|
 | Bild flimmert | `BEAM_NS_PER_UNIT` verringern (z. B. 2000) |
-| Linien zu dunkel | `BEAM_NS_PER_UNIT` erhöhen (z. B. 5000) oder Intensität am Oszi erhöhen |
-| Ecken verrundet, Ziffern verwaschen (Oszi zu langsam) | `BEAM_NS_PER_UNIT` erhöhen |
+| Linien zu dunkel | `BEAM_NS_PER_UNIT` erhöhen (z. B. 5000) oder Intensität am Oszilloskop erhöhen |
+| Ecken verrundet, Ziffern verwaschen (Oszilloskop zu langsam) | `BEAM_NS_PER_UNIT` erhöhen |
 | Linienanfänge mit kleinen „Haken“ | `JUMP_SPEED` (z. B. 12) oder `JUMP_LANDING` (z. B. 4) verringern |
-| Rücklaufspuren zwischen den Linien sichtbar | `JUMP_SPEED` erhöhen (32), `0` (harter Sprung, für schnelle Oszis) oder Z-Dunkeltastung nutzen (`ZBLANK_PIN`) |
+| Rücklaufspuren zwischen den Linien sichtbar | `JUMP_SPEED` erhöhen (32), `0` (harter Sprung, für schnelle Oszilloskope) oder Z-Dunkeltastung nutzen (`ZBLANK_PIN`) |
 | Zeiger heller/dunkler als das Zifferblatt | `HAND_BRIGHT_PCT` anpassen |
 | Zeit falsch um ganze Stunden | `TZ_INFO` prüfen |
 | OLED-Bild 2 px versetzt | in der `.ino` `NONAME0` → `NONAME2` |

@@ -46,7 +46,7 @@
     secrets.h                         WLAN-Liste (lokal, nicht im Git)
     secrets_example.h                 Vorlage für secrets.h
     DataTable.h                       Vektordaten: Zifferblatt, Ziffern, Zeiger
-    ../HARDWARE.md                    Verdrahtung, Gehäuse, Oszi-Einstellungen
+    ../HARDWARE.md                    Verdrahtung, Gehäuse, Oszilloskop-Einstellungen
     ../SOFTWARE.md                    Aufbau der Software, Tabellenformat, Tuning
 
   Benötigte Bibliothek (Arduino-Bibliotheksverwalter):  U8g2 by oliver
@@ -64,7 +64,7 @@
 #include <soc/rtc_io_reg.h>   // Registeradressen der DAC-Pads
 #include <soc/gpio_reg.h>     // GPIO-Setzen/Löschen für die optionale Dunkeltastung
 #include <U8g2lib.h>          // OLED-Treiber
-#include <Preferences.h>      // dauerhafte Einstellungen im Flash (NVS): Oszi-Profil
+#include <Preferences.h>      // dauerhafte Einstellungen im Flash (NVS): Oszilloskop-Profil
 
 #include "config.h"
 
@@ -122,7 +122,7 @@ static inline uint32_t packTime(int h, int m, int s) {
 // NTP-Status. Schreiber: SNTP-Callback (läuft im lwIP-Task auf Core 0),
 // Leser: uiTask. time_t ist auf aktuellen ESP32-Cores 64 Bit breit und damit
 // NICHT atomar – daher der Spinlock für den Zeitstempel.
-// Oszi-Profil: 0 = analoges Röhren-Oszi, 1 = digitales Oszi / USB-Oszi.
+// Oszilloskop-Profil: 0 = analoges Röhren-Oszilloskop, 1 = digitales Oszilloskop / USB-Oszilloskop.
 // Startwert aus dem Flash (NVS), im Betrieb per BOOT-Taster umschaltbar.
 // Schreiber: uiTask (Core 0), Leser: beamJump (Core 1). 1 Byte = atomar.
 static volatile uint8_t g_scopeProfile = SCOPE_PROFILE;
@@ -147,7 +147,7 @@ static WiFiMulti    wifiMulti;
 //*****************************************************************************
 // Vektor-Engine (Core 1)
 //*****************************************************************************
-// Ziel: ALLE Linien und Punkte gleich hell – auch auf älteren Röhren-Oszis.
+// Ziel: ALLE Linien und Punkte gleich hell – auch auf älteren Röhren-Oszilloskopen.
 //
 // Die Helligkeit einer Spur auf dem Schirm hängt davon ab, wie lange der
 // Strahl auf jedem Stück Weg verweilt (Energie pro Länge). Gleich hell heißt
@@ -171,7 +171,7 @@ static WiFiMulti    wifiMulti;
 //      a) Sprünge laufen in 1-Einheit-Schritten mit JUMP_SPEED-facher
 //         Geschwindigkeit (Spur = 1/JUMP_SPEED der Linienhelligkeit) und
 //         bremsen auf den letzten JUMP_RAMP Einheiten auf JUMP_LANDING ab.
-//         So kommen auch langsame X/Y-Verstärker alter Oszis präzise am
+//         So kommen auch langsame X/Y-Verstärker alter Oszilloskope präzise am
 //         Ziel an (ein harter Sprung würde dort über- oder nachschwingen).
 //      b) Zifferblatt und Ziffern werden beim Start einmal zu einer
 //         Rundtour mit möglichst kurzen Sprüngen sortiert (buildTour).
@@ -180,7 +180,7 @@ static WiFiMulti    wifiMulti;
 //         zur Mitte entfällt damit ganz – der Strahl "läuft" auf dem Zeiger.
 //      d) Jeder Linienzug wird von dem Ende aus gezeichnet, das näher am
 //         Strahl liegt.
-//     Optional (ZBLANK_PIN): Dunkeltastung über den Z-Eingang des Oszis –
+//     Optional (ZBLANK_PIN): Dunkeltastung über den Z-Eingang des Oszilloskops –
 //     der Strahl ist während des Sprungs aus, die Spur verschwindet ganz.
 //     JUMP_SPEED 0 = harter Sprung wie im Original.
 //  6. Begrenzte Geschwindigkeit: 1 DAC-Einheit (≈ 12,5 mV) pro 3 µs beim
@@ -328,8 +328,8 @@ static inline void IRAM_ATTR zBlank(bool dark)
 #endif
 
 // Sprung (Rücklauf) zum Punkt (x2,y2) – siehe Regel 5.
-// Die Sprungart hängt vom Oszi-Profil ab (BOOT-Taster, g_scopeProfile):
-//   digital → harter Sprung: ein digitales Oszi würde jeden Zwischenpunkt
+// Die Sprungart hängt vom Oszilloskop-Profil ab (BOOT-Taster, g_scopeProfile):
+//   digital → harter Sprung: ein digitales Oszilloskop würde jeden Zwischenpunkt
 //             eines gefahrenen Sprungs als hellen Abtastpunkt zeigen.
 //   analog  → gebremster Sprung (JUMP_SPEED/JUMP_LANDING/JUMP_RAMP).
 // Mit Z-Dunkeltastung (ZBLANK_PIN) wird immer im Dunkeln hart gesprungen.
@@ -899,7 +899,7 @@ static void fitText(char *buf, size_t maxChars)
 //
 // Pixel-Shift gegen Einbrennen: alle OLED_SHIFT_EVERY_S Sekunden wird das
 // gesamte Bild um 0…3 px nach rechts und 0…1 px nach unten versetzt.
-// ---- BOOT-Taster: Oszi-Profil umschalten -------------------------------------
+// ---- BOOT-Taster: Oszilloskop-Profil umschalten ------------------------------
 // BOOT-Taster des DevKitC (GPIO0, gedrückt = LOW) mindestens BUTTON_LONG_MS
 // halten → Profil wechselt (analog ↔ digital), wird im Flash gespeichert und
 // gilt sofort, auch nach dem nächsten Neustart. Während des Haltens und
@@ -911,12 +911,12 @@ static bool     s_btnHandled   = false;  // Umschaltung für diesen Tastendruck 
 static uint32_t s_overlayUntil = 0;      // Profil-Hinweis auf dem OLED bis zu diesem Zeitpunkt
 
 static const char *profileName(uint8_t p)  { return p == 1 ? "DIGITAL" : "ANALOG"; }
-static const char *profileHint(uint8_t p)  { return p == 1 ? "Digital-/USB-Oszi" : "Roehren-Oszi"; }
+static const char *profileHint(uint8_t p)  { return p == 1 ? "Digital-/USB-Oszilloskop" : "Roehren-Oszilloskop"; }
 
 static void saveProfile(uint8_t p)
 {
   // Schreiben ins Flash hält Core 1 für wenige ms an (einmaliger kurzer
-  // Lichtpunkt auf dem Oszi) – passiert nur bei der Umschaltung.
+  // Lichtpunkt auf dem Oszilloskop) – passiert nur bei der Umschaltung.
   Preferences prefs;
   if (prefs.begin("scopeclock", false)) {
     prefs.putUChar("profile", p);
@@ -965,12 +965,13 @@ static bool oledProfileOverlay()
     // Countdown bis zur Umschaltung
     const uint32_t left = (BUTTON_LONG_MS - (now - s_btnDownSince) + 999) / 1000;
     char buf[24];
-    drawCentered("Oszi-Profil wechseln", 20, 1);
-    snprintf(buf, sizeof(buf), "weiter halten: %lu s", (unsigned long)left);
-    drawCentered(buf, 38, 1);
-    drawCentered(g_scopeProfile == 1 ? "-> ANALOG" : "-> DIGITAL", 56, 1);
+    drawCentered("Oszilloskop-Profil", 12, 1);         // 18 Zeichen = 108 px
+    drawCentered("wechseln", 25, 1);
+    snprintf(buf, sizeof(buf), "noch %lu s halten", (unsigned long)left);
+    drawCentered(buf, 41, 1);
+    drawCentered(g_scopeProfile == 1 ? "-> ANALOG" : "-> DIGITAL", 57, 1);
   } else {
-    drawCentered("Oszi-Profil", 16, 1);
+    drawCentered("Oszilloskop-Profil", 16, 1);
     u8g2.setFont(u8g2_font_7x14B_tf);
     drawCentered(profileName(g_scopeProfile), 36, 1);
     u8g2.setFont(u8g2_font_5x8_tf);
@@ -1045,7 +1046,7 @@ static void oledUpdate()
 //*****************************************************************************
 // Einfacher Zeitplan ohne weitere Tasks:
 //   alle  10 ms  publishTime()    → Sekundenzeiger springt max. 10 ms zu spät
-//                buttonPoll()     → BOOT-Taster (Oszi-Profil)
+//                buttonPoll()     → BOOT-Taster (Oszilloskop-Profil)
 //   alle 200 ms  oledUpdate()     → Sekundenanzeige auf dem OLED flüssig
 //   alle   1 s   wifiLogChanges() → Statusmeldungen auf der Konsole
 static void uiTask(void *)
@@ -1091,7 +1092,7 @@ void setup()
   // Bis zum ersten publishTime() die Startzeit anzeigen
   g_timePacked = packTime(FALLBACK_H, FALLBACK_M, FALLBACK_S);
 
-  // Gespeichertes Oszi-Profil laden (vor dem Start des scopeTask)
+  // Gespeichertes Oszilloskop-Profil laden (vor dem Start des scopeTask)
   g_scopeProfile = loadProfile();
   Serial.printf("[Scope] Profil: %s (%s) – BOOT-Taster %u s halten zum Umschalten\n",
                 profileName(g_scopeProfile), profileHint(g_scopeProfile),
