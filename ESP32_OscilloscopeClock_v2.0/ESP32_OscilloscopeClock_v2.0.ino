@@ -19,7 +19,7 @@
      inkl. Zeitzone und automatischer Sommer-/Winterzeit (TZ-String in config.h)
    - Schnelle DAC-Ausgabe über direkte Registerzugriffe (weniger Flimmern)
    - Waveshare 2.42" OLED (SSD1309, 128x64) im I2C-Modus mit U8g2:
-     reine Textanzeige – Uhrzeit (24h) im 7-Segment-Stil, Datum mit MEZ/MESZ,
+     reine Textanzeige – Uhrzeit (24h) im 7-Segment-Stil, Wochentag + Datum,
      Netzwerkname, IP, Signalstärke, Zeitpunkt der letzten NTP-Synchronisierung,
      Pixel-Shift gegen Einbrennen
    - Läuft ohne WLAN mit der Startzeit aus config.h weiter (wie das Original)
@@ -418,10 +418,15 @@ static void drawSegTime(int y, int hh, int mm, int ss, int dx)
   }
 }
 
+// Zentriert Text; bei sehr breiten Zeilen wird x so begrenzt, dass der Text
+// trotz Pixel-Shift nicht über den Rand hinausragt.
 static void drawCentered(const char *txt, int baseline, int dx)
 {
   const int w = u8g2.getStrWidth(txt);
-  u8g2.drawStr((128 - 3 - w) / 2 + dx, baseline, txt);
+  int x = (128 - 3 - w) / 2 + dx;
+  if (x + w > 128) x = 128 - w;
+  if (x < 0) x = 0;
+  u8g2.drawStr(x, baseline, txt);
 }
 
 // Kürzt einen Text auf maxChars Zeichen (mit ".." am Ende).
@@ -435,14 +440,15 @@ static void fitText(char *buf, size_t maxChars)
 }
 
 // ---- Bildaufbau ----------------------------------------------------------------
-//  Zeile 1 : Wochentag, Datum, MEZ/MESZ           (Font 6x10)
+//  Zeile 1 : Wochentag (ausgeschrieben), Datum    (Font 6x10)
 //  Mitte   : HH:MM:SS, 24h, 7-Segment-Stil (11x20 px je Ziffer)
-//  Zeile 3 : Netzwerkname (SSID)                  (Font 5x8, max. 25 Zeichen)
+//  Zeile 3 : Netzwerkname (SSID)                  (Font 5x8, max. 25 Zeichen, zentriert)
 //  Zeile 4 : IP-Adresse + Signalstärke in dBm
 //  Zeile 5 : Zeitpunkt der letzten NTP-Synchronisierung
 static void oledUpdate()
 {
-  static const char *WD[] = { "So", "Mo", "Di", "Mi", "Do", "Fr", "Sa" };
+  static const char *WD[] = { "Sonntag", "Montag", "Dienstag", "Mittwoch",
+                              "Donnerstag", "Freitag", "Samstag" };
   const size_t LINE_CHARS = 25;     // 128 px / 5 px abzüglich Pixel-Shift
   struct tm t;
   const bool valid = currentTime(t);
@@ -460,8 +466,8 @@ static void oledUpdate()
   // Datum + Zeitzone
   u8g2.setFont(u8g2_font_6x10_tf);
   if (valid)
-    snprintf(buf, sizeof(buf), "%s %02d.%02d.%04d %s", WD[t.tm_wday], t.tm_mday,
-             t.tm_mon + 1, t.tm_year + 1900, t.tm_isdst > 0 ? "MESZ" : "MEZ");
+    snprintf(buf, sizeof(buf), "%s %02d.%02d.%04d", WD[t.tm_wday], t.tm_mday,
+             t.tm_mon + 1, t.tm_year + 1900);   // max. 21 Zeichen = 126 px
   else
     snprintf(buf, sizeof(buf), "Datum unbekannt");
   drawCentered(buf, 9 + dy, dx);
@@ -477,7 +483,7 @@ static void oledUpdate()
   else if (connected)     snprintf(buf, sizeof(buf), "WLAN %s", WiFi.SSID().c_str());
   else                    snprintf(buf, sizeof(buf), "WLAN %s ...", WIFI_SSID);
   fitText(buf, LINE_CHARS);
-  u8g2.drawStr(dx, 42 + dy, buf);
+  drawCentered(buf, 42 + dy, dx);
 
   // IP + Signal
   if (connected) {
@@ -488,7 +494,7 @@ static void oledUpdate()
     snprintf(buf, sizeof(buf), "Offline-Betrieb");
   }
   fitText(buf, LINE_CHARS);
-  u8g2.drawStr(dx, 51 + dy, buf);
+  drawCentered(buf, 51 + dy, dx);
 
   // Letzte NTP-Synchronisierung
   if (g_ntpSynced) {
@@ -502,7 +508,7 @@ static void oledUpdate()
   } else {
     snprintf(buf, sizeof(buf), "Sync aus (Startzeit)");
   }
-  u8g2.drawStr(dx, 60 + dy, buf);
+  drawCentered(buf, 60 + dy, dx);
 
   u8g2.sendBuffer();
 }
