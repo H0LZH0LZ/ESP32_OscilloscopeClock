@@ -20,7 +20,7 @@
    - Schnelle DAC-Ausgabe über direkte Registerzugriffe (weniger Flimmern)
    - Waveshare 2.42" OLED (SSD1309, 128x64) im I2C-Modus mit U8g2:
      reine Textanzeige – Uhrzeit (24h) im 7-Segment-Stil, Wochentag + Datum,
-     Netzwerkname, IP, Signalstärke, Zeitpunkt der letzten NTP-Synchronisierung,
+     Kalenderwoche, Netzwerkname, Signalstärke, letzte NTP-Synchronisierung,
      Pixel-Shift gegen Einbrennen
    - Läuft ohne WLAN mit der Startzeit aus config.h weiter (wie das Original)
 
@@ -429,6 +429,23 @@ static void drawCentered(const char *txt, int baseline, int dx)
   u8g2.drawStr(x, baseline, txt);
 }
 
+// ISO-8601-Kalenderwoche (Woche beginnt Montag, KW 1 enthält den 4. Januar).
+static int isoWeeksInYear(int y)
+{
+  auto p = [](int yy) { return (yy + yy / 4 - yy / 100 + yy / 400) % 7; };
+  return (p(y) == 4 || p(y - 1) == 3) ? 53 : 52;
+}
+
+static int isoWeek(const struct tm &t)
+{
+  const int year = t.tm_year + 1900;
+  const int wd   = t.tm_wday ? t.tm_wday : 7;          // Mo=1 … So=7
+  const int w    = (t.tm_yday + 1 - wd + 10) / 7;
+  if (w < 1) return isoWeeksInYear(year - 1);
+  if (w > isoWeeksInYear(year)) return 1;
+  return w;
+}
+
 // Kürzt einen Text auf maxChars Zeichen (mit ".." am Ende).
 static void fitText(char *buf, size_t maxChars)
 {
@@ -440,15 +457,14 @@ static void fitText(char *buf, size_t maxChars)
 }
 
 // ---- Bildaufbau ----------------------------------------------------------------
-//  Zeile 1 : Wochentag (ausgeschrieben), Datum    (Font 6x10)
+//  Zeile 1 : Wochentag (kurz), Datum, ISO-Kalenderwoche (Font 6x10)
 //  Mitte   : HH:MM:SS, 24h, 7-Segment-Stil (11x20 px je Ziffer)
 //  Zeile 3 : Netzwerkname (SSID)                  (Font 5x8, max. 25 Zeichen, zentriert)
-//  Zeile 4 : IP-Adresse + Signalstärke in dBm
+//  Zeile 4 : Signalstärke in dBm + Bewertung
 //  Zeile 5 : Zeitpunkt der letzten NTP-Synchronisierung
 static void oledUpdate()
 {
-  static const char *WD[] = { "Sonntag", "Montag", "Dienstag", "Mittwoch",
-                              "Donnerstag", "Freitag", "Samstag" };
+  static const char *WD[] = { "So", "Mo", "Di", "Mi", "Do", "Fr", "Sa" };
   const size_t LINE_CHARS = 25;     // 128 px / 5 px abzüglich Pixel-Shift
   struct tm t;
   const bool valid = currentTime(t);
@@ -466,8 +482,8 @@ static void oledUpdate()
   // Datum + Zeitzone
   u8g2.setFont(u8g2_font_6x10_tf);
   if (valid)
-    snprintf(buf, sizeof(buf), "%s %02d.%02d.%04d", WD[t.tm_wday], t.tm_mday,
-             t.tm_mon + 1, t.tm_year + 1900);   // max. 21 Zeichen = 126 px
+    snprintf(buf, sizeof(buf), "%s %02d.%02d.%04d  KW %02d", WD[t.tm_wday], t.tm_mday,
+             t.tm_mon + 1, t.tm_year + 1900, isoWeek(t));   // 20 Zeichen = 120 px
   else
     snprintf(buf, sizeof(buf), "Datum unbekannt");
   drawCentered(buf, 9 + dy, dx);
@@ -485,9 +501,11 @@ static void oledUpdate()
   fitText(buf, LINE_CHARS);
   drawCentered(buf, 42 + dy, dx);
 
-  // IP + Signal
+  // Signalstärke
   if (connected) {
-    snprintf(buf, sizeof(buf), "%s %ddBm", WiFi.localIP().toString().c_str(), (int)WiFi.RSSI());
+    const int rssi = WiFi.RSSI();
+    const char *q = rssi > -55 ? "sehr gut" : rssi > -67 ? "gut" : rssi > -75 ? "maessig" : "schwach";
+    snprintf(buf, sizeof(buf), "Signal %d dBm (%s)", rssi, q);
   } else if (wifiConfigured()) {
     snprintf(buf, sizeof(buf), "keine Verbindung");
   } else {
