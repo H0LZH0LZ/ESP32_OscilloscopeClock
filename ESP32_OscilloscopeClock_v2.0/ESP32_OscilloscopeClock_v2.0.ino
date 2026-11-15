@@ -469,11 +469,12 @@ static void fitText(char *buf, size_t maxChars)
 }
 
 // ---- Bildaufbau ----------------------------------------------------------------
-// Vier Zeilen, horizontal UND vertikal zentriert (Block ca. y 6…57):
-//  HH:MM:SS, 24h, 7-Segment-Stil (11x20 px je Ziffer)
-//  Wochentag (kurz), Datum, ISO-Kalenderwoche          (Font 6x10)
-//  Netzwerkname (SSID)                                 (Font 5x8, max. 25 Zeichen)
-//  Signalstärke in dBm
+// Zwei Gruppen, horizontal zentriert, mit deutlichem Abstand dazwischen:
+//  oben  (y  2…35): HH:MM:SS, 24h, 7-Segment-Stil (11x20 px je Ziffer)
+//                   Wochentag (kurz), Datum, ISO-Kalenderwoche   (Font 6x10)
+//  unten (y 44…61): Netzwerkname (SSID)                          (Font 5x8, max. 25 Zeichen)
+//                   Signalstärke in dBm
+// Optional trennt eine dünne Linie die beiden Gruppen (OLED_SEPARATOR in config.h).
 // Der NTP-Sync wird nur auf der seriellen Konsole ausgegeben (wifiLogChanges).
 // Pixel-Shift: +0..3 px horizontal, +0..1 px vertikal.
 static void oledUpdate()
@@ -493,11 +494,14 @@ static void oledUpdate()
   char buf[48];
   u8g2.clearBuffer();
 
-  // Vertikale Positionen relativ zum Blockanfang Y0
-  const int Y0 = 6;
+  // Vertikale Positionen: Gruppe Zeit/Datum oben, Gruppe WLAN unten
+  const int Y_TIME  = 2;    // Oberkante der 7-Segment-Ziffern
+  const int Y_DATE  = 33;   // Grundlinie Datum
+  const int Y_SSID  = 50;   // Grundlinie Netzwerkname
+  const int Y_RSSI  = 59;   // Grundlinie Signalstärke
 
   // Uhrzeit (24h) – oben
-  drawSegTime(Y0 + dy, t.tm_hour, t.tm_min, t.tm_sec, dx);
+  drawSegTime(Y_TIME + dy, t.tm_hour, t.tm_min, t.tm_sec, dx);
 
   // Datum + Kalenderwoche
   u8g2.setFont(u8g2_font_6x10_tf);
@@ -506,7 +510,12 @@ static void oledUpdate()
              t.tm_mon + 1, t.tm_year + 1900, isoWeek(t));   // 20 Zeichen = 120 px
   else
     snprintf(buf, sizeof(buf), "Datum unbekannt");
-  drawCentered(buf, Y0 + 31 + dy, dx);
+  drawCentered(buf, Y_DATE + dy, dx);
+
+#if OLED_SEPARATOR
+  // dünne, gepunktete Trennlinie zwischen den Gruppen
+  for (int x = 8 + dx; x < 120 + dx; x += 2) u8g2.drawPixel(x, 40 + dy);
+#endif
 
   u8g2.setFont(u8g2_font_5x8_tf);
   const bool connected = wifiConfigured() && WiFi.status() == WL_CONNECTED;
@@ -516,7 +525,7 @@ static void oledUpdate()
   else if (connected)     snprintf(buf, sizeof(buf), "WLAN %s", WiFi.SSID().c_str());
   else                    snprintf(buf, sizeof(buf), "WLAN %s ...", WIFI_SSID);
   fitText(buf, LINE_CHARS);
-  drawCentered(buf, Y0 + 41 + dy, dx);
+  drawCentered(buf, Y_SSID + dy, dx);
 
   // Signalstärke
   if (connected) {
@@ -527,7 +536,7 @@ static void oledUpdate()
     snprintf(buf, sizeof(buf), "Offline-Betrieb");
   }
   fitText(buf, LINE_CHARS);
-  drawCentered(buf, Y0 + 50 + dy, dx);
+  drawCentered(buf, Y_RSSI + dy, dx);
 
   u8g2.sendBuffer();
 }
