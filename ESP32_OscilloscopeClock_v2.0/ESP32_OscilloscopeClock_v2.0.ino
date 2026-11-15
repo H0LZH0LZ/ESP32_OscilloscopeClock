@@ -19,7 +19,7 @@
      inkl. Zeitzone und automatischer Sommer-/Winterzeit (TZ-String in config.h)
    - Schnelle DAC-Ausgabe über direkte Registerzugriffe (weniger Flimmern)
    - Waveshare 2.42" OLED (SSD1309, 128x64) im I2C-Modus mit U8g2:
-     reine Textanzeige – Uhrzeit (24h) im 7-Segment-Stil, Wochentag + Datum,
+     reine Textanzeige – Uhrzeit (24h) im 7-Segment-Stil, Datum,
      Kalenderwoche, Netzwerkname, Signalstärke (NTP-Sync auf der Konsole),
      Pixel-Shift gegen Einbrennen
    - Läuft ohne WLAN mit der Startzeit aus config.h weiter (wie das Original)
@@ -472,7 +472,7 @@ static void fitText(char *buf, size_t maxChars)
 // Alle Zeilen horizontal zentriert, vertikal mit kleinen Abständen:
 //  y  3…22 : HH:MM:SS, 24h, 7-Segment-Stil (11x20 px je Ziffer)
 //            ~6 px Abstand
-//  y 29…35 : Wochentag (kurz), Datum, ISO-Kalenderwoche   (Font 6x10)
+//  y 29…35 : ISO-Kalenderwoche, Datum                    (Font 6x10)
 //            ~7 px Abstand (trennt Zeit/Datum von WLAN)
 //  y 43…49 : Netzwerkname (SSID)                          (Font 5x8, max. 25 Zeichen)
 //  y 52…58 : Signalstärke in dBm
@@ -480,7 +480,6 @@ static void fitText(char *buf, size_t maxChars)
 // Pixel-Shift: +0..3 px horizontal, +0..1 px vertikal.
 static void oledUpdate()
 {
-  static const char *WD[] = { "So", "Mo", "Di", "Mi", "Do", "Fr", "Sa" };
   const size_t LINE_CHARS = 25;     // 128 px / 5 px abzüglich Pixel-Shift
   struct tm t;
   const bool valid = currentTime(t);
@@ -504,11 +503,11 @@ static void oledUpdate()
   // Uhrzeit (24h) – oben
   drawSegTime(Y_TIME + dy, t.tm_hour, t.tm_min, t.tm_sec, dx);
 
-  // Datum + Kalenderwoche
+  // Kalenderwoche + Datum
   u8g2.setFont(u8g2_font_6x10_tf);
   if (valid)
-    snprintf(buf, sizeof(buf), "%s %02d.%02d.%04d  KW %02d", WD[t.tm_wday], t.tm_mday,
-             t.tm_mon + 1, t.tm_year + 1900, isoWeek(t));   // 20 Zeichen = 120 px
+    snprintf(buf, sizeof(buf), "KW %02d  %02d.%02d.%04d", isoWeek(t), t.tm_mday,
+             t.tm_mon + 1, t.tm_year + 1900);   // 17 Zeichen = 102 px
   else
     snprintf(buf, sizeof(buf), "Datum unbekannt");
   drawCentered(buf, Y_DATE + dy, dx);
