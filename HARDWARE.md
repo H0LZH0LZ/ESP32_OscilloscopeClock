@@ -91,16 +91,59 @@ Das Modul ist ab Werk auf 4-Wire-SPI eingestellt.
 - DevKit auf Abstandsbolzen oder Lochrasterplatine. Die Leitungen GPIO25/26 → BNC kurz halten.
 
 ## Oszilloskop-Einstellungen
+
+### Analoges Röhren-Oszi (`SCOPE_PROFILE 0`)
 - Betriebsart **X/Y**, beide Kanäle **DC-Kopplung**.
 - Kanal 1 (X) und Kanal 2 (Y): **0,5 V/Div**. Bei 8 Divisions ergibt das 4 V, das 3,2-V-Bild passt also hinein.
 - Mit den Position-Reglern auf Bildmitte schieben (DAC-Mitte ≈ 1,6 V).
 - Helligkeit/Intensität eher gering, Fokus nachstellen.
 
+### Digitales Oszi / USB-Oszi (`SCOPE_PROFILE 1`, Standard)
+Ein digitales Oszi zeigt im X/Y-Modus nur die Abtastwerte **einer Aufnahme**. Damit die ganze Uhr
+zu sehen ist, muss das Aufnahmefenster (10 × Zeitbasis) mindestens ein Uhrenbild abdecken.
+Ein Bild dauert ca. 4,3 ms, mit römischen Ziffern ca. 6,2 ms.
+
+| Einstellung | Wert | Grund |
+|---|---|---|
+| Kopplung | DC, beide Kanäle | Die Signale haben einen Gleichanteil (0–3,2 V) |
+| Empfindlichkeit | 0,5 V/Div, beide Kanäle gleich | sonst wird die Uhr verzerrt |
+| Offset/Position | auf Bildmitte, ca. −1,6 V bzw. −3,2 Div | DAC-Mitte ≈ 1,6 V |
+| Zeitbasis | **1 ms/Div** (Fenster 10 ms ≈ 2 Bilder) | ganze Uhr in jeder Aufnahme |
+| Trigger | **Auto** (freilaufend) | Die Uhr liefert kein Triggerereignis |
+| Nachleuchten (Persistence) | kurz bis mittel, falls vorhanden | glättet den Bildaufbau |
+| Bandbreitenbegrenzung | ein (z. B. 20 MHz) | weniger Rauschen, die Signale sind langsam |
+
+**Tektronix TDS3012**
+- CH1 = X (GPIO25), CH2 = Y (GPIO26). XY-Darstellung im Display-Menü einschalten.
+- Zeitbasis 1 ms/Div, Trigger Auto.
+- Das TDS3000 stuft die Intensität nach Häufigkeit ab (Digital Phosphor). Gleichmäßige
+  Strahlgeschwindigkeit wirkt dort wieder direkt als gleichmäßige Helligkeit.
+- Kurzes Nachleuchten (Display → Persist) beruhigt das Bild.
+
+**HP 54200A**
+- Ob und wie das Gerät eine X/Y-Darstellung bietet, konnte ich nicht sicher klären. Bitte im
+  Handbuch (Display-Menü) nachsehen.
+- Gut für die Uhr: Das Gerät hat variables/unendliches Nachleuchten. Damit sammelt sich das Bild
+  über mehrere Aufnahmen, auch wenn eine einzelne Aufnahme nur wenige Punkte hat.
+
+**Digilent Analog Discovery 2**
+- Die Eingänge sind **differenziell**: 1+ an GPIO25 (X), **1− an GND**; 2+ an GPIO26 (Y),
+  **2− an GND**. Zusätzlich das GND-Kabel des AD2 an GND des ESP32.
+- WaveForms → Scope: Range 500 mV/Div, Offset −1,6 V, Zeitbasis 1 ms/Div, Trigger Auto,
+  XY-Ansicht einschalten (View → XY).
+- Standardpuffer 8.192 Abtastwerte pro Kanal: Bei 10 ms Fenster ist das ca. 1 Wert pro 1,2 µs,
+  also 2–3 Werte pro Schritt der Uhr. Mehr Punkte liefert die Gerätekonfiguration mit
+  2 × 16k Scope-Puffer (WaveForms → Device Manager).
+- Verbindet die XY-Ansicht die Abtastwerte mit Linien, sind auch die Sprünge als Linien zu sehen.
+  Dann in den Ansichtsoptionen auf Punktdarstellung umstellen, falls angeboten.
+- Beide Geräte hängen am selben PC, damit haben sie gemeinsame Masse, das ist unkritisch.
+
 ## Feinabstimmung in `config.h`
 | Parameter | Wirkung |
 |---|---|
 | `BEAM_NS_PER_UNIT` | Strahlgeschwindigkeit. Größer = hellere Linien, weniger Bilder/s (Standard 3000 ≈ 230 Bilder/s) |
-| `JUMP_SPEED` | Geschwindigkeit der Sprünge zwischen Linien (Standard 24). Größer = schwächere Rücklaufspur, kleiner (12) für sehr alte Oszis, 0 = harter Sprung |
+| `SCOPE_PROFILE` | 0 = analoges Röhren-Oszi, 1 = digitales Oszi / USB-Oszi (Standard). Wählt die passende Sprungart |
+| `JUMP_SPEED` | Geschwindigkeit der Sprünge zwischen Linien (analog 24, digital 0). Größer = schwächere Rücklaufspur, kleiner (12) für sehr alte Oszis, 0 = harter Sprung |
 | `JUMP_LANDING`, `JUMP_RAMP` | Abbremsen vor dem Linienanfang (Standard 8 und 4). Kleinere `JUMP_LANDING` bei „Haken“ an Linienanfängen |
 | `ZBLANK_PIN` | optionaler Ausgang zur Dunkeltastung (Z-Eingang), -1 = aus |
 | `HAND_BRIGHT_PCT` | Helligkeit von Stunden- und Minutenzeiger im Verhältnis zum Rest (Standard 67 %, wirkt dann gleich hell) |

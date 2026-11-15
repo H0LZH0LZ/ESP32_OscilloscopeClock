@@ -44,6 +44,15 @@
 //     als ein Schritt (s.u.), das Bild wird dann dunkler und flimmert eher.
 #define USE_FAST_DAC 1
 
+// ---- Oszilloskop-Typ ---------------------------------------------------------
+//   0 = analoges Röhren-Oszi (Strahl zeichnet direkt, z.B. Hameg HM203, Tek 2213)
+//   1 = digitales Oszi / Speicher-Oszi / USB-Oszi (tastet ab und zeigt Punkte,
+//       z.B. Tektronix TDS3012, HP 54200A, Digilent Analog Discovery 2)
+// Wirkt sich auf die Sprünge zwischen Linienzügen aus (JUMP_SPEED, s.u.):
+// Digitale Oszis zeigen jeden Abtastwert eines gefahrenen Sprungs als Punkt –
+// dort ist ein harter Sprung besser (nur 0–1 Abtastwerte unterwegs).
+#define SCOPE_PROFILE 1
+
 // ---- Strahlgeschwindigkeit (gleichmäßige Helligkeit) -----------------------
 // Der Strahl bewegt sich auf ALLEN Linien gleich schnell: 1 DAC-Einheit
 // (≈ 12,5 mV, 1/255 des Bildes) pro BEAM_NS_PER_UNIT Nanosekunden.
@@ -66,14 +75,19 @@
 // JUMP_RAMP Einheiten auf JUMP_LANDING ab, damit auch langsame
 // X/Y-Verstärker alter Oszis genau am Linienanfang ankommen.
 //
-//   JUMP_SPEED  24   Standard: Spur ca. 1/24, für Oszis ab ~0,5 MHz X/Y-Bandbreite
+//   JUMP_SPEED  24   Standard analog: Spur ca. 1/24, für Oszis ab ~0,5 MHz X/Y-Bandbreite
 //               12   sehr alte/langsame Oszis (Spur heller, aber sicher)
-//                0   harter Sprung wie im Original – auf schnellen Oszis
-//                    praktisch unsichtbar, bei langsamen Über-/Nachschwingen
+//                0   harter Sprung wie im Original – Standard für digitale Oszis;
+//                    auf schnellen Analog-Oszis praktisch unsichtbar, bei
+//                    langsamen Über-/Nachschwingen
 //   JUMP_LANDING 8   Geschwindigkeit beim Ankommen (kleiner = sanfter)
 //   JUMP_RAMP    4   Bremsweg in DAC-Einheiten
 // Zeigen Linienanfänge kleine "Haken", JUMP_SPEED oder JUMP_LANDING verkleinern.
-#define JUMP_SPEED   24
+#if SCOPE_PROFILE == 1
+  #define JUMP_SPEED  0          // digitales Oszi: harter Sprung
+#else
+  #define JUMP_SPEED 24          // analoges Röhren-Oszi
+#endif
 #define JUMP_LANDING  8
 #define JUMP_RAMP     4
 
