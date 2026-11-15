@@ -13,7 +13,7 @@ Hardware angepasst: **ESP32-WROOM-32U DevKitC V4**, **Waveshare 2.42" OLED (I2C)
 - NTP über das eingebaute SNTP des ESP32. Die `NTPtimeESP`-Bibliothek entfällt.
   Zeitzone mit automatischer Sommer-/Winterzeit, stündliches Nachsynchronisieren.
 - Schnelle DAC-Ausgabe über Register, dadurch mehr Bilder pro Sekunde und weniger Flimmern.
-- OLED zeigt Uhrzeit, Datum, WLAN-Signal und NTP-Status, mit Pixel-Shift gegen Einbrennen.
+- OLED als reine Textanzeige: Uhrzeit im 24h-Format im 7-Segment-Stil, darunter Datum, WLAN-Signal (dBm) und NTP-Status als Text, mit Pixel-Shift gegen Einbrennen.
 - Ohne WLAN-Zugangsdaten läuft die Uhr offline ab einer festen Startzeit, wie im Original.
 
 ### Schnellstart (Arduino IDE 2.x)

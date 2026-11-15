@@ -5,7 +5,7 @@
 | Teil | Zweck |
 |---|---|
 | ESP32-WROOM-32U DevKitC V4 (USB-C, IPEX/U.FL) | Klassischer Dual-Core-ESP32 mit zwei 8-Bit-DACs (GPIO25/26) |
-| Waveshare 2.42" OLED (SSD1309, 128×64) | Lokale Anzeige: Digitalzeit, Datum, WLAN/NTP-Status |
+| Waveshare 2.42" OLED (SSD1309, 128×64) | Lokale Textanzeige: Uhrzeit 24h im 7-Segment-Stil, Datum, WLAN/NTP-Status |
 | 2,4-GHz-Stabantenne + IPEX→SMA-Pigtail | Pflicht beim *-32U*: das Modul hat **keine** PCB-Antenne |
 | 2× BNC-Einbaubuchse (Lötanschluss) | X- und Y-Ausgang zum Oszilloskop |
 | ABS-Abzweigdose 100 × 150 mm | Gehäuse (funkdurchlässig) |
