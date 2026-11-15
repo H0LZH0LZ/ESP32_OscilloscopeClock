@@ -1,3 +1,35 @@
+# ESP32 Oscilloscope Clock – v2.0 (Dual-Core, NTP, OLED)
+
+Diese Version baut auf dem Original von Mauro Pintus auf (siehe unten) und ist für folgende
+Hardware angepasst: **ESP32-WROOM-32U DevKitC V4**, **Waveshare 2.42" OLED (I2C)**, externe
+2,4-GHz-Antenne, BNC-Ausgänge und ein ABS-Gehäuse.
+
+**Aufbau und Verdrahtung: [HARDWARE.md](HARDWARE.md)**
+
+### Was ist neu
+- **Core 1** erzeugt ausschließlich die X/Y-Signale (GPIO25/26) – ohne Pausen, ohne Locks.
+- **Core 0** übernimmt WLAN, NTP und das OLED. WLAN und I2C werden dort initialisiert, damit ihre
+  Interrupts den Zeichenpfad nicht stören.
+- NTP über das eingebaute SNTP des ESP32. Die `NTPtimeESP`-Bibliothek entfällt.
+  Zeitzone mit automatischer Sommer-/Winterzeit, stündliches Nachsynchronisieren.
+- Schnelle DAC-Ausgabe über Register, dadurch mehr Bilder pro Sekunde und weniger Flimmern.
+- OLED zeigt Uhrzeit, Datum, WLAN-Signal und NTP-Status, mit Pixel-Shift gegen Einbrennen.
+- Ohne WLAN-Zugangsdaten läuft die Uhr offline ab einer festen Startzeit, wie im Original.
+
+### Schnellstart (Arduino IDE 2.x)
+1. Boardverwalter: **esp32 by Espressif** (2.0.x oder 3.x) installieren, Board **ESP32 Dev Module**.
+2. Bibliotheksverwalter: **U8g2** (by oliver) installieren.
+3. Im Ordner `ESP32_OscilloscopeClock_v2.0/` die Datei `secrets_example.h` nach `secrets.h`
+   kopieren und WLAN-SSID und Passwort eintragen.
+4. `ESP32_OscilloscopeClock_v2.0.ino` öffnen und hochladen. Seriellen Monitor auf 115200 Baud stellen.
+5. Oszilloskop in den X/Y-Modus schalten, 0,5 V/Div, DC-Kopplung (Details in HARDWARE.md).
+
+Alternativ mit PlatformIO: `pio run -t upload` (siehe `platformio.ini`).
+
+Einstellungen (Zeitzone, Pins, Zifferblatt, DAC-Timing) stehen in `ESP32_OscilloscopeClock_v2.0/config.h`.
+
+---
+
 # ESP32 Oscilloscope Clock by Mauro Pintus
 
 ESP32 Oscilloscope Clock using internal DACs, with WiFi ntp sync
