@@ -93,7 +93,7 @@ Das Modul ist ab Werk auf 4-Wire-SPI eingestellt.
 ## Oszilloskop-Einstellungen
 
 Die Firmware kennt zwei Oszilloskop-Profile. Umgeschaltet wird im Betrieb mit dem **BOOT-Taster** des
-ESP32: **2 s halten**. Das OLED zeigt dabei den Wechsel (z. B. „DIGITAL -> ANALOG“) mit Countdown.
+ESP32: **3 s halten**. Das OLED zeigt dabei den Wechsel (z. B. „DIGITAL > ANALOG“) mit Countdown.
 Wer vorher loslässt, bricht ab. Die Einstellung wird im Flash gespeichert und gilt auch nach einem Neustart.
 Ein neues Hochladen ist nicht nötig. Den Taster **nicht beim Einschalten** drücken, sonst
 startet der ESP32 im Download-Modus. Beim Umschalten kann einmal kurz ein Lichtpunkt auf dem Oszilloskop
@@ -155,7 +155,7 @@ Ein Bild dauert ca. 4,3 ms, mit römischen Ziffern ca. 6,2 ms.
 |---|---|
 | `BEAM_NS_PER_UNIT` | Strahlgeschwindigkeit. Größer = hellere Linien, weniger Bilder/s (Standard 3000 ≈ 230 Bilder/s) |
 | `SCOPE_PROFILE` | Start-Profil, solange keins gespeichert ist: 0 = ANALOG, 1 = DIGITAL (Standard). Im Betrieb per BOOT-Taster umschaltbar |
-| `BUTTON_LONG_MS` | Haltedauer des BOOT-Tasters zum Umschalten (Standard 2000 ms) |
+| `BUTTON_LONG_MS` | Haltedauer des BOOT-Tasters zum Umschalten (Standard 3000 ms) |
 | `JUMP_SPEED` | Geschwindigkeit der Sprünge zwischen Linien im Profil ANALOG (Standard 24; DIGITAL springt immer hart). Größer = schwächere Rücklaufspur, kleiner (12) für sehr alte Oszilloskope, 0 = harter Sprung |
 | `JUMP_LANDING`, `JUMP_RAMP` | Abbremsen vor dem Linienanfang (Standard 8 und 4). Kleinere `JUMP_LANDING` bei „Haken“ an Linienanfängen |
 | `ZBLANK_PIN` | optionaler Ausgang zur Dunkeltastung (Z-Eingang), -1 = aus |

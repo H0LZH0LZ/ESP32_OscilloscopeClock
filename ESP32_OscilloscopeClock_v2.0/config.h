@@ -59,7 +59,7 @@
 // (Nicht beim Einschalten drücken – dann startet der Download-Modus.)
 #define SCOPE_PROFILE 1
 #define BOOT_BUTTON_PIN 0        // BOOT-Taster des DevKitC (gedrückt = LOW)
-#define BUTTON_LONG_MS  2000     // so lange halten zum Umschalten
+#define BUTTON_LONG_MS  3000     // so lange halten zum Umschalten (Countdown 3 s)
 
 // ---- Strahlgeschwindigkeit (gleichmäßige Helligkeit) -----------------------
 // Der Strahl bewegt sich auf ALLEN Linien gleich schnell: 1 DAC-Einheit

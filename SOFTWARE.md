@@ -68,10 +68,10 @@ Diese Datei beschreibt, wie die Firmware aufgebaut ist. Für Verdrahtung und Geh
 ## BOOT-Taster: Oszilloskop-Profil
 
 `buttonPoll()` im `uiTask` fragt den BOOT-Taster (GPIO0, gedrückt = LOW) alle 10 ms ab.
-Nach 2 s Halten wird `g_scopeProfile` umgeschaltet. Das ist ein Byte und damit atomar,
+Nach 3 s Halten wird `g_scopeProfile` umgeschaltet. Das ist ein Byte und damit atomar,
 `beamJump()` auf Core 1 liest es beim nächsten Sprung. Danach wird das Profil im NVS
 gespeichert. Pro Tastendruck wird nur einmal umgeschaltet, auch wenn der Taster länger gehalten
-wird. `oledProfileOverlay()` zeigt während des Haltens den Wechsel (z. B. „DIGITAL -> ANALOG“)
+wird. `oledProfileOverlay()` zeigt während des Haltens den Wechsel (z. B. „DIGITAL > ANALOG“)
 mit Countdown, danach erscheint sofort wieder die normale Anzeige. `setup()` lädt das Profil vor dem Start des `scopeTask`. Ist noch nichts
 gespeichert, gilt `SCOPE_PROFILE` aus `config.h`.
 
@@ -80,7 +80,7 @@ gespeichert, gilt `SCOPE_PROFILE` aus `config.h`.
 ```
 ESP32 Oscilloscope Clock v2.0
 CPU: 240 MHz
-[Scope] Profil: DIGITAL – BOOT-Taster 2 s halten zum Umschalten
+[Scope] Profil: DIGITAL – BOOT-Taster 3 s halten zum Umschalten
 [UI] laeuft auf Core 0
 [Scope] laeuft auf Core 1
 [WiFi] bekanntes Netz: "Gastzugang"
@@ -126,7 +126,7 @@ Strahlgeschwindigkeit:
 | Gleiche Verweilzeit | Jeder Schritt genau `BEAM_NS_PER_UNIT`, über den CPU-Taktzähler. Wird ein Schritt durch einen Interrupt verzögert, werden die folgenden kürzer | Zeit pro Punkt je nach Treiberaufruf |
 | Ecken | Endpunkt einer Linie = Startpunkt der nächsten, wird nur **einmal** ausgegeben | doppelt, helle Punkte an Ecken |
 | Kurze Linien | Rundungsrest wird an die nächste Linie weitergereicht, ein Linienzug bekommt exakt seine Länge an Zeit | jede Linie für sich gerundet |
-| Oszilloskop-Profil | DIGITAL: harte Sprünge, sonst zeigt ein abtastendes Oszilloskop Zwischenpunkte. ANALOG: gebremste Sprünge (siehe nächste Zeile). Umschalten im Betrieb per BOOT-Taster (2 s), gespeichert im NVS (`Preferences`, Namensraum `scopeclock`) | – |
+| Oszilloskop-Profil | DIGITAL: harte Sprünge, sonst zeigt ein abtastendes Oszilloskop Zwischenpunkte. ANALOG: gebremste Sprünge (siehe nächste Zeile). Umschalten im Betrieb per BOOT-Taster (3 s), gespeichert im NVS (`Preferences`, Namensraum `scopeclock`) | – |
 | Sprünge (ANALOG) | in 1-Einheit-Schritten mit 24-facher Geschwindigkeit (`JUMP_SPEED`), auf den letzten 4 Einheiten bremsend (`JUMP_LANDING`, `JUMP_RAMP`). Die Rücklaufspur hat ca. 1/24 der Linienhelligkeit, alte Verstärker landen trotzdem genau | harter Sprung |
 | Reihenfolge | Zifferblatt und Ziffern werden beim Start einmal zu einer Rundtour mit minimalen Sprüngen sortiert (Nächster-Nachbar + 2-opt), Einstieg dort, wo der Sekundenzeiger endet | Tabellenreihenfolge |
 | Sekundenzeiger | hin und zurück mit je halber Helligkeit gezeichnet, dadurch entfällt der lange Sprung vom Rand zur Mitte | – |
