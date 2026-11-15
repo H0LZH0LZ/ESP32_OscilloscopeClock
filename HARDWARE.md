@@ -93,24 +93,24 @@ Das Modul ist ab Werk auf 4-Wire-SPI eingestellt.
 ## Oszilloskop-Einstellungen
 
 Die Firmware kennt zwei Oszilloskop-Profile. Umgeschaltet wird im Betrieb mit dem **BOOT-Taster** des
-ESP32: **2 s halten**. Das OLED zählt herunter und zeigt danach das neue Profil (Analog oder
-Digital). Die Einstellung wird im Flash gespeichert und gilt auch nach einem Neustart.
+ESP32: **2 s halten**. Das OLED zeigt dabei den Wechsel (z. B. „DIGITAL -> ANALOG“) mit Countdown.
+Wer vorher loslässt, bricht ab. Danach zeigt es das neue Profil mit „gespeichert“. Die Einstellung wird im Flash gespeichert und gilt auch nach einem Neustart.
 Ein neues Hochladen ist nicht nötig. Den Taster **nicht beim Einschalten** drücken, sonst
 startet der ESP32 im Download-Modus. Beim Umschalten kann einmal kurz ein Lichtpunkt auf dem Oszilloskop
 aufblitzen (Schreibzugriff auf den Flash).
 
 | Profil | für | Sprünge zwischen Linien |
 |---|---|---|
-| Digital (ab Werk) | digitale Oszilloskope, Speicher-Oszilloskope | hart, damit keine Abtastpunkte unterwegs entstehen |
-| Analog | analoge Röhren-Oszilloskope | schnell und vor dem Ziel gebremst, schwache Rücklaufspur |
+| DIGITAL (ab Werk) | digitale Oszilloskope, Speicher-Oszilloskope | hart, damit keine Abtastpunkte unterwegs entstehen |
+| ANALOG | analoge Röhren-Oszilloskope | schnell und vor dem Ziel gebremst, schwache Rücklaufspur |
 
-### Analoges Röhren-Oszilloskop (Profil Analog)
+### Analoges Röhren-Oszilloskop (Profil ANALOG)
 - Betriebsart **X/Y**, beide Kanäle **DC-Kopplung**.
 - Kanal 1 (X) und Kanal 2 (Y): **0,5 V/Div**. Bei 8 Divisions ergibt das 4 V, das 3,2-V-Bild passt also hinein.
 - Mit den Position-Reglern auf Bildmitte schieben (DAC-Mitte ≈ 1,6 V).
 - Helligkeit/Intensität eher gering, Fokus nachstellen.
 
-### Digitales Oszilloskop (Profil Digital, ab Werk)
+### Digitales Oszilloskop (Profil DIGITAL, ab Werk)
 Ein digitales Oszilloskop zeigt im X/Y-Modus nur die Abtastwerte **einer Aufnahme**. Damit die ganze Uhr
 zu sehen ist, muss das Aufnahmefenster (10 × Zeitbasis) mindestens ein Uhrenbild abdecken.
 Ein Bild dauert ca. 4,3 ms, mit römischen Ziffern ca. 6,2 ms.
@@ -154,9 +154,9 @@ Ein Bild dauert ca. 4,3 ms, mit römischen Ziffern ca. 6,2 ms.
 | Parameter | Wirkung |
 |---|---|
 | `BEAM_NS_PER_UNIT` | Strahlgeschwindigkeit. Größer = hellere Linien, weniger Bilder/s (Standard 3000 ≈ 230 Bilder/s) |
-| `SCOPE_PROFILE` | Start-Profil, solange keins gespeichert ist: 0 = Analog, 1 = Digital (Standard). Im Betrieb per BOOT-Taster umschaltbar |
+| `SCOPE_PROFILE` | Start-Profil, solange keins gespeichert ist: 0 = ANALOG, 1 = DIGITAL (Standard). Im Betrieb per BOOT-Taster umschaltbar |
 | `BUTTON_LONG_MS` | Haltedauer des BOOT-Tasters zum Umschalten (Standard 2000 ms) |
-| `JUMP_SPEED` | Geschwindigkeit der Sprünge zwischen Linien im Profil Analog (Standard 24; Digital springt immer hart). Größer = schwächere Rücklaufspur, kleiner (12) für sehr alte Oszilloskope, 0 = harter Sprung |
+| `JUMP_SPEED` | Geschwindigkeit der Sprünge zwischen Linien im Profil ANALOG (Standard 24; DIGITAL springt immer hart). Größer = schwächere Rücklaufspur, kleiner (12) für sehr alte Oszilloskope, 0 = harter Sprung |
 | `JUMP_LANDING`, `JUMP_RAMP` | Abbremsen vor dem Linienanfang (Standard 8 und 4). Kleinere `JUMP_LANDING` bei „Haken“ an Linienanfängen |
 | `ZBLANK_PIN` | optionaler Ausgang zur Dunkeltastung (Z-Eingang), -1 = aus |
 | `HAND_BRIGHT_PCT` | Helligkeit von Stunden- und Minutenzeiger im Verhältnis zum Rest (Standard 67 %, wirkt dann gleich hell) |

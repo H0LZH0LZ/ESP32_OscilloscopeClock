@@ -910,7 +910,7 @@ static uint32_t s_btnDownSince = 0;      // millis() beim Drücken, 0 = losgelas
 static bool     s_btnHandled   = false;  // Umschaltung für diesen Tastendruck erledigt
 static uint32_t s_overlayUntil = 0;      // Profil-Hinweis auf dem OLED bis zu diesem Zeitpunkt
 
-static const char *profileName(uint8_t p)  { return p == 1 ? "Digital" : "Analog"; }
+static const char *profileName(uint8_t p)  { return p == 1 ? "DIGITAL" : "ANALOG"; }
 
 static void saveProfile(uint8_t p)
 {
@@ -951,28 +951,44 @@ static void buttonPoll()
   }
 }
 
-// Profil-Hinweis statt der normalen Anzeige. Liefert true, wenn gezeichnet.
+// Umschaltbildschirm statt der normalen Anzeige. Liefert true, wenn gezeichnet.
+// Nur Text, alle Zeilen zentriert:
+//
+//   Während des Haltens (ab 0,3 s):     Nach dem Umschalten (2,5 s lang):
+//
+//      Oszilloskop-Profil                   Oszilloskop-Profil
+//     DIGITAL -> ANALOG     (fett)               ANALOG          (fett)
+//       noch 2 s halten                        gespeichert
+//    loslassen = abbrechen
 static bool oledProfileOverlay()
 {
   const uint32_t now = millis();
   const bool holding = s_btnDownSince && !s_btnHandled && now - s_btnDownSince >= 300;
   if (!holding && (int32_t)(s_overlayUntil - now) <= 0) return false;
 
+  char buf[24];
   u8g2.clearBuffer();
   u8g2.setFont(u8g2_font_6x10_tf);
   if (holding) {
-    // Countdown bis zur Umschaltung
-    const uint32_t left = (BUTTON_LONG_MS - (now - s_btnDownSince) + 999) / 1000;
-    char buf[24];
-    drawCentered("Oszilloskop-Profil", 12, 1);         // 18 Zeichen = 108 px
-    drawCentered("wechseln", 25, 1);
-    snprintf(buf, sizeof(buf), "noch %lu s halten", (unsigned long)left);
-    drawCentered(buf, 41, 1);
-    drawCentered(g_scopeProfile == 1 ? "-> Analog" : "-> Digital", 57, 1);
-  } else {
-    drawCentered("Oszilloskop-Profil", 24, 1);
+    const uint8_t cur  = g_scopeProfile;
+    const uint8_t next = cur ? 0 : 1;
+    const uint32_t left = (BUTTON_LONG_MS - (now - s_btnDownSince) + 999) / 1000;   // aufgerundet
+
+    drawCentered("Oszilloskop-Profil", 12, 1);                     // 18 Zeichen = 108 px
     u8g2.setFont(u8g2_font_7x14B_tf);
-    drawCentered(profileName(g_scopeProfile), 46, 1);
+    snprintf(buf, sizeof(buf), "%s -> %s", profileName(cur), profileName(next));
+    drawCentered(buf, 32, 1);                                      // max. 17 Zeichen = 119 px
+    u8g2.setFont(u8g2_font_6x10_tf);
+    snprintf(buf, sizeof(buf), "noch %lu s halten", (unsigned long)left);
+    drawCentered(buf, 48, 1);
+    u8g2.setFont(u8g2_font_5x8_tf);
+    drawCentered("loslassen = abbrechen", 61, 1);                  // 21 Zeichen = 105 px
+  } else {
+    drawCentered("Oszilloskop-Profil", 18, 1);
+    u8g2.setFont(u8g2_font_7x14B_tf);
+    drawCentered(profileName(g_scopeProfile), 38, 1);
+    u8g2.setFont(u8g2_font_6x10_tf);
+    drawCentered("gespeichert", 55, 1);
   }
   u8g2.sendBuffer();
   return true;

@@ -83,7 +83,7 @@
 // JUMP_RAMP Einheiten auf JUMP_LANDING ab, damit auch langsame
 // X/Y-Verstärker alter Oszilloskope genau am Linienanfang ankommen.
 //
-// Diese Werte gelten im Profil Analog (im Profil Digital wird immer hart gesprungen):
+// Diese Werte gelten im Profil ANALOG (im Profil DIGITAL wird immer hart gesprungen):
 //   JUMP_SPEED  24   Standard: Spur ca. 1/24, für Oszilloskope ab ~0,5 MHz X/Y-Bandbreite
 //               12   sehr alte/langsame Oszilloskope (Spur heller, aber sicher)
 //                0   harter Sprung wie im Original – auf schnellen Analog-Oszilloskopen
@@ -91,7 +91,7 @@
 //   JUMP_LANDING 8   Geschwindigkeit beim Ankommen (kleiner = sanfter)
 //   JUMP_RAMP    4   Bremsweg in DAC-Einheiten
 // Zeigen Linienanfänge kleine "Haken", JUMP_SPEED oder JUMP_LANDING verkleinern.
-#define JUMP_SPEED   24          // gilt im Profil Analog; Digital springt immer hart
+#define JUMP_SPEED   24          // gilt im Profil ANALOG; DIGITAL springt immer hart
 #define JUMP_LANDING  8
 #define JUMP_RAMP     4
 
