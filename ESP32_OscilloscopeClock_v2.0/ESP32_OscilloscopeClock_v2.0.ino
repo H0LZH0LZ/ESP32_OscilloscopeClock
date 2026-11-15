@@ -19,8 +19,9 @@
      inkl. Zeitzone und automatischer Sommer-/Winterzeit (TZ-String in config.h)
    - Schnelle DAC-Ausgabe über direkte Registerzugriffe (weniger Flimmern)
    - Waveshare 2.42" OLED (SSD1309, 128x64) im I2C-Modus mit U8g2:
-     reine Textanzeige – Uhrzeit (24h) im 7-Segment-Stil, Datum,
-     WLAN-/NTP-Status als Text, Pixel-Shift gegen Einbrennen
+     reine Textanzeige – Uhrzeit (24h) im 7-Segment-Stil, Datum mit MEZ/MESZ,
+     Netzwerkname, IP, Signalstärke, Zeitpunkt der letzten NTP-Synchronisierung,
+     Pixel-Shift gegen Einbrennen
    - Läuft ohne WLAN mit der Startzeit aus config.h weiter (wie das Original)
 
   Benötigte Bibliothek (Arduino-Bibliotheksverwalter):  U8g2 by oliver
@@ -66,7 +67,7 @@ static inline uint32_t packTime(int h, int m, int s) {
 }
 
 static volatile bool     g_ntpSynced    = false;
-static volatile uint32_t g_lastSyncMs   = 0;
+static volatile time_t   g_lastSyncEpoch = 0;   // Zeitpunkt der letzten NTP-Synchronisierung
 
 static TaskHandle_t scopeTaskHandle = nullptr;
 static TaskHandle_t uiTaskHandle    = nullptr;
@@ -272,10 +273,10 @@ static void scopeTask(void *)
 //*****************************************************************************
 // Zeit
 //*****************************************************************************
-static void onNtpSync(struct timeval *)
+static void onNtpSync(struct timeval *tv)
 {
-  g_ntpSynced  = true;
-  g_lastSyncMs = millis();
+  g_lastSyncEpoch = tv ? tv->tv_sec : time(nullptr);
+  g_ntpSynced     = true;
 }
 
 // Liefert die aktuelle lokale Zeit; ohne NTP ab FALLBACK_* hochgezählt.
@@ -398,9 +399,9 @@ static void drawSegDigit(int x, int y, int digit, int w, int h, int t)
 // HH:MM:SS im 24h-Format als 7-Segment-Anzeige, horizontal zentriert.
 static void drawSegTime(int y, int hh, int mm, int ss, int dx)
 {
-  const int W = 14, H = 28, T = 3;   // Ziffer 14x28 px, Segment 3 px
-  const int GAP = 3;                 // Abstand zwischen zwei Ziffern
-  const int COLON = 3, CGAP = 4;     // Doppelpunkt 3 px breit, 4 px Abstand je Seite
+  const int W = 11, H = 20, T = 2;   // Ziffer 11x20 px, Segment 2 px
+  const int GAP = 2;                 // Abstand zwischen zwei Ziffern
+  const int COLON = 2, CGAP = 3;     // Doppelpunkt 2 px breit, 3 px Abstand je Seite
   const int total = 6 * W + 3 * GAP + 2 * (CGAP + COLON + CGAP);
   int x = (128 - 3 - total) / 2 + dx; // 3 px Reserve für den Pixel-Shift
 
@@ -423,14 +424,26 @@ static void drawCentered(const char *txt, int baseline, int dx)
   u8g2.drawStr((128 - 3 - w) / 2 + dx, baseline, txt);
 }
 
+// Kürzt einen Text auf maxChars Zeichen (mit ".." am Ende).
+static void fitText(char *buf, size_t maxChars)
+{
+  if (strlen(buf) > maxChars && maxChars > 2) {
+    buf[maxChars - 2] = '.';
+    buf[maxChars - 1] = '.';
+    buf[maxChars]     = '\0';
+  }
+}
+
 // ---- Bildaufbau ----------------------------------------------------------------
-//  Zeile 1 : Wochentag + Datum (Text)
-//  Mitte   : HH:MM:SS als 7-Segment-Anzeige (24h)
-//  Zeile 3 : WLAN-Status mit Signalstärke in dBm (Text)
-//  Zeile 4 : NTP-Status (Text)
+//  Zeile 1 : Wochentag, Datum, MEZ/MESZ           (Font 6x10)
+//  Mitte   : HH:MM:SS, 24h, 7-Segment-Stil (11x20 px je Ziffer)
+//  Zeile 3 : Netzwerkname (SSID)                  (Font 5x8, max. 25 Zeichen)
+//  Zeile 4 : IP-Adresse + Signalstärke in dBm
+//  Zeile 5 : Zeitpunkt der letzten NTP-Synchronisierung
 static void oledUpdate()
 {
   static const char *WD[] = { "So", "Mo", "Di", "Mi", "Do", "Fr", "Sa" };
+  const size_t LINE_CHARS = 25;     // 128 px / 5 px abzüglich Pixel-Shift
   struct tm t;
   const bool valid = currentTime(t);
 
@@ -441,13 +454,14 @@ static void oledUpdate()
   dx = step;  dy = (step + 1) % 2;
 #endif
 
-  char buf[32];
+  char buf[48];
   u8g2.clearBuffer();
 
-  // Datum
+  // Datum + Zeitzone
   u8g2.setFont(u8g2_font_6x10_tf);
   if (valid)
-    snprintf(buf, sizeof(buf), "%s %02d.%02d.%04d", WD[t.tm_wday], t.tm_mday, t.tm_mon + 1, t.tm_year + 1900);
+    snprintf(buf, sizeof(buf), "%s %02d.%02d.%04d %s", WD[t.tm_wday], t.tm_mday,
+             t.tm_mon + 1, t.tm_year + 1900, t.tm_isdst > 0 ? "MESZ" : "MEZ");
   else
     snprintf(buf, sizeof(buf), "Datum unbekannt");
   drawCentered(buf, 9 + dy, dx);
@@ -455,24 +469,40 @@ static void oledUpdate()
   // Uhrzeit (24h)
   drawSegTime(13 + dy, t.tm_hour, t.tm_min, t.tm_sec, dx);
 
-  // WLAN
   u8g2.setFont(u8g2_font_5x8_tf);
   const bool connected = wifiConfigured() && WiFi.status() == WL_CONNECTED;
-  if (!wifiConfigured())  snprintf(buf, sizeof(buf), "WLAN: aus");
-  else if (connected)     snprintf(buf, sizeof(buf), "WLAN: ok  %d dBm", (int)WiFi.RSSI());
-  else                    snprintf(buf, sizeof(buf), "WLAN: verbinde ...");
+
+  // Netzwerkname
+  if (!wifiConfigured())  snprintf(buf, sizeof(buf), "WLAN aus");
+  else if (connected)     snprintf(buf, sizeof(buf), "WLAN %s", WiFi.SSID().c_str());
+  else                    snprintf(buf, sizeof(buf), "WLAN %s ...", WIFI_SSID);
+  fitText(buf, LINE_CHARS);
+  u8g2.drawStr(dx, 42 + dy, buf);
+
+  // IP + Signal
+  if (connected) {
+    snprintf(buf, sizeof(buf), "%s %ddBm", WiFi.localIP().toString().c_str(), (int)WiFi.RSSI());
+  } else if (wifiConfigured()) {
+    snprintf(buf, sizeof(buf), "keine Verbindung");
+  } else {
+    snprintf(buf, sizeof(buf), "Offline-Betrieb");
+  }
+  fitText(buf, LINE_CHARS);
   u8g2.drawStr(dx, 51 + dy, buf);
 
-  // NTP
+  // Letzte NTP-Synchronisierung
   if (g_ntpSynced) {
-    const uint32_t ago = (millis() - g_lastSyncMs) / 60000UL;
-    snprintf(buf, sizeof(buf), "NTP:  ok, vor %lu min", (unsigned long)ago);
-  } else if (!wifiConfigured()) {
-    snprintf(buf, sizeof(buf), "NTP:  aus (Startzeit)");
+    struct tm st;
+    time_t e = g_lastSyncEpoch;
+    localtime_r(&e, &st);
+    snprintf(buf, sizeof(buf), "Sync %02d.%02d. %02d:%02d:%02d",
+             st.tm_mday, st.tm_mon + 1, st.tm_hour, st.tm_min, st.tm_sec);
+  } else if (wifiConfigured()) {
+    snprintf(buf, sizeof(buf), "Sync ausstehend");
   } else {
-    snprintf(buf, sizeof(buf), "NTP:  warte ...");
+    snprintf(buf, sizeof(buf), "Sync aus (Startzeit)");
   }
-  u8g2.drawStr(dx, 61 + dy, buf);
+  u8g2.drawStr(dx, 60 + dy, buf);
 
   u8g2.sendBuffer();
 }
