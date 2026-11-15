@@ -955,7 +955,7 @@ static void buttonPoll()
 //
 //      Oszilloskop-Profil
 //      DIGITAL > ANALOG       (fett)
-//             3 s             (Countdown 3 … 1)
+//              3              (Countdown 3, 2, 1 – Schrift wie Überschrift)
 static bool oledProfileOverlay()
 {
   const uint32_t now = millis();
@@ -973,8 +973,9 @@ static bool oledProfileOverlay()
   u8g2.setFont(u8g2_font_7x14B_tf);
   snprintf(buf, sizeof(buf), "%s > %s", profileName(cur), profileName(next));
   drawCentered(buf, 37, 1);                                        // max. 15 Zeichen = 105 px
-  snprintf(buf, sizeof(buf), "%lu s", (unsigned long)left);
-  drawCentered(buf, 58, 1);
+  u8g2.setFont(u8g2_font_6x10_tf);                                 // wie die Überschrift
+  snprintf(buf, sizeof(buf), "%lu", (unsigned long)left);
+  drawCentered(buf, 56, 1);
   u8g2.sendBuffer();
   return true;
 }
