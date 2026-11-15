@@ -53,7 +53,6 @@
 #define OLED_REFRESH_MS   200        // Displayaktualisierung
 #define OLED_SHIFT_EVERY_S 60        // Pixel-Shift gegen Einbrennen (0 = aus)
 #define OLED_CONTRAST     0x80       // 0x00…0xFF
-#define OLED_SEPARATOR    0          // 1 = gepunktete Linie zwischen Uhrzeit/Datum und WLAN
 
 // ---------------------------------------------------------------------------
 // Diverses
