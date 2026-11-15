@@ -506,8 +506,8 @@ static void oledUpdate()
   // Kalenderwoche + Datum
   u8g2.setFont(u8g2_font_6x10_tf);
   if (valid)
-    snprintf(buf, sizeof(buf), "KW %02d  %02d.%02d.%04d", isoWeek(t), t.tm_mday,
-             t.tm_mon + 1, t.tm_year + 1900);   // 17 Zeichen = 102 px
+    snprintf(buf, sizeof(buf), "KW %02d - %02d.%02d.%04d", isoWeek(t), t.tm_mday,
+             t.tm_mon + 1, t.tm_year + 1900);   // 18 Zeichen = 108 px
   else
     snprintf(buf, sizeof(buf), "Datum unbekannt");
   drawCentered(buf, Y_DATE + dy, dx);
