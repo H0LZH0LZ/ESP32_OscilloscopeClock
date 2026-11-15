@@ -47,27 +47,48 @@
 // ---- Strahlgeschwindigkeit (gleichmäßige Helligkeit) -----------------------
 // Der Strahl bewegt sich auf ALLEN Linien gleich schnell: 1 DAC-Einheit
 // (≈ 12,5 mV, 1/255 des Bildes) pro BEAM_NS_PER_UNIT Nanosekunden.
-// Ein Bild hat ca. 1.500–1.700 Schritte (römisches Zifferblatt ca. 2.300).
+// Ein Bild dauert ca. 1.400 Schrittzeiten (römisches Zifferblatt ca. 2.100).
 //
 //   BEAM_NS_PER_UNIT   Bildfrequenz          Hinweis
 //                      (1–12 / römisch)
-//        2000          ~310 Hz / ~220 Hz     moderne/schnelle Oszis
-//        3000          ~210 Hz / ~150 Hz     Standard, passt für fast alle Röhren
-//        5000          ~125 Hz /  ~90 Hz     sehr alte/langsame Röhren, hellere Spur
-//        8000           ~75 Hz /  ~55 Hz     Untergrenze – darunter flimmert es
+//        2000          ~350 Hz / ~240 Hz     moderne/schnelle Oszis
+//        3000          ~230 Hz / ~160 Hz     Standard, passt für fast alle Röhren
+//        5000          ~140 Hz / ~100 Hz     sehr alte/langsame Röhren, hellere Spur
+//        8000           ~90 Hz /  ~60 Hz     Untergrenze – darunter flimmert es
 //
 // Größer = langsamer = hellere Linien, aber niedrigere Bildfrequenz.
 #define BEAM_NS_PER_UNIT 3000
 
-// Sprünge zwischen Linienzügen (der ESP32 kann den Strahl nicht dunkeltasten)
-// werden so viel schneller gefahren wie geschrieben. Die Rücklaufspur ist um
-// diesen Faktor schwächer (8 → 1/8 der Linienhelligkeit).
-//   8      Standard: schwache, gleichmäßige Rücklaufspur, für alle Röhren sicher
-//   16     schwächere Rücklaufspur, für Oszis mit ≥ 1 MHz X/Y-Bandbreite
-//   4      sehr alte/langsame Oszis, wenn Linienanfänge "Haken" zeigen
-//   0      harter Sprung wie im Original: auf schnellen Oszis praktisch
-//          unsichtbar, bei langsamen evtl. Über-/Nachschwingen
-#define JUMP_SPEED 8
+// ---- Rücklauf: Sprünge zwischen Linienzügen ---------------------------------
+// Ohne Dunkeltastung (s.u.) hinterlässt jeder Sprung eine schwache Spur.
+// Sprünge fahren mit JUMP_SPEED-facher Schreibgeschwindigkeit (Spur =
+// 1/JUMP_SPEED so hell wie eine Linie) und bremsen auf den letzten
+// JUMP_RAMP Einheiten auf JUMP_LANDING ab, damit auch langsame
+// X/Y-Verstärker alter Oszis genau am Linienanfang ankommen.
+//
+//   JUMP_SPEED  24   Standard: Spur ca. 1/24, für Oszis ab ~0,5 MHz X/Y-Bandbreite
+//               12   sehr alte/langsame Oszis (Spur heller, aber sicher)
+//                0   harter Sprung wie im Original – auf schnellen Oszis
+//                    praktisch unsichtbar, bei langsamen Über-/Nachschwingen
+//   JUMP_LANDING 8   Geschwindigkeit beim Ankommen (kleiner = sanfter)
+//   JUMP_RAMP    4   Bremsweg in DAC-Einheiten
+// Zeigen Linienanfänge kleine "Haken", JUMP_SPEED oder JUMP_LANDING verkleinern.
+#define JUMP_SPEED   24
+#define JUMP_LANDING  8
+#define JUMP_RAMP     4
+
+// ---- Optional: Dunkeltastung über den Z-Eingang -----------------------------
+// Viele Röhren-Oszis haben hinten eine BNC-Buchse "Z" / "Z-Mod" / "Intensity".
+// Ein Logikpegel dort schaltet den Strahl aus. Mit einem dritten Kabel
+// (GPIO → Z-Eingang) verschwinden die Rücklaufspuren dann vollständig.
+//   ZBLANK_PIN         GPIO für den Z-Ausgang, -1 = nicht verwendet (Standard)
+//                      Empfehlung: 27 (frei, kein Boot-Pin)
+//   ZBLANK_ACTIVE_HIGH 1 = High-Pegel (3,3 V) macht dunkel (z.B. viele Hameg)
+//                      0 = Low-Pegel macht dunkel – im Handbuch des Oszis prüfen
+//   ZBLANK_SETTLE_NS   Wartezeit im Dunkeln nach dem Sprung, bis X/Y stehen
+#define ZBLANK_PIN         -1
+#define ZBLANK_ACTIVE_HIGH  1
+#define ZBLANK_SETTLE_NS 5000
 
 // Stunden- und Minutenzeiger sind schmale Rauten: Ihre beiden Kanten liegen
 // nur 0–4 DAC-Einheiten auseinander und verschmelzen auf dem Schirm zu einer

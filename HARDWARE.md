@@ -29,10 +29,26 @@ GND  ─────────────────── OLED CS
 GND  ─────────────────── OLED DC    (DC = GND → I2C-Adresse 0x3C, DC = 3V3 → 0x3D)
 
 IPEX/U.FL ── Pigtail ── SMA-Buchse in der Gehäusewand ── Stabantenne
+
+Optional, Dunkeltastung:
+GPIO27 ──[220Ω]──────── BNC "Z"  Mittelkontakt   ──> Z-Eingang des Oszis (Rückseite)
+GND ──────────────────── BNC "Z" Masse
 ```
 
 Die Pins stehen zentral in `ESP32_OscilloscopeClock_v2.0/config.h`. Nur GPIO25/26 sind fest vorgegeben,
 weil die DACs nur an diesen beiden Pins herausgeführt sind.
+
+### Optional: Dunkeltastung über den Z-Eingang
+Der ESP32 kann den Strahl nicht selbst abschalten. Zwischen zwei Linien bleibt deshalb eine sehr
+schwache Rücklaufspur (die Firmware hält sie mit ca. 1/24 der Linienhelligkeit so klein wie möglich).
+Viele Röhrenoszilloskope haben auf der Rückseite eine BNC-Buchse **„Z“, „Z-Mod“, „Z-Input“** oder
+**„Intensity“**. Mit einem dritten Ausgang lässt sich der Strahl während der Sprünge ganz ausschalten:
+1. Dritte BNC-Buchse ins Gehäuse, Verdrahtung wie oben (GPIO27 über 220 Ω).
+2. Im Handbuch des Oszis nachsehen, welcher Pegel **dunkel** schaltet. Bei vielen Geräten macht
+   High (TTL) dunkel. Bei manchen ist es umgekehrt, oder der Eingang braucht mehr als 3,3 V.
+3. In `config.h` `ZBLANK_PIN 27` setzen, bei Bedarf `ZBLANK_ACTIVE_HIGH 0`.
+4. Bleibt das Bild ganz dunkel, ist die Polarität falsch. Zeigen sich Lichtpunkte an den
+   Linienanfängen, `ZBLANK_SETTLE_NS` erhöhen.
 
 ### Hinweise zu den DAC-Ausgängen
 - Ausgangsbereich ca. 0 … 3,2 V, Bildmitte ca. 1,6 V.
@@ -83,8 +99,10 @@ Das Modul ist ab Werk auf 4-Wire-SPI eingestellt.
 ## Feinabstimmung in `config.h`
 | Parameter | Wirkung |
 |---|---|
-| `BEAM_NS_PER_UNIT` | Strahlgeschwindigkeit. Größer = hellere Linien, weniger Bilder/s (Standard 3000 ≈ 210 Bilder/s) |
-| `JUMP_SPEED` | Geschwindigkeit der Sprünge zwischen Linien. Größer = schwächere Rücklaufspur. Kleiner für sehr alte Oszis. 0 = harter Sprung |
+| `BEAM_NS_PER_UNIT` | Strahlgeschwindigkeit. Größer = hellere Linien, weniger Bilder/s (Standard 3000 ≈ 230 Bilder/s) |
+| `JUMP_SPEED` | Geschwindigkeit der Sprünge zwischen Linien (Standard 24). Größer = schwächere Rücklaufspur, kleiner (12) für sehr alte Oszis, 0 = harter Sprung |
+| `JUMP_LANDING`, `JUMP_RAMP` | Abbremsen vor dem Linienanfang (Standard 8 und 4). Kleinere `JUMP_LANDING` bei „Haken“ an Linienanfängen |
+| `ZBLANK_PIN` | optionaler Ausgang zur Dunkeltastung (Z-Eingang), -1 = aus |
 | `HAND_BRIGHT_PCT` | Helligkeit von Stunden- und Minutenzeiger im Verhältnis zum Rest (Standard 67 %, wirkt dann gleich hell) |
 | `USE_FAST_DAC` | `1` = direkte Registerzugriffe (Standard). `0` = `dacWrite()`, nur als Notlösung |
 | `DIAL_STYLE` | Zifferblatt: 0 = 1–12, 1 = 13–24, 2 = römisch |

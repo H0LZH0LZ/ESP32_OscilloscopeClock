@@ -62,6 +62,7 @@
 #include <esp_sntp.h>         // NTP-Client des ESP-IDF (Sync-Callback, Intervall)
 #include <soc/soc.h>          // SET_PERI_REG_BITS()
 #include <soc/rtc_io_reg.h>   // Registeradressen der DAC-Pads
+#include <soc/gpio_reg.h>     // GPIO-Setzen/Löschen für die optionale Dunkeltastung
 #include <U8g2lib.h>          // OLED-Treiber
 
 #include "config.h"
@@ -159,18 +160,25 @@ static WiFiMulti    wifiMulti;
 //  4. Rundungsrest: Kurze Linien (in den Ziffern oft nur 1–2 Einheiten) werden
 //     nicht einzeln gerundet; der Rest wandert in die nächste Linie. Ein ganzer
 //     Linienzug bekommt so exakt seine Länge an Verweilzeit.
-//  5. Sprünge zwischen Linienzügen: Der ESP32 kann den Strahl nicht dunkel
-//     tasten. Sprünge werden deshalb ebenfalls in 1-Einheit-Schritten gefahren,
-//     aber mit JUMP_SPEED-fach kürzerer Verweilzeit: Es bleibt eine
-//     gleichmäßige, sehr schwache Rücklaufspur statt heller Punkte, und auch
-//     langsame X/Y-Verstärker alter Oszis können folgen (ein harter Sprung
-//     würde dort über- oder nachschwingen). JUMP_SPEED 0 = harter Sprung wie
-//     im Original (für schnelle Oszis, Rücklauf praktisch unsichtbar).
-//  6. Kurze Sprünge: Jeder Linienzug wird von dem Ende aus gezeichnet, das
-//     näher am Strahl liegt (z.B. Minutenstriche abwechselnd außen→innen und
-//     innen→außen). Die Rücklaufwege werden dadurch deutlich kürzer.
-//  7. Begrenzte Geschwindigkeit: 1 DAC-Einheit (≈ 12,5 mV) pro 3 µs beim
-//     Schreiben bzw. ~0,4 µs beim Springen ist für jede Röhre langsam genug.
+//  5. Sprünge zwischen Linienzügen (Rücklauf): Ohne Dunkeltastung bleibt
+//     auf dem Schirm eine Spur. Sie wird so schwach wie möglich gehalten:
+//      a) Sprünge laufen in 1-Einheit-Schritten mit JUMP_SPEED-facher
+//         Geschwindigkeit (Spur = 1/JUMP_SPEED der Linienhelligkeit) und
+//         bremsen auf den letzten JUMP_RAMP Einheiten auf JUMP_LANDING ab.
+//         So kommen auch langsame X/Y-Verstärker alter Oszis präzise am
+//         Ziel an (ein harter Sprung würde dort über- oder nachschwingen).
+//      b) Zifferblatt und Ziffern werden beim Start einmal zu einer
+//         Rundtour mit möglichst kurzen Sprüngen sortiert (buildTour).
+//      c) Der Sekundenzeiger wird hin (Mitte → Spitze) und zurück je mit
+//         halber Helligkeit gezeichnet. Der lange Sprung vom Rand zurück
+//         zur Mitte entfällt damit ganz – der Strahl "läuft" auf dem Zeiger.
+//      d) Jeder Linienzug wird von dem Ende aus gezeichnet, das näher am
+//         Strahl liegt.
+//     Optional (ZBLANK_PIN): Dunkeltastung über den Z-Eingang des Oszis –
+//     der Strahl ist während des Sprungs aus, die Spur verschwindet ganz.
+//     JUMP_SPEED 0 = harter Sprung wie im Original.
+//  6. Begrenzte Geschwindigkeit: 1 DAC-Einheit (≈ 12,5 mV) pro 3 µs beim
+//     Schreiben ist für jede Röhre langsam genug.
 //
 // Alle Funktionen hier tragen IRAM_ATTR und die Tabellen liegen im RAM:
 // So gibt es keine Flash-Cache-Fehlzugriffe (Nachladen aus dem Flash dauert
@@ -181,7 +189,10 @@ static int lastx = -1, lasty = -1;
 
 // Zeitsteuerung in CPU-Takten
 static uint32_t s_stepCycles = 0;   // Verweilzeit eines Schreibschritts (BEAM_NS_PER_UNIT)
-static uint32_t s_jumpCycles = 0;   // Verweilzeit eines Sprungschritts (÷ JUMP_SPEED)
+// Verweilzeit eines Sprungschritts abhängig vom Restweg r (0 … JUMP_RAMP):
+// r = JUMP_RAMP und mehr → volle Sprunggeschwindigkeit, r = 0 → JUMP_LANDING
+static uint32_t s_jumpCycles[JUMP_RAMP + 1];
+static uint32_t s_settleCycles = 0; // Einschwingzeit bei Dunkeltastung
 static uint32_t s_deadline   = 0;   // Zieltermin des aktuellen Schritts
 
 // Schreibt einen 8-Bit-Wert auf den X-DAC (GPIO25).
@@ -213,9 +224,18 @@ static void dacInit() {
   lastx = lasty = 0x80;
   s_stepCycles = (uint32_t)((uint64_t)BEAM_NS_PER_UNIT * getCpuFrequencyMhz() / 1000ULL);
   if (s_stepCycles < 1) s_stepCycles = 1;
-#if JUMP_SPEED > 0
-  s_jumpCycles = s_stepCycles / JUMP_SPEED;
-  if (s_jumpCycles < 1) s_jumpCycles = 1;
+  // Sprung-Bremsrampe vorberechnen (spart Divisionen im Zeichenpfad)
+  static_assert(JUMP_SPEED == 0 || (JUMP_SPEED >= JUMP_LANDING && JUMP_LANDING >= 1 && JUMP_RAMP >= 1),
+                "config.h: JUMP_SPEED >= JUMP_LANDING >= 1 und JUMP_RAMP >= 1 (oder JUMP_SPEED 0)");
+  for (int r = 0; r <= JUMP_RAMP && JUMP_SPEED > 0; r++) {
+    const uint32_t v16 = 16 * JUMP_LANDING + 16 * (JUMP_SPEED - JUMP_LANDING) * r / JUMP_RAMP;
+    s_jumpCycles[r] = v16 ? (s_stepCycles * 16) / v16 : s_stepCycles;
+    if (s_jumpCycles[r] < 1) s_jumpCycles[r] = 1;
+  }
+#if ZBLANK_PIN >= 0
+  pinMode(ZBLANK_PIN, OUTPUT);
+  digitalWrite(ZBLANK_PIN, ZBLANK_ACTIVE_HIGH ? LOW : HIGH);   // Strahl an
+  s_settleCycles = (uint32_t)((uint64_t)ZBLANK_SETTLE_NS * getCpuFrequencyMhz() / 1000ULL);
 #endif
   s_deadline = ESP.getCycleCount();
 }
@@ -290,6 +310,92 @@ static void IRAM_ATTR beamMove(int x1, int y1, int x2, int y2, uint32_t cycles, 
   beamPoint(x2, y2, cycles);             // exakt auf dem Endpunkt landen
 }
 
+#if ZBLANK_PIN >= 0
+static_assert(ZBLANK_PIN < 32, "ZBLANK_PIN muss GPIO 0-31 sein");
+// Schaltet den Strahl über den Z-Eingang des Oszilloskops aus (dark=true)
+// oder wieder an. Direkter Registerzugriff: wenige Takte, IRAM-sicher.
+static inline void IRAM_ATTR zBlank(bool dark)
+{
+  if (dark == (bool)ZBLANK_ACTIVE_HIGH) REG_WRITE(GPIO_OUT_W1TS_REG, 1UL << ZBLANK_PIN);
+  else                                  REG_WRITE(GPIO_OUT_W1TC_REG, 1UL << ZBLANK_PIN);
+}
+#endif
+
+// Sprung (Rücklauf) zum Punkt (x2,y2) – siehe Regel 5.
+static void IRAM_ATTR beamJump(int x2, int y2)
+{
+  if (x2 == lastx && y2 == lasty) return;
+#if ZBLANK_PIN >= 0
+  // Dunkel tasten, hart springen, im Dunkeln einschwingen lassen, Strahl an.
+  zBlank(true);
+  beamPoint(x2, y2, s_settleCycles);
+  zBlank(false);
+#elif JUMP_SPEED == 0
+  // Harter Sprung wie im Original (ohne Verweilzeit)
+  if (x2 != lastx) { lastx = x2; dacOutX((uint8_t)x2); }
+  if (y2 != lasty) { lasty = y2; dacOutY((uint8_t)y2); }
+#else
+  // Schnell fahren, auf den letzten JUMP_RAMP Einheiten abbremsen
+  const int x1 = lastx, y1 = lasty, dx = x2 - x1, dy = y2 - y1;
+  const int32_t len16 = (int32_t)isqrt32((uint32_t)(dx * dx + dy * dy) << 8);
+  int n = (len16 + 8) / 16;
+  if (n < 1) n = 1;
+  int32_t fx = x1 * 65536 + 0x8000, fy = y1 * 65536 + 0x8000;
+  const int32_t ix = dx * 65536 / n, iy = dy * 65536 / n;
+  for (int k = 1; k < n; k++) {
+    fx += ix; fy += iy;
+    const int r = n - k;                                 // Restweg in Einheiten
+    beamPoint(fx >> 16, fy >> 16, s_jumpCycles[r < JUMP_RAMP ? r : JUMP_RAMP]);
+  }
+  beamPoint(x2, y2, s_jumpCycles[0]);
+#endif
+}
+
+//*****************************************************************************
+// Linienzüge ("Strokes")
+//*****************************************************************************
+// Ein Stroke ist ein zusammenhängender Linienzug in einer Tabelle aus
+// DataTable.h: Punkte bei den Byte-Offsets a, a±2, …, b. Ist b < a, wird er
+// rückwärts gezeichnet (Helligkeit ist richtungsunabhängig).
+struct Stroke {
+  const byte *t;
+  int16_t a, b;
+};
+
+static inline int strokeX(const Stroke &st, bool end) { return st.t[end ? st.b : st.a]; }
+static inline int strokeY(const Stroke &st, bool end) { return st.t[(end ? st.b : st.a) + 1]; }
+
+// Zeichnet einen Stroke: Sprung zum Startpunkt, dort einen normalen Schritt
+// verweilen, dann alle Linien mit 'cycles' pro Schritt.
+static void IRAM_ATTR drawStroke(const Stroke &st, uint32_t cycles)
+{
+  const byte *t = st.t;
+  const int dir = (st.b >= st.a) ? 2 : -2;
+  beamJump(t[st.a], t[st.a + 1]);
+  beamPoint(t[st.a], t[st.a + 1], cycles);               // Startpunkt wie jeder andere Punkt
+  int32_t carry16 = 0;                                    // Rundungsrest je Linienzug
+  for (int k = st.a; k != st.b; k += dir)
+    beamMove(t[k], t[k + 1], t[k + dir], t[k + dir + 1], cycles, &carry16);
+}
+
+// Sucht ab Byte-Offset i den nächsten Linienzug mit mindestens 2 Punkten.
+// Liefert false am Tabellenende. Danach zeigt i hinter den Linienzug.
+static bool IRAM_ATTR nextStroke(const byte *table, int size, byte sep, int &i, Stroke &out)
+{
+  while (i + 1 < size && table[i] != 0xFF) {
+    if (table[i] == sep) { i++; continue; }              // (mehrere) Trenner überspringen
+    int end = i;                                          // Punkte bei i, i+2, …, end-2
+    while (end + 1 < size && table[end] != sep && table[end] != 0xFF) end += 2;
+    const int start = i;
+    i = end;
+    if ((end - start) / 2 >= 2) {                         // Einzelpunkte wie im Original ignorieren
+      out.t = table; out.a = start; out.b = end - 2;
+      return true;
+    }
+  }
+  return false;
+}
+
 //*****************************************************************************
 // PlotTable – zeichnet Linienzüge aus einer Tabelle in DataTable.h
 //*****************************************************************************
@@ -316,45 +422,110 @@ static void IRAM_ATTR PlotTable(const byte *table, int size, byte sep, int offse
 {
   const uint32_t cycles = (uint32_t)((uint64_t)s_stepCycles * brightPct / 100);
   int i = offset;
-  while (i + 1 < size && table[i] != 0xFF) {
-    if (table[i] == sep) { i++; continue; }            // (mehrere) Trenner überspringen
-
-    // Linienzug abgrenzen: Punkte bei i, i+2, …, end-2
-    int end = i;
-    while (end + 1 < size && table[end] != sep && table[end] != 0xFF) end += 2;
-    const int points = (end - i) / 2;
-
-    if (points >= 2) {
-      // Näheres Ende wählen (quadratischer Abstand reicht zum Vergleich)
-      const int last = end - 2;
-      const int ds = (table[i] - lastx)    * (table[i] - lastx)    + (table[i + 1] - lasty)    * (table[i + 1] - lasty);
-      const int de = (table[last] - lastx) * (table[last] - lastx) + (table[last + 1] - lasty) * (table[last + 1] - lasty);
-      const int first = (de < ds) ? last : i;
-      const int dir   = (de < ds) ? -2 : 2;
-
-      // Sprung zum Startpunkt
-#if JUMP_SPEED > 0
-      beamMove(lastx, lasty, table[first], table[first + 1], s_jumpCycles, nullptr);
-#endif
-      beamPoint(table[first], table[first + 1], cycles);   // Startpunkt wie jeder andere Punkt
-
-      int32_t carry16 = 0;                                  // Rundungsrest je Linienzug
-      for (int n = 0, k = first; n < points - 1; n++, k += dir)
-        beamMove(table[k], table[k + 1], table[k + dir], table[k + dir + 1], cycles, &carry16);
-    }
-    i = end;
+  Stroke st;
+  while (nextStroke(table, size, sep, i, st)) {
+    // Näheres Ende wählen (quadratischer Abstand reicht zum Vergleich)
+    const int ds = (strokeX(st, 0) - lastx) * (strokeX(st, 0) - lastx) + (strokeY(st, 0) - lasty) * (strokeY(st, 0) - lasty);
+    const int de = (strokeX(st, 1) - lastx) * (strokeX(st, 1) - lastx) + (strokeY(st, 1) - lasty) * (strokeY(st, 1) - lasty);
+    if (de < ds) { const int16_t tmp = st.a; st.a = st.b; st.b = tmp; }
+    drawStroke(st, cycles);
   }
+}
+
+//*****************************************************************************
+// Rundtour für Zifferblatt + Ziffern (einmal beim Start berechnet)
+//*****************************************************************************
+// Zifferblatt-Striche und Ziffern ändern sich nie. Ihre Reihenfolge und
+// Zeichenrichtung werden deshalb einmal so optimiert, dass die Summe aller
+// Sprünge möglichst klein ist – als geschlossene Runde, damit man an jeder
+// Stelle einsteigen kann (dort, wo der Sekundenzeiger gerade endet).
+//   1. Nächster-Nachbar: immer den Linienzug (und dessen Ende) nehmen, der
+//      dem aktuellen Endpunkt am nächsten liegt.
+//   2. 2-opt: Teilstücke der Runde umdrehen, solange das Sprünge spart.
+static const int TOUR_MAX = 128;
+static Stroke s_tour[TOUR_MAX];
+static int    s_tourLen = 0;
+
+static float tourGap(const Stroke &from, const Stroke &to)       // Sprung from.Ende → to.Anfang
+{
+  const float dx = strokeX(to, 0) - strokeX(from, 1), dy = strokeY(to, 0) - strokeY(from, 1);
+  return sqrtf(dx * dx + dy * dy);
+}
+
+static void tourAdd(const byte *table, int size)
+{
+  int i = 0;
+  Stroke st;
+  while (s_tourLen < TOUR_MAX && nextStroke(table, size, 0x00, i, st)) s_tour[s_tourLen++] = st;
+}
+
+static void reverseStroke(Stroke &st) { const int16_t tmp = st.a; st.a = st.b; st.b = tmp; }
+
+static void buildTour(const byte *digits, int digitsSize)
+{
+  s_tourLen = 0;
+  tourAdd(DialData, sizeof(DialData));
+  tourAdd(digits, digitsSize);
+  const int n = s_tourLen;
+  if (n < 3) return;
+
+  // 1. Nächster Nachbar
+  for (int k = 1; k < n; k++) {
+    int best = k; bool rev = false; float bestD = 1e9f;
+    for (int j = k; j < n; j++) {
+      float d = tourGap(s_tour[k - 1], s_tour[j]);
+      if (d < bestD) { bestD = d; best = j; rev = false; }
+      Stroke r = s_tour[j]; reverseStroke(r);
+      d = tourGap(s_tour[k - 1], r);
+      if (d < bestD) { bestD = d; best = j; rev = true; }
+    }
+    const Stroke tmp = s_tour[k]; s_tour[k] = s_tour[best]; s_tour[best] = tmp;
+    if (rev) reverseStroke(s_tour[k]);
+  }
+
+  // 2. 2-opt auf der geschlossenen Runde: Abschnitt i+1 … j umdrehen
+  //    (Reihenfolge UND Richtung jedes Linienzugs darin)
+  for (int pass = 0; pass < 50; pass++) {
+    bool improved = false;
+    for (int i = 0; i < n - 1; i++) {
+      for (int j = i + 1; j < n; j++) {
+        const Stroke &A = s_tour[i], &B = s_tour[i + 1], &C = s_tour[j], &D = s_tour[(j + 1) % n];
+        if ((j + 1) % n == i) continue;
+        const float before = tourGap(A, B) + tourGap(C, D);
+        Stroke Cr = C, Br = B; reverseStroke(Cr); reverseStroke(Br);
+        const float after  = tourGap(A, Cr) + tourGap(Br, D);
+        if (after + 0.01f < before) {
+          for (int l = i + 1, r = j; l <= r; l++, r--) {
+            Stroke tmp = s_tour[l]; s_tour[l] = s_tour[r]; s_tour[r] = tmp;
+            reverseStroke(s_tour[l]);
+            if (l != r) reverseStroke(s_tour[r]);
+          }
+          improved = true;
+        }
+      }
+    }
+    if (!improved) break;
+  }
+
+  float total = 0;
+  for (int k = 0; k < n; k++) total += tourGap(s_tour[k], s_tour[(k + 1) % n]);
+  Serial.printf("[Scope] Rundtour: %d Linienzuege, Spruenge gesamt %.0f DAC-Einheiten\n", n, total);
 }
 
 //*****************************************************************************
 // scopeTask – Core 1: zeichnet endlos Zifferblatt + Zeiger
 //*****************************************************************************
-// Ein komplettes Bild besteht aus: Ring mit Minutenstrichen, Ziffern,
-// Stunden-, Minuten- und Sekundenzeiger. Danach beginnt sofort das nächste.
+// Ablauf eines Bildes (Strahl startet in der Mitte):
+//   1. Stundenzeiger, Minutenzeiger      (Rauten um die Mitte)
+//   2. Sekundenzeiger Mitte → Spitze     (halbe Helligkeit)
+//   3. Rundtour Zifferblatt + Ziffern    (Einstieg nahe der Sekundenzeiger-Spitze,
+//                                          endet wieder dort)
+//   4. Sekundenzeiger Spitze → Mitte     (halbe Helligkeit, ersetzt den Rücksprung)
+// Danach beginnt sofort das nächste Bild.
 //
 // Zeigertabellen (DataTable.h) enthalten je 60 vorberechnete Stellungen:
 //   HrPtrData, MinPtrData: 60 × 9 Byte  (4 Punkte = schmale Raute + 0xFF)
-//   SecPtrData:            60 × 5 Byte  (2 Punkte = Linie + 0xFF)
+//   SecPtrData:            60 × 5 Byte  (2 Punkte Spitze, Mitte + 0xFF)
 // Der Offset "Stellung × Eintragslänge" wählt die passende Stellung aus.
 static void scopeTask(void *)
 {
@@ -364,6 +535,16 @@ static void scopeTask(void *)
   disableCore1WDT();
   dacInit();
   Serial.printf("[Scope] laeuft auf Core %d\n", xPortGetCoreID());
+
+#if DIAL_STYLE == 1
+  buildTour(DialDigits24, sizeof(DialDigits24));          // Ziffern 13-24
+#elif DIAL_STYLE == 2
+  buildTour(DialDigitsRoman, sizeof(DialDigitsRoman));    // römische Ziffern
+#else
+  buildTour(DialDigits12, sizeof(DialDigits12));          // Ziffern 1-12
+#endif
+
+  const uint32_t secCycles = s_stepCycles / 2;            // Sekundenzeiger: 2 × halbe Helligkeit
 
   for (;;) {
     // Uhrzeit einmal pro Bild atomar lesen, damit alle drei Zeiger
@@ -377,17 +558,26 @@ static void scopeTask(void *)
     // je 12 Minuten – er wandert also wie bei einer echten Uhr mit.
     const int hpos = (h % 12) * 5 + m / 12;
 
-    PlotTable(DialData, sizeof(DialData), 0x00, 0);                 // Ring + Striche
-#if DIAL_STYLE == 1
-    PlotTable(DialDigits24, sizeof(DialDigits24), 0x00, 0);         // Ziffern 13-24
-#elif DIAL_STYLE == 2
-    PlotTable(DialDigitsRoman, sizeof(DialDigitsRoman), 0x00, 0);   // röm. Ziffern
-#else
-    PlotTable(DialDigits12, sizeof(DialDigits12), 0x00, 0);         // Ziffern 1-12
-#endif
-    PlotTable(HrPtrData,  sizeof(HrPtrData),  0xFF, 9 * hpos, HAND_BRIGHT_PCT); // Stundenzeiger
-    PlotTable(MinPtrData, sizeof(MinPtrData), 0xFF, 9 * m,    HAND_BRIGHT_PCT); // Minutenzeiger
-    PlotTable(SecPtrData, sizeof(SecPtrData), 0xFF, 5 * s);         // Sekundenzeiger
+    // 1. Stunden- und Minutenzeiger
+    PlotTable(HrPtrData,  sizeof(HrPtrData),  0xFF, 9 * hpos, HAND_BRIGHT_PCT);
+    PlotTable(MinPtrData, sizeof(MinPtrData), 0xFF, 9 * m,    HAND_BRIGHT_PCT);
+
+    // 2. Sekundenzeiger hin: Tabelle = [Spitze, Mitte] → Stroke Mitte→Spitze
+    const Stroke secOut  = { SecPtrData, (int16_t)(5 * s + 2), (int16_t)(5 * s) };
+    const Stroke secBack = { SecPtrData, (int16_t)(5 * s),     (int16_t)(5 * s + 2) };
+    drawStroke(secOut, secCycles);
+
+    // 3. Rundtour, Einstieg beim Linienzug, der der Zeigerspitze am nächsten liegt
+    int start = 0, bestD = 1 << 30;
+    for (int k = 0; k < s_tourLen; k++) {
+      const int dx = strokeX(s_tour[k], 0) - lastx, dy = strokeY(s_tour[k], 0) - lasty;
+      if (dx * dx + dy * dy < bestD) { bestD = dx * dx + dy * dy; start = k; }
+    }
+    for (int k = 0; k < s_tourLen; k++)
+      drawStroke(s_tour[(start + k) % s_tourLen], s_stepCycles);
+
+    // 4. Sekundenzeiger zurück zur Mitte (statt eines langen Rücksprungs)
+    drawStroke(secBack, secCycles);
 
 #if defined EXCEL
     // Diagnosemodus: nach einem Bild anhalten (alle Punkte wurden ausgegeben)
