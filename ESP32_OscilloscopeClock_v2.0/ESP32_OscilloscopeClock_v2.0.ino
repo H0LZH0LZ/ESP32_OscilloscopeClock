@@ -457,11 +457,12 @@ static void fitText(char *buf, size_t maxChars)
 }
 
 // ---- Bildaufbau ----------------------------------------------------------------
-//  Zeile 1 : Wochentag (kurz), Datum, ISO-Kalenderwoche (Font 6x10)
-//  Mitte   : HH:MM:SS, 24h, 7-Segment-Stil (11x20 px je Ziffer)
-//  Zeile 3 : Netzwerkname (SSID)                  (Font 5x8, max. 25 Zeichen, zentriert)
-//  Zeile 4 : Signalstärke in dBm
-//  Zeile 5 : "NTP-Sync TT.MM. hh:mm:ss" = Zeitpunkt der letzten NTP-Synchronisierung
+//  y  1-21 : HH:MM:SS, 24h, 7-Segment-Stil (11x20 px je Ziffer)
+//  y ~26-33: Wochentag (kurz), Datum, ISO-Kalenderwoche  (Font 6x10)
+//  y ~37-43: Netzwerkname (SSID)                          (Font 5x8, max. 25 Zeichen)
+//  y ~46-52: Signalstärke in dBm
+//  y ~55-61: "NTP-Sync TT.MM. hh:mm:ss" = letzte NTP-Synchronisierung
+//  Alle Zeilen horizontal zentriert; +0..1 px vertikaler Pixel-Shift.
 static void oledUpdate()
 {
   static const char *WD[] = { "So", "Mo", "Di", "Mi", "Do", "Fr", "Sa" };
@@ -479,17 +480,17 @@ static void oledUpdate()
   char buf[48];
   u8g2.clearBuffer();
 
-  // Datum + Zeitzone
+  // Uhrzeit (24h) – oben
+  drawSegTime(1 + dy, t.tm_hour, t.tm_min, t.tm_sec, dx);
+
+  // Datum + Kalenderwoche
   u8g2.setFont(u8g2_font_6x10_tf);
   if (valid)
     snprintf(buf, sizeof(buf), "%s %02d.%02d.%04d  KW %02d", WD[t.tm_wday], t.tm_mday,
              t.tm_mon + 1, t.tm_year + 1900, isoWeek(t));   // 20 Zeichen = 120 px
   else
     snprintf(buf, sizeof(buf), "Datum unbekannt");
-  drawCentered(buf, 9 + dy, dx);
-
-  // Uhrzeit (24h)
-  drawSegTime(13 + dy, t.tm_hour, t.tm_min, t.tm_sec, dx);
+  drawCentered(buf, 33 + dy, dx);
 
   u8g2.setFont(u8g2_font_5x8_tf);
   const bool connected = wifiConfigured() && WiFi.status() == WL_CONNECTED;
@@ -499,7 +500,7 @@ static void oledUpdate()
   else if (connected)     snprintf(buf, sizeof(buf), "WLAN %s", WiFi.SSID().c_str());
   else                    snprintf(buf, sizeof(buf), "WLAN %s ...", WIFI_SSID);
   fitText(buf, LINE_CHARS);
-  drawCentered(buf, 42 + dy, dx);
+  drawCentered(buf, 43 + dy, dx);
 
   // Signalstärke
   if (connected) {
@@ -510,7 +511,7 @@ static void oledUpdate()
     snprintf(buf, sizeof(buf), "Offline-Betrieb");
   }
   fitText(buf, LINE_CHARS);
-  drawCentered(buf, 51 + dy, dx);
+  drawCentered(buf, 52 + dy, dx);
 
   // Letzte NTP-Synchronisierung
   if (g_ntpSynced) {
@@ -524,7 +525,7 @@ static void oledUpdate()
   } else {
     snprintf(buf, sizeof(buf), "NTP-Sync aus");
   }
-  drawCentered(buf, 60 + dy, dx);
+  drawCentered(buf, 61 + dy, dx);
 
   u8g2.sendBuffer();
 }
