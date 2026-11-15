@@ -85,6 +85,6 @@ Das Modul ist ab Werk auf 4-Wire-SPI eingestellt.
 |---|---|
 | `USE_FAST_DAC` | `1` = direkte Registerzugriffe (schnell). `0` = `dacWrite()` wie im Original (langsamer, flimmert eher) |
 | `DOT_DELAY_CYCLES` | Wartezeit pro Bildpunkt. Erhöhen, wenn Ziffern verzerrt aussehen. Verringern, wenn das Bild flimmert |
-| `DIAL_STYLE` | Zifferblatt: 0 = 1–12, 1 = 24 h, 2 = römisch |
+| `DIAL_STYLE` | Zifferblatt: 0 = 1–12, 1 = 13–24, 2 = römisch |
 | `TZ_INFO` | Zeitzone inkl. Sommerzeitregel (Standard: Mitteleuropa) |
 | `OLED_SHIFT_EVERY_S` | Pixel-Shift gegen OLED-Einbrennen |

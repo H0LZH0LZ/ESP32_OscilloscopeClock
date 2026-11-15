@@ -4,7 +4,7 @@ Diese Version baut auf dem Original von Mauro Pintus auf (siehe unten) und ist f
 Hardware angepasst: **ESP32-WROOM-32U DevKitC V4**, **Waveshare 2.42" OLED (I2C)**, externe
 2,4-GHz-Antenne, BNC-Ausgänge und ein ABS-Gehäuse.
 
-**Aufbau und Verdrahtung: [HARDWARE.md](HARDWARE.md)**
+**Aufbau und Verdrahtung: [HARDWARE.md](HARDWARE.md)** · **Aufbau der Software: [SOFTWARE.md](SOFTWARE.md)**
 
 ### Was ist neu
 - **Core 1** erzeugt ausschließlich die X/Y-Signale (GPIO25/26) – ohne Pausen, ohne Locks.

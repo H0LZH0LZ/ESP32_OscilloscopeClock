@@ -2,9 +2,46 @@
   Data Tables for ESP32 Oscilloscope Clock
   Mauro Pintus , Milano 2018/05/25
 
+  Vektordaten für das Oszilloskop-Bild. Gezeichnet werden sie mit PlotTable()
+  in der .ino-Datei.
+
+  Koordinaten
+  -----------
+  Jeder Punkt besteht aus 2 Bytes (x, y), 0…255 = DAC-Ausgangswert.
+  (0x80, 0x80) ist die Bildmitte, y wächst nach oben (12 Uhr ≈ y 0xFE).
+  Aufeinanderfolgende Punkte werden durch Linien verbunden.
+
+  Trenner
+  -------
+  0x00  beendet bei Zifferblatt/Ziffern einen Linienzug, danach beginnt der
+        nächste (der Strahl springt dorthin). x = 0 ist deshalb als Koordinate
+        in diesen Tabellen nicht erlaubt.
+  0xFF  beendet bei den Zeigern eine Zeigerstellung bzw. die Tabelle.
+
+  Tabellen
+  --------
+  DialData         Ring aus 60 Minutenstrichen (60 × [P1 P2 0x00], lange Striche
+                   an den Stunden). Wird immer gezeichnet.
+  DialDots         Alternative: 60 Punkte statt Striche (nicht verwendet)
+  DialDigits12     Ziffern 1–12              (DIAL_STYLE 0, Standard)
+  DialDigits24     Ziffern 13–24 an den Positionen 1–12   (DIAL_STYLE 1)
+  DialDigitsRoman  römische Ziffern I–XII, 4 als "IIII"   (DIAL_STYLE 2)
+  DialDigitsMin    nur 12, 3, 6, 9 (nicht verwendet)
+  SecPtrData       Sekundenzeiger: 60 Stellungen × 5 Byte
+                   = 2 Punkte (Spitze → Mitte) + 0xFF
+  MinPtrData       Minutenzeiger:  60 Stellungen × 9 Byte
+                   = 4 Punkte (schmale Raute, geschlossen) + 0xFF
+  HrPtrData        Stundenzeiger:  wie MinPtrData, aber kürzer
+  TestData         Testmuster (Quadrat, Achteck, Strahlen) zum Einstellen
+                   des Oszilloskops (nicht verwendet)
+
+  Stellung n (0 = 12 Uhr, im Uhrzeigersinn) beginnt bei Byte-Offset n × 5
+  (Sekunden) bzw. n × 9 (Minuten/Stunden).
+
   v2.0: PROGMEM entfernt. Die Tabellen sind bewusst NICHT const und liegen damit
   im internen RAM (DRAM). So stockt die Strahlausgabe auf Core 1 nicht, wenn der
   Flash-Cache kurzzeitig gesperrt ist (z.B. NVS-Schreibzugriffe des WLAN-Stacks).
+  Belegung: ca. 3,3 KB RAM.
 *********************************************************************************/
 
 byte DialData[] = {
