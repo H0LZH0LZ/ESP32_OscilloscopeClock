@@ -956,7 +956,7 @@ static void buttonPoll()
 //      Oszilloskop-Profil
 //      DIGITAL > ANALOG       (fett)
 //              3              (Countdown 3, 2, 1 als 7-Segment-Ziffer,
-//                              gleiche Größe wie die Uhrzeit: 11x20 px)
+//                              9x16 px, etwas kleiner als die Uhrzeit)
 static bool oledProfileOverlay()
 {
   const uint32_t now = millis();
@@ -974,11 +974,12 @@ static bool oledProfileOverlay()
   u8g2.setFont(u8g2_font_7x14B_tf);
   snprintf(buf, sizeof(buf), "%s > %s", profileName(cur), profileName(next));
   drawCentered(buf, 30, 1);                                        // max. 15 Zeichen = 105 px
-  // Countdown-Ziffer: 11x20 px, Segmentstärke 2 px (wie drawSegTime), zentriert.
+  // Countdown-Ziffer: 9x16 px, Segmentstärke 2 px, zentriert.
   // Eine "1" besteht nur aus den rechten Segmenten – für die Mitte nach links rücken.
-  int x0 = (128 - 3 - 11) / 2 + 1;
-  if (left == 1) x0 -= (11 - 2) / 2;
-  drawSegDigit(x0, 38, (int)left, 11, 20, 2);
+  const int CW = 9, CH = 16, CT = 2;
+  int x0 = (128 - 3 - CW) / 2 + 1;
+  if (left == 1) x0 -= (CW - CT) / 2;
+  drawSegDigit(x0, 40, (int)left, CW, CH, CT);
   u8g2.sendBuffer();
   return true;
 }
