@@ -910,8 +910,7 @@ static uint32_t s_btnDownSince = 0;      // millis() beim Drücken, 0 = losgelas
 static bool     s_btnHandled   = false;  // Umschaltung für diesen Tastendruck erledigt
 static uint32_t s_overlayUntil = 0;      // Profil-Hinweis auf dem OLED bis zu diesem Zeitpunkt
 
-static const char *profileName(uint8_t p)  { return p == 1 ? "DIGITAL" : "ANALOG"; }
-static const char *profileHint(uint8_t p)  { return p == 1 ? "Digital-Oszilloskop" : "Roehren-Oszilloskop"; }
+static const char *profileName(uint8_t p)  { return p == 1 ? "Digital" : "Analog"; }
 
 static void saveProfile(uint8_t p)
 {
@@ -948,7 +947,7 @@ static void buttonPoll()
     g_scopeProfile = p;                       // gilt ab dem nächsten Sprung
     saveProfile(p);
     s_overlayUntil = now + 2500;
-    Serial.printf("[Scope] Profil umgeschaltet: %s (%s), gespeichert\n", profileName(p), profileHint(p));
+    Serial.printf("[Scope] Profil umgeschaltet: %s, gespeichert\n", profileName(p));
   }
 }
 
@@ -969,13 +968,11 @@ static bool oledProfileOverlay()
     drawCentered("wechseln", 25, 1);
     snprintf(buf, sizeof(buf), "noch %lu s halten", (unsigned long)left);
     drawCentered(buf, 41, 1);
-    drawCentered(g_scopeProfile == 1 ? "-> ANALOG" : "-> DIGITAL", 57, 1);
+    drawCentered(g_scopeProfile == 1 ? "-> Analog" : "-> Digital", 57, 1);
   } else {
-    drawCentered("Oszilloskop-Profil", 16, 1);
+    drawCentered("Oszilloskop-Profil", 24, 1);
     u8g2.setFont(u8g2_font_7x14B_tf);
-    drawCentered(profileName(g_scopeProfile), 36, 1);
-    u8g2.setFont(u8g2_font_5x8_tf);
-    drawCentered(profileHint(g_scopeProfile), 54, 1);
+    drawCentered(profileName(g_scopeProfile), 46, 1);
   }
   u8g2.sendBuffer();
   return true;
@@ -1094,9 +1091,8 @@ void setup()
 
   // Gespeichertes Oszilloskop-Profil laden (vor dem Start des scopeTask)
   g_scopeProfile = loadProfile();
-  Serial.printf("[Scope] Profil: %s (%s) – BOOT-Taster %u s halten zum Umschalten\n",
-                profileName(g_scopeProfile), profileHint(g_scopeProfile),
-                (unsigned)(BUTTON_LONG_MS / 1000));
+  Serial.printf("[Scope] Profil: %s – BOOT-Taster %u s halten zum Umschalten\n",
+                profileName(g_scopeProfile), (unsigned)(BUTTON_LONG_MS / 1000));
 
   //                      Funktion   Name     Stack  Param    Prio Handle           Kern
   xTaskCreatePinnedToCore(uiTask,    "ui",    8192, nullptr, 1,   &uiTaskHandle,    UI_CORE);

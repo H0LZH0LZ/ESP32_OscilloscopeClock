@@ -80,7 +80,7 @@ gespeichert, gilt `SCOPE_PROFILE` aus `config.h`.
 ```
 ESP32 Oscilloscope Clock v2.0
 CPU: 240 MHz
-[Scope] Profil: DIGITAL (Digital-Oszilloskop) – BOOT-Taster 2 s halten zum Umschalten
+[Scope] Profil: Digital – BOOT-Taster 2 s halten zum Umschalten
 [UI] laeuft auf Core 0
 [Scope] laeuft auf Core 1
 [WiFi] bekanntes Netz: "Gastzugang"
@@ -89,7 +89,7 @@ CPU: 240 MHz
 [NTP] Sync 15.11.2026 21:15:06, naechster in ca. 60 min
 [WiFi] Verbindung verloren – versuche erneut
 [NTP] Warnung: letzter Sync liegt mehr als 2 Intervalle zurueck
-[Scope] Profil umgeschaltet: ANALOG (Roehren-Oszilloskop), gespeichert
+[Scope] Profil umgeschaltet: Analog, gespeichert
 ```
 
 Passwörter werden nie ausgegeben.
@@ -126,8 +126,8 @@ Strahlgeschwindigkeit:
 | Gleiche Verweilzeit | Jeder Schritt genau `BEAM_NS_PER_UNIT`, über den CPU-Taktzähler. Wird ein Schritt durch einen Interrupt verzögert, werden die folgenden kürzer | Zeit pro Punkt je nach Treiberaufruf |
 | Ecken | Endpunkt einer Linie = Startpunkt der nächsten, wird nur **einmal** ausgegeben | doppelt, helle Punkte an Ecken |
 | Kurze Linien | Rundungsrest wird an die nächste Linie weitergereicht, ein Linienzug bekommt exakt seine Länge an Zeit | jede Linie für sich gerundet |
-| Oszilloskop-Profil | DIGITAL: harte Sprünge, sonst zeigt ein abtastendes Oszilloskop Zwischenpunkte. ANALOG: gebremste Sprünge (siehe nächste Zeile). Umschalten im Betrieb per BOOT-Taster (2 s), gespeichert im NVS (`Preferences`, Namensraum `scopeclock`) | – |
-| Sprünge (ANALOG) | in 1-Einheit-Schritten mit 24-facher Geschwindigkeit (`JUMP_SPEED`), auf den letzten 4 Einheiten bremsend (`JUMP_LANDING`, `JUMP_RAMP`). Die Rücklaufspur hat ca. 1/24 der Linienhelligkeit, alte Verstärker landen trotzdem genau | harter Sprung |
+| Oszilloskop-Profil | Digital: harte Sprünge, sonst zeigt ein abtastendes Oszilloskop Zwischenpunkte. Analog: gebremste Sprünge (siehe nächste Zeile). Umschalten im Betrieb per BOOT-Taster (2 s), gespeichert im NVS (`Preferences`, Namensraum `scopeclock`) | – |
+| Sprünge (Analog) | in 1-Einheit-Schritten mit 24-facher Geschwindigkeit (`JUMP_SPEED`), auf den letzten 4 Einheiten bremsend (`JUMP_LANDING`, `JUMP_RAMP`). Die Rücklaufspur hat ca. 1/24 der Linienhelligkeit, alte Verstärker landen trotzdem genau | harter Sprung |
 | Reihenfolge | Zifferblatt und Ziffern werden beim Start einmal zu einer Rundtour mit minimalen Sprüngen sortiert (Nächster-Nachbar + 2-opt), Einstieg dort, wo der Sekundenzeiger endet | Tabellenreihenfolge |
 | Sekundenzeiger | hin und zurück mit je halber Helligkeit gezeichnet, dadurch entfällt der lange Sprung vom Rand zur Mitte | – |
 | Richtung | jeder Linienzug wird vom näheren Ende aus gezeichnet | immer vom Tabellenanfang |
