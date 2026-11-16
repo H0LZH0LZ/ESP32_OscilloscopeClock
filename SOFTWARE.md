@@ -112,7 +112,7 @@ die Strahlausgabe auf Core 1 nicht.
 Scrollen sichtbar): Uhr, Status, Einstellungen mit den Unterpunkten Oszilloskop, Uhrzeit, Display,
 WLAN und System (springen direkt in die jeweilige Gruppe), Protokoll, darunter die Sprachauswahl.
 Die Einstellungen sind in fünf Gruppen geteilt: **Oszilloskop** (Profil zuerst, Zifferblatt,
-Verweilzeit, Helligkeiten, Rücklauf-Tempo, Testbild), **Uhrzeit** (ggf. „Uhrzeit stellen“, Zeitformat,
+Testbild an zweiter Stelle, Verweilzeit, Helligkeiten, Rücklauf-Tempo), **Uhrzeit** (ggf. „Uhrzeit stellen“, Zeitformat,
 Zeitzone, Zeitserver), **Display** (OLED-Helligkeit, Sekunden, Drehung, Pixelverschiebung)
 und **WLAN** (gespeicherte Netze, Netzsuche, Netz hinzufügen, Neu verbinden, WLAN zurücksetzen) und **System** (Gerätename, Passwort, Einstellungen sichern/laden). Der oberste Abschnitt (Überschrift, Vorschau, Uhrzeit,
 Datum) ist zentriert. Die Titelleiste „ESP32 Oscilloscope Clock“ bleibt immer oben neben der
@@ -153,8 +153,8 @@ und berechnet die Rundtour neu. Das dauert einige zehn Millisekunden, so lange s
 (kurzer Lichtpunkt). Die Auswahl wird im NVS gespeichert (Schlüssel `dial`), `DIAL_STYLE` in
 `config.h` ist nur der Startwert. Alle Ziffernsätze liegen deshalb im RAM (zusammen ca. 0,7 KB).
 
-Darunter folgen drei Bereiche. **Status** und **Protokoll** sind anfangs eingeklappt (Pfeil V,
-Zustand im Browser gespeichert; ein Sprung aus dem Menü klappt sie auf). Jede Einstellung und jede Schaltfläche hat eine kurze Beschreibung:
+Darunter folgen drei Bereiche. **Status** und **Protokoll** sind einklappbar (Pfeil V): Status ist anfangs offen, Protokoll zu
+(Zustand im Browser gespeichert; ein Sprung aus dem Menü klappt sie auf). Jede Einstellung und jede Schaltfläche hat eine kurze Beschreibung:
 - **Status:** große Uhrzeit, KW und Datum, Zeitabgleich (NTP) mit letztem Abgleich, WLAN,
   Signalstärke, Netzwerkadresse, Laufzeit, Arbeitsspeicher (frei/gesamt, darunter Tiefstwert seit
   dem Neustart und größter freier Block), Prozessorauslastung Kern 0 und Kern 1 (je eine Zeile mit
@@ -168,7 +168,7 @@ Zustand im Browser gespeichert; ein Sprung aus dem Menü klappt sie auf). Jede E
 - **Einstellungen:** siehe [Einstellungen im Webinterface](#einstellungen-im-webinterface). Solange
   kein Zeitserver erreichbar war, steht ganz oben zusätzlich „Uhrzeit stellen“ (siehe [Zeit und NTP](#zeit-und-ntp)).
 - **WLAN** (Gruppe in den Einstellungen): gespeicherte Netze (bis zu 10, je mit „Löschen“), Netzsuche
-  (stärkstes Netz oben, Balken und dBm, das verbundene Netz ist markiert; Netz antippen übernimmt den Namen), Formular, „Neu verbinden“, „WLAN zurücksetzen“ (alle Netze löschen).
+  (stärkstes Netz oben, Balken und dBm, das verbundene Netz ist markiert; Netz antippen übernimmt den Namen), Formular „Netz hinzufügen“ (anfangs eingeklappt; offen, solange noch kein Netz gespeichert ist, und beim Antippen eines gefundenen Netzes), „Neu verbinden“, „WLAN zurücksetzen“ (alle Netze löschen).
 - **Protokoll** (das Log der Firmware): die letzten `LOG_BUFFER_SIZE` Byte (8 KB, ca. 120 Zeilen),
   alle 5 s aktualisiert, solange „Automatisch aktualisieren“ an ist („Jetzt aktualisieren“ lädt sofort). Das Feld
   hat eine feste Höhe (max. 60 % des Bildschirms) mit eigener Scrollleiste. Wischen im Feld scrollt
@@ -176,10 +176,13 @@ Zustand im Browser gespeichert; ein Sprung aus dem Menü klappt sie auf). Jede E
   oben, bleibt die Position beim Aktualisieren erhalten. „Alles anzeigen“ klappt das Log auf volle
   Länge auf, darunter steht die Zeilenzahl. „Kopieren“ legt die gefilterten Zeilen in die
   Zwischenablage (über http per verstecktem Textfeld, weil die Clipboard-API nur mit https geht).
+  „Leeren“ löscht nach Rückfrage den Ringpuffer der Uhr (`POST /api/log/clear`); die erste neue Zeile
+  ist „Protokoll geloescht“.
 - **System** (Gruppe in den Einstellungen): Gerätename (`host`, a–z, 0–9, Bindestrich, max. 32; gilt
   sofort für mDNS `http://<name>.local` und beim nächsten Verbinden für den Router), Passwort setzen/
   entfernen, Einstellungen sichern (JSON-Datei mit allen Einstellungen außer WLANs und Passwort)
-  und laden (sendet die Werte an `POST /api/settings`).
+  und laden (sendet die Werte an `POST /api/settings`), „Alle Einstellungen zurücksetzen“ (alle Gruppen,
+  Sprache und Gerätename auf `config.h`, Testbild aus; WLANs und Passwort bleiben; 8 s „Rückgängig“).
 
 **Bedienhilfen der Seite:**
 - **Punkte unter der Vorschau** zeigen das aktive Zifferblatt; Punkt oder Pfeil ‹ › antippen wechselt (zusätzlich zum Wischen).
@@ -211,6 +214,7 @@ eingesetzt (`textContent`), nie als HTML.
 | `GET /manifest.json`, `/icon.svg`, `/icon.png` | App-Manifest und Symbol für den Startbildschirm |
 | `GET /api/status` | JSON: `time`, `date`, `kw`, `ntp{synced,overdue,manual,dst,last,server}`, `wifi{configured,connected,ssid,rssi,ip,host}`, `ap{active,ssid,ip}`, `profile`, `dial`, `fps`, `heap`, `heapTotal`, `heapMin`, `heapBlock`, `cpu0`, `reset`, `uptime`, `fw`, `lang`, `h12`, `auth` (Passwort gesetzt), `test` (Testbild an) |
 | `GET /api/log` | Log als Text, älteste Zeile zuerst |
+| `POST /api/log/clear` | Log-Ringpuffer leeren (serielle Ausgabe unberührt) |
 | `GET /api/networks` | gespeicherte Netze `[{ssid, source:"web"}]`, nie Passwörter |
 | `GET /font.woff2`, `GET /font-600.woff2` | Schrift der Seite, Light und SemiBold (aus `font.h`), wird ein Jahr im Browser zwischengespeichert. Zwei feste Schnitte statt einer variablen Schrift, weil manche Android-Browser fette Texte einer variablen Schrift sonst in der Systemschrift zeigen |
 | `GET /api/vectors` | Vektordaten für die Vorschau (ca. 9 KB): `dial`, `digits` (alle Zifferblätter, Index = Stil), `test` (Testbild), `hr`, `min`, `sec` (je 60 Stellungen). Linienzüge als `[x0,y0,x1,y1,…]`, 0–255, y nach oben |
@@ -221,7 +225,7 @@ eingesetzt (`textContent`), nie als HTML.
 | `POST /api/reconnect` | Verbindung trennen, `wifiTask` verbindet mit dem stärksten Netz |
 | `GET /api/settings` | aktuelle Einstellungen, Standardwerte (`defaults`) und Zeitzonen-Liste |
 | `POST /api/settings` | beliebige Felder `profile`, `dial`, `beamNs`, `handPct`, `tickPct`, `digitPct`, `jumpSpeed`, `tz`, `ntp`, `oledPct`, `oledSec`, `oledShift`, `oledFlip`, `lang` (`de`/`en`), `h12` (0/1), `host` (Gerätename), `test` (0/1, Testbild, nicht gespeichert): prüfen, sofort anwenden, speichern. Antwort `{ok, msg, settings}` |
-| `POST /api/settings/reset` | `group` = `scope` (Oszilloskop), `time` (Uhrzeit) oder `display`: nur diese Gruppe auf die Werte aus `config.h`; ohne `group` alles inkl. Sprache. WLANs bleiben immer erhalten |
+| `POST /api/settings/reset` | `group` = `scope` (Oszilloskop), `time` (Uhrzeit) oder `display`: nur diese Gruppe auf die Werte aus `config.h`; ohne `group` alles inkl. Sprache und Gerätename, Testbild aus. WLANs bleiben immer erhalten |
 | `POST /api/password` | `pw` (4–32 Zeichen) setzt das Passwort, leer entfernt es (NVS `upw`) |
 | `POST /api/dial` | `style` 0 = 1–12, 1 = 12/3/6/9, 2 = römisch I–XII, 3 = römisch XII/III/VI/IX, 4 = nur Striche: Zifferblatt umschalten (Oszilloskop und Vorschau), wird gespeichert |
 | `POST /api/time` | `epoch` (Unix-Sekunden, UTC) **oder** `local` (`JJJJ-MM-TTTHH:MM[:SS]`, Ortszeit), optional `dst` (-1 automatisch, 1 Sommerzeit, 0 Winterzeit): Uhrzeit von Hand stellen, 2024–2099 |

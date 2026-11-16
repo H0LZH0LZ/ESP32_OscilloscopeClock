@@ -254,6 +254,15 @@ static void logMsg(const char *fmt, ...)
   portEXIT_CRITICAL(&s_logMux);
 }
 
+// Leert den Ringpuffer (POST /api/log/clear). Die serielle Ausgabe bleibt davon unberührt.
+static void logClear()
+{
+  portENTER_CRITICAL(&s_logMux);
+  s_logHead = 0; s_logWrapped = false;
+  memset(s_logBuf, 0, sizeof(s_logBuf));
+  portEXIT_CRITICAL(&s_logMux);
+}
+
 // Liefert den Log-Inhalt in zeitlicher Reihenfolge (älteste Zeile zuerst).
 // Nach einem Überlauf wird die angeschnittene erste Zeile weggelassen.
 static String logRead()
@@ -1770,7 +1779,7 @@ static void handleSettingsReset()
     if (scope) for (const char *k : { "profile", "dial", "beam", "hand", "tick", "digit", "jump" }) p.remove(k);
     if (tim)   for (const char *k : { "tz", "ntp", "h12" }) p.remove(k);
     if (disp)  for (const char *k : { "oled", "oledp", "osec", "night", "nfrom", "nto", "npct", "shift", "flip" }) p.remove(k);
-    if (all)   p.remove("lang");
+    if (all)   { p.remove("lang"); p.remove("host"); }
     p.end();
   }
   if (scope) {
@@ -1789,7 +1798,15 @@ static void handleSettingsReset()
     s_oledShift = OLED_SHIFT_EVERY_S > 0;
     s_oledFlip  = OLED_FLIP;  oledSetFlip(s_oledFlip);
   }
-  if (all) s_lang = UI_LANG;
+  if (all) {
+    s_lang = UI_LANG;
+    g_testPattern = false;
+    if (strcmp(s_host, WIFI_HOSTNAME) != 0) {           // Gerätename zurück auf WIFI_HOSTNAME
+      strlcpy(s_host, WIFI_HOSTNAME, sizeof(s_host));
+      WiFi.setHostname(s_host);
+      if (WiFi.status() == WL_CONNECTED) { MDNS.end(); if (MDNS.begin(s_host)) MDNS.addService("http", "tcp", 80); }
+    }
+  }
   const char *name = all ? tr("alle", "all") : scope ? tr("Oszilloskop", "oscilloscope")
                    : tim ? tr("Uhrzeit", "time") : "Display";
   logMsg(tr("[Web] Einstellungen (%s) auf Standardwerte zurueckgesetzt", "[Web] settings (%s) reset to defaults"), name);
@@ -1861,6 +1878,12 @@ static void webStart()
   web.on("/api/settings",       HTTP_GET,  handleSettingsGet);
   web.on("/api/settings",       HTTP_POST, handleSettingsPost);
   web.on("/api/settings/reset", HTTP_POST, handleSettingsReset);
+  web.on("/api/log/clear",   HTTP_POST, [] {
+    if (!authOk()) return;
+    logClear();
+    logMsg("%s", tr("[Web] Protokoll geloescht", "[Web] log cleared"));
+    sendJsonResult(true, tr("Protokoll gelöscht", "Log cleared"));
+  });
   web.on("/api/password",       HTTP_POST, handlePassword);
   web.onNotFound(handleNotFound);
   static const char *hdrs[] = { "X-Pass" };                  // Passwort-Header auswerten können

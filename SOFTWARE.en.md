@@ -117,7 +117,7 @@ affect the beam output on core 1.
 scrolling): „Uhr“ (clock), Status, „Einstellungen“ (settings), with the sub-entries „Oszilloskop“, „Uhrzeit“, „Display“, „WLAN“ and „System“ (jump directly to that group of
 the settings), „Protokoll“ (log), below them
 the language selection. The settings are split into five groups: **„Oszilloskop“** (Oscilloscope: profile first, dial,
-dwell time, brightness, retrace speed, test pattern), **„Uhrzeit“** (Time: “Set time” if shown, time format,
+test pattern in second place, dwell time, brightness, retrace speed), **„Uhrzeit“** (Time: “Set time” if shown, time format,
 time zone, time server), **„Display“** (OLED brightness, seconds, rotation, pixel shift)
 and **„WLAN“** (Wi-Fi: saved networks, network scan, add network, reconnect, reset Wi-Fi) and **„System“** (device name, password, back up/load settings).
 The top section (title, preview, time, date) is centred. The title bar “ESP32 Oscilloscope Clock”
@@ -169,7 +169,7 @@ Below follow three sections. Every setting and every button has a short descript
   As long as no time server has been reached, „Uhrzeit stellen“ (set time) appears at the top
   (see [Time and NTP](#time-and-ntp)).
 - **„WLAN“ (Wi-Fi, group in the settings):** saved networks (up to 10, each with “Delete”), network
-  scan (strongest network first, bars and dBm, the connected network is marked; tapping a network takes over its name), form, „Neu verbinden“ (reconnect), „WLAN zurücksetzen“ (reset Wi-Fi: delete all networks).
+  scan (strongest network first, bars and dBm, the connected network is marked; tapping a network takes over its name), form „Netz hinzufügen“ (add network; collapsed at first – open while no network is saved and when tapping a found network), „Neu verbinden“ (reconnect), „WLAN zurücksetzen“ (reset Wi-Fi: delete all networks).
 - **„Protokoll“ (log):** the last `LOG_BUFFER_SIZE` bytes (8 KB, approx. 120 lines), refreshed every
   5 s while „Automatisch aktualisieren“ (auto refresh) is on („Jetzt aktualisieren“ – refresh now –
   loads immediately). The field has a fixed height (max. 60 % of the screen) with its own scroll
@@ -177,12 +177,14 @@ Below follow three sections. Every setting and every button has a short descript
   lines follow automatically. If you are reading further up, the position is kept on refresh.
   „Alles anzeigen“ (show all) expands the log to full length; the line count is shown below.
   „Kopieren“ (copy) puts the filtered lines on the clipboard (over http via a hidden text field, since
-  the Clipboard API needs https).
+  the Clipboard API needs https). „Leeren“ (clear) empties the clock's ring buffer after a confirmation
+  (`POST /api/log/clear`); the first new line is “log cleared”.
 - **„System“ (group in the settings):** device name (`host`, a–z, 0–9, hyphen, max. 32; applies at once
   to mDNS `http://<name>.local` and to the router on the next connection), set/remove password, back up
   settings (JSON file with all settings except Wi-Fi networks and password) and load them (sent to
-  `POST /api/settings`).
-- **Status** and **„Protokoll“** start collapsed (V arrow, state saved in the browser; a jump from the menu opens them).
+  `POST /api/settings`), „Alle Einstellungen zurücksetzen“ (reset all settings: all groups, language and
+  device name to `config.h`, test pattern off; Wi-Fi networks and password are kept; “Undo” for 8 s).
+- **Status** and **„Protokoll“** are collapsible (V arrow): status starts open, log closed (state saved in the browser; a jump from the menu opens them).
 
 **Usability aids of the page:**
 - **Dots below the preview** show the active dial; tapping a dot or the arrows ‹ › changes it (in addition to swiping).
@@ -218,6 +220,7 @@ inserted as text (`textContent`), never as HTML.
 | `GET /font.woff2`, `GET /font-600.woff2` | font of the page, Light and SemiBold (from `font.h`), cached by the browser for one year. Two static styles instead of a variable font, because some Android browsers otherwise show bold text of a variable font in the system font |
 | `GET /api/status` | JSON: `time`, `date`, `kw`, `ntp{synced,overdue,manual,dst,last,server}`, `wifi{configured,connected,ssid,rssi,ip,host}`, `ap{active,ssid,ip}`, `profile`, `dial`, `fps`, `heap`, `heapTotal`, `heapMin`, `heapBlock`, `cpu0`, `reset`, `uptime`, `fw`, `lang`, `h12`, `auth` (password set), `test` (test pattern on) |
 | `GET /api/log` | log as text, oldest line first |
+| `POST /api/log/clear` | empty the log ring buffer (serial output unaffected) |
 | `GET /api/networks` | saved networks `[{ssid, source:"web"}]`, never passwords |
 | `GET /api/vectors` | vector data for the preview (approx. 9 KB): `dial`, `digits` (all dials, index = style), `test` (test pattern), `hr`, `min`, `sec` (60 positions each). Polylines as `[x0,y0,x1,y1,…]`, 0–255, y upwards |
 | `GET /api/scan` | network scan in the background: first `{"running":true}`, then `{"networks":[{ssid,rssi,open}]}` |
@@ -227,7 +230,7 @@ inserted as text (`textContent`), never as HTML.
 | `POST /api/reconnect` | disconnect, `wifiTask` connects to the strongest network |
 | `GET /api/settings` | current settings, default values (`defaults`) and time zone list |
 | `POST /api/settings` | any of the fields `profile`, `dial`, `beamNs`, `handPct`, `tickPct`, `digitPct`, `jumpSpeed`, `tz`, `ntp`, `oledPct`, `oledSec`, `oledShift`, `oledFlip`, `lang` (`de`/`en`), `h12` (0/1), `host` (device name), `test` (0/1, test pattern, not saved): validate, apply immediately, save. Answer `{ok, msg, settings}` |
-| `POST /api/settings/reset` | `group` = `scope` (oscilloscope), `time` or `display`: reset only this group to the values from `config.h`; without `group` everything incl. language. Wi-Fi networks are always kept |
+| `POST /api/settings/reset` | `group` = `scope` (oscilloscope), `time` or `display`: reset only this group to the values from `config.h`; without `group` everything incl. language and device name, test pattern off. Wi-Fi networks are always kept |
 | `POST /api/password` | `pw` (4–32 characters) sets the password, empty removes it (NVS `upw`) |
 | `POST /api/dial` | `style` 0 = 1–12, 1 = 12/3/6/9, 2 = Roman I–XII, 3 = Roman XII/III/VI/IX, 4 = ticks only: change the dial (oscilloscope and preview), saved |
 | `POST /api/time` | `epoch` (Unix seconds, UTC) **or** `local` (`YYYY-MM-DDTHH:MM[:SS]`, local time), optional `dst` (-1 automatic, 1 summer time, 0 winter time): set the time by hand, 2024–2099 |

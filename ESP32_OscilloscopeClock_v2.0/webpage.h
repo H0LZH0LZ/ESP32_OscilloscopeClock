@@ -85,7 +85,7 @@ header{padding:0 0 4px;text-align:center;scroll-margin-top:calc(env(safe-area-in
    damit die Uhrzeit beim Weiterzählen nicht hin und her springt. */
 #clock i{display:inline-block;width:.62em;font-style:normal;text-align:center}
 #clock .ap{font-size:.4em;margin-left:.25em;letter-spacing:.04em}
-#date{color:var(--mute)}
+#date{color:var(--mute);font-size:21px;margin-top:2px}
 .scope canvas{margin:0 auto}
 section{background:var(--card);border-radius:14px;margin:0 0 14px;padding:6px 16px}   /* oben/unten 6 px + Innenabstand der Zeilen ≈ 16 px wie links/rechts */
 /* Abschnittsüberschriften bleiben beim Scrollen direkt unter der Titelleiste
@@ -110,7 +110,13 @@ button.sec{background:transparent;color:var(--acc);border:1px solid var(--line)}
 button.del{width:auto;min-height:36px;padding:0 12px;background:transparent;color:var(--err);border:1px solid var(--line);margin:0}
 button:disabled{opacity:.5}
 label{display:block;color:var(--mute);font-size:14px;margin:10px 0 4px}
-.subhead{color:var(--fg);font-size:16px;margin:10px 0 2px}   /* Zwischenüberschrift wie die Einstellungen */
+.subhead{color:var(--fg);font-size:16px;margin:10px 0 2px}
+/* „Netz hinzufügen“: einklappbar, anfangs zu (offen, solange kein Netz gespeichert ist) */
+button.fold{display:flex;justify-content:space-between;align-items:center;width:100%;background:transparent;color:var(--fg);
+ font-weight:300;font-size:16px;padding:0;margin:4px 0 0;border-top:1px solid var(--line);border-radius:0}
+button.fold::after{content:"";width:8px;height:8px;margin:0 10px 4px 0;border:solid var(--acc);border-width:0 2px 2px 0;
+ transition:transform .2s;transform:rotate(-135deg) translate(-2px,-2px)}
+button.fold[aria-expanded="false"]::after{transform:rotate(45deg)}   /* Zwischenüberschrift wie die Einstellungen */
 .desc{color:var(--mute);font-size:13px;margin:0 0 6px}.desc.top{margin-top:10px}   /* kurze Funktionsbeschreibung */
 input{font:inherit;font-size:16px;width:100%;min-height:44px;padding:0 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--fg)}
 .pw{display:flex;gap:8px}.pw button{width:auto;margin:0;white-space:nowrap}
@@ -133,7 +139,7 @@ pre{font:12px/1.45 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere;heigh
 pre::-webkit-scrollbar{width:6px}pre::-webkit-scrollbar-thumb{background:var(--mute);border-radius:3px}
 pre.full{height:auto;overflow-y:visible}
 .loginfo{color:var(--mute);font-size:13px;margin:0 0 8px;display:flex;justify-content:space-between;gap:8px}
-.tools{display:flex;flex-wrap:wrap;gap:8px}.tools button{margin:0 0 10px;flex:1 1 28%}
+.tools{display:flex;flex-wrap:wrap;gap:8px}.tools button{margin:0 0 10px;flex:1 1 40%}
 .logsw{min-height:44px;border-top:1px solid var(--line);margin-bottom:0}
 /* Einstellungen */
 .set{border-top:1px solid var(--line);padding:10px 0}
@@ -276,6 +282,9 @@ h2.coll::after{content:"";width:8px;height:8px;margin:0 10px 4px 0;border:solid 
    <button type="button" data-profile="0" aria-pressed="false">ANALOG</button></div>
   <div class="sub">DIGITAL für digitale Oszilloskope, ANALOG für Röhren-Oszilloskope. Umschalten auch an der Uhr: BOOT-Taster 3 s halten.</div></div>
  <!-- Zifferblatt (auch per Wischen über die Vorschau) -->
+ <!-- Testbild zum Einstellen des Oszilloskops (nicht gespeichert) -->
+ <div class="set"><label class="sw"><span>Testbild</span><input type="checkbox" id="sTest"></label>
+  <div class="sub">Zeigt statt der Uhr Rahmen, Kreis und Mittelkreuz zum Einstellen von Position, Größe und Fokus. Der Kreis muss rund sein (X und Y gleich groß). Wird nicht gespeichert.</div></div>
  <div class="set"><div class="head"><label for="sDial">Zifferblatt</label></div>
   <select id="sDial"><option value="0">Ziffern 1–12</option><option value="1">Ziffern 12 · 3 · 6 · 9</option><option value="4">Nur Striche</option>
    <option value="3">Römisch XII · III · VI · IX</option><option value="2">Römisch I–XII</option></select>
@@ -300,9 +309,6 @@ h2.coll::after{content:"";width:8px;height:8px;margin:0 10px 4px 0;border:solid 
  <div class="set" id="jumpRow"><div class="head"><label for="sJump">Rücklauf-Tempo</label><span class="val" id="vJump"></span></div>
   <input type="range" id="sJump" min="0" max="48" step="1">
   <div class="sub" id="jumpHint"></div></div>
- <!-- Testbild zum Einstellen des Oszilloskops (nicht gespeichert) -->
- <div class="set"><label class="sw"><span>Testbild</span><input type="checkbox" id="sTest"></label>
-  <div class="sub">Zeigt statt der Uhr Rahmen, Kreis und Mittelkreuz zum Einstellen von Position, Größe und Fokus. Der Kreis muss rund sein (X und Y gleich groß). Wird nicht gespeichert.</div></div>
   <div class="gmsg" data-gmsg="scope"></div>
   <!-- Nur diese Gruppe auf die Werte aus config.h zurücksetzen -->
   <button type="button" class="sec greset" data-reset="scope">Auf Standardwerte zurücksetzen</button>
@@ -378,7 +384,8 @@ h2.coll::after{content:"";width:8px;height:8px;margin:0 10px 4px 0;border:solid 
  <ul id="scan"></ul>
  <form id="wf" autocomplete="off">
   <!-- Neues Netz eintragen (Name, Passwort, speichern) -->
-  <div class="subhead">Netz hinzufügen</div>
+  <button type="button" class="fold" id="addTgl" aria-expanded="false" aria-controls="addBody">Netz hinzufügen</button>
+  <div id="addBody" hidden>
   <label for="ssid">Netzwerkname (SSID)</label>
   <input id="ssid" name="ssid" maxlength="32" autocapitalize="none" autocorrect="off" spellcheck="false" required>
   <div class="desc">Name des WLANs genau wie am Router (Groß-/Kleinschreibung beachten).</div>
@@ -389,6 +396,7 @@ h2.coll::after{content:"";width:8px;height:8px;margin:0 10px 4px 0;border:solid 
   <div id="msg"></div>
   <button type="submit">Netz speichern</button>
   <div class="desc">Speichert das Netz auf der Uhr (bis zu 10 Netze).</div>
+  </div>
  </form>
  <!-- Verbindung trennen und mit dem stärksten Netz neu verbinden -->
  <button class="sec" id="recon">Neu verbinden (mit dem stärksten Netz)</button>
@@ -414,6 +422,10 @@ h2.coll::after{content:"";width:8px;height:8px;margin:0 10px 4px 0;border:solid 
   <div class="tools"><button type="button" class="sec" id="bkSave">Sichern (Datei)</button><button type="button" class="sec" id="bkLoad">Laden</button></div>
   <input type="file" id="bkFile" accept=".json,application/json" hidden>
   <div class="sub">Speichert alle Einstellungen außer WLANs und Passwort in einer Datei und spielt sie wieder ein – etwa nach einem Tausch des ESP32.</div></div>
+ <!-- Alle Einstellungen auf die Werte aus config.h (WLANs und Passwort bleiben) -->
+  <div class="gmsg" data-gmsg="all"></div>
+  <button type="button" class="sec greset" data-reset="all">Alle Einstellungen zurücksetzen</button>
+  <div class="desc">Setzt alle Gruppen, Sprache und Gerätename auf die Werte aus config.h zurück und schaltet das Testbild aus. WLANs und Passwort bleiben erhalten. <span class="saved">Änderungen wirken sofort und bleiben gespeichert.</span></div>
  </div>
 </section></div>
 
@@ -435,8 +447,9 @@ h2.coll::after{content:"";width:8px;height:8px;margin:0 10px 4px 0;border:solid 
  <!-- Sofort neu laden / feste Höhe aufheben -->
  <div class="tools"><button class="sec" id="logBtn">Jetzt aktualisieren</button>
  <button class="sec" id="logFull">Alles anzeigen</button>
- <button class="sec" id="logCopy">Kopieren</button></div>
- <p class="hint">„Jetzt aktualisieren“ lädt sofort neu. „Alles anzeigen“ hebt die feste Höhe des Feldes auf. „Kopieren“ legt die angezeigten Zeilen in die Zwischenablage, etwa für eine Fehlermeldung. Die Uhr speichert die letzten 8 KB (ca. 120 Zeilen).</p>
+ <button class="sec" id="logCopy">Kopieren</button>
+ <button class="sec" id="logClr">Leeren</button></div>
+ <p class="hint">„Jetzt aktualisieren“ lädt sofort neu. „Alles anzeigen“ hebt die feste Höhe des Feldes auf. „Kopieren“ legt die angezeigten Zeilen in die Zwischenablage, etwa für eine Fehlermeldung. „Leeren“ löscht den Protokollspeicher der Uhr, etwa vor einem Test. Die Uhr speichert die letzten 8 KB (ca. 120 Zeilen).</p>
 </section></div>
 </main>
 <script>
@@ -460,7 +473,8 @@ Object.assign(EN,{"Helligkeit Minutenstriche": "Tick mark brightness", "Helligke
 Object.assign(EN,{"Unter 100 %, weil die schmalen Zeiger sonst heller wirken als der Rest. 0 % blendet die Zeiger aus.": "Below 100 % because the narrow hands would otherwise look brighter than the rest. 0 % hides the hands.", "Die 60 Striche am Rand. 0 % blendet sie aus.": "The 60 marks around the edge. 0 % hides them.", "Die Zahlen auf dem Zifferblatt. 0 % blendet sie aus.": "The numerals on the dial. 0 % hides them.", "Helligkeit des kleinen Displays an der Uhr. 0 % schaltet es aus; niedrige Werte schonen das OLED.": "Brightness of the small display on the clock. 0 % switches it off; low values protect the OLED.", "Sekunden anzeigen": "Show seconds", "Uhrzeit auf dem OLED als HH:MM:SS oder nur HH:MM.": "Time on the OLED as HH:MM:SS or just HH:MM.", "aus": "off"});
 Object.assign(EN,{"WLAN zurücksetzen": "Reset Wi-Fi", "Löscht alle gespeicherten Netze. Die Uhr startet danach neu und öffnet das Setup-WLAN „ScopeClock-Setup“.": "Deletes all saved networks. The clock then restarts and opens the setup network “ScopeClock-Setup”."});
 Object.assign(EN,{"Darstellung": "Appearance", "Hell": "Light", "Dunkel": "Dark", "Hell, dunkel oder wie im System eingestellt. Wird nur in diesem Browser gespeichert.": "Light, dark or as set in the system. Saved only in this browser.", "Voriges Zifferblatt": "Previous dial", "Nächstes Zifferblatt": "Next dial", "Alle": "All", "Zeit": "Time", "Warnungen": "Warnings", "Zeigt nur Meldungen eines Bereichs; „Warnungen“ zeigt Probleme wie Verbindungsabbrüche.": "Shows only messages of one area; “Warnings” shows problems such as connection losses.", "Rückgängig": "Undo", "Wiederhergestellt": "Restored", "von Hand": "manual"});
-Object.assign(EN,{"Nur Striche": "Ticks only", "Testbild": "Test pattern", "Zeigt statt der Uhr Rahmen, Kreis und Mittelkreuz zum Einstellen von Position, Größe und Fokus. Der Kreis muss rund sein (X und Y gleich groß). Wird nicht gespeichert.": "Shows a frame, circle and centre cross instead of the clock to adjust position, size and focus. The circle must be round (X and Y equal). Not saved.", "Gerätename": "Device name", "Name im Router und Adresse im Browser:": "Name in the router and address in the browser:", "nur a–z, 0–9 und Bindestrich.": "only a–z, 0–9 and hyphen.", "Passwort für Änderungen": "Password for changes", "Setzen": "Set", "Passwort entfernen": "Remove password", "Standardmäßig ohne Passwort. Ist eines gesetzt, fragt die Seite bei Änderungen einmal danach; Anzeigen geht weiterhin ohne. 4–32 Zeichen.": "No password by default. If one is set, the page asks for it once when changing something; viewing still works without. 4–32 characters.", "Einstellungen sichern": "Back up settings", "Sichern (Datei)": "Save (file)", "Laden": "Load", "Speichert alle Einstellungen außer WLANs und Passwort in einer Datei und spielt sie wieder ein – etwa nach einem Tausch des ESP32.": "Saves all settings except Wi-Fi networks and password to a file and loads them back – e.g. after replacing the ESP32.", "Kopieren": "Copy", "„Jetzt aktualisieren“ lädt sofort neu. „Alles anzeigen“ hebt die feste Höhe des Feldes auf. „Kopieren“ legt die angezeigten Zeilen in die Zwischenablage, etwa für eine Fehlermeldung. Die Uhr speichert die letzten 8 KB (ca. 120 Zeilen).": "“Refresh now” reloads immediately. “Show all” removes the fixed height of the field. “Copy” puts the shown lines on the clipboard, e.g. for a bug report. The clock keeps the last 8 KB (approx. 120 lines).", "Passwort der Uhr eingeben": "Enter the clock password", "Passwort falsch – bitte erneut eingeben": "Wrong password – please try again", "Passwort erforderlich": "Password required", "Passwort falsch": "Wrong password", "gesetzt": "set", "keins": "none", "verbunden": "connected", "Kopiert": "Copied", "Kopieren nicht möglich": "Copy not possible", "Datei ungültig": "Invalid file", "Geladen": "Loaded"});
+Object.assign(EN,{"Nur Striche": "Ticks only", "Testbild": "Test pattern", "Zeigt statt der Uhr Rahmen, Kreis und Mittelkreuz zum Einstellen von Position, Größe und Fokus. Der Kreis muss rund sein (X und Y gleich groß). Wird nicht gespeichert.": "Shows a frame, circle and centre cross instead of the clock to adjust position, size and focus. The circle must be round (X and Y equal). Not saved.", "Gerätename": "Device name", "Name im Router und Adresse im Browser:": "Name in the router and address in the browser:", "nur a–z, 0–9 und Bindestrich.": "only a–z, 0–9 and hyphen.", "Passwort für Änderungen": "Password for changes", "Setzen": "Set", "Passwort entfernen": "Remove password", "Standardmäßig ohne Passwort. Ist eines gesetzt, fragt die Seite bei Änderungen einmal danach; Anzeigen geht weiterhin ohne. 4–32 Zeichen.": "No password by default. If one is set, the page asks for it once when changing something; viewing still works without. 4–32 characters.", "Einstellungen sichern": "Back up settings", "Sichern (Datei)": "Save (file)", "Laden": "Load", "Speichert alle Einstellungen außer WLANs und Passwort in einer Datei und spielt sie wieder ein – etwa nach einem Tausch des ESP32.": "Saves all settings except Wi-Fi networks and password to a file and loads them back – e.g. after replacing the ESP32.", "Kopieren": "Copy", "„Jetzt aktualisieren“ lädt sofort neu. „Alles anzeigen“ hebt die feste Höhe des Feldes auf. „Kopieren“ legt die angezeigten Zeilen in die Zwischenablage, etwa für eine Fehlermeldung. „Leeren“ löscht den Protokollspeicher der Uhr, etwa vor einem Test. Die Uhr speichert die letzten 8 KB (ca. 120 Zeilen).": "“Refresh now” reloads immediately. “Show all” removes the fixed height of the field. “Copy” puts the shown lines on the clipboard, e.g. for a bug report. “Clear” deletes the log memory of the clock, e.g. before a test. The clock keeps the last 8 KB (approx. 120 lines).", "Passwort der Uhr eingeben": "Enter the clock password", "Passwort falsch – bitte erneut eingeben": "Wrong password – please try again", "Passwort erforderlich": "Password required", "Passwort falsch": "Wrong password", "gesetzt": "set", "keins": "none", "verbunden": "connected", "Kopiert": "Copied", "Kopieren nicht möglich": "Copy not possible", "Datei ungültig": "Invalid file", "Geladen": "Loaded"});
+Object.assign(EN,{"Alle Einstellungen zurücksetzen": "Reset all settings", "Setzt alle Gruppen, Sprache und Gerätename auf die Werte aus config.h zurück und schaltet das Testbild aus. WLANs und Passwort bleiben erhalten.": "Resets all groups, language and device name to the values from config.h and switches the test pattern off. Wi-Fi networks and password are kept.", "Leeren": "Clear", "Protokoll auf der Uhr löschen?": "Clear the log on the clock?", "Gelöscht": "Cleared", "Fehler": "Error"});
 const DE={};for(const k in EN)DE[EN[k]]=k;
 let lang='de';try{if(localStorage.getItem('lang')==='en')lang='en'}catch(e){}
 const t=s=>lang==='en'&&EN[s]||s;
@@ -730,22 +744,23 @@ $('sLang').onchange=async e=>{const l=e.target.value;if(l===lang)return;
 // „Rückgängig“ wiederherstellen (sendet die alten Werte per POST /api/settings).
 const GFIELDS={scope:['profile','dial','beamNs','handPct','tickPct','digitPct','jumpSpeed'],time:['tz','ntp','h12'],
  display:['oledPct','oledSec','oledShift','oledFlip']};
+GFIELDS.all=[...GFIELDS.scope,...GFIELDS.time,...GFIELDS.display,'lang','host'];
 document.querySelectorAll('[data-reset]').forEach(b=>b.onclick=async()=>{const g=b.dataset.reset;
  const m=document.querySelector('[data-gmsg="'+g+'"]'),old={};
  if(S)for(const k of GFIELDS[g])old[k]=typeof S[k]==='boolean'?(S[k]?1:0):S[k];
- setBusy=true;try{const r=await post('/api/settings/reset',{group:g});if(r.settings){S=r.settings;h12=!!S.h12;lastSec=-1;renderSettings();dial=S.dial;drawScope()}
+ setBusy=true;try{const r=await post('/api/settings/reset',g==='all'?{}:{group:g});if(r.settings){S=r.settings;h12=!!S.h12;lastSec=-1;renderSettings();dial=S.dial;drawScope();if(S.lang&&S.lang!==lang)setLangLocal(S.lang)}
   m.textContent=r.msg||'';m.className='gmsg '+(r.ok?'ok':'err');clearTimeout(m.t);
   if(r.ok&&Object.keys(old).length){const u=document.createElement('button');u.type='button';u.className='sec undo';u.textContent=t('Rückgängig');
-   u.onclick=async()=>{clearTimeout(m.t);try{const x=await post('/api/settings',old);if(x.settings){S=x.settings;h12=!!S.h12;lastSec=-1;renderSettings();dial=S.dial;drawScope()}
+   u.onclick=async()=>{clearTimeout(m.t);try{const x=await post('/api/settings',old);if(x.settings){S=x.settings;h12=!!S.h12;lastSec=-1;renderSettings();dial=S.dial;drawScope();if(S.lang&&S.lang!==lang)setLangLocal(S.lang)}
     m.textContent=x.ok?t('Wiederhergestellt'):(x.msg||'');m.className='gmsg '+(x.ok?'ok':'err');m.t=setTimeout(()=>m.textContent='',2500)}catch(e){}};
    m.append(u);m.t=setTimeout(()=>m.textContent='',8000)}}
  catch(e){m.textContent=t('Keine Antwort von der Uhr');m.className='gmsg err'}setBusy=false});
-// ---- Status und Protokoll ein-/ausklappen (anfangs zu; Zustand im Browser gespeichert)
+// ---- Status und Protokoll ein-/ausklappen (Status anfangs offen, Protokoll zu; Zustand im Browser gespeichert)
 function openSec(g,open){g.classList.toggle('closed',!open);g.firstElementChild.setAttribute('aria-expanded',String(open));
  try{localStorage.setItem('secs',JSON.stringify([...document.querySelectorAll('.grp')].filter(x=>x.firstElementChild.classList.contains('coll')&&!x.classList.contains('closed')).map(x=>x.firstElementChild.id)))}catch(e){}
  if(open&&g.firstElementChild.id==='log-h'){logFirst=true;showLog()}}
 {let o=null;try{o=JSON.parse(localStorage.getItem('secs'))}catch(e){}
- document.querySelectorAll('h2.coll').forEach(h=>{const g=h.parentNode,on=Array.isArray(o)&&o.includes(h.id);
+ document.querySelectorAll('h2.coll').forEach(h=>{const g=h.parentNode,on=Array.isArray(o)?o.includes(h.id):h.id==='status-h';   // Status anfangs offen, Protokoll zu
   g.classList.toggle('closed',!on);h.setAttribute('aria-expanded',String(on));
   h.onclick=()=>openSec(g,g.classList.contains('closed'));
   h.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();h.onclick()}}})}
@@ -786,9 +801,14 @@ async function status(){
    row(t('Firmware-Version'),'v'+s.fw,'',t('installierte Programmversion')));
  }catch(e){if(online){$('status').replaceChildren(row(t('Verbindung'),t('keine Antwort von der Uhr'),'err'))}online=false}
 }
+// „Netz hinzufügen“ auf-/zuklappen
+let addTouched=false;
+function showAdd(on){$('addBody').hidden=!on;$('addTgl').setAttribute('aria-expanded',String(on))}
+$('addTgl').onclick=()=>{addTouched=true;showAdd($('addBody').hidden)};
 // Liste der gespeicherten WLANs laden (Netze aus dem Webinterface mit "Löschen")
 async function saved(){
  try{const l=await (await get('/api/networks')).json();const u=$('saved');u.replaceChildren();
+  if(!l.length&&!addTouched)showAdd(true);
   if(!l.length){const li=document.createElement('li');li.innerHTML='<span class="hint">'+t('noch keine gespeichert')+'</span>';u.append(li)}
   for(const n of l){const li=document.createElement('li');const a=document.createElement('span');a.textContent=n.ssid;li.append(a);
    {const b=document.createElement('button');b.className='del';b.textContent=t('Löschen');
@@ -807,7 +827,7 @@ async function scan(){
    const a=document.createElement('span');a.textContent=n.ssid+(n.open?' '+t('(ohne Passwort)'):'')+(n.ssid===curSsid?' · '+t('verbunden'):'');
    if(n.ssid===curSsid)a.style.fontWeight='600';
    const b=document.createElement('span');b.className='bars';b.textContent=bars(n.rssi).trim()+' '+n.rssi+' dBm';
-   li.append(a,b);li.onclick=()=>{$('ssid').value=n.ssid;$('pw').focus()};u.append(li)}
+   li.append(a,b);li.onclick=()=>{showAdd(true);$('ssid').value=n.ssid;$('pw').focus()};u.append(li)}
   if(!r.networks.length){const li=document.createElement('li');li.innerHTML='<span class="hint">'+t('keine Netze gefunden')+'</span>';u.append(li)}
  }catch(e){}
  $('scanBtn').disabled=false;$('scanBtn').textContent=t('Netze in Reichweite suchen');
@@ -829,6 +849,9 @@ function showLog(){const p=$('log'),end=logFirst||p.scrollTop+p.clientHeight>=p.
  $('logInfo').textContent=(logF==='all'?'':ls.length+' '+t('von')+' ')+all.length+' '+t('Zeilen')}
 async function log(){try{logRaw=await (await get('/api/log')).text();showLog()}catch(e){}}
 $('logF').onchange=e=>{logF=e.target.value;logFirst=true;showLog()};
+// Protokollspeicher der Uhr leeren (nach Rückfrage)
+$('logClr').onclick=async()=>{if(!confirm(t('Protokoll auf der Uhr löschen?')))return;const r=await post('/api/log/clear',{});
+ const b=$('logClr');b.textContent=r.ok?t('Gelöscht'):(r.msg||t('Fehler'));setTimeout(()=>b.textContent=t('Leeren'),1500);logFirst=true;log()};
 // Kopieren: Clipboard-API nur in sicheren Kontexten (https) – über http (Uhr im WLAN) per Textfeld
 $('logCopy').onclick=async()=>{const txt=$('log').textContent,b=$('logCopy');let ok=false;
  try{if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(txt);ok=true}}catch(e){}
