@@ -119,7 +119,7 @@ the settings), „Protokoll“ (log), below them
 the language selection. The settings are split into five groups: **„Oszilloskop“** (Oscilloscope: profile first, dial,
 test pattern in second place, dwell time, brightness, retrace speed), **„Uhrzeit“** (Time: “Set time” if shown, time format,
 time zone, time server), **„Display“** (OLED brightness, seconds, rotation, pixel shift)
-and **„WLAN“** (Wi-Fi: saved networks, network scan, add network, reconnect, reset Wi-Fi) and **„System“** (device name, password, back up/load settings).
+and **„WLAN“** (Wi-Fi: saved networks, network scan, add network, reconnect, reset Wi-Fi) and **„System“** (device name, back up/load settings).
 The top section (title, preview, time, date) is centred. The title bar “ESP32 Oscilloscope Clock”
 always stays at the top next to the menu button, the section headings directly below it
 (`position: sticky`). Each section heading is only pinned within its section (`.grp`), so the
@@ -180,17 +180,17 @@ Below follow three sections. Every setting and every button has a short descript
   the Clipboard API needs https). „Leeren“ (clear) empties the clock's ring buffer after a confirmation
   (`POST /api/log/clear`); the first new line is “log cleared”.
 - **„System“ (group in the settings):** device name (`host`, a–z, 0–9, hyphen, max. 32; applies at once
-  to mDNS `http://<name>.local` and to the router on the next connection), set/remove password, back up
-  settings (JSON file with all settings except Wi-Fi networks and password) and load them (sent to
+  to mDNS `http://<name>.local` and to the router on the next connection), back up
+  settings (JSON file with all settings except Wi-Fi networks) and load them (sent to
   `POST /api/settings`), „Alle Einstellungen zurücksetzen“ (reset all settings: all groups, language and
-  device name to `config.h`, test pattern off; Wi-Fi networks and password are kept; “Undo” for 8 s).
+  device name to `config.h`, test pattern off; Wi-Fi networks are kept; “Undo” for 8 s).
 - **Status** and **„Protokoll“** are collapsible (V arrow): status starts open, log closed (state saved in the browser; a jump from the menu opens them).
 
 **Usability aids of the page:**
 - **Dots below the preview** show the active dial; tapping a dot or the arrows ‹ › changes it (in addition to swiping).
   No name is shown when switching.
 - **Settings groups** are collapsed (V arrow) and open by tapping the heading (state saved in the browser). Menu sub-entries
-  open their group; when “Set time” appears, the time group opens by itself.
+  open their group; when “Set time” appears, the time group opens by itself and closes again once the time server is reached again.
 - **“✓ Saved”** briefly appears right at the changed setting (errors in red).
 - **Preview while dragging:** the dwell time changes the preview brightness and shows the estimated frame rate (~);
   in profile ANALOG the retrace speed shows the retrace lines in the preview (fainter the faster).
@@ -217,11 +217,11 @@ inserted as text (`textContent`), never as HTML.
 | `GET /` | the page |
 | `GET /manifest.json`, `/icon.svg`, `/icon.png` | app manifest and icon for the home screen |
 | `GET /font.woff2`, `GET /font-600.woff2` | font of the page, Light and SemiBold (from `font.h`), cached by the browser for one year. Two static styles instead of a variable font, because some Android browsers otherwise show bold text of a variable font in the system font |
-| `GET /api/status` | JSON: `time`, `date`, `kw`, `ntp{synced,overdue,manual,dst,last,server}`, `wifi{configured,connected,ssid,rssi,ip,host}`, `ap{active,ssid,ip}`, `profile`, `dial`, `fps`, `heap`, `heapTotal`, `heapMin`, `heapBlock`, `cpu0`, `reset`, `uptime`, `fw`, `lang`, `h12`, `auth` (password set), `test` (test pattern on) |
+| `GET /api/status` | JSON: `time`, `date`, `kw`, `ntp{synced,overdue,manual,dst,last,server}`, `wifi{configured,connected,ssid,rssi,ip,host}`, `ap{active,ssid,ip}`, `profile`, `dial`, `fps`, `heap`, `heapTotal`, `heapMin`, `heapBlock`, `cpu0`, `reset`, `uptime`, `fw`, `lang`, `h12`, `test` (test pattern on) |
 | `GET /api/log` | log as text, oldest line first |
 | `POST /api/log/clear` | empty the log ring buffer (serial output unaffected) |
 | `GET /api/networks` | saved networks `[{ssid, source:"web"}]`, never passwords |
-| `GET /api/vectors` | vector data for the preview (approx. 9 KB): `dial`, `digits` (all dials, index = style), `test` (test pattern), `hr`, `min`, `sec` (60 positions each). Polylines as `[x0,y0,x1,y1,…]`, 0–255, y upwards |
+| `GET /api/vectors` | vector data for the preview (the preview does not show the test pattern, only the oscilloscope does) (approx. 9 KB): `dial`, `digits` (all dials, index = style), `hr`, `min`, `sec` (60 positions each). Polylines as `[x0,y0,x1,y1,…]`, 0–255, y upwards |
 | `GET /api/scan` | network scan in the background: first `{"running":true}`, then `{"networks":[{ssid,rssi,open}]}` |
 | `POST /api/wifi` | save `ssid`, `pw` or change the password (SSID 1–32, password empty or 8–63 characters) |
 | `POST /api/wifi/delete` | delete `ssid`, then restart (WiFiMulti cannot forget networks) |
@@ -230,7 +230,6 @@ inserted as text (`textContent`), never as HTML.
 | `GET /api/settings` | current settings, default values (`defaults`) and time zone list |
 | `POST /api/settings` | any of the fields `profile`, `dial`, `beamNs`, `handPct`, `tickPct`, `digitPct`, `jumpSpeed`, `tz`, `ntp`, `oledPct`, `oledSec`, `oledShift`, `oledFlip`, `lang` (`de`/`en`), `h12` (0/1), `host` (device name), `test` (0/1, test pattern, not saved): validate, apply immediately, save. Answer `{ok, msg, settings}` |
 | `POST /api/settings/reset` | `group` = `scope` (oscilloscope), `time` or `display`: reset only this group to the values from `config.h`; without `group` everything incl. language and device name, test pattern off. Wi-Fi networks are always kept |
-| `POST /api/password` | `pw` (4–32 characters) sets the password, empty removes it (NVS `upw`) |
 | `POST /api/dial` | `style` 0 = 1–12, 1 = 12/3/6/9, 2 = Roman I–XII, 3 = Roman XII/III/VI/IX, 4 = ticks only: change the dial (oscilloscope and preview), saved |
 | `POST /api/time` | `epoch` (Unix seconds, UTC) **or** `local` (`YYYY-MM-DDTHH:MM[:SS]`, local time), optional `dst` (-1 automatic, 1 summer time, 0 winter time): set the time by hand, 2024–2099 |
 
@@ -287,7 +286,6 @@ that group; Wi-Fi networks are kept.
 | OLED pixel shift („OLED-Pixelverschiebung“) | `shift` | on/off | offset against burn-in |
 | Rotate OLED by 180° („OLED um 180° drehen“) | `flip` | on/off | `u8g2.setDisplayRotation(U8G2_R2)`, for a display mounted upside down |
 | Device name („Gerätename“) | `host` | a–z, 0–9, hyphen, max. 32 | `WiFi.setHostname()`, `MDNS.begin()` again |
-| Password („Passwort für Änderungen“) | `upw` | empty (default) or 4–32 characters | see [Password](#password) |
 | Test pattern („Testbild“) | – | on/off | `g_testPattern`: `scopeTask` draws `TestData` instead of the clock; not saved |
 | Language („Sprache“) | `lang` | Deutsch / English | `s_lang`: web interface, OLED, log |
 | Time format („Zeitformat“) | `h12` | 24 hours / 12 hours (AM/PM) | `s_h12`: time on OLED and web page (log stays 24 h) |
@@ -295,22 +293,8 @@ that group; Wi-Fi networks are kept.
 The firmware validates every value (`handleSettingsPost()`) and reports invalid input with a
 reason. `loadSettings()` reads all values in `setup()` before the tasks start.
 
-### Password
-No password is set by default. If one is set („System“ → „Passwort für Änderungen“), `authOk()` checks
-the `X-Pass` header on all changing requests (`POST /api/settings`, `/settings/reset`, `/wifi…`, `/time`,
-`/dial`, `/reconnect`, `/password`) and otherwise answers 401. The page then asks once for the password
-and remembers it for the session (`sessionStorage`). Viewing (status, preview, log) works without a
-password. It is stored in NVS (`upw`) and never output. Forgotten: hold the BOOT button for 10 s
-(`BUTTON_PW_CLEAR_MS`, see below) – no login needed. Alternatively upload once with
-`WEB_PASSWORD_CLEAR 1`, then back to 0. Without https it travels unencrypted over Wi-Fi – it protects
-against accidental changes, not against attackers on the network.
 
 ## BOOT button: oscilloscope profile
-
-**With a web password set** there is a second stage: the profile only switches on release between
-3 and 10 s. Holding until `BUTTON_PW_CLEAR_MS` (10 s) clears the password (RAM and NVS `upw`); from 3 s
-the OLED shows “Release: profile / Hold: clear password” with a countdown, then “Password cleared” for
-3 s. Without a password everything stays as described below.
 
 **Test pattern at start-up:** `g_testPattern` starts as `BOOT_TEST_S > 0`; the `uiTask` switches it off
 after `BOOT_TEST_S` seconds (log “start-up test pattern finished”) unless it was switched by hand in the

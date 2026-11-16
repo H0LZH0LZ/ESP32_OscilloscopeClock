@@ -406,26 +406,21 @@ h2.coll::after{content:"";width:8px;height:8px;margin:0 10px 4px 0;border:solid 
  <button type="button" class="sec greset" id="wReset">WLAN zurücksetzen</button>
  <div class="desc">Löscht alle gespeicherten Netze. Die Uhr startet danach neu und öffnet das Setup-WLAN „ScopeClock-Setup“.</div>
  </div>
- <!-- Gruppe System: Gerätename, Passwort, Einstellungen sichern/laden -->
+ <!-- Gruppe System: Gerätename, Einstellungen sichern/laden, alles zurücksetzen -->
  <div class="sgroup"><div class="grouphead" id="sys-h" role="button" tabindex="0" aria-expanded="true">System</div>
  <!-- Gerätename (Router, http://<name>.local) -->
  <div class="set"><div class="head"><label for="sHost">Gerätename</label></div>
   <div class="pw"><input id="sHost" maxlength="32" autocapitalize="none" autocorrect="off" spellcheck="false"><button type="button" class="sec" id="sHostSave">Übernehmen</button></div>
   <div class="sub"><span>Name im Router und Adresse im Browser:</span> <b>http://<span id="vHost">scope-clock</span>.local</b> – <span>nur a–z, 0–9 und Bindestrich.</span></div></div>
- <!-- Optionales Passwort für Änderungen (Standard: keins) -->
- <div class="set"><div class="head"><label for="sPw">Passwort für Änderungen</label><span class="val" id="vPw"></span></div>
-  <div class="pw"><input id="sPw" type="password" maxlength="32" autocomplete="new-password" autocapitalize="none" autocorrect="off" spellcheck="false"><button type="button" class="sec" id="sPwSave">Setzen</button></div>
-  <button type="button" class="sec" id="sPwDel">Passwort entfernen</button>
-  <div class="sub">Standardmäßig ohne Passwort. Ist eines gesetzt, fragt die Seite bei Änderungen einmal danach; Anzeigen geht weiterhin ohne. 4–32 Zeichen. Vergessen? Den BOOT-Taster an der Uhr 10 s gedrückt halten – das OLED zählt herunter und das Passwort wird gelöscht.</div></div>
  <!-- Einstellungen als Datei sichern und wieder laden -->
  <div class="set"><div class="head"><label>Einstellungen sichern</label></div>
   <div class="tools"><button type="button" class="sec" id="bkSave">Sichern (Datei)</button><button type="button" class="sec" id="bkLoad">Laden</button></div>
   <input type="file" id="bkFile" accept=".json,application/json" hidden>
-  <div class="sub">Speichert alle Einstellungen außer WLANs und Passwort in einer Datei und spielt sie wieder ein – etwa nach einem Tausch des ESP32.</div></div>
- <!-- Alle Einstellungen auf die Werte aus config.h (WLANs und Passwort bleiben) -->
+  <div class="sub">Speichert alle Einstellungen außer WLANs in einer Datei und spielt sie wieder ein – etwa nach einem Tausch des ESP32.</div></div>
+ <!-- Alle Einstellungen auf die Werte aus config.h (WLANs bleiben) -->
   <div class="gmsg" data-gmsg="all"></div>
   <button type="button" class="sec greset" data-reset="all">Alle Einstellungen zurücksetzen</button>
-  <div class="desc">Setzt alle Gruppen, Sprache und Gerätename auf die Werte aus config.h zurück und schaltet das Testbild aus. WLANs und Passwort bleiben erhalten. <span class="saved">Änderungen wirken sofort und bleiben gespeichert.</span></div>
+  <div class="desc">Setzt alle Gruppen, Sprache und Gerätename auf die Werte aus config.h zurück und schaltet das Testbild aus. WLANs bleiben erhalten. <span class="saved">Änderungen wirken sofort und bleiben gespeichert.</span></div>
  </div>
 </section></div>
 
@@ -473,8 +468,8 @@ Object.assign(EN,{"Helligkeit Minutenstriche": "Tick mark brightness", "Helligke
 Object.assign(EN,{"Unter 100 %, weil die schmalen Zeiger sonst heller wirken als der Rest. 0 % blendet die Zeiger aus.": "Below 100 % because the narrow hands would otherwise look brighter than the rest. 0 % hides the hands.", "Die 60 Striche am Rand. 0 % blendet sie aus.": "The 60 marks around the edge. 0 % hides them.", "Die Zahlen auf dem Zifferblatt. 0 % blendet sie aus.": "The numerals on the dial. 0 % hides them.", "Helligkeit des kleinen Displays an der Uhr. 0 % schaltet es aus; niedrige Werte schonen das OLED.": "Brightness of the small display on the clock. 0 % switches it off; low values protect the OLED.", "Sekunden anzeigen": "Show seconds", "Uhrzeit auf dem OLED als HH:MM:SS oder nur HH:MM.": "Time on the OLED as HH:MM:SS or just HH:MM.", "aus": "off"});
 Object.assign(EN,{"WLAN zurücksetzen": "Reset Wi-Fi", "Löscht alle gespeicherten Netze. Die Uhr startet danach neu und öffnet das Setup-WLAN „ScopeClock-Setup“.": "Deletes all saved networks. The clock then restarts and opens the setup network “ScopeClock-Setup”."});
 Object.assign(EN,{"Darstellung": "Appearance", "Hell": "Light", "Dunkel": "Dark", "Hell, dunkel oder wie im System eingestellt. Wird nur in diesem Browser gespeichert.": "Light, dark or as set in the system. Saved only in this browser.", "Voriges Zifferblatt": "Previous dial", "Nächstes Zifferblatt": "Next dial", "Alle": "All", "Zeit": "Time", "Warnungen": "Warnings", "Zeigt nur Meldungen eines Bereichs; „Warnungen“ zeigt Probleme wie Verbindungsabbrüche.": "Shows only messages of one area; “Warnings” shows problems such as connection losses.", "Rückgängig": "Undo", "Wiederhergestellt": "Restored", "von Hand": "manual"});
-Object.assign(EN,{"Nur Striche": "Ticks only", "Testbild": "Test pattern", "Zeigt statt der Uhr Rahmen, Kreis und Mittelkreuz zum Einstellen von Position, Größe und Fokus. Der Kreis muss rund sein (X und Y gleich groß). Wird nicht gespeichert; nach dem Einschalten erscheint es automatisch für 10 s.": "Shows a frame, circle and centre cross instead of the clock to adjust position, size and focus. The circle must be round (X and Y equal). Not saved; after power-on it appears automatically for 10 s.", "Gerätename": "Device name", "Name im Router und Adresse im Browser:": "Name in the router and address in the browser:", "nur a–z, 0–9 und Bindestrich.": "only a–z, 0–9 and hyphen.", "Passwort für Änderungen": "Password for changes", "Setzen": "Set", "Passwort entfernen": "Remove password", "Standardmäßig ohne Passwort. Ist eines gesetzt, fragt die Seite bei Änderungen einmal danach; Anzeigen geht weiterhin ohne. 4–32 Zeichen. Vergessen? Den BOOT-Taster an der Uhr 10 s gedrückt halten – das OLED zählt herunter und das Passwort wird gelöscht.": "No password by default. If one is set, the page asks for it once when changing something; viewing still works without. 4–32 characters. Forgotten? Hold the BOOT button on the clock for 10 s – the OLED counts down and the password is cleared.", "Einstellungen sichern": "Back up settings", "Sichern (Datei)": "Save (file)", "Laden": "Load", "Speichert alle Einstellungen außer WLANs und Passwort in einer Datei und spielt sie wieder ein – etwa nach einem Tausch des ESP32.": "Saves all settings except Wi-Fi networks and password to a file and loads them back – e.g. after replacing the ESP32.", "Kopieren": "Copy", "„Jetzt aktualisieren“ lädt sofort neu. „Alles anzeigen“ hebt die feste Höhe des Feldes auf. „Kopieren“ legt die angezeigten Zeilen in die Zwischenablage, etwa für eine Fehlermeldung. „Leeren“ löscht den Protokollspeicher der Uhr, etwa vor einem Test. Die Uhr speichert die letzten 8 KB (ca. 120 Zeilen).": "“Refresh now” reloads immediately. “Show all” removes the fixed height of the field. “Copy” puts the shown lines on the clipboard, e.g. for a bug report. “Clear” deletes the log memory of the clock, e.g. before a test. The clock keeps the last 8 KB (approx. 120 lines).", "Passwort der Uhr eingeben": "Enter the clock password", "Passwort falsch – bitte erneut eingeben": "Wrong password – please try again", "Passwort erforderlich": "Password required", "Passwort falsch": "Wrong password", "gesetzt": "set", "keins": "none", "verbunden": "connected", "Kopiert": "Copied", "Kopieren nicht möglich": "Copy not possible", "Datei ungültig": "Invalid file", "Geladen": "Loaded"});
-Object.assign(EN,{"Alle Einstellungen zurücksetzen": "Reset all settings", "Setzt alle Gruppen, Sprache und Gerätename auf die Werte aus config.h zurück und schaltet das Testbild aus. WLANs und Passwort bleiben erhalten.": "Resets all groups, language and device name to the values from config.h and switches the test pattern off. Wi-Fi networks and password are kept.", "Leeren": "Clear", "Protokoll auf der Uhr löschen?": "Clear the log on the clock?", "Gelöscht": "Cleared", "Fehler": "Error"});
+Object.assign(EN,{"Nur Striche": "Ticks only", "Testbild": "Test pattern", "Zeigt statt der Uhr Rahmen, Kreis und Mittelkreuz zum Einstellen von Position, Größe und Fokus. Der Kreis muss rund sein (X und Y gleich groß). Wird nicht gespeichert; nach dem Einschalten erscheint es automatisch für 10 s.": "Shows a frame, circle and centre cross instead of the clock to adjust position, size and focus. The circle must be round (X and Y equal). Not saved; after power-on it appears automatically for 10 s.", "Gerätename": "Device name", "Name im Router und Adresse im Browser:": "Name in the router and address in the browser:", "nur a–z, 0–9 und Bindestrich.": "only a–z, 0–9 and hyphen.", "Einstellungen sichern": "Back up settings", "Sichern (Datei)": "Save (file)", "Laden": "Load", "Speichert alle Einstellungen außer WLANs in einer Datei und spielt sie wieder ein – etwa nach einem Tausch des ESP32.": "Saves all settings except Wi-Fi networks to a file and loads them back – e.g. after replacing the ESP32.", "Kopieren": "Copy", "„Jetzt aktualisieren“ lädt sofort neu. „Alles anzeigen“ hebt die feste Höhe des Feldes auf. „Kopieren“ legt die angezeigten Zeilen in die Zwischenablage, etwa für eine Fehlermeldung. „Leeren“ löscht den Protokollspeicher der Uhr, etwa vor einem Test. Die Uhr speichert die letzten 8 KB (ca. 120 Zeilen).": "“Refresh now” reloads immediately. “Show all” removes the fixed height of the field. “Copy” puts the shown lines on the clipboard, e.g. for a bug report. “Clear” deletes the log memory of the clock, e.g. before a test. The clock keeps the last 8 KB (approx. 120 lines).", "verbunden": "connected", "Kopiert": "Copied", "Kopieren nicht möglich": "Copy not possible", "Datei ungültig": "Invalid file", "Geladen": "Loaded"});
+Object.assign(EN,{"Alle Einstellungen zurücksetzen": "Reset all settings", "Setzt alle Gruppen, Sprache und Gerätename auf die Werte aus config.h zurück und schaltet das Testbild aus. WLANs bleiben erhalten.": "Resets all groups, language and device name to the values from config.h and switches the test pattern off. Wi-Fi networks are kept.", "Leeren": "Clear", "Protokoll auf der Uhr löschen?": "Clear the log on the clock?", "Gelöscht": "Cleared", "Fehler": "Error"});
 const DE={};for(const k in EN)DE[EN[k]]=k;
 let lang='de';try{if(localStorage.getItem('lang')==='en')lang='en'}catch(e){}
 const t=s=>lang==='en'&&EN[s]||s;
@@ -491,15 +486,7 @@ function showClock(t){let s=String(t),ap='';const m=/^(\d\d):(\d\d:\d\d)$/.exec(
  if(h12&&m){const h=+m[1];ap=h>=12?'PM':'AM';s=(h%12||12)+':'+m[2]}
  $('clock').innerHTML=s.replace(/[0-9-]/g,'<i>$&</i>')+(ap?'<small class="ap">'+ap+'</small>':'')}
 const get=(u)=>fetch(u,{cache:'no-store'}).then(r=>{if(!r.ok)throw r.status;return r});
-// POST an die Uhr. Ist ein Passwort gesetzt (Antwort 401), fragt die Seite danach und
-// merkt es sich für diese Sitzung (sessionStorage), dann wird die Anfrage wiederholt.
-let pass='';try{pass=sessionStorage.getItem('pw')||''}catch(e){}
-async function post(u,d){
- for(let i=0;i<3;i++){const r=await fetch(u,{method:'POST',headers:pass?{'X-Pass':pass}:{},body:new URLSearchParams(d)});
-  if(r.status!==401)return r.json();
-  const p=prompt(t(i?'Passwort falsch – bitte erneut eingeben':'Passwort der Uhr eingeben'));if(p===null)return {ok:false,msg:t('Passwort erforderlich')};
-  pass=p;try{sessionStorage.setItem('pw',p)}catch(e){}}
- return {ok:false,msg:t('Passwort falsch')}}
+const post=(u,d)=>fetch(u,{method:'POST',body:new URLSearchParams(d)}).then(r=>r.json());
 // Statuszeile: Bezeichnung links, Wert rechts, optional Klasse (warn/err) und
 // eine kleine Erläuterung unter der Bezeichnung.
 function row(k,v,c,note){const d=document.createElement('div');d.className='row';
@@ -535,10 +522,6 @@ function drawScope(){
  for(let i=1;i<8;i++){const p=Math.round(i*W/8)+.5;g.beginPath();g.moveTo(p,0);g.lineTo(p,W);g.moveTo(0,p);g.lineTo(W,p);g.stroke()}
  showDots();                                     // Punkte gleich zeigen, auch ohne Vektordaten
  if(!V||tBase===null)return;
- if(S&&S.test&&V.test){g.lineCap='round';g.lineJoin='round';      // Testbild statt Uhr
-  for(const [w,col,blur] of [[5,SC.glow,10],[1.8,SC.trace,3]]){g.lineWidth=w*k/2;g.strokeStyle=col;g.shadowColor=SC.halo;g.shadowBlur=blur;g.beginPath();
-   for(const p of V.test){g.moveTo(p[0]*k,(255-p[1])*k);for(let i=2;i<p.length;i+=2)g.lineTo(p[i]*k,(255-p[i+1])*k)}g.stroke()}
-  g.shadowBlur=0;return}
  const sec=(tBase+Math.floor((performance.now()-tAt)/1000))%86400;
  const h=Math.floor(sec/3600),m=Math.floor(sec/60)%60,s=sec%60;
  // Drei Gruppen mit eigener Helligkeit wie am Oszilloskop (Einstellungen, 100 % = normal):
@@ -690,9 +673,7 @@ $('sSec').onchange=e=>setSetting({oledSec:e.target.checked?1:0});
 $('sShift').onchange=e=>setSetting({oledShift:e.target.checked?1:0});
 $('sFlip').onchange=e=>setSetting({oledFlip:e.target.checked?1:0});
 $('sHostSave').onclick=()=>setSetting({host:$('sHost').value.trim().toLowerCase()});
-$('sPwSave').onclick=async()=>{const v=$('sPw').value;const r=await post('/api/password',{pw:v});ctlMsg(r);if(r.ok){pass=v;try{sessionStorage.setItem('pw',v)}catch(e){}$('sPw').value='';status()}};
-$('sPwDel').onclick=async()=>{const r=await post('/api/password',{pw:''});ctlMsg(r);if(r.ok){pass='';try{sessionStorage.removeItem('pw')}catch(e){}status()}};
-// Sichern: alle Einstellungen (ohne WLANs/Passwort) als JSON-Datei herunterladen; Laden: Datei wählen, an die Uhr senden
+// Sichern: alle Einstellungen (ohne WLANs) als JSON-Datei herunterladen; Laden: Datei wählen, an die Uhr senden
 const BK=['profile','dial','beamNs','handPct','tickPct','digitPct','jumpSpeed','tz','ntp','h12','oledPct','oledSec','oledShift','oledFlip','lang','host'];
 $('bkSave').onclick=()=>{if(!S)return;const o={app:'scope-clock',version:1,settings:{}};for(const k of BK)if(k in S)o.settings[k]=S[k];
  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(o,null,1)],{type:'application/json'}));
@@ -704,7 +685,7 @@ $('bkFile').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f
   lastCtl=$('bkLoad');setBusy=true;const r=await post('/api/settings',d);if(r.settings){S=r.settings;h12=!!S.h12;lastSec=-1;renderSettings();dial=S.dial;drawScope()}
   setBusy=false;ctlMsg(r.ok?{ok:true,msg:t('Geladen')}:r);if(S&&S.lang&&S.lang!==lang)setLangLocal(S.lang)}
  catch(x){setBusy=false;lastCtl=$('bkLoad');ctlMsg({ok:false,msg:t('Datei ungültig')})}};
-$('sTest').onchange=e=>{if(S)S.test=e.target.checked;drawScope();setSetting({test:e.target.checked?1:0})};
+$('sTest').onchange=e=>{if(S)S.test=e.target.checked;setSetting({test:e.target.checked?1:0})};
 // ---- Uhrzeit von Hand stellen (nur ohne Zeitserver sichtbar)
 const pad=v=>String(v).padStart(2,'0');
 // Block "Uhrzeit stellen" ein-/ausblenden, beim Einblenden mit der Gerätezeit vorbelegen
@@ -715,7 +696,7 @@ document.querySelectorAll('[data-dst]').forEach(b=>b.onclick=()=>{dstMode=+b.dat
 function showTimeRow(on,dst){const r=$('timeRow');
  $('tDstBox').hidden=!(S&&S.tz&&S.tz.includes(','));            // nur bei Zeitzonen mit Sommerzeit
  if(r.hidden===!on)return;r.hidden=!on;
- if(on)openGroup($('time-h').parentNode,true);              // wichtig: Gruppe Uhrzeit aufklappen
+ openGroup($('time-h').parentNode,on);   // ohne Zeit: Gruppe Uhrzeit aufklappen; ist NTP wieder da: wieder einklappen
  if(on&&typeof dst==='number'){dstMode=dst;showDst()}
  if(on){const d=new Date();$('tDate').value=d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
   $('tTime').value=pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds())}}
@@ -779,7 +760,7 @@ async function status(){
   if(typeof s.h12==='boolean'&&s.h12!==h12&&!setBusy){h12=s.h12;lastSec=-1}
   lastFps=s.fps;fpsNs=S?S.beamNs:0;if(document.activeElement!==$('sBeam'))$('vFps').textContent=s.fps+' '+t('Bilder/s');
   showTimeRow(!s.ntp.synced,s.ntp.dst);
-  curSsid=s.wifi.connected?s.wifi.ssid:'';$('vPw').textContent=t(s.auth?'gesetzt':'keins');
+  curSsid=s.wifi.connected?s.wifi.ssid:'';
   if(S&&!setBusy&&typeof s.test==='boolean'&&s.test!==!!S.test){S.test=s.test;renderSettings()}
   if(S&&!setBusy){const p=s.profile==='DIGITAL'?1:0;if(p!==S.profile||s.dial!==S.dial){S.profile=p;S.dial=s.dial;renderSettings()}}$('date').textContent=s.date?(t('KW')+' '+s.kw+' – '+(lang==='en'?s.date.split('.').reverse().join('-'):s.date)):t('Datum unbekannt');
   const st=$('status');st.replaceChildren(

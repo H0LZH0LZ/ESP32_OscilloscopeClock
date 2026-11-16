@@ -177,7 +177,6 @@ static char    s_ntpServer[64] = NTP_SERVER_1;             // erster NTP-Server 
 static uint8_t s_oledPct       = OLED_BRIGHT_PCT;          // OLED-Helligkeit 0–100 % (0 = aus)
 static bool    s_oledSec       = OLED_SECONDS;             // Uhrzeit mit Sekunden
 static char    s_host[33]      = WIFI_HOSTNAME;            // Gerätename (Router, http://<name>.local)
-static char    s_webPw[33]     = "";                       // optionales Passwort für Änderungen (leer = keins)
 static volatile bool g_testPattern = BOOT_TEST_S > 0;    // beim Start BOOT_TEST_S Sekunden an
 static bool s_bootTest = BOOT_TEST_S > 0;                 // Start-Testbild läuft noch                // Testbild statt Uhr (nicht gespeichert)
 static bool    s_oledShift     = OLED_SHIFT_EVERY_S > 0;
@@ -1149,7 +1148,6 @@ static void handleStatus()
   o += ",\"cpu0\":";                 o += (int)s_cpu0Load;                    // Last Core 0 in %
   o += ",\"reset\":";                jsonStr(o, resetReasonText());
   o += ",\"fw\":";                   jsonStr(o, FW_VERSION);
-  o += ",\"auth\":";                 o += s_webPw[0] ? "true" : "false";
   o += ",\"test\":";                 o += g_testPattern ? "true" : "false";
   o += ",\"h12\":";                  o += s_h12 ? "true" : "false";
   o += ",\"lang\":";                 o += s_lang ? "\"en\"" : "\"de\"";
@@ -1215,7 +1213,6 @@ static void handleVectors()
   o += ",\"hr\":";  appendHand(o, HrPtrData,  sizeof(HrPtrData),  9);
   o += ",\"min\":"; appendHand(o, MinPtrData, sizeof(MinPtrData), 9);
   o += ",\"sec\":"; appendHand(o, SecPtrData, sizeof(SecPtrData), 5);
-  o += ",\"test\":"; appendStrokes(o, TestData, sizeof(TestData), 0x00, 0, false);
   o += '}';
   web.sendHeader("Cache-Control", "max-age=3600");
   web.send(200, "application/json", o);
@@ -1270,34 +1267,6 @@ static void handleScan()
 }
 
 // POST /api/wifi (ssid, pw) – Netz speichern bzw. Passwort ändern
-// ---- Optionales Passwort für alle Änderungen ---------------------------------------
-// Ist eines gesetzt (Einstellungen → System), muss jede POST-Anfrage es im Header
-// "X-Pass" mitschicken; sonst Antwort 401 und die Seite fragt danach. Lesen (Status,
-// Protokoll, Vorschau) geht immer. Vergessen: BOOT-Taster 10 s halten (buttonPoll), oder in
-// config.h WEB_PASSWORD_CLEAR 1 setzen, hochladen (Passwort wird ignoriert), wieder 0.
-static bool authOk()
-{
-  if (!s_webPw[0] || web.header("X-Pass") == s_webPw) return true;
-  String o = "{\"ok\":false,\"auth\":true,\"msg\":";
-  jsonStr(o, tr("Passwort erforderlich", "Password required"));
-  o += '}';
-  web.send(401, "application/json", o);
-  return false;
-}
-
-// POST /api/password – Passwort setzen (pw = 4–32 Zeichen) oder entfernen (pw leer)
-static void handlePassword()
-{
-  if (!authOk()) return;
-  const String pw = web.arg("pw");
-  if (pw.length() && (pw.length() < 4 || pw.length() > 32)) { sendJsonResult(false, tr("Passwort: 4 bis 32 Zeichen", "Password: 4 to 32 characters")); return; }
-  strlcpy(s_webPw, pw.c_str(), sizeof(s_webPw));
-  Preferences p;
-  if (p.begin("scopeclock", false)) { if (pw.length()) p.putString("upw", s_webPw); else p.remove("upw"); p.end(); }
-  logMsg("%s", pw.length() ? tr("[Web] Passwort gesetzt", "[Web] password set") : tr("[Web] Passwort entfernt", "[Web] password removed"));
-  sendJsonResult(true, pw.length() ? tr("Passwort gesetzt", "Password set") : tr("Passwort entfernt", "Password removed"));
-}
-
 // Gerätename prüfen: 1–32 Zeichen, a–z, 0–9, Bindestrich (nicht am Anfang/Ende)
 static bool hostValid(const String &h)
 {
@@ -1308,7 +1277,6 @@ static bool hostValid(const String &h)
 
 static void handleWifiSave()
 {
-  if (!authOk()) return;
   const String ssid = web.arg("ssid");
   const String pw   = web.arg("pw");
   if (ssid.length() < 1 || ssid.length() > 32) { sendJsonResult(false, tr("Netzwerkname: 1 bis 32 Zeichen", "Network name: 1 to 32 characters")); return; }
@@ -1337,7 +1305,6 @@ static void handleWifiSave()
 // WiFiMulti kann Netze nicht wieder vergessen, deshalb startet die Uhr neu.
 static void handleWifiDelete()
 {
-  if (!authOk()) return;
   const String ssid = web.arg("ssid");
   int slot = -1;
   for (int i = 0; i < s_webNetCount; i++) if (ssid == s_webNets[i].ssid) slot = i;
@@ -1354,7 +1321,6 @@ static void handleWifiDelete()
 // Ohne bekanntes Netz öffnet die Uhr anschließend das Setup-WLAN.
 static void handleWifiReset()
 {
-  if (!authOk()) return;
   s_webNetCount = 0;
   webNetsSave();
   logMsg(tr("[Web] alle WLANs geloescht – Neustart", "[Web] all networks deleted – restarting"));
@@ -1422,7 +1388,6 @@ static bool applyDstOverride(int mode)
 // Ein späterer NTP-Abgleich überschreibt die Zeit wieder (gewollt).
 static void handleTimeSet()
 {
-  if (!authOk()) return;
   // Sommer-/Winterzeit zuerst festlegen – mktime() rechnet dann mit dem richtigen Versatz
   int dst = web.hasArg("dst") ? web.arg("dst").toInt() : -1;
   if (dst > 1) dst = 1;
@@ -1468,7 +1433,6 @@ static void handleTimeSet()
 // für das Oszilloskop (scopeTask baut die Rundtour neu) und wird gespeichert.
 static void handleDial()
 {
-  if (!authOk()) return;
   const int st = web.arg("style").toInt();
   if (!web.hasArg("style") || st < 0 || st >= DIAL_STYLES) { sendJsonResult(false, tr("Zifferblatt: 0 bis 4", "Dial: 0 to 4")); return; }
   if (st != g_dialStyle) {
@@ -1564,7 +1528,6 @@ static void loadSettings()
   s_oledSec      = p.getUChar("osec", OLED_SECONDS) != 0;
   char hb[33];
   if (p.getString("host", hb, sizeof(hb)) && hostValid(String(hb))) strlcpy(s_host, hb, sizeof(s_host));
-  if (!WEB_PASSWORD_CLEAR) p.getString("upw", s_webPw, sizeof(s_webPw));
   s_oledShift    = p.getUChar("shift", OLED_SHIFT_EVERY_S > 0) != 0;
   s_oledFlip     = p.getUChar("flip", OLED_FLIP) != 0;
   s_h12          = p.getUChar("h12", CLOCK_12H) != 0;
@@ -1644,7 +1607,6 @@ static void handleSettingsGet() { sendSettings(true, ""); }
 // sofort angewendet und gespeichert.
 static void handleSettingsPost()
 {
-  if (!authOk()) return;
   Preferences p;
   if (!p.begin("scopeclock", false)) { sendSettings(false, tr("Flash-Speicher nicht verfügbar", "Flash storage not available")); return; }
   String err;
@@ -1771,7 +1733,6 @@ static void handleSettingsPost()
 //   ohne group     alles (auch die Sprache); gespeicherte WLANs bleiben immer erhalten
 static void handleSettingsReset()
 {
-  if (!authOk()) return;
   const String g = web.arg("group");
   const bool all = g.length() == 0;
   const bool scope = all || g == "scope", tim = all || g == "time", disp = all || g == "display";
@@ -1819,7 +1780,6 @@ static void handleSettingsReset()
 // dem stärksten bekannten Netz (z.B. nach dem Eintragen eines neuen Netzes)
 static void handleReconnect()
 {
-  if (!authOk()) return;
   if (!wifiConfigured()) { sendJsonResult(false, tr("Noch kein WLAN eingetragen", "No network configured yet")); return; }
   logMsg(tr("[Web] Neu verbinden angefordert", "[Web] reconnect requested"));
   sendJsonResult(true, tr("Verbinde neu … die Seite ist kurz nicht erreichbar.", "Reconnecting … the page is briefly unavailable."));
@@ -1881,15 +1841,11 @@ static void webStart()
   web.on("/api/settings",       HTTP_POST, handleSettingsPost);
   web.on("/api/settings/reset", HTTP_POST, handleSettingsReset);
   web.on("/api/log/clear",   HTTP_POST, [] {
-    if (!authOk()) return;
     logClear();
     logMsg("%s", tr("[Web] Protokoll geloescht", "[Web] log cleared"));
     sendJsonResult(true, tr("Protokoll gelöscht", "Log cleared"));
   });
-  web.on("/api/password",       HTTP_POST, handlePassword);
   web.onNotFound(handleNotFound);
-  static const char *hdrs[] = { "X-Pass" };                  // Passwort-Header auswerten können
-  web.collectHeaders(hdrs, 1);
   web.begin();
   logMsg(tr("[Web] Webserver gestartet (Port 80)", "[Web] web server started (port 80)"));
 }
@@ -2124,11 +2080,6 @@ static void fitText(char *buf, size_t maxChars)
 // gehalten, startet der ESP32 im Download-Modus statt der Uhr.
 static uint32_t s_btnDownSince = 0;      // millis() beim Drücken, 0 = losgelassen
 static bool     s_btnHandled   = false;  // Umschaltung für diesen Tastendruck erledigt
-static bool     s_btnPwMode    = false;  // Passwort gesetzt: Profilwechsel erst beim Loslassen
-static uint32_t s_pwClearedAt  = 0;      // millis() der Passwort-Löschung (Meldung 3 s auf dem OLED)
-// Passwort vergessen: Ist eines gesetzt, wechselt das Profil erst beim Loslassen nach
-// BUTTON_LONG_MS. Wer weiter hält, löscht nach BUTTON_PW_CLEAR_MS das Passwort (ohne
-// Anmeldung – wer den Taster erreicht, hat ohnehin Zugriff auf die Uhr).
 
 static const char *profileName(uint8_t p)  { return p == 1 ? "DIGITAL" : "ANALOG"; }
 
@@ -2161,28 +2112,8 @@ static void buttonPoll()
 {
   const bool down = digitalRead(BOOT_BUTTON_PIN) == LOW;
   const uint32_t now = millis();
-  if (!down) {
-    // Passwort-Modus: Loslassen zwischen 3 s und 10 s schaltet das Profil um
-    if (s_btnDownSince && s_btnPwMode && !s_btnHandled && now - s_btnDownSince >= BUTTON_LONG_MS) {
-      const uint8_t p = g_scopeProfile ? 0 : 1;
-      g_scopeProfile = p;
-      saveSetting("profile", p);
-      logMsg(tr("[Scope] Profil umgeschaltet: %s, gespeichert", "[Scope] profile switched: %s, saved"), profileName(p));
-    }
-    s_btnDownSince = 0; s_btnHandled = false; return;
-  }
-  if (s_btnDownSince == 0) { s_btnDownSince = now ? now : 1; s_btnPwMode = s_webPw[0] != 0; return; }
-  if (s_btnPwMode) {
-    if (!s_btnHandled && now - s_btnDownSince >= BUTTON_PW_CLEAR_MS) {
-      s_btnHandled = true;
-      s_webPw[0] = 0;
-      Preferences pr;
-      if (pr.begin("scopeclock", false)) { pr.remove("upw"); pr.end(); }
-      s_pwClearedAt = now ? now : 1;
-      logMsg("%s", tr("[Web] Passwort per BOOT-Taster geloescht", "[Web] password cleared with BOOT button"));
-    }
-    return;
-  }
+  if (!down) { s_btnDownSince = 0; s_btnHandled = false; return; }
+  if (s_btnDownSince == 0) { s_btnDownSince = now ? now : 1; return; }
   if (!s_btnHandled && now - s_btnDownSince >= BUTTON_LONG_MS) {
     s_btnHandled = true;
     const uint8_t p = g_scopeProfile ? 0 : 1;
@@ -2200,39 +2131,11 @@ static void buttonPoll()
 //      DIGITAL > ANALOG       (fett)
 //              3              (Countdown 3, 2, 1 als 7-Segment-Ziffer,
 //                              9x16 px, etwas kleiner als die Uhrzeit)
-static bool btnOverlayActive()
-{
-  const uint32_t now = millis();
-  return (s_btnDownSince && !s_btnHandled && now - s_btnDownSince >= 300) ||
-         (s_pwClearedAt && now - s_pwClearedAt < 3000);
-}
-
 static bool oledProfileOverlay()
 {
   const uint32_t now = millis();
-  if (!btnOverlayActive()) return false;
-  // Mit 6x10-Font: max. 21 Zeichen pro Zeile
-  const int CW = 9, CH = 16, CT = 2;
-  if (s_pwClearedAt && now - s_pwClearedAt < 3000) {          // Bestätigung
-    u8g2.clearBuffer();
-    u8g2.setFont(u8g2_font_7x14B_tf);
-    drawCentered(tr("Passwort", "Password"), 26, 1);
-    drawCentered(tr("geloescht", "cleared"), 44, 1);
-    u8g2.sendBuffer();
-    return true;
-  }
-  if (s_btnPwMode && now - s_btnDownSince >= BUTTON_LONG_MS) {  // 3–10 s: Passwort-Countdown
-    const uint32_t left = (BUTTON_PW_CLEAR_MS - (now - s_btnDownSince) + 999) / 1000;
-    u8g2.clearBuffer();
-    u8g2.setFont(u8g2_font_6x10_tf);
-    drawCentered(tr("Loslassen: Profil", "Release: profile"), 11, 1);
-    drawCentered(tr("Halten: Passwort weg", "Hold: clear password"), 24, 1);
-    int x0 = (128 - 3 - CW) / 2 + 1;
-    if (left == 1) x0 -= (CW - CT) / 2;
-    drawSegDigit(x0, 36, (int)left, CW, CH, CT);
-    u8g2.sendBuffer();
-    return true;
-  }
+  const bool holding = s_btnDownSince && !s_btnHandled && now - s_btnDownSince >= 300;
+  if (!holding) return false;
 
   const uint8_t  cur  = g_scopeProfile;
   const uint8_t  next = cur ? 0 : 1;
@@ -2247,6 +2150,7 @@ static bool oledProfileOverlay()
   drawCentered(buf, 30, 1);                                        // max. 15 Zeichen = 105 px
   // Countdown-Ziffer: 9x16 px, Segmentstärke 2 px, zentriert.
   // Eine "1" besteht nur aus den rechten Segmenten – für die Mitte nach links rücken.
+  const int CW = 9, CH = 16, CT = 2;
   int x0 = (128 - 3 - CW) / 2 + 1;
   if (left == 1) x0 -= (CW - CT) / 2;
   drawSegDigit(x0, 40, (int)left, CW, CH, CT);
@@ -2257,7 +2161,8 @@ static bool oledProfileOverlay()
 // OLED neu zeichnen: Uhrzeit, KW/Datum, WLAN-Name, Signalstärke (1× pro Sekunde)
 static void oledUpdate()
 {
-  oledApplyBrightness(btnOverlayActive());
+  const bool overlay = s_btnDownSince && !s_btnHandled && millis() - s_btnDownSince >= 300;
+  oledApplyBrightness(overlay);
   if (oledProfileOverlay()) return;
   if (s_oledPct == 0) return;   // Display aus: nichts zeichnen
 

@@ -65,10 +65,6 @@
 #define SCOPE_PROFILE 1
 #define BOOT_BUTTON_PIN 0        // BOOT-Taster des DevKitC (gedrückt = LOW)
 #define BUTTON_LONG_MS  3000     // so lange halten zum Umschalten (Countdown 3 s)
-// Passwort vergessen? Ist ein Web-Passwort gesetzt, den BOOT-Taster weiter halten: Nach
-// BUTTON_PW_CLEAR_MS wird das Passwort gelöscht (Countdown auf dem OLED), das Profil bleibt.
-// Bei gesetztem Passwort wechselt das Profil deshalb erst beim Loslassen (nach 3 s).
-#define BUTTON_PW_CLEAR_MS 10000
 
 // ---- Strahlgeschwindigkeit (gleichmäßige Helligkeit) -----------------------
 // Der Strahl bewegt sich auf ALLEN Linien gleich schnell: 1 DAC-Einheit
@@ -182,11 +178,6 @@
 // Diverses
 // ---------------------------------------------------------------------------
 #define WIFI_HOSTNAME "scope-clock"   // Start-Gerätename (im Webinterface änderbar) im Router, Webinterface: http://scope-clock.local
-
-// Passwort für Änderungen im Webinterface vergessen? Einfacher: BOOT-Taster 10 s halten
-// (siehe BUTTON_PW_CLEAR_MS). Alternativ hier auf 1 setzen und hochladen: Das
-// gespeicherte Passwort wird dann ignoriert und kann neu gesetzt werden. Danach wieder 0.
-#define WEB_PASSWORD_CLEAR 0
 
 // Testbild beim Einschalten: so viele Sekunden Rahmen, Kreis und Mittelkreuz, danach die Uhr
 // (zum schnellen Prüfen von Position und Größe am Oszilloskop). 0 = aus.

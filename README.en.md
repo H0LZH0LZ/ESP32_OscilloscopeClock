@@ -40,7 +40,7 @@ This documentation quotes the German labels and adds the English label in parent
 - **12- or 24-hour format** for OLED and web interface (12 h with AM/PM), switchable in the web interface.
 - **German or English** for the web interface, OLED display and log, switchable in the web
   interface (side menu) and saved. Start value `UI_LANG` in `config.h`.
-- **Web interface** at `http://scope-clock.local`, optimised for phones, optional password for changes (none by default), also as an app on the
+- **Web interface** at `http://scope-clock.local`, optimised for phones, no password, also as an app on the
   home screen. Light/dark/automatic appearance, log with filter, reset with “Undo”.
   At the top it shows a live preview of the oscilloscope picture (transparent background in the
   light theme), below that the status (time sync, Wi-Fi, signal strength, profile, frame rate,
@@ -49,7 +49,7 @@ This documentation quotes the German labels and adds the English label in parent
   over the preview changes the dial**: 1–12, only 12/3/6/9, ticks only (no numbers), only Roman XII/III/VI/IX or Roman I–XII. This
   also applies to the oscilloscope and is saved. Under „Einstellungen“ (settings) you can change
   the oscilloscope profile, dial, beam dwell time, brightness of hands, tick marks and numerals, retrace speed, time zone, time
-  server (NTP) and OLED (brightness 0–100 %, seconds, pixel shift, 180° rotation) online. In addition there is a **test pattern** for adjusting the oscilloscope, the **device name**, an optional **password** and **back up/load settings** (as a file). Changes apply immediately
+  server (NTP) and OLED (brightness 0–100 %, seconds, pixel shift, 180° rotation) online. In addition there is a **test pattern** for adjusting the oscilloscope, the **device name** and **back up/load settings** (as a file). Changes apply immediately
   and are saved. The web interface is always reachable as soon as the clock is on Wi-Fi. Without
   a known network the clock opens the setup network **“ScopeClock-Setup”**, and the phone shows
   the setup page automatically.
@@ -94,8 +94,7 @@ interface.
 | Language German/English | side menu (☰) → „Sprache“ (Language, drop-down list) |
 | Add/delete Wi-Fi networks | „Einstellungen“ → „WLAN“ (Settings → Wi-Fi, also directly via the side menu) |
 | Adjust the oscilloscope | „Einstellungen“ → „Oszilloskop“ → „Testbild“ (test pattern: frame, circle, centre cross; not saved). After power-on it appears automatically for 10 s |
-| Forgotten password | hold the BOOT button on the clock for 10 s (the OLED counts down), no login needed |
-| Device name, password, backup, reset everything | „Einstellungen“ → „System“ |
+| Device name, backup, reset everything | „Einstellungen“ → „System“ |
 | Clear the log | „Protokoll“ section → „Leeren“ (Clear) |
 | Troubleshooting | „Protokoll“ (log) section of the web interface, or the serial monitor (115200 baud) |
 
@@ -105,7 +104,7 @@ interface.
 
 | Board package | Program memory | Global variables (RAM) |
 |---|---|---|
-| esp32 3.3.12 | 1,294,406 bytes (98 %) | 74,932 bytes (22 %) |
+| esp32 3.3.12 | 1,289,066 bytes (98 %) | 74,892 bytes (22 %) |
 | esp32 2.0.17 | 866,053 bytes (66 %) | 61,048 bytes (18 %) – state before the menu and dial switching |
 
 The configuration variants (profile ANALOG/DIGITAL, Z blanking, dial 0/1/2, `USE_FAST_DAC 0`,

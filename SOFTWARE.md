@@ -114,7 +114,7 @@ WLAN und System (springen direkt in die jeweilige Gruppe), Protokoll, darunter d
 Die Einstellungen sind in fünf Gruppen geteilt: **Oszilloskop** (Profil zuerst, Zifferblatt,
 Testbild an zweiter Stelle, Verweilzeit, Helligkeiten, Rücklauf-Tempo), **Uhrzeit** (ggf. „Uhrzeit stellen“, Zeitformat,
 Zeitzone, Zeitserver), **Display** (OLED-Helligkeit, Sekunden, Drehung, Pixelverschiebung)
-und **WLAN** (gespeicherte Netze, Netzsuche, Netz hinzufügen, Neu verbinden, WLAN zurücksetzen) und **System** (Gerätename, Passwort, Einstellungen sichern/laden). Der oberste Abschnitt (Überschrift, Vorschau, Uhrzeit,
+und **WLAN** (gespeicherte Netze, Netzsuche, Netz hinzufügen, Neu verbinden, WLAN zurücksetzen) und **System** (Gerätename, Einstellungen sichern/laden). Der oberste Abschnitt (Überschrift, Vorschau, Uhrzeit,
 Datum) ist zentriert. Die Titelleiste „ESP32 Oscilloscope Clock“ bleibt immer oben neben der
 Menütaste stehen, die Abschnittsüberschriften direkt darunter (`position: sticky`). Jede
 Abschnittsüberschrift ist nur innerhalb ihres Abschnitts (`.grp`) angeheftet, so schiebt die
@@ -177,16 +177,16 @@ Darunter folgen drei Bereiche. **Status** und **Protokoll** sind einklappbar (Pf
   „Leeren“ löscht nach Rückfrage den Ringpuffer der Uhr (`POST /api/log/clear`); die erste neue Zeile
   ist „Protokoll geloescht“.
 - **System** (Gruppe in den Einstellungen): Gerätename (`host`, a–z, 0–9, Bindestrich, max. 32; gilt
-  sofort für mDNS `http://<name>.local` und beim nächsten Verbinden für den Router), Passwort setzen/
-  entfernen, Einstellungen sichern (JSON-Datei mit allen Einstellungen außer WLANs und Passwort)
+  sofort für mDNS `http://<name>.local` und beim nächsten Verbinden für den Router), Einstellungen
+  sichern (JSON-Datei mit allen Einstellungen außer WLANs)
   und laden (sendet die Werte an `POST /api/settings`), „Alle Einstellungen zurücksetzen“ (alle Gruppen,
-  Sprache und Gerätename auf `config.h`, Testbild aus; WLANs und Passwort bleiben; 8 s „Rückgängig“).
+  Sprache und Gerätename auf `config.h`, Testbild aus; WLANs bleiben; 8 s „Rückgängig“).
 
 **Bedienhilfen der Seite:**
 - **Punkte unter der Vorschau** zeigen das aktive Zifferblatt; Punkt oder Pfeil ‹ › antippen wechselt (zusätzlich zum Wischen).
   Beim Wechsel wird kein Name eingeblendet.
 - **Gruppen der Einstellungen** sind eingeklappt (Pfeil V) und öffnen sich per Tippen auf die Überschrift (Zustand im Browser
-  gespeichert). Menü-Unterpunkte öffnen ihre Gruppe; erscheint „Uhrzeit stellen“, öffnet sich „Uhrzeit“ von selbst.
+  gespeichert). Menü-Unterpunkte öffnen ihre Gruppe; erscheint „Uhrzeit stellen“, öffnet sich „Uhrzeit“ von selbst und klappt wieder zu, sobald der Zeitserver wieder erreicht ist.
 - **„✓ Gespeichert“** erscheint kurz direkt an der geänderten Einstellung (Fehler in Rot).
 - **Vorschau beim Ziehen:** Verweilzeit ändert Helligkeit der Vorschau und zeigt die geschätzte Bildrate (~), das
   Rücklauf-Tempo zeigt im Profil ANALOG die Rücklaufspuren in der Vorschau (schwächer, je schneller).
@@ -210,12 +210,12 @@ eingesetzt (`textContent`), nie als HTML.
 |---|---|
 | `GET /` | die Seite |
 | `GET /manifest.json`, `/icon.svg`, `/icon.png` | App-Manifest und Symbol für den Startbildschirm |
-| `GET /api/status` | JSON: `time`, `date`, `kw`, `ntp{synced,overdue,manual,dst,last,server}`, `wifi{configured,connected,ssid,rssi,ip,host}`, `ap{active,ssid,ip}`, `profile`, `dial`, `fps`, `heap`, `heapTotal`, `heapMin`, `heapBlock`, `cpu0`, `reset`, `uptime`, `fw`, `lang`, `h12`, `auth` (Passwort gesetzt), `test` (Testbild an) |
+| `GET /api/status` | JSON: `time`, `date`, `kw`, `ntp{synced,overdue,manual,dst,last,server}`, `wifi{configured,connected,ssid,rssi,ip,host}`, `ap{active,ssid,ip}`, `profile`, `dial`, `fps`, `heap`, `heapTotal`, `heapMin`, `heapBlock`, `cpu0`, `reset`, `uptime`, `fw`, `lang`, `h12`, `test` (Testbild an) |
 | `GET /api/log` | Log als Text, älteste Zeile zuerst |
 | `POST /api/log/clear` | Log-Ringpuffer leeren (serielle Ausgabe unberührt) |
 | `GET /api/networks` | gespeicherte Netze `[{ssid, source:"web"}]`, nie Passwörter |
 | `GET /font.woff2`, `GET /font-600.woff2` | Schrift der Seite, Light und SemiBold (aus `font.h`), wird ein Jahr im Browser zwischengespeichert. Zwei feste Schnitte statt einer variablen Schrift, weil manche Android-Browser fette Texte einer variablen Schrift sonst in der Systemschrift zeigen |
-| `GET /api/vectors` | Vektordaten für die Vorschau (ca. 9 KB): `dial`, `digits` (alle Zifferblätter, Index = Stil), `test` (Testbild), `hr`, `min`, `sec` (je 60 Stellungen). Linienzüge als `[x0,y0,x1,y1,…]`, 0–255, y nach oben |
+| `GET /api/vectors` | Vektordaten für die Vorschau (das Testbild zeigt die Vorschau nicht, nur das Oszilloskop) (ca. 9 KB): `dial`, `digits` (alle Zifferblätter, Index = Stil), `hr`, `min`, `sec` (je 60 Stellungen). Linienzüge als `[x0,y0,x1,y1,…]`, 0–255, y nach oben |
 | `GET /api/scan` | Netzsuche im Hintergrund: erst `{"running":true}`, dann `{"networks":[{ssid,rssi,open}]}` |
 | `POST /api/wifi` | `ssid`, `pw` speichern bzw. Passwort ändern (SSID 1–32, Passwort leer oder 8–63 Zeichen) |
 | `POST /api/wifi/delete` | `ssid` löschen, danach Neustart (WiFiMulti kann Netze nicht vergessen) |
@@ -224,7 +224,6 @@ eingesetzt (`textContent`), nie als HTML.
 | `GET /api/settings` | aktuelle Einstellungen, Standardwerte (`defaults`) und Zeitzonen-Liste |
 | `POST /api/settings` | beliebige Felder `profile`, `dial`, `beamNs`, `handPct`, `tickPct`, `digitPct`, `jumpSpeed`, `tz`, `ntp`, `oledPct`, `oledSec`, `oledShift`, `oledFlip`, `lang` (`de`/`en`), `h12` (0/1), `host` (Gerätename), `test` (0/1, Testbild, nicht gespeichert): prüfen, sofort anwenden, speichern. Antwort `{ok, msg, settings}` |
 | `POST /api/settings/reset` | `group` = `scope` (Oszilloskop), `time` (Uhrzeit) oder `display`: nur diese Gruppe auf die Werte aus `config.h`; ohne `group` alles inkl. Sprache und Gerätename, Testbild aus. WLANs bleiben immer erhalten |
-| `POST /api/password` | `pw` (4–32 Zeichen) setzt das Passwort, leer entfernt es (NVS `upw`) |
 | `POST /api/dial` | `style` 0 = 1–12, 1 = 12/3/6/9, 2 = römisch I–XII, 3 = römisch XII/III/VI/IX, 4 = nur Striche: Zifferblatt umschalten (Oszilloskop und Vorschau), wird gespeichert |
 | `POST /api/time` | `epoch` (Unix-Sekunden, UTC) **oder** `local` (`JJJJ-MM-TTTHH:MM[:SS]`, Ortszeit), optional `dst` (-1 automatisch, 1 Sommerzeit, 0 Winterzeit): Uhrzeit von Hand stellen, 2024–2099 |
 
@@ -279,7 +278,6 @@ Knopf „Auf Standardwerte zurücksetzen“: Er löscht nur die gespeicherten We
 | OLED-Pixelverschiebung | `shift` | an/aus | Versatz gegen Einbrennen |
 | OLED um 180° drehen | `flip` | an/aus | `u8g2.setDisplayRotation(U8G2_R2)`, für ein kopfüber eingebautes Display |
 | Gerätename | `host` | a–z, 0–9, Bindestrich, max. 32 | `WiFi.setHostname()`, `MDNS.begin()` neu |
-| Passwort | `upw` | leer (Standard) oder 4–32 Zeichen | siehe [Passwort](#passwort) |
 | Testbild | – | an/aus | `g_testPattern`: `scopeTask` zeichnet `TestData` statt der Uhr; nicht gespeichert |
 | Sprache | `lang` | Deutsch / English | `s_lang`: Webinterface, OLED, Protokoll |
 | Zeitformat | `h12` | 24 Stunden / 12 Stunden (AM/PM) | `s_h12`: Uhrzeit auf OLED und Webseite (Protokoll bleibt 24 h) |
@@ -287,22 +285,8 @@ Knopf „Auf Standardwerte zurücksetzen“: Er löscht nur die gespeicherten We
 Die Firmware prüft jeden Wert (`handleSettingsPost()`) und meldet ungültige Eingaben mit Grund
 zurück. `loadSettings()` liest alle Werte in `setup()`, bevor die Tasks starten.
 
-### Passwort
-Ab Werk ist kein Passwort gesetzt. Ist eines gesetzt (System → „Passwort für Änderungen“), prüft
-`authOk()` bei allen ändernden Anfragen (`POST /api/settings`, `/settings/reset`, `/wifi…`, `/time`,
-`/dial`, `/reconnect`, `/password`) den Header `X-Pass` und antwortet sonst mit 401. Die Seite fragt
-dann einmal per Dialog nach dem Passwort und merkt es sich für die Sitzung (`sessionStorage`).
-Anzeigen (Status, Vorschau, Protokoll) geht ohne Passwort. Das Passwort liegt im NVS (`upw`) und wird
-nie ausgegeben. Vergessen: BOOT-Taster 10 s halten (`BUTTON_PW_CLEAR_MS`, siehe unten) – ohne
-Anmeldung. Alternativ einmal mit `WEB_PASSWORD_CLEAR 1` hochladen, dann wieder 0. Ohne https wird
-es im WLAN unverschlüsselt übertragen – es schützt vor versehentlichen Änderungen, nicht vor Angreifern im Netz.
 
 ## BOOT-Taster: Oszilloskop-Profil
-
-**Mit gesetztem Web-Passwort** gilt eine zweite Stufe: Das Profil wechselt erst beim Loslassen
-zwischen 3 und 10 s. Wer bis `BUTTON_PW_CLEAR_MS` (10 s) hält, löscht das Passwort (RAM und NVS `upw`);
-das OLED zeigt ab 3 s „Loslassen: Profil / Halten: Passwort weg“ mit Countdown und danach 3 s lang
-„Passwort gelöscht“. Ohne Passwort bleibt alles wie unten beschrieben.
 
 **Testbild beim Start:** `g_testPattern` startet mit `BOOT_TEST_S > 0`; der `uiTask` schaltet es nach
 `BOOT_TEST_S` Sekunden aus (Log „Start-Testbild beendet“), außer es wurde vorher im Webinterface von

@@ -32,7 +32,7 @@ Hardware angepasst: **ESP32-WROOM-32U DevKitC V4**, **Waveshare 2.42" OLED (SPI)
 - **12- oder 24-Stunden-Format** für OLED und Webinterface (12 h mit AM/PM), umschaltbar im Webinterface.
 - **Sprache Deutsch oder Englisch** für Webinterface, OLED-Anzeige und Protokoll, umschaltbar im
   Webinterface (Seitenmenü) und gespeichert. Startwert `UI_LANG` in `config.h`.
-- **Webinterface** unter `http://scope-clock.local`, für Handys optimiert, optional mit Passwort für Änderungen (ab Werk keins), auch als App auf den
+- **Webinterface** unter `http://scope-clock.local`, für Handys optimiert und ohne Passwort, auch als App auf den
   Startbildschirm. Darstellung hell/dunkel/automatisch, Protokoll mit Filter (Auswahlliste), Zurücksetzen mit „Rückgängig“.
   Oben zeigt es eine Live-Vorschau des Oszilloskop-Bildes (im hellen Design ohne Hintergrund),
   darunter den Status (Zeitabgleich, WLAN, Signalstärke, Profil, Bildrate, Laufzeit, Arbeitsspeicher,
@@ -41,7 +41,7 @@ Hardware angepasst: **ESP32-WROOM-32U DevKitC V4**, **Waveshare 2.42" OLED (SPI)
   (nach links oder rechts) wechselt das Zifferblatt**: 1–12, nur 12/3/6/9, nur Striche (ohne Zahlen), römisch XII/III/VI/IX oder römisch I–XII. Das gilt auch am Oszilloskop und bleibt
   gespeichert. Unter **Einstellungen** lassen sich Oszilloskop-Profil, Zifferblatt,
   Verweilzeit des Strahls, Helligkeit von Zeigern, Minutenstrichen und Ziffern, Rücklauf-Tempo, Zeitzone, Zeitserver (NTP) und OLED
-  (Helligkeit 0–100 %, Sekunden, Pixelverschiebung, Drehung um 180°) online ändern. Dazu kommen ein **Testbild** zum Einstellen des Oszilloskops, der **Gerätename**, ein optionales **Passwort** und **Einstellungen sichern/laden** (als Datei). Die Änderungen wirken sofort und bleiben gespeichert. Das Webinterface ist immer
+  (Helligkeit 0–100 %, Sekunden, Pixelverschiebung, Drehung um 180°) online ändern. Dazu kommen ein **Testbild** zum Einstellen des Oszilloskops, der **Gerätename** und **Einstellungen sichern/laden** (als Datei). Die Änderungen wirken sofort und bleiben gespeichert. Das Webinterface ist immer
   erreichbar, sobald die Uhr im WLAN ist. Ohne bekanntes WLAN öffnet die Uhr das Setup-WLAN
   **„ScopeClock-Setup“**, das Handy zeigt dann automatisch die Einrichtungsseite.
 - Eine Firmware für alle Oszilloskope: Das Profil DIGITAL (ab Werk) bzw. ANALOG wird im Betrieb
@@ -84,8 +84,7 @@ stehen in `ESP32_OscilloscopeClock_v2.0/config.h`. Im Betrieb ändert man sie be
 | Sprache Deutsch/English | Seitenmenü (☰) → „Sprache“ (Auswahlliste) |
 | WLAN hinzufügen/löschen | Einstellungen → WLAN (auch direkt über das Seitenmenü) |
 | Oszilloskop einstellen | Einstellungen → Oszilloskop → „Testbild“ (Rahmen, Kreis, Mittelkreuz; wird nicht gespeichert). Nach dem Einschalten erscheint es automatisch 10 s lang |
-| Passwort vergessen | BOOT-Taster an der Uhr 10 s halten (OLED zählt herunter), keine Anmeldung nötig |
-| Gerätename, Passwort, Sicherung, alles zurücksetzen | Einstellungen → System |
+| Gerätename, Sicherung, alles zurücksetzen | Einstellungen → System |
 | Protokoll leeren | Abschnitt Protokoll → „Leeren“ |
 | Fehlersuche | Abschnitt Protokoll im Webinterface, oder serieller Monitor (115200 Baud) |
 
@@ -95,7 +94,7 @@ stehen in `ESP32_OscilloscopeClock_v2.0/config.h`. Im Betrieb ändert man sie be
 
 | Board-Paket | Programmspeicher | Globale Variablen (RAM) |
 |---|---|---|
-| esp32 3.3.12 | 1.294.406 Byte (98 %) | 74.932 Byte (22 %) |
+| esp32 3.3.12 | 1.289.066 Byte (98 %) | 74.892 Byte (22 %) |
 | esp32 2.0.17 | 866.053 Byte (66 %) | 61.048 Byte (18 %) – Stand vor Menü und Zifferblatt-Umschaltung |
 
 Die Konfigurationsvarianten (Profil ANALOG/DIGITAL, Z-Dunkeltastung, Zifferblatt 0/1/2,
