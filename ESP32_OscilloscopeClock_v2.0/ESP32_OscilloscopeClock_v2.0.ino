@@ -1619,25 +1619,44 @@ static void handleSettingsPost()
   else sendSettings(true, changed ? tr("Gespeichert", "Saved") : tr("Keine Änderung", "No change"));
 }
 
-// POST /api/settings/reset – alle Einstellungen auf die Werte aus config.h
+// POST /api/settings/reset – Einstellungen einer Gruppe auf die Werte aus config.h
+//   group=scope    Oszilloskop: Profil, Zifferblatt, Verweilzeit, Zeigerhelligkeit, Rücklauf-Tempo
+//   group=time     Uhrzeit: Zeitformat, Zeitzone, Zeitserver
+//   group=display  Display: OLED-Helligkeit, Pixelverschiebung, Drehung
+//   ohne group     alles (auch die Sprache); gespeicherte WLANs bleiben immer erhalten
 static void handleSettingsReset()
 {
+  const String g = web.arg("group");
+  const bool all = g.length() == 0;
+  const bool scope = all || g == "scope", tim = all || g == "time", disp = all || g == "display";
+  if (!scope && !tim && !disp) { sendSettings(false, tr("Unbekannte Gruppe", "Unknown group")); return; }
   Preferences p;
   if (p.begin("scopeclock", false)) {
-    for (const char *k : { "profile", "dial", "beam", "hand", "jump", "tz", "ntp", "oled", "shift", "flip", "lang", "h12" }) p.remove(k);
+    if (scope) for (const char *k : { "profile", "dial", "beam", "hand", "jump" }) p.remove(k);
+    if (tim)   for (const char *k : { "tz", "ntp", "h12" }) p.remove(k);
+    if (disp)  for (const char *k : { "oled", "shift", "flip" }) p.remove(k);
+    if (all)   p.remove("lang");
     p.end();
   }
-  g_scopeProfile = SCOPE_PROFILE;  g_dialStyle = DIAL_STYLE;
-  g_beamNs = BEAM_NS_PER_UNIT;     g_handPct = HAND_BRIGHT_PCT;   g_jumpSpeed = JUMP_SPEED;
-  strlcpy(s_tz, TZ_INFO, sizeof(s_tz));
-  strlcpy(s_ntpServer, NTP_SERVER_1, sizeof(s_ntpServer));
-  s_oledContrast = OLED_CONTRAST;  oledSetContrast(s_oledContrast);
-  s_oledShift = OLED_SHIFT_EVERY_S > 0;
-  s_oledFlip  = OLED_FLIP;  oledSetFlip(s_oledFlip);
-  s_h12       = CLOCK_12H;
-  s_lang      = UI_LANG;
-  applyTime();
-  logMsg(tr("[Web] Einstellungen auf Standardwerte zurueckgesetzt", "[Web] settings reset to defaults"));
+  if (scope) {
+    g_scopeProfile = SCOPE_PROFILE;  g_dialStyle = DIAL_STYLE;
+    g_beamNs = BEAM_NS_PER_UNIT;     g_handPct = HAND_BRIGHT_PCT;   g_jumpSpeed = JUMP_SPEED;
+  }
+  if (tim) {
+    strlcpy(s_tz, TZ_INFO, sizeof(s_tz));
+    strlcpy(s_ntpServer, NTP_SERVER_1, sizeof(s_ntpServer));
+    s_h12 = CLOCK_12H;
+    applyTime();
+  }
+  if (disp) {
+    s_oledContrast = OLED_CONTRAST;  oledSetContrast(s_oledContrast);
+    s_oledShift = OLED_SHIFT_EVERY_S > 0;
+    s_oledFlip  = OLED_FLIP;  oledSetFlip(s_oledFlip);
+  }
+  if (all) s_lang = UI_LANG;
+  const char *name = all ? tr("alle", "all") : scope ? tr("Oszilloskop", "oscilloscope")
+                   : tim ? tr("Uhrzeit", "time") : "Display";
+  logMsg(tr("[Web] Einstellungen (%s) auf Standardwerte zurueckgesetzt", "[Web] settings (%s) reset to defaults"), name);
   sendSettings(true, tr("Auf Standardwerte zurückgesetzt", "Reset to defaults"));
 }
 

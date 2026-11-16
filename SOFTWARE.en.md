@@ -195,7 +195,7 @@ inserted as text (`textContent`), never as HTML.
 | `POST /api/reconnect` | disconnect, `wifiTask` connects to the strongest network |
 | `GET /api/settings` | current settings, default values (`defaults`) and time zone list |
 | `POST /api/settings` | any of the fields `profile`, `dial`, `beamNs`, `handPct`, `jumpSpeed`, `tz`, `ntp`, `oledContrast`, `oledShift`, `oledFlip`, `lang` (`de`/`en`), `h12` (0/1): validate, apply immediately, save. Answer `{ok, msg, settings}` |
-| `POST /api/settings/reset` | reset all settings to the values from `config.h` |
+| `POST /api/settings/reset` | `group` = `scope` (oscilloscope), `time` or `display`: reset only this group to the values from `config.h`; without `group` everything incl. language. Wi-Fi networks are always kept |
 | `POST /api/dial` | `style` 0 = 1–12, 1 = 12/3/6/9, 2 = Roman I–XII, 3 = Roman XII/III/VI/IX: change the dial (oscilloscope and preview), saved |
 | `POST /api/time` | `epoch` (Unix seconds, UTC) **or** `local` (`YYYY-MM-DDTHH:MM[:SS]`, local time), optional `dst` (-1 automatic, 1 summer time, 0 winter time): set the time by hand, 2024–2099 |
 
@@ -232,8 +232,9 @@ start-up.
 
 The „Einstellungen“ (settings) section changes values at run time. Every change takes effect
 immediately and is stored in NVS. Sliders send when released, so that flash is not written on every
-movement. `config.h` only provides the start values. „Auf Standardwerte zurücksetzen“ (reset to
-defaults) deletes the stored values; Wi-Fi networks are kept.
+movement. `config.h` only provides the start values. Each group (oscilloscope, time, display) has its own
+button „Auf Standardwerte zurücksetzen“ (Reset to defaults): it deletes only the stored values of
+that group; Wi-Fi networks are kept.
 
 | Setting (German label) | NVS key | Range | Effect |
 |---|---|---|---|

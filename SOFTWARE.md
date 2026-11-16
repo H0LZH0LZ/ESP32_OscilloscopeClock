@@ -189,7 +189,7 @@ eingesetzt (`textContent`), nie als HTML.
 | `POST /api/reconnect` | Verbindung trennen, `wifiTask` verbindet mit dem stärksten Netz |
 | `GET /api/settings` | aktuelle Einstellungen, Standardwerte (`defaults`) und Zeitzonen-Liste |
 | `POST /api/settings` | beliebige Felder `profile`, `dial`, `beamNs`, `handPct`, `jumpSpeed`, `tz`, `ntp`, `oledContrast`, `oledShift`, `oledFlip`, `lang` (`de`/`en`), `h12` (0/1): prüfen, sofort anwenden, speichern. Antwort `{ok, msg, settings}` |
-| `POST /api/settings/reset` | alle Einstellungen auf die Werte aus `config.h` |
+| `POST /api/settings/reset` | `group` = `scope` (Oszilloskop), `time` (Uhrzeit) oder `display`: nur diese Gruppe auf die Werte aus `config.h`; ohne `group` alles inkl. Sprache. WLANs bleiben immer erhalten |
 | `POST /api/dial` | `style` 0 = 1–12, 1 = 12/3/6/9, 2 = römisch I–XII, 3 = römisch XII/III/VI/IX: Zifferblatt umschalten (Oszilloskop und Vorschau), wird gespeichert |
 | `POST /api/time` | `epoch` (Unix-Sekunden, UTC) **oder** `local` (`JJJJ-MM-TTTHH:MM[:SS]`, Ortszeit), optional `dst` (-1 automatisch, 1 Sommerzeit, 0 Winterzeit): Uhrzeit von Hand stellen, 2024–2099 |
 
@@ -225,8 +225,8 @@ immer zu 100 % mit der Strahlausgabe belegt.
 
 Der Abschnitt „Einstellungen“ ändert Werte im laufenden Betrieb. Jede Änderung wirkt sofort und wird
 im NVS gespeichert. Schieberegler senden beim Loslassen, damit nicht bei jeder Bewegung in den Flash
-geschrieben wird. `config.h` liefert nur die Startwerte. „Auf Standardwerte zurücksetzen“ löscht die
-gespeicherten Werte, die WLANs bleiben erhalten.
+geschrieben wird. `config.h` liefert nur die Startwerte. Jede Gruppe (Oszilloskop, Uhrzeit, Display) hat einen eigenen
+Knopf „Auf Standardwerte zurücksetzen“: Er löscht nur die gespeicherten Werte dieser Gruppe, die WLANs bleiben erhalten.
 
 | Einstellung | NVS-Schlüssel | Bereich | Wirkung |
 |---|---|---|---|
