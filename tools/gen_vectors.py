@@ -130,11 +130,11 @@ for i, a in enumerate(sys.argv):
         FONT = sys.argv[i + 1]
 
 # ---------------------------------------------------------------- römisch, serifenlos
-RH = 14
+RH = 20                                   # gleiche Höhe wie die 7-Segment-Ziffern
 ROMAN = {
     'I': (0, [[(0, 0), (0, RH)]]),
-    'V': (8, [[(0, RH), (4, 0), (8, RH)]]),
-    'X': (8, [[(0, 0), (8, RH)], [(0, RH), (8, 0)]]),
+    'V': (10, [[(0, RH), (5, 0), (10, RH)]]),
+    'X': (10, [[(0, 0), (10, RH)], [(0, RH), (10, 0)]]),
 }
 ROMAN_NUM = {1: 'I', 2: 'II', 3: 'III', 4: 'IIII', 5: 'V', 6: 'VI', 7: 'VII',
              8: 'VIII', 9: 'IX', 10: 'X', 11: 'XI', 12: 'XII'}
@@ -164,7 +164,7 @@ def arabic(hours):
     return polys
 
 
-def roman(hours, radius=95):
+def roman(hours, radius=91):                 # gleicher Radius wie die 7-Segment-Ziffern
     polys = []
     for h in hours:
         cx, cy = pt(radius, h * 30)
