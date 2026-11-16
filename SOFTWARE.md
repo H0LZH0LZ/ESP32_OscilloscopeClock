@@ -59,6 +59,7 @@ Diese Datei beschreibt, wie die Firmware aufgebaut ist. Für Verdrahtung und Geh
 | Log-Ringpuffer | `logMsg()` auf beiden Kernen | Webinterface | Spinlock |
 | `g_ntpSynced` | SNTP-Callback | uiTask | `bool`, atomar |
 | `g_timeManual` | Webinterface (`POST /api/time`) | uiTask | `bool`, atomar |
+| `s_lang` (Sprache), `s_dstForced` (Sommer-/Winterzeit von Hand) | uiTask (Webinterface) | uiTask | nur Core 0 |
 | `g_lastSyncEpoch` | SNTP-Callback | uiTask | Spinlock (`time_t` ist 64 Bit) |
 
 ## Zeit und NTP
@@ -76,6 +77,23 @@ Diese Datei beschreibt, wie die Firmware aufgebaut ist. Für Verdrahtung und Geh
   `settimeofday()` setzt die Systemuhr, `g_timeManual` macht sie gültig (`timeValid()`). Ein späterer
   NTP-Abgleich überschreibt sie. Der ESP32 hat keine gepufferte Echtzeituhr: Nach einem Neustart
   muss die Zeit erneut gestellt werden.
+- **Sommer-/Winterzeit bei der Handeingabe:** „Automatisch“ (Regeln der Zeitzone), „Sommerzeit“ oder
+  „Winterzeit“ (`dst` = -1/1/0). Fest gewählt setzt `applyDstOverride()` eine Zeitzone ohne
+  Umschaltregel, z. B. `CEST-2:00` statt `CET-1CEST,M3.5.0,M10.5.0/3` (`tzPart()` liest Name und
+  Versatz aus der POSIX-Zeitzone). Beim nächsten NTP-Abgleich oder einer Zeitzonen-Änderung gilt
+  wieder die normale Zeitzone. Die Auswahl erscheint nur bei Zeitzonen mit Sommerzeit.
+
+## Sprache (Deutsch/English)
+
+- `s_lang` (NVS-Schlüssel `lang`, Startwert `UI_LANG`) gilt für Meldungen des Webinterfaces, das OLED
+  und das Protokoll. `tr("deutsch", "english")` wählt den Text. Protokollzeilen behalten die Sprache,
+  in der sie geschrieben wurden. `loadSettings()` läuft deshalb vor der ersten Ausgabe in `setup()`.
+- OLED auf Englisch: `WiFi …`, `Week 46 - 2026-11-15` (ISO-Datum), „Oscilloscope profile“.
+- Webseite: Sie ist auf Deutsch geschrieben, die Tabelle `EN` im Skript übersetzt. `applyLang()`
+  übersetzt alle festen Texte (Textknoten, `aria-label`) – über die Rückwärtstabelle auch zurück –,
+  `t()` die Texte aus dem Skript. Umgeschaltet wird in den Einstellungen oder unten im Seitenmenü;
+  die Seite wechselt sofort und speichert die Sprache auf der Uhr (`POST /api/settings`, `lang`).
+  Eine Änderung von einem anderen Gerät übernimmt die Seite mit der nächsten Statusabfrage.
 
 ## WLAN
 
@@ -158,7 +176,7 @@ eingesetzt (`textContent`), nie als HTML.
 | Methode und Pfad | Funktion |
 |---|---|
 | `GET /` | die Seite |
-| `GET /api/status` | JSON: `time`, `date`, `kw`, `ntp{synced,overdue,manual,last,server}`, `wifi{configured,connected,ssid,rssi,ip,host}`, `ap{active,ssid,ip}`, `profile`, `dial`, `fps`, `heap`, `heapTotal`, `heapMin`, `heapBlock`, `cpu0`, `reset`, `uptime`, `fw` |
+| `GET /api/status` | JSON: `time`, `date`, `kw`, `ntp{synced,overdue,manual,dst,last,server}`, `wifi{configured,connected,ssid,rssi,ip,host}`, `ap{active,ssid,ip}`, `profile`, `dial`, `fps`, `heap`, `heapTotal`, `heapMin`, `heapBlock`, `cpu0`, `reset`, `uptime`, `fw`, `lang` |
 | `GET /api/log` | Log als Text, älteste Zeile zuerst |
 | `GET /api/networks` | gespeicherte Netze `[{ssid, source:"secrets"/"web"}]`, nie Passwörter |
 | `GET /font.woff2` | Schrift der Seite (aus `font.h`), wird ein Jahr im Browser zwischengespeichert |
@@ -168,10 +186,10 @@ eingesetzt (`textContent`), nie als HTML.
 | `POST /api/wifi/delete` | `ssid` löschen, danach Neustart (WiFiMulti kann Netze nicht vergessen) |
 | `POST /api/reconnect` | Verbindung trennen, `wifiTask` verbindet mit dem stärksten Netz |
 | `GET /api/settings` | aktuelle Einstellungen, Standardwerte (`defaults`) und Zeitzonen-Liste |
-| `POST /api/settings` | beliebige Felder `profile`, `dial`, `beamNs`, `handPct`, `jumpSpeed`, `tz`, `ntp`, `oledContrast`, `oledShift`, `oledFlip`: prüfen, sofort anwenden, speichern. Antwort `{ok, msg, settings}` |
+| `POST /api/settings` | beliebige Felder `profile`, `dial`, `beamNs`, `handPct`, `jumpSpeed`, `tz`, `ntp`, `oledContrast`, `oledShift`, `oledFlip`, `lang` (`de`/`en`): prüfen, sofort anwenden, speichern. Antwort `{ok, msg, settings}` |
 | `POST /api/settings/reset` | alle Einstellungen auf die Werte aus `config.h` |
 | `POST /api/dial` | `style` 0 = 1–12, 1 = 12/3/6/9, 2 = römisch I–XII, 3 = römisch XII/III/VI/IX: Zifferblatt umschalten (Oszilloskop und Vorschau), wird gespeichert |
-| `POST /api/time` | `epoch` (Unix-Sekunden, UTC) **oder** `local` (`JJJJ-MM-TTTHH:MM[:SS]`, Ortszeit): Uhrzeit von Hand stellen, 2024–2099 |
+| `POST /api/time` | `epoch` (Unix-Sekunden, UTC) **oder** `local` (`JJJJ-MM-TTTHH:MM[:SS]`, Ortszeit), optional `dst` (-1 automatisch, 1 Sommerzeit, 0 Winterzeit): Uhrzeit von Hand stellen, 2024–2099 |
 
 **Gespeicherte WLANs:** bis zu `WEB_MAX_NETWORKS` (5) Netze im NVS (Namensraum `scopeclock`,
 Schlüssel `netn`, `net_s0…`, `net_p0…`), zusätzlich zu `secrets.h`. Sie bleiben bei einem
@@ -220,6 +238,7 @@ gespeicherten Werte, die WLANs bleiben erhalten.
 | OLED-Helligkeit | `oled` | 1–255 | `u8g2.setContrast()` |
 | OLED-Pixelverschiebung | `shift` | an/aus | Versatz gegen Einbrennen |
 | OLED um 180° drehen | `flip` | an/aus | `u8g2.setDisplayRotation(U8G2_R2)`, für ein kopfüber eingebautes Display |
+| Sprache | `lang` | Deutsch / English | `s_lang`: Webinterface, OLED, Protokoll |
 
 Die Firmware prüft jeden Wert (`handleSettingsPost()`) und meldet ungültige Eingaben mit Grund
 zurück. `loadSettings()` liest alle Werte in `setup()`, bevor die Tasks starten.

@@ -142,6 +142,10 @@
 #define OLED_CONTRAST     0x80       // Helligkeit 0x00…0xFF (niedriger = langlebiger)
 #define OLED_FLIP         0          // 1 = Anzeige um 180° drehen (Display kopfüber eingebaut)
 
+// Sprache für Webinterface, OLED und Protokoll: 0 = Deutsch, 1 = English.
+// Startwert – im Webinterface umschaltbar (wird gespeichert).
+#define UI_LANG           0
+
 // ---------------------------------------------------------------------------
 // Webinterface (http://scope-clock.local bzw. IP-Adresse der Uhr)
 // ---------------------------------------------------------------------------

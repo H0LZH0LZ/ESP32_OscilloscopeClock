@@ -4,8 +4,8 @@
 
 This document describes how the firmware is structured. For wiring and enclosure see
 [HARDWARE.en.md](HARDWARE.en.md), for the quick start the [README](README.en.md).
-The web interface is in German; its labels are quoted in German with the English meaning in
-parentheses. Code comments are in German.
+Web interface, OLED and log can be switched between German and English. Labels are quoted in
+German with the English label in parentheses. Code comments are in German.
 
 ## Files
 
@@ -61,6 +61,7 @@ parentheses. Code comments are in German.
 | Log ring buffer | `logMsg()` on both cores | web interface | spinlock |
 | `g_ntpSynced` | SNTP callback | uiTask | `bool`, atomic |
 | `g_timeManual` | web interface (`POST /api/time`) | uiTask | `bool`, atomic |
+| `s_lang` (language), `s_dstForced` (summer/winter time set by hand) | uiTask (web interface) | uiTask | core 0 only |
 | `g_lastSyncEpoch` | SNTP callback | uiTask | spinlock (`time_t` is 64 bit) |
 
 ## Time and NTP
@@ -79,6 +80,24 @@ parentheses. Code comments are in German.
   converted with `mktime()`). `settimeofday()` sets the system clock, `g_timeManual` marks it as
   valid (`timeValid()`). A later NTP sync overwrites it. The ESP32 has no battery-backed real-time
   clock: after a restart the time has to be set again.
+- **Summer/winter time for manual input:** „Automatisch“ (Automatic, rules of the time zone),
+  „Sommerzeit“ (Summer time) or „Winterzeit“ (Winter time) (`dst` = -1/1/0). When fixed,
+  `applyDstOverride()` sets a time zone without switching rule, e.g. `CEST-2:00` instead of
+  `CET-1CEST,M3.5.0,M10.5.0/3` (`tzPart()` reads name and offset from the POSIX time zone). With the
+  next NTP sync or a time zone change the normal time zone applies again. The choice is only shown
+  for time zones with daylight saving time.
+
+## Language (German/English)
+
+- `s_lang` (NVS key `lang`, start value `UI_LANG`) applies to web interface messages, the OLED and
+  the log. `tr("german", "english")` picks the text. Log lines keep the language they were written
+  in; `loadSettings()` therefore runs before the first output in `setup()`.
+- OLED in English: `WiFi …`, `Week 46 - 2026-11-15` (ISO date), “Oscilloscope profile”.
+- Web page: written in German, the table `EN` in the script translates. `applyLang()` translates all
+  fixed texts (text nodes, `aria-label`) – and back via the reverse table –, `t()` the texts from the
+  script. Switch in the settings or at the bottom of the side menu; the page changes immediately and
+  stores the language on the clock (`POST /api/settings`, `lang`). A change from another device is
+  picked up with the next status request.
 
 ## Wi-Fi
 
@@ -164,7 +183,7 @@ inserted as text (`textContent`), never as HTML.
 |---|---|
 | `GET /` | the page |
 | `GET /font.woff2` | font of the page (from `font.h`), cached by the browser for one year |
-| `GET /api/status` | JSON: `time`, `date`, `kw`, `ntp{synced,overdue,manual,last,server}`, `wifi{configured,connected,ssid,rssi,ip,host}`, `ap{active,ssid,ip}`, `profile`, `dial`, `fps`, `heap`, `heapTotal`, `heapMin`, `heapBlock`, `cpu0`, `reset`, `uptime`, `fw` |
+| `GET /api/status` | JSON: `time`, `date`, `kw`, `ntp{synced,overdue,manual,dst,last,server}`, `wifi{configured,connected,ssid,rssi,ip,host}`, `ap{active,ssid,ip}`, `profile`, `dial`, `fps`, `heap`, `heapTotal`, `heapMin`, `heapBlock`, `cpu0`, `reset`, `uptime`, `fw`, `lang` |
 | `GET /api/log` | log as text, oldest line first |
 | `GET /api/networks` | saved networks `[{ssid, source:"secrets"/"web"}]`, never passwords |
 | `GET /api/vectors` | vector data for the preview (approx. 9 KB): `dial`, `digits` (all four dials, index = style), `hr`, `min`, `sec` (60 positions each). Polylines as `[x0,y0,x1,y1,…]`, 0–255, y upwards |
@@ -173,12 +192,12 @@ inserted as text (`textContent`), never as HTML.
 | `POST /api/wifi/delete` | delete `ssid`, then restart (WiFiMulti cannot forget networks) |
 | `POST /api/reconnect` | disconnect, `wifiTask` connects to the strongest network |
 | `GET /api/settings` | current settings, default values (`defaults`) and time zone list |
-| `POST /api/settings` | any of the fields `profile`, `dial`, `beamNs`, `handPct`, `jumpSpeed`, `tz`, `ntp`, `oledContrast`, `oledShift`, `oledFlip`: validate, apply immediately, save. Answer `{ok, msg, settings}` |
+| `POST /api/settings` | any of the fields `profile`, `dial`, `beamNs`, `handPct`, `jumpSpeed`, `tz`, `ntp`, `oledContrast`, `oledShift`, `oledFlip`, `lang` (`de`/`en`): validate, apply immediately, save. Answer `{ok, msg, settings}` |
 | `POST /api/settings/reset` | reset all settings to the values from `config.h` |
 | `POST /api/dial` | `style` 0 = 1–12, 1 = 12/3/6/9, 2 = Roman I–XII, 3 = Roman XII/III/VI/IX: change the dial (oscilloscope and preview), saved |
-| `POST /api/time` | `epoch` (Unix seconds, UTC) **or** `local` (`YYYY-MM-DDTHH:MM[:SS]`, local time): set the time by hand, 2024–2099 |
+| `POST /api/time` | `epoch` (Unix seconds, UTC) **or** `local` (`YYYY-MM-DDTHH:MM[:SS]`, local time), optional `dst` (-1 automatic, 1 summer time, 0 winter time): set the time by hand, 2024–2099 |
 
-All messages returned by the interfaces (`msg`) are in German, like the page.
+Messages returned by the interfaces (`msg`) are in the selected language.
 
 **Saved networks:** up to `WEB_MAX_NETWORKS` (5) networks in NVS (namespace `scopeclock`, keys
 `netn`, `net_s0…`, `net_p0…`), in addition to `secrets.h`. They survive a firmware update.
@@ -226,6 +245,7 @@ defaults) deletes the stored values; Wi-Fi networks are kept.
 | OLED brightness („OLED-Helligkeit“) | `oled` | 1–255 | `u8g2.setContrast()` |
 | OLED pixel shift („OLED-Pixelverschiebung“) | `shift` | on/off | offset against burn-in |
 | Rotate OLED by 180° („OLED um 180° drehen“) | `flip` | on/off | `u8g2.setDisplayRotation(U8G2_R2)`, for a display mounted upside down |
+| Language („Sprache“) | `lang` | Deutsch / English | `s_lang`: web interface, OLED, log |
 
 The firmware validates every value (`handleSettingsPost()`) and reports invalid input with a
 reason. `loadSettings()` reads all values in `setup()` before the tasks start.
@@ -276,8 +296,8 @@ Both show the same lines, with a timestamp (`+<s>s` until the time is valid):
 23:20:00 [Scope] Profil umgeschaltet: ANALOG, gespeichert
 ```
 
-(The log messages are in German: “verbunden mit” = connected to, “Verbindung verloren” =
-connection lost, “gespeichert” = saved, “von Hand gestellt” = set by hand.)
+(Shown in German here; with the language set to English the lines read e.g. “[WiFi] connected to …”,
+“[WiFi] connection lost – retrying”, “[Time] set by hand …”.)
 Passwords are never printed.
 
 ## OLED display

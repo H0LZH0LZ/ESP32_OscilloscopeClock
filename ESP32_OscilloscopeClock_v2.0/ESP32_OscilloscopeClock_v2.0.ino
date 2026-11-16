@@ -202,9 +202,14 @@ static char    s_ntpServer[64] = NTP_SERVER_1;             // erster NTP-Server 
 static uint8_t s_oledContrast  = OLED_CONTRAST;
 static bool    s_oledShift     = OLED_SHIFT_EVERY_S > 0;
 static bool    s_oledFlip      = OLED_FLIP;                // Anzeige um 180° gedreht
+static uint8_t s_lang          = UI_LANG;                  // Sprache: 0 = Deutsch, 1 = English
+
+// Text in der eingestellten Sprache (Webinterface-Meldungen, OLED, Protokoll)
+static inline const char *tr(const char *de, const char *en) { return s_lang ? en : de; }
 
 static volatile bool g_ntpSynced     = false;  // true nach dem ersten erfolgreichen Sync
 static volatile bool g_timeManual    = false;  // true, wenn die Zeit im Webinterface gestellt wurde
+static int8_t        s_dstForced     = -1;     // von Hand gewählt: -1 = automatisch, 0 = Winterzeit, 1 = Sommerzeit
 static time_t        g_lastSyncEpoch = 0;      // Unix-Zeit der letzten Synchronisierung
 
 // Gültige Uhrzeit mit Datum: per NTP oder von Hand gestellt (ohne Internet).
@@ -626,8 +631,8 @@ static const char *dialName(int style)
 {
   switch (style) {
     case 1:  return "12/3/6/9";
-    case 2:  return "roemisch I-XII";
-    case 3:  return "roemisch XII/III/VI/IX";
+    case 2:  return tr("roemisch I-XII", "Roman I-XII");
+    case 3:  return tr("roemisch XII/III/VI/IX", "Roman XII/III/VI/IX");
     default: return "1-12";
   }
 }
@@ -713,7 +718,7 @@ static void buildTour(const uint8_t *digits, int digitsSize)
 
   float total = 0;
   for (int k = 0; k < n; k++) total += tourGap(s_tour[k], s_tour[(k + 1) % n]);
-  logMsg("[Scope] Rundtour: %d Linienzuege, Spruenge gesamt %.0f DAC-Einheiten", n, total);
+  logMsg(tr("[Scope] Rundtour: %d Linienzuege, Spruenge gesamt %.0f DAC-Einheiten", "[Scope] round trip: %d polylines, jumps total %.0f DAC units"), n, total);
 }
 
 //*****************************************************************************
@@ -740,7 +745,7 @@ static void IRAM_ATTR scopeTask(void *)
   // Core-Version aktiv ist, würde er auslösen. Deshalb hier abschalten.
   disableCore1WDT();
   dacInit();
-  logMsg("[Scope] laeuft auf Core %d", xPortGetCoreID());
+  logMsg(tr("[Scope] laeuft auf Core %d", "[Scope] running on core %d"), xPortGetCoreID());
 
   uint32_t secCycles = s_stepCycles / 2;                  // Sekundenzeiger: 2 × halbe Helligkeit
   int builtDial = -1;                                     // Zifferblatt der aktuellen Rundtour
@@ -943,15 +948,15 @@ static void wifiStart()
     const WifiCredential &n = WIFI_NETWORKS[i];
     if (!n.ssid || !n.ssid[0]) continue;
     wifiMulti.addAP(n.ssid, n.password);
-    logMsg("[WiFi] bekanntes Netz (secrets.h): \"%s\"", n.ssid);   // Passwort wird nie ausgegeben
+    logMsg(tr("[WiFi] bekanntes Netz (secrets.h): \"%s\"", "[WiFi] known network (secrets.h): \"%s\""), n.ssid);   // Passwort wird nie ausgegeben
   }
   webNetsLoad();
   for (int i = 0; i < s_webNetCount; i++) {
     wifiMulti.addAP(s_webNets[i].ssid, s_webNets[i].pw);
-    logMsg("[WiFi] bekanntes Netz (Webinterface): \"%s\"", s_webNets[i].ssid);
+    logMsg(tr("[WiFi] bekanntes Netz (Webinterface): \"%s\"", "[WiFi] known network (web interface): \"%s\""), s_webNets[i].ssid);
   }
   if (!wifiConfigured())
-    logMsg("[WiFi] noch kein WLAN eingetragen – Einrichtung ueber das Setup-WLAN \"%s\"", WEB_SETUP_AP_SSID);
+    logMsg(tr("[WiFi] noch kein WLAN eingetragen – Einrichtung ueber das Setup-WLAN \"%s\"", "[WiFi] no network configured yet – set up via the setup network \"%s\""), WEB_SETUP_AP_SSID);
 
   // NTP: configTzTime() setzt die Zeitzone (inkl. Sommerzeitregel) und startet
   // den SNTP-Client im Hintergrund. Er wartet selbstständig, bis das WLAN steht,
@@ -985,16 +990,16 @@ static void wifiLogChanges()
   wl_status_t st = WiFi.status();
   if (st != last) {
     if (st == WL_CONNECTED) {
-      logMsg("[WiFi] verbunden mit \"%s\", IP %s, RSSI %d dBm",
+      logMsg(tr("[WiFi] verbunden mit \"%s\", IP %s, RSSI %d dBm", "[WiFi] connected to \"%s\", IP %s, RSSI %d dBm"),
              WiFi.SSID().c_str(), WiFi.localIP().toString().c_str(), WiFi.RSSI());
       if (!mdnsStarted && MDNS.begin(WIFI_HOSTNAME)) {
         MDNS.addService("http", "tcp", 80);
         mdnsStarted = true;
-        logMsg("[Web] erreichbar unter http://%s.local und http://%s",
+        logMsg(tr("[Web] erreichbar unter http://%s.local und http://%s", "[Web] reachable at http://%s.local and http://%s"),
                WIFI_HOSTNAME, WiFi.localIP().toString().c_str());
       }
     } else if (last == WL_CONNECTED) {
-      logMsg("[WiFi] Verbindung verloren – versuche erneut");
+      logMsg(tr("[WiFi] Verbindung verloren – versuche erneut", "[WiFi] connection lost – retrying"));
     }
     last = st;
   }
@@ -1002,6 +1007,7 @@ static void wifiLogChanges()
   // Neuer Sync erkannt = Zeitstempel hat sich seit der letzten Ausgabe geändert
   const time_t syncEpoch = lastSyncEpoch();
   if (g_ntpSynced && syncEpoch != lastLoggedSync) {
+    if (s_dstForced >= 0) applyDstOverride(-1);         // Zeitserver da: wieder automatische Sommerzeit
     struct tm st;
     localtime_r(&syncEpoch, &st);
     logMsg("[NTP] Sync %02d.%02d.%04d %02d:%02d:%02d",
@@ -1012,7 +1018,7 @@ static void wifiLogChanges()
 
   // Überfällig? (z.B. WLAN dauerhaft weg oder NTP-Server nicht erreichbar)
   if (!overdueLogged && ntpOverdue()) {
-    logMsg("[NTP] Warnung: letzter Sync liegt mehr als 2 Intervalle zurueck");
+    logMsg(tr("[NTP] Warnung: letzter Sync liegt mehr als 2 Intervalle zurueck", "[NTP] warning: last sync is more than 2 intervals ago"));
     overdueLogged = true;
   }
 }
@@ -1063,17 +1069,17 @@ static bool idleHookCore0()
 static const char *resetReasonText()
 {
   switch (esp_reset_reason()) {
-    case ESP_RST_POWERON:   return "Einschalten";
-    case ESP_RST_EXT:       return "Reset-Taster";
-    case ESP_RST_SW:        return "Neustart durch Software";
-    case ESP_RST_PANIC:     return "Absturz (Programmfehler)";
-    case ESP_RST_INT_WDT:   return "Absturz (Interrupt-Watchdog)";
-    case ESP_RST_TASK_WDT:  return "Absturz (Task-Watchdog)";
-    case ESP_RST_WDT:       return "Absturz (Watchdog)";
-    case ESP_RST_DEEPSLEEP: return "Aufwachen aus Tiefschlaf";
-    case ESP_RST_BROWNOUT:  return "Unterspannung";
+    case ESP_RST_POWERON:   return tr("Einschalten", "Power on");
+    case ESP_RST_EXT:       return tr("Reset-Taster", "Reset button");
+    case ESP_RST_SW:        return tr("Neustart durch Software", "Software restart");
+    case ESP_RST_PANIC:     return tr("Absturz (Programmfehler)", "Crash (exception)");
+    case ESP_RST_INT_WDT:   return tr("Absturz (Interrupt-Watchdog)", "Crash (interrupt watchdog)");
+    case ESP_RST_TASK_WDT:  return tr("Absturz (Task-Watchdog)", "Crash (task watchdog)");
+    case ESP_RST_WDT:       return tr("Absturz (Watchdog)", "Crash (watchdog)");
+    case ESP_RST_DEEPSLEEP: return tr("Aufwachen aus Tiefschlaf", "Wake from deep sleep");
+    case ESP_RST_BROWNOUT:  return tr("Unterspannung", "Brown-out");
     case ESP_RST_SDIO:      return "SDIO";
-    default:                return "unbekannt";
+    default:                return tr("unbekannt", "unknown");
   }
 }
 
@@ -1117,6 +1123,7 @@ static void handleStatus()
   o += ",\"ntp\":{\"synced\":"; o += g_ntpSynced ? "true" : "false";
   o += ",\"overdue\":";         o += ntpOverdue() ? "true" : "false";
   o += ",\"manual\":";          o += g_timeManual ? "true" : "false";
+  o += ",\"dst\":";             o += (int)s_dstForced;
   o += ",\"last\":";
   if (g_ntpSynced) {
     const time_t e = lastSyncEpoch(); struct tm st; localtime_r(&e, &st);
@@ -1146,6 +1153,7 @@ static void handleStatus()
   o += ",\"cpu0\":";                 o += (int)s_cpu0Load;                    // Last Core 0 in %
   o += ",\"reset\":";                jsonStr(o, resetReasonText());
   o += ",\"fw\":";                   jsonStr(o, FW_VERSION);
+  o += ",\"lang\":";                 o += s_lang ? "\"en\"" : "\"de\"";
   o += '}';
   web.send(200, "application/json", o);
 }
@@ -1272,26 +1280,26 @@ static void handleWifiSave()
 {
   const String ssid = web.arg("ssid");
   const String pw   = web.arg("pw");
-  if (ssid.length() < 1 || ssid.length() > 32) { sendJsonResult(false, "Netzwerkname: 1 bis 32 Zeichen"); return; }
-  if (pw.length() > 0 && (pw.length() < 8 || pw.length() > 63)) { sendJsonResult(false, "Passwort: 8 bis 63 Zeichen (oder leer für offene Netze)"); return; }
+  if (ssid.length() < 1 || ssid.length() > 32) { sendJsonResult(false, tr("Netzwerkname: 1 bis 32 Zeichen", "Network name: 1 to 32 characters")); return; }
+  if (pw.length() > 0 && (pw.length() < 8 || pw.length() > 63)) { sendJsonResult(false, tr("Passwort: 8 bis 63 Zeichen (oder leer für offene Netze)", "Password: 8 to 63 characters (or empty for open networks)")); return; }
 
   int slot = -1;
   for (int i = 0; i < s_webNetCount; i++) if (ssid == s_webNets[i].ssid) slot = i;   // vorhandenes ersetzen
   const bool isNew = slot < 0;
   if (isNew) {
-    if (s_webNetCount >= WEB_MAX_NETWORKS) { sendJsonResult(false, "Speicher voll – bitte zuerst ein Netz löschen"); return; }
+    if (s_webNetCount >= WEB_MAX_NETWORKS) { sendJsonResult(false, tr("Speicher voll – bitte zuerst ein Netz löschen", "Storage full – please delete a network first")); return; }
     slot = s_webNetCount++;
   }
   strlcpy(s_webNets[slot].ssid, ssid.c_str(), sizeof(s_webNets[slot].ssid));
   strlcpy(s_webNets[slot].pw,   pw.c_str(),   sizeof(s_webNets[slot].pw));
   webNetsSave();
   wifiMulti.addAP(s_webNets[slot].ssid, s_webNets[slot].pw);   // ab sofort bekannt
-  logMsg("[Web] WLAN \"%s\" %s", s_webNets[slot].ssid, isNew ? "gespeichert" : "aktualisiert");
+  logMsg(tr("[Web] WLAN \"%s\" %s", "[Web] network \"%s\" %s"), s_webNets[slot].ssid, isNew ? tr("gespeichert", "saved") : tr("aktualisiert", "updated"));
 
   if (WiFi.status() == WL_CONNECTED)
-    sendJsonResult(true, "Gespeichert. Wird beim nächsten Verbindungsaufbau genutzt – oder „Neu verbinden“ antippen.");
+    sendJsonResult(true, tr("Gespeichert. Wird beim nächsten Verbindungsaufbau genutzt – oder „Neu verbinden“ antippen.", "Saved. Used on the next connection attempt – or tap “Reconnect”."));
   else
-    sendJsonResult(true, "Gespeichert. Die Uhr verbindet sich jetzt …");
+    sendJsonResult(true, tr("Gespeichert. Die Uhr verbindet sich jetzt …", "Saved. The clock is connecting now …"));
 }
 
 // POST /api/wifi/delete (ssid) – nur im Webinterface gespeicherte Netze.
@@ -1301,22 +1309,78 @@ static void handleWifiDelete()
   const String ssid = web.arg("ssid");
   int slot = -1;
   for (int i = 0; i < s_webNetCount; i++) if (ssid == s_webNets[i].ssid) slot = i;
-  if (slot < 0) { sendJsonResult(false, "Dieses Netz ist nicht im Webinterface gespeichert"); return; }
+  if (slot < 0) { sendJsonResult(false, tr("Dieses Netz ist nicht im Webinterface gespeichert", "This network is not saved in the web interface")); return; }
   for (int i = slot; i < s_webNetCount - 1; i++) s_webNets[i] = s_webNets[i + 1];
   s_webNetCount--;
   webNetsSave();
-  logMsg("[Web] WLAN \"%s\" geloescht – Neustart", ssid.c_str());
-  sendJsonResult(true, "Gelöscht. Die Uhr startet neu – Seite in ca. 10 s neu laden.");
+  logMsg(tr("[Web] WLAN \"%s\" geloescht – Neustart", "[Web] network \"%s\" deleted – restarting"), ssid.c_str());
+  sendJsonResult(true, tr("Gelöscht. Die Uhr startet neu – Seite in ca. 10 s neu laden.", "Deleted. The clock restarts – reload the page in about 10 s."));
   s_restartAtMs = millis() + 1500;
+}
+
+// ---- Sommer-/Winterzeit von Hand (nur für die manuell gestellte Uhrzeit) ----
+// Liest aus einer POSIX-Zeitzone wie "CET-1CEST,M3.5.0,M10.5.0/3" Name und
+// Versatz (in Sekunden, POSIX-Vorzeichen: "-1" = UTC+1) ab Position p.
+static bool tzPart(const char *&p, char *name, size_t nameLen, long &off, bool needOff)
+{
+  size_t n = 0;
+  if (*p == '<') { p++; while (*p && *p != '>' && n + 1 < nameLen) name[n++] = *p++; if (*p != '>') return false; p++; }
+  else while (isalpha((unsigned char)*p) && n + 1 < nameLen) name[n++] = *p++;
+  name[n] = 0;
+  if (n < 3) return false;
+  if (!(*p == '+' || *p == '-' || isdigit((unsigned char)*p))) return !needOff;
+  const int sign = (*p == '-') ? -1 : 1;
+  if (*p == '+' || *p == '-') p++;
+  long h = 0, m = 0, sec = 0;
+  while (isdigit((unsigned char)*p)) h = h * 10 + (*p++ - '0');
+  if (*p == ':') { p++; while (isdigit((unsigned char)*p)) m = m * 10 + (*p++ - '0'); }
+  if (*p == ':') { p++; while (isdigit((unsigned char)*p)) sec = sec * 10 + (*p++ - '0'); }
+  off = sign * (h * 3600 + m * 60 + sec);
+  return true;
+}
+
+// Zeitzone fest auf Winterzeit (mode 0) bzw. Sommerzeit (mode 1) stellen – ohne
+// automatischen Wechsel. mode -1 = wieder die normale Zeitzone mit Umschaltregeln.
+// Rückgabe false: Die Zeitzone kennt keine Sommerzeit (z.B. UTC) – nichts geändert.
+static bool applyDstOverride(int mode)
+{
+  if (mode < 0) {
+    setenv("TZ", s_tz, 1); tzset();
+    s_dstForced = -1;
+    return true;
+  }
+  char stdName[16], dstName[16];
+  long stdOff = 0, dstOff = 0;
+  const char *p = s_tz;
+  if (!tzPart(p, stdName, sizeof(stdName), stdOff, true)) return false;
+  if (!*p || *p == ',') return false;                       // keine Sommerzeit-Regel
+  dstOff = stdOff - 3600;                                   // Standard: eine Stunde vor
+  if (!tzPart(p, dstName, sizeof(dstName), dstOff, false)) return false;
+  const char *name = mode ? dstName : stdName;
+  const long  off  = mode ? dstOff  : stdOff;
+  const long  a    = off < 0 ? -off : off;
+  char tz[48];
+  bool alpha = true;                                        // <…> nur, wenn nötig (z.B. "+03")
+  for (const char *c = name; *c; c++) if (!isalpha((unsigned char)*c)) alpha = false;
+  snprintf(tz, sizeof(tz), alpha ? "%s%s%ld:%02ld" : "<%s>%s%ld:%02ld",
+           name, off < 0 ? "-" : "", a / 3600, (a % 3600) / 60);
+  setenv("TZ", tz, 1); tzset();
+  s_dstForced = (int8_t)mode;
+  return true;
 }
 
 // POST /api/time – Uhrzeit von Hand stellen (für den Betrieb ohne Internet).
 //   epoch=<Unix-Sekunden, UTC>        "Uhrzeit vom Handy übernehmen"
 //   local=JJJJ-MM-TTTHH:MM[:SS]       Datum/Uhrzeit aus den Eingabefeldern,
 //                                     gilt in der eingestellten Zeitzone
+//   dst=-1/0/1 (optional)             automatisch / Winterzeit / Sommerzeit fest
 // Ein späterer NTP-Abgleich überschreibt die Zeit wieder (gewollt).
 static void handleTimeSet()
 {
+  // Sommer-/Winterzeit zuerst festlegen – mktime() rechnet dann mit dem richtigen Versatz
+  int dst = web.hasArg("dst") ? web.arg("dst").toInt() : -1;
+  if (dst > 1) dst = 1;
+  if (dst < 0 || !applyDstOverride(dst)) { applyDstOverride(-1); dst = -1; }
   time_t e = 0;
   if (web.hasArg("epoch")) {
     e = (time_t)strtoll(web.arg("epoch").c_str(), nullptr, 10);
@@ -1332,24 +1396,26 @@ static void handleTimeSet()
     }
     const int Y = v[0], M = v[1], D = v[2], h = v[3], m = v[4], sec = v[5];
     if (n < 5 || M < 1 || M > 12 || D < 1 || D > 31 || h < 0 || h > 23 || m < 0 || m > 59 || sec < 0 || sec > 59) {
-      sendJsonResult(false, "Datum oder Uhrzeit ungültig"); return;
+      sendJsonResult(false, tr("Datum oder Uhrzeit ungültig", "Invalid date or time")); return;
     }
     t.tm_year = Y - 1900; t.tm_mon = M - 1; t.tm_mday = D;
     t.tm_hour = h; t.tm_min = m; t.tm_sec = sec;
-    t.tm_isdst = -1;                                      // Sommerzeit aus der Zeitzone bestimmen
+    t.tm_isdst = dst < 0 ? -1 : 0;                        // automatisch: Sommerzeit aus der Zeitzone bestimmen
     e = mktime(&t);
   }
   // Plausibel: 2024 bis 2099
-  if (e < (time_t)1704067200 || e > (time_t)4102444800LL) { sendJsonResult(false, "Datum muss zwischen 2024 und 2099 liegen"); return; }
+  if (e < (time_t)1704067200 || e > (time_t)4102444800LL) { sendJsonResult(false, tr("Datum muss zwischen 2024 und 2099 liegen", "Date must be between 2024 and 2099")); return; }
   struct timeval tv = { e, 0 };
   settimeofday(&tv, nullptr);
   g_timeManual = true;
   struct tm lt;
   localtime_r(&e, &lt);
-  logMsg("[Zeit] von Hand gestellt (%s): %02d.%02d.%04d %02d:%02d:%02d",
-         web.hasArg("epoch") ? "vom Handy" : "Eingabe",
+  logMsg(tr("[Zeit] von Hand gestellt (%s, %s): %02d.%02d.%04d %02d:%02d:%02d", "[Time] set by hand (%s, %s): %02d.%02d.%04d %02d:%02d:%02d"),
+         web.hasArg("epoch") ? tr("vom Handy", "from phone") : tr("Eingabe", "input"),
+         dst < 0 ? tr("Sommer-/Winterzeit automatisch", "summer/winter time automatic")
+                 : dst ? tr("Sommerzeit", "summer time") : tr("Winterzeit", "winter time"),
          lt.tm_mday, lt.tm_mon + 1, lt.tm_year + 1900, lt.tm_hour, lt.tm_min, lt.tm_sec);
-  sendJsonResult(true, "Uhrzeit gestellt");
+  sendJsonResult(true, tr("Uhrzeit gestellt", "Time set"));
 }
 
 // POST /api/dial (style = 0 … DIAL_STYLES-1, siehe dialDigits) – Zifferblatt umschalten: gilt sofort
@@ -1357,11 +1423,11 @@ static void handleTimeSet()
 static void handleDial()
 {
   const int st = web.arg("style").toInt();
-  if (!web.hasArg("style") || st < 0 || st >= DIAL_STYLES) { sendJsonResult(false, "Zifferblatt: 0 bis 3"); return; }
+  if (!web.hasArg("style") || st < 0 || st >= DIAL_STYLES) { sendJsonResult(false, tr("Zifferblatt: 0 bis 3", "Dial: 0 to 3")); return; }
   if (st != g_dialStyle) {
     g_dialStyle = (uint8_t)st;
     saveSetting("dial", (uint8_t)st);
-    logMsg("[Scope] Zifferblatt: %s, gespeichert", dialName(st));
+    logMsg(tr("[Scope] Zifferblatt: %s, gespeichert", "[Scope] dial: %s, saved"), dialName(st));
   }
   String o = "{\"ok\":true,\"dial\":";
   o += st;
@@ -1388,21 +1454,21 @@ static void handleDial()
 //   shift      OLED-Pixel-Shift        0/1
 //   flip       OLED um 180° gedreht    0/1
 
-struct TzOption { const char *label; const char *tz; };
+struct TzOption { const char *label; const char *labelEn; const char *tz; };
 static const TzOption TIMEZONES[] = {
-  { "Mitteleuropa (Berlin, Wien, Zürich)", "CET-1CEST,M3.5.0,M10.5.0/3" },
-  { "Westeuropa (London, Lissabon)",       "GMT0BST,M3.5.0/1,M10.5.0" },
-  { "Osteuropa (Helsinki, Athen)",         "EET-2EEST,M3.5.0/3,M10.5.0/4" },
-  { "Moskau",                              "MSK-3" },
-  { "UTC",                                 "UTC0" },
-  { "USA Ost (New York)",                  "EST5EDT,M3.2.0,M11.1.0" },
-  { "USA Zentral (Chicago)",               "CST6CDT,M3.2.0,M11.1.0" },
-  { "USA Mountain (Denver)",               "MST7MDT,M3.2.0,M11.1.0" },
-  { "USA West (Los Angeles)",              "PST8PDT,M3.2.0,M11.1.0" },
-  { "Indien (Delhi)",                      "IST-5:30" },
-  { "China (Peking)",                      "CST-8" },
-  { "Japan (Tokio)",                       "JST-9" },
-  { "Australien Ost (Sydney)",             "AEST-10AEDT,M10.1.0,M4.1.0/3" },
+  { "Mitteleuropa (Berlin, Wien, Zürich)", "Central Europe (Berlin, Vienna, Zurich)", "CET-1CEST,M3.5.0,M10.5.0/3" },
+  { "Westeuropa (London, Lissabon)",       "Western Europe (London, Lisbon)","GMT0BST,M3.5.0/1,M10.5.0" },
+  { "Osteuropa (Helsinki, Athen)",         "Eastern Europe (Helsinki, Athens)","EET-2EEST,M3.5.0/3,M10.5.0/4" },
+  { "Moskau",                              "Moscow","MSK-3" },
+  { "UTC",                                 "UTC","UTC0" },
+  { "USA Ost (New York)",                  "US Eastern (New York)","EST5EDT,M3.2.0,M11.1.0" },
+  { "USA Zentral (Chicago)",               "US Central (Chicago)","CST6CDT,M3.2.0,M11.1.0" },
+  { "USA Mountain (Denver)",               "US Mountain (Denver)","MST7MDT,M3.2.0,M11.1.0" },
+  { "USA West (Los Angeles)",              "US Pacific (Los Angeles)","PST8PDT,M3.2.0,M11.1.0" },
+  { "Indien (Delhi)",                      "India (Delhi)","IST-5:30" },
+  { "China (Peking)",                      "China (Beijing)","CST-8" },
+  { "Japan (Tokio)",                       "Japan (Tokyo)","JST-9" },
+  { "Australien Ost (Sydney)",             "Australia Eastern (Sydney)","AEST-10AEDT,M10.1.0,M4.1.0/3" },
 };
 static const int TIMEZONE_COUNT = sizeof(TIMEZONES) / sizeof(TIMEZONES[0]);
 
@@ -1445,6 +1511,7 @@ static void loadSettings()
   s_oledContrast = oled ? oled : OLED_CONTRAST;
   s_oledShift    = p.getUChar("shift", OLED_SHIFT_EVERY_S > 0) != 0;
   s_oledFlip     = p.getUChar("flip", OLED_FLIP) != 0;
+  s_lang         = p.getUChar("lang", UI_LANG) ? 1 : 0;
   p.end();
 }
 
@@ -1461,6 +1528,7 @@ static void settingsJson(String &o)
   o += ",\"oledContrast\":"; o += (int)s_oledContrast;
   o += ",\"oledShift\":";    o += s_oledShift ? "true" : "false";
   o += ",\"oledFlip\":";     o += s_oledFlip ? "true" : "false";
+  o += ",\"lang\":";         o += s_lang ? "\"en\"" : "\"de\"";
   o += ",\"defaults\":{\"profile\":"; o += SCOPE_PROFILE;
   o += ",\"dial\":";         o += DIAL_STYLE;
   o += ",\"beamNs\":";       o += BEAM_NS_PER_UNIT;
@@ -1471,14 +1539,15 @@ static void settingsJson(String &o)
   o += ",\"oledContrast\":"; o += OLED_CONTRAST;
   o += ",\"oledShift\":";    o += OLED_SHIFT_EVERY_S > 0 ? "true" : "false";
   o += ",\"oledFlip\":";     o += OLED_FLIP ? "true" : "false";
+  o += ",\"lang\":";         o += UI_LANG ? "\"en\"" : "\"de\"";
   o += "},\"timezones\":[";
   bool cfgListed = false;
   for (int i = 0; i < TIMEZONE_COUNT; i++) {
     if (i) o += ',';
-    o += "{\"label\":"; jsonStr(o, TIMEZONES[i].label); o += ",\"tz\":"; jsonStr(o, TIMEZONES[i].tz); o += '}';
+    o += "{\"label\":"; jsonStr(o, tr(TIMEZONES[i].label, TIMEZONES[i].labelEn)); o += ",\"tz\":"; jsonStr(o, TIMEZONES[i].tz); o += '}';
     if (!strcmp(TIMEZONES[i].tz, TZ_INFO)) cfgListed = true;
   }
-  if (!cfgListed) { o += ",{\"label\":\"aus config.h\",\"tz\":"; jsonStr(o, TZ_INFO); o += '}'; }
+  if (!cfgListed) { o += ",{\"label\":"; jsonStr(o, tr("aus config.h", "from config.h")); o += ",\"tz\":"; jsonStr(o, TZ_INFO); o += '}'; }
   o += "]}";
 }
 
@@ -1497,6 +1566,7 @@ static void sendSettings(bool ok, const char *msg)
 static void applyTime()
 {
   configTzTime(s_tz, s_ntpServer, NTP_SERVER_2, NTP_SERVER_3);
+  s_dstForced = -1;                        // configTzTime setzt die normale Zeitzone
 }
 
 // GET /api/settings
@@ -1507,7 +1577,7 @@ static void handleSettingsGet() { sendSettings(true, ""); }
 static void handleSettingsPost()
 {
   Preferences p;
-  if (!p.begin("scopeclock", false)) { sendSettings(false, "Flash-Speicher nicht verfügbar"); return; }
+  if (!p.begin("scopeclock", false)) { sendSettings(false, tr("Flash-Speicher nicht verfügbar", "Flash storage not available")); return; }
   String err;
   int changed = 0;
   auto bad = [&](const char *m) { if (err.length()) err += "; "; err += m; };
@@ -1515,66 +1585,75 @@ static void handleSettingsPost()
   if (web.hasArg("profile")) {
     const int v = web.arg("profile").toInt();
     if (v == 0 || v == 1) { g_scopeProfile = v; p.putUChar("profile", v); changed++;
-      logMsg("[Web] Oszilloskop-Profil: %s", profileName(v)); }
-    else bad("Oszilloskop-Profil ungültig");
+      logMsg(tr("[Web] Oszilloskop-Profil: %s", "[Web] oscilloscope profile: %s"), profileName(v)); }
+    else bad(tr("Oszilloskop-Profil ungültig", "Invalid oscilloscope profile"));
   }
   if (web.hasArg("dial")) {
     const int v = web.arg("dial").toInt();
     if (v >= 0 && v < DIAL_STYLES) { g_dialStyle = v; p.putUChar("dial", v); changed++;
-      logMsg("[Web] Zifferblatt: %s", dialName(v)); }
-    else bad("Zifferblatt ungültig");
+      logMsg(tr("[Web] Zifferblatt: %s", "[Web] dial: %s"), dialName(v)); }
+    else bad(tr("Zifferblatt ungültig", "Invalid dial"));
   }
   if (web.hasArg("beamNs")) {
     const int v = web.arg("beamNs").toInt();
     if (v >= 1000 && v <= 10000) { g_beamNs = v; p.putUShort("beam", v); changed++;
-      logMsg("[Web] Strahlgeschwindigkeit: %d ns pro Schritt", v); }
-    else bad("Verweilzeit des Strahls: 1 bis 10 µs");
+      logMsg(tr("[Web] Verweilzeit des Strahls: %d ns pro Schritt", "[Web] beam dwell time: %d ns per step"), v); }
+    else bad(tr("Verweilzeit des Strahls: 1 bis 10 µs", "Beam dwell time: 1 to 10 µs"));
   }
   if (web.hasArg("handPct")) {
     const int v = web.arg("handPct").toInt();
     if (v >= 30 && v <= 100) { g_handPct = v; p.putUChar("hand", v); changed++;
-      logMsg("[Web] Zeiger-Helligkeit: %d %%", v); }
-    else bad("Zeigerhelligkeit: 30 bis 100 %");
+      logMsg(tr("[Web] Zeigerhelligkeit: %d %%", "[Web] hand brightness: %d %%"), v); }
+    else bad(tr("Zeigerhelligkeit: 30 bis 100 %", "Hand brightness: 30 to 100 %"));
   }
   if (web.hasArg("jumpSpeed")) {
     const int v = web.arg("jumpSpeed").toInt();
     if (v >= 0 && v <= 48) { g_jumpSpeed = v; p.putUChar("jump", v); changed++;
-      logMsg("[Web] Ruecklauf-Tempo: %d%s", v, v ? "x" : " (hart)"); }
-    else bad("Rücklauf-Tempo: 0 bis 48");
+      logMsg(tr("[Web] Ruecklauf-Tempo: %d%s", "[Web] retrace speed: %d%s"), v, v ? "x" : tr(" (sofortiger Sprung)", " (instant jump)")); }
+    else bad(tr("Rücklauf-Tempo: 0 bis 48", "Retrace speed: 0 to 48"));
   }
   bool timeChanged = false;
   if (web.hasArg("tz")) {
     const String v = web.arg("tz");
     if (tzAllowed(v.c_str())) { strlcpy(s_tz, v.c_str(), sizeof(s_tz)); p.putString("tz", s_tz); changed++; timeChanged = true;
-      logMsg("[Web] Zeitzone: %s", s_tz); }
-    else bad("Zeitzone unbekannt");
+      logMsg(tr("[Web] Zeitzone: %s", "[Web] time zone: %s"), s_tz); }
+    else bad(tr("Zeitzone unbekannt", "Unknown time zone"));
   }
   if (web.hasArg("ntp")) {
     const String v = web.arg("ntp");
     if (hostnameValid(v)) { strlcpy(s_ntpServer, v.c_str(), sizeof(s_ntpServer)); p.putString("ntp", s_ntpServer); changed++; timeChanged = true;
-      logMsg("[Web] NTP-Server: %s", s_ntpServer); }
-    else bad("Zeitserver: nur Buchstaben, Ziffern, Punkt und Bindestrich (max. 63 Zeichen)");
+      logMsg(tr("[Web] Zeitserver: %s", "[Web] time server: %s"), s_ntpServer); }
+    else bad(tr("Zeitserver: nur Buchstaben, Ziffern, Punkt und Bindestrich (max. 63 Zeichen)", "Time server: only letters, digits, dot and hyphen (max. 63 characters)"));
   }
   if (web.hasArg("oledContrast")) {
     const int v = web.arg("oledContrast").toInt();
     if (v >= 1 && v <= 255) { s_oledContrast = v; oledSetContrast(v); p.putUChar("oled", v); changed++; }
-    else bad("OLED-Helligkeit: 1 bis 255");
+    else bad(tr("OLED-Helligkeit: 1 bis 255", "OLED brightness: 1 to 255"));
   }
   if (web.hasArg("oledFlip")) {
     s_oledFlip = web.arg("oledFlip") == "1" || web.arg("oledFlip") == "true";
     oledSetFlip(s_oledFlip);
     p.putUChar("flip", s_oledFlip); changed++;
-    logMsg("[Web] OLED-Ausrichtung: %s", s_oledFlip ? "um 180 Grad gedreht" : "normal");
+    logMsg(tr("[Web] OLED-Ausrichtung: %s", "[Web] OLED orientation: %s"), s_oledFlip ? tr("um 180 Grad gedreht", "rotated by 180 degrees") : tr("normal", "normal"));
   }
   if (web.hasArg("oledShift")) {
     s_oledShift = web.arg("oledShift") == "1" || web.arg("oledShift") == "true";
     p.putUChar("shift", s_oledShift); changed++;
   }
+  // Sprache für Webinterface, OLED und Protokoll ("de" oder "en")
+  if (web.hasArg("lang")) {
+    const String v = web.arg("lang");
+    if (v == "de" || v == "en") {
+      s_lang = v == "en" ? 1 : 0;
+      p.putUChar("lang", s_lang); changed++;
+      logMsg("%s", tr("[Web] Sprache: Deutsch", "[Web] language: English"));
+    } else bad(tr("Sprache: de oder en", "Language: de or en"));
+  }
   p.end();
   if (timeChanged) applyTime();
 
   if (err.length()) sendSettings(false, err.c_str());
-  else sendSettings(true, changed ? "Gespeichert" : "Keine Änderung");
+  else sendSettings(true, changed ? tr("Gespeichert", "Saved") : tr("Keine Änderung", "No change"));
 }
 
 // POST /api/settings/reset – alle Einstellungen auf die Werte aus config.h
@@ -1582,7 +1661,7 @@ static void handleSettingsReset()
 {
   Preferences p;
   if (p.begin("scopeclock", false)) {
-    for (const char *k : { "profile", "dial", "beam", "hand", "jump", "tz", "ntp", "oled", "shift", "flip" }) p.remove(k);
+    for (const char *k : { "profile", "dial", "beam", "hand", "jump", "tz", "ntp", "oled", "shift", "flip", "lang" }) p.remove(k);
     p.end();
   }
   g_scopeProfile = SCOPE_PROFILE;  g_dialStyle = DIAL_STYLE;
@@ -1592,18 +1671,19 @@ static void handleSettingsReset()
   s_oledContrast = OLED_CONTRAST;  oledSetContrast(s_oledContrast);
   s_oledShift = OLED_SHIFT_EVERY_S > 0;
   s_oledFlip  = OLED_FLIP;  oledSetFlip(s_oledFlip);
+  s_lang      = UI_LANG;
   applyTime();
-  logMsg("[Web] Einstellungen auf Standard zurueckgesetzt");
-  sendSettings(true, "Auf Standardwerte zurückgesetzt");
+  logMsg(tr("[Web] Einstellungen auf Standardwerte zurueckgesetzt", "[Web] settings reset to defaults"));
+  sendSettings(true, tr("Auf Standardwerte zurückgesetzt", "Reset to defaults"));
 }
 
 // POST /api/reconnect – Verbindung trennen; wifiTask verbindet sich dann mit
 // dem stärksten bekannten Netz (z.B. nach dem Eintragen eines neuen Netzes)
 static void handleReconnect()
 {
-  if (!wifiConfigured()) { sendJsonResult(false, "Noch kein WLAN eingetragen"); return; }
-  logMsg("[Web] Neu verbinden angefordert");
-  sendJsonResult(true, "Verbinde neu … die Seite ist kurz nicht erreichbar.");
+  if (!wifiConfigured()) { sendJsonResult(false, tr("Noch kein WLAN eingetragen", "No network configured yet")); return; }
+  logMsg(tr("[Web] Neu verbinden angefordert", "[Web] reconnect requested"));
+  sendJsonResult(true, tr("Verbinde neu … die Seite ist kurz nicht erreichbar.", "Reconnecting … the page is briefly unavailable."));
   web.client().flush();
   delay(100);
   WiFi.disconnect(false, false);
@@ -1645,7 +1725,7 @@ static void webStart()
   web.on("/api/settings/reset", HTTP_POST, handleSettingsReset);
   web.onNotFound(handleNotFound);
   web.begin();
-  logMsg("[Web] Webserver gestartet (Port 80)");
+  logMsg(tr("[Web] Webserver gestartet (Port 80)", "[Web] web server started (port 80)"));
 }
 
 // Setup-WLAN ein-/ausschalten (aufgerufen 1× pro Sekunde, siehe oben).
@@ -1662,14 +1742,14 @@ static void webApManage()
     WiFi.softAP(WEB_SETUP_AP_SSID);                      // offenes WLAN, ohne Passwort
     dns.start(53, "*", WiFi.softAPIP());                 // jeder Name → Uhr (Captive Portal)
     s_apActive = true;
-    logMsg("[Web] Setup-WLAN \"%s\" aktiv – Einrichtung unter http://%s",
+    logMsg(tr("[Web] Setup-WLAN \"%s\" aktiv – Einrichtung unter http://%s", "[Web] setup network \"%s\" active – set up at http://%s"),
            WEB_SETUP_AP_SSID, WiFi.softAPIP().toString().c_str());
   } else if (s_apActive && conn && now - s_connSinceMs >= 30000UL) {
     dns.stop();
     WiFi.softAPdisconnect(true);
     WiFi.mode(WIFI_STA);
     s_apActive = false;
-    logMsg("[Web] Setup-WLAN beendet (verbunden mit \"%s\")", WiFi.SSID().c_str());
+    logMsg(tr("[Web] Setup-WLAN beendet (verbunden mit \"%s\")", "[Web] setup network closed (connected to \"%s\")"), WiFi.SSID().c_str());
   }
 }
 
@@ -1713,7 +1793,7 @@ static void oledInit()
   u8g2.drawStr(10, 26, "Scope Clock");
   u8g2.setFont(u8g2_font_6x10_tf);
   u8g2.drawStr(10, 44, "Firmware v" FW_VERSION);
-  u8g2.drawStr(10, 58, "Starte ...");
+  u8g2.drawStr(10, 58, tr("Starte ...", "Starting ..."));
   u8g2.sendBuffer();
 }
 
@@ -1890,7 +1970,7 @@ static void buttonPoll()
     const uint8_t p = g_scopeProfile ? 0 : 1;
     g_scopeProfile = p;                       // gilt ab dem nächsten Sprung
     saveSetting("profile", p);
-    logMsg("[Scope] Profil umgeschaltet: %s, gespeichert", profileName(p));
+    logMsg(tr("[Scope] Profil umgeschaltet: %s, gespeichert", "[Scope] profile switched: %s, saved"), profileName(p));
   }
 }
 
@@ -1915,7 +1995,7 @@ static bool oledProfileOverlay()
 
   u8g2.clearBuffer();
   u8g2.setFont(u8g2_font_6x10_tf);
-  drawCentered("Oszilloskop-Profil", 11, 1);                       // 18 Zeichen = 108 px
+  drawCentered(tr("Oszilloskop-Profil", "Oscilloscope profile"), 11, 1);   // max. 20 Zeichen = 120 px
   u8g2.setFont(u8g2_font_7x14B_tf);
   snprintf(buf, sizeof(buf), "%s > %s", profileName(cur), profileName(next));
   drawCentered(buf, 30, 1);                                        // max. 15 Zeichen = 105 px
@@ -1961,20 +2041,22 @@ static void oledUpdate()
   // 2) Kalenderwoche + Datum (nur mit gültiger NTP-Zeit)
   u8g2.setFont(u8g2_font_6x10_tf);
   if (valid)
-    snprintf(buf, sizeof(buf), "KW %02d - %02d.%02d.%04d", isoWeek(t), t.tm_mday,
-             t.tm_mon + 1, t.tm_year + 1900);   // 18 Zeichen = 108 px
+    if (s_lang) snprintf(buf, sizeof(buf), "Week %02d - %04d-%02d-%02d", isoWeek(t), t.tm_year + 1900,
+                         t.tm_mon + 1, t.tm_mday);       // 20 Zeichen = 120 px (ISO-Datum)
+    else        snprintf(buf, sizeof(buf), "KW %02d - %02d.%02d.%04d", isoWeek(t), t.tm_mday,
+                         t.tm_mon + 1, t.tm_year + 1900);   // 18 Zeichen = 108 px
   else
-    snprintf(buf, sizeof(buf), "Datum unbekannt");
+    snprintf(buf, sizeof(buf), "%s", tr("Datum unbekannt", "Date unknown"));
   drawCentered(buf, Y_DATE + dy, dx);
 
   u8g2.setFont(u8g2_font_5x8_tf);
   const bool connected = wifiConfigured() && WiFi.status() == WL_CONNECTED;
 
   // 3) Netzwerkname: verbundenes Netz / Setup-WLAN / Suche läuft
-  if (connected)          snprintf(buf, sizeof(buf), "WLAN %s", WiFi.SSID().c_str());
+  if (connected)          snprintf(buf, sizeof(buf), "%s %s", tr("WLAN", "WiFi"), WiFi.SSID().c_str());
   else if (s_apActive)    snprintf(buf, sizeof(buf), "Setup %s", WEB_SETUP_AP_SSID);
-  else if (!wifiConfigured()) snprintf(buf, sizeof(buf), "WLAN aus");
-  else                    snprintf(buf, sizeof(buf), "WLAN suche ...");
+  else if (!wifiConfigured()) snprintf(buf, sizeof(buf), "%s", tr("WLAN aus", "WiFi off"));
+  else                    snprintf(buf, sizeof(buf), "%s", tr("WLAN suche ...", "WiFi searching ..."));
   fitText(buf, LINE_CHARS);
   drawCentered(buf, Y_SSID + dy, dx);
 
@@ -1984,9 +2066,9 @@ static void oledUpdate()
   } else if (s_apActive) {
     snprintf(buf, sizeof(buf), "http://%s", WiFi.softAPIP().toString().c_str());
   } else if (wifiConfigured()) {
-    snprintf(buf, sizeof(buf), "keine Verbindung");
+    snprintf(buf, sizeof(buf), "%s", tr("keine Verbindung", "not connected"));
   } else {
-    snprintf(buf, sizeof(buf), "Offline-Betrieb");
+    snprintf(buf, sizeof(buf), "%s", tr("Offline-Betrieb", "Offline mode"));
   }
   fitText(buf, LINE_CHARS);
   drawCentered(buf, Y_RSSI + dy, dx);
@@ -2008,7 +2090,7 @@ static void uiTask(void *)
 {
   // WICHTIG: OLED (SPI) und WLAN werden HIER initialisiert, nicht in setup():
   // ihre Interrupts landen damit auf Core 0 und stören den Zeichenpfad nicht.
-  logMsg("[UI] laeuft auf Core %d", xPortGetCoreID());
+  logMsg(tr("[UI] laeuft auf Core %d", "[UI] running on core %d"), xPortGetCoreID());
   oledInit();
   wifiStart();
   pinMode(BOOT_BUTTON_PIN, INPUT_PULLUP);    // DevKitC hat zusätzlich einen externen Pull-up
@@ -2053,20 +2135,20 @@ void setup()
   Serial.begin(SERIAL_BAUD);
   delay(200);                             // USB-Seriell kurz Zeit geben
   Serial.println();
-  logMsg("ESP32 Oscilloscope Clock v" FW_VERSION " (Idee nach Mauro Pintus 2018)");
+  // Gespeicherte Einstellungen laden (Profil, Zifferblatt, Strahl, Zeit, OLED, Sprache) –
+  // vor der ersten Ausgabe (wegen der Sprache) und vor dem Start der Tasks
+  loadSettings();
+  logMsg(tr("ESP32 Oscilloscope Clock v" FW_VERSION " (Idee nach Mauro Pintus 2018)", "ESP32 Oscilloscope Clock v" FW_VERSION " (idea by Mauro Pintus 2018)"));
   logMsg("CPU: %lu MHz", (unsigned long)getCpuFrequencyMhz());
 
   // Bis zum ersten publishTime() die Startzeit anzeigen
   g_timePacked = packTime(FALLBACK_H, FALLBACK_M, FALLBACK_S);
 
-  // Gespeicherte Einstellungen laden (Profil, Zifferblatt, Strahl, Zeit, OLED) –
-  // vor dem Start der Tasks
-  loadSettings();
-  logMsg("[Scope] Profil: %s – BOOT-Taster %u s halten zum Umschalten",
+  logMsg(tr("[Scope] Profil: %s – BOOT-Taster %u s halten zum Umschalten", "[Scope] profile: %s – hold BOOT button %u s to switch"),
                 profileName(g_scopeProfile), (unsigned)(BUTTON_LONG_MS / 1000));
 
   //                      Funktion   Name     Stack  Param    Prio Handle           Kern
-  logMsg("Letzter Neustart: %s", resetReasonText());
+  logMsg(tr("Letzter Neustart: %s", "Last restart: %s"), resetReasonText());
   esp_register_freertos_idle_hook_for_cpu(idleHookCore0, 0);   // CPU-Last-Messung Core 0
 
   xTaskCreatePinnedToCore(uiTask,    "ui",    8192, nullptr, 1,   &uiTaskHandle,    UI_CORE);

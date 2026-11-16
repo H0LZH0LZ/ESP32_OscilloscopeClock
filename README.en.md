@@ -8,8 +8,9 @@ adapted for this hardware: **ESP32-WROOM-32U DevKitC V4**, **Waveshare 2.42" OLE
 
 **Build and wiring: [HARDWARE.en.md](HARDWARE.en.md)** · **Software design: [SOFTWARE.en.md](SOFTWARE.en.md)**
 
-The web interface and the OLED are in German. This documentation quotes the German labels and
-adds the English meaning in parentheses, e.g. „Einstellungen“ (settings).
+Web interface, OLED and log can be switched between German and English („Sprache“ / “Language”).
+This documentation quotes the German labels and adds the English label in parentheses, e.g.
+„Einstellungen“ (Settings).
 
 ### Contents
 - [Features](#features)
@@ -33,8 +34,11 @@ adds the English meaning in parentheses, e.g. „Einstellungen“ (settings).
 - Every NTP sync is reported with date and time on the serial console (115200 baud), as is a
   warning if syncs stop.
 - Works without internet too: the time can be set by hand in the web interface (or taken over
-  from the phone with one tap). Without any time source the clock counts from a fixed start time.
+  from the phone with one tap), optionally with summer or winter time fixed. Without any time source
+  the clock counts from a fixed start time.
 - Several Wi-Fi networks: the clock automatically connects to the strongest known network.
+- **German or English** for the web interface, OLED display and log, switchable in the web
+  interface (settings or side menu) and saved. Start value `UI_LANG` in `config.h`.
 - **Web interface** at `http://scope-clock.local`, optimised for phones, no password.
   At the top it shows a live preview of the oscilloscope picture (transparent background in the
   light theme), below that the status (time sync, Wi-Fi, signal strength, profile, frame rate,
@@ -54,7 +58,7 @@ adds the English meaning in parentheses, e.g. „Einstellungen“ (settings).
 ### Quick start (Arduino IDE 2.x)
 1. Boards manager: install **esp32 by Espressif** (2.0.x or 3.x), board **ESP32 Dev Module**.
    Under **Tools → Partition Scheme** choose “**Huge APP (3MB No OTA/1MB SPIFFS)**”. This gives the
-   program 3 MB instead of 1.25 MB (39 % used instead of 93 %). The clock uses neither OTA updates
+   program 3 MB instead of 1.25 MB (40 % used instead of 94 %). The clock uses neither OTA updates
    nor SPIFFS, and saved networks and settings survive the change.
 2. Library manager: install **U8g2** (by oliver).
 3. Enter your Wi-Fi in one of two ways:
@@ -87,7 +91,8 @@ interface.
 | Open the web interface | `http://scope-clock.local` or the IP address from the OLED/log; without a known network via the setup network “ScopeClock-Setup” (`http://192.168.4.1`) |
 | Change the dial | swipe left/right over the preview (on a PC: arrow keys), or „Einstellungen“ → „Zifferblatt“ (dial) |
 | Oscilloscope profile DIGITAL/ANALOG | hold the BOOT button for 3 s, or „Einstellungen“ → „Oszilloskop-Profil“ |
-| Set the time without internet | „Einstellungen“ → „Uhrzeit stellen“ (set time; only shown while no time server has been reached) |
+| Set the time without internet | „Einstellungen“ → „Uhrzeit stellen“ (Set time; only shown while no time server has been reached); summer/winter time automatic or fixed |
+| Language German/English | „Einstellungen“ → „Sprache“ (Language) or at the bottom of the side menu (☰) |
 | Add/delete Wi-Fi networks | „WLAN“ section of the web interface, or `secrets.h` |
 | Troubleshooting | „Protokoll“ (log) section of the web interface, or the serial monitor (115200 baud) |
 
@@ -97,13 +102,13 @@ interface.
 
 | Board package | Program memory | Global variables (RAM) |
 |---|---|---|
-| esp32 3.3.12 | 1,226,178 bytes (93 %) | 74,148 bytes (22 %) |
+| esp32 3.3.12 | 1,244,694 bytes (94 %) | 74,148 bytes (22 %) |
 | esp32 2.0.17 | 866,053 bytes (66 %) | 61,048 bytes (18 %) – state before the menu and dial switching |
 
 The configuration variants (profile ANALOG/DIGITAL, Z blanking, dial 0/1/2, `USE_FAST_DAC 0`,
 EXCEL mode) were also built without warnings before the web interface was added. With the
-recommended partition scheme **Huge APP** the same firmware uses approx. 1,226,000 of 3,145,728
-bytes (**39 %**), with “Minimal SPIFFS” 62 %.
+recommended partition scheme **Huge APP** the same firmware uses approx. 1,245,000 of 3,145,728
+bytes (**40 %**), with “Minimal SPIFFS” 63 %.
 
 Also simulated on a PC: beam path (brightness, retrace lines, frame rate), OLED content, BOOT
 button, calendar week, memory accesses (AddressSanitizer). The web page was tested in Chromium at

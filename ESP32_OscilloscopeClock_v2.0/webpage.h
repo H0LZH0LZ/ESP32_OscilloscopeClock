@@ -116,7 +116,7 @@ pre.full{height:auto;overflow-y:visible}
 .logsw{min-height:44px;border-top:1px solid var(--line);margin-bottom:8px}
 /* Einstellungen */
 .set{border-top:1px solid var(--line);padding:10px 0}
-.set:first-of-type{border-top:0}
+.set:first-of-type,#timeRow[hidden]+.set{border-top:0}   /* keine Linie über dem ersten sichtbaren Eintrag */
 .set .head{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
 .set .head label{margin:0;color:var(--fg);font-size:16px}
 .set .val{color:var(--mute);font-variant-numeric:tabular-nums;white-space:nowrap}
@@ -126,7 +126,8 @@ pre.full{height:auto;overflow-y:visible}
 .seg{display:flex;gap:6px;margin-top:6px}
 .seg button{margin:0;background:transparent;color:var(--fg);border:1px solid var(--line);font-weight:500}
 .seg button[aria-pressed="true"]{background:var(--acc);color:#fff;border-color:var(--acc);font-weight:600}
-.dt{display:flex;gap:8px;margin-top:6px}.dt input{flex:1 1 0;min-width:0}
+.dt{display:flex;gap:8px;margin-top:6px}
+#tDst{margin-bottom:2px}#tDst button{padding:0 4px;font-size:15px}.dt input{flex:1 1 0;min-width:0}
 .sw{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:0;color:var(--fg);font-size:16px}
 .sw input{width:24px;height:24px;min-height:0;margin:0;flex:none;accent-color:var(--acc)}
 .set.off{opacity:.55}
@@ -156,6 +157,7 @@ html{scroll-behavior:smooth}
 #nav h3{font-size:13px;color:var(--mute);text-transform:uppercase;letter-spacing:.06em;margin:4px 8px 12px}
 #nav a{display:flex;align-items:center;min-height:48px;padding:0 12px;border-radius:10px;color:var(--fg);text-decoration:none;font-weight:500}
 #nav a:active,#nav a:hover{background:var(--bg)}
+#nav .navlang{margin:16px 8px 0}
 #shade{position:fixed;inset:0;z-index:35;background:rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .25s}
 #shade.open{opacity:1;pointer-events:auto}
 
@@ -169,6 +171,9 @@ html{scroll-behavior:smooth}
  <a href="#set-h">Einstellungen</a>
  <a href="#wlan-h">WLAN</a>
  <a href="#log-h">Protokoll</a>
+ <div class="seg navlang" role="group" aria-label="Sprache">
+  <button type="button" data-lang="de" aria-pressed="true">Deutsch</button>
+  <button type="button" data-lang="en" aria-pressed="false">English</button></div>
 </nav>
 <div id="shade"></div>
 <main>
@@ -189,9 +194,19 @@ html{scroll-behavior:smooth}
   <div class="sub">Kein Zeitserver erreichbar (kein Internet). Die Uhrzeit lässt sich hier von Hand stellen.</div>
   <button type="button" id="tPhone">Uhrzeit dieses Geräts übernehmen</button>
   <div class="dt"><input type="date" id="tDate" aria-label="Datum"><input type="time" id="tTime" step="1" aria-label="Uhrzeit"></div>
+  <div id="tDstBox"><div class="seg" id="tDst" role="group" aria-label="Sommer-/Winterzeit">
+   <button type="button" data-dst="-1" aria-pressed="true">Automatisch</button>
+   <button type="button" data-dst="1" aria-pressed="false">Sommerzeit</button>
+   <button type="button" data-dst="0" aria-pressed="false">Winterzeit</button></div>
+  <div class="sub">Automatisch = nach den Regeln der Zeitzone. Sommer- oder Winterzeit fest wählen, falls die Uhr sonst eine Stunde falsch geht.</div></div>
   <button type="button" class="sec" id="tSave">Datum und Uhrzeit setzen</button>
   <div id="tMsg"></div>
   <div class="sub">Sobald ein Zeitserver erreichbar ist, stellt sich die Uhr wieder selbst. Nach einem Neustart muss die Zeit erneut gestellt werden.</div></div>
+ <div class="set"><div class="head"><label>Sprache</label></div>
+  <div class="seg" role="group" aria-label="Sprache">
+   <button type="button" data-lang="de" aria-pressed="true">Deutsch</button>
+   <button type="button" data-lang="en" aria-pressed="false">English</button></div>
+  <div class="sub">Gilt für Webinterface, OLED-Anzeige und Protokoll.</div></div>
  <div class="set"><div class="head"><label>Oszilloskop-Profil</label></div>
   <div class="seg" role="group" aria-label="Oszilloskop-Profil">
    <button type="button" data-profile="1" aria-pressed="false">DIGITAL</button>
@@ -264,6 +279,24 @@ html{scroll-behavior:smooth}
 </main>
 <script>
 const $=id=>document.getElementById(id);
+// ---- Sprache (Deutsch/English) ----------------------------------------------
+// Die Seite ist auf Deutsch geschrieben. EN übersetzt deutsche Texte ins Englische.
+// t(): Text für Skript-Ausgaben; applyLang(): übersetzt alle festen Texte der Seite
+// (Textknoten und aria-label) – über die Rückwärtstabelle DE auch wieder zurück.
+// Die Sprache wird auf der Uhr gespeichert (gilt auch für OLED und Protokoll);
+// localStorage merkt sie nur, damit die Seite beim Laden gleich richtig erscheint.
+const EN={"Abschnitte":"Sections","Uhr":"Clock","Status":"Status","Einstellungen":"Settings","WLAN":"Wi-Fi","Protokoll":"Log","Menü":"Menu","Vorschau des Oszilloskop-Bildes – nach links oder rechts wischen (oder Pfeiltasten), um das Zifferblatt zu wechseln":"Preview of the oscilloscope picture – swipe left or right (or use the arrow keys) to change the dial","‹ Nach links oder rechts wischen, um das Zifferblatt zu wechseln ›":"‹ Swipe left or right to change the dial ›","Sprache":"Language","Gilt für Webinterface, OLED-Anzeige und Protokoll.":"Applies to the web interface, the OLED display and the log.","Uhrzeit stellen":"Set time","Kein Zeitserver erreichbar (kein Internet). Die Uhrzeit lässt sich hier von Hand stellen.":"No time server reachable (no internet). You can set the time by hand here.","Uhrzeit dieses Geräts übernehmen":"Use this device's time","Datum":"Date","Uhrzeit":"Time","Datum und Uhrzeit setzen":"Set date and time","Sobald ein Zeitserver erreichbar ist, stellt sich die Uhr wieder selbst. Nach einem Neustart muss die Zeit erneut gestellt werden.":"As soon as a time server is reachable, the clock sets itself again. After a restart the time has to be set again.","Oszilloskop-Profil":"Oscilloscope profile","DIGITAL für digitale Oszilloskope, ANALOG für Röhren-Oszilloskope. Umschalten auch an der Uhr: BOOT-Taster 3 s halten.":"DIGITAL for digital oscilloscopes, ANALOG for CRT oscilloscopes. Can also be switched on the clock: hold the BOOT button for 3 s.","Zifferblatt":"Dial","Ziffern 1–12":"Numbers 1–12","Römisch I–XII":"Roman I–XII","Römisch XII · III · VI · IX":"Roman XII · III · VI · IX","Ziffern auf dem Oszilloskop. Geht auch durch Wischen über die Vorschau oben.":"Numerals on the oscilloscope. You can also swipe over the preview above.","Verweilzeit des Strahls":"Beam dwell time","Länger = hellere Linien, aber weniger Bilder pro Sekunde (jetzt":"Longer = brighter lines, but fewer frames per second (now","Helligkeit Stunden-/Minutenzeiger":"Hour/minute hand brightness","Unter 100 %, weil die schmalen Zeiger sonst heller wirken als der Rest.":"Below 100 % because the narrow hands would otherwise look brighter than the rest.","Rücklauf-Tempo":"Retrace speed","Zeitzone":"Time zone","Bestimmt die Ortszeit samt automatischer Sommer-/Winterzeit.":"Sets the local time including automatic daylight saving time.","Zeitserver (NTP)":"Time server (NTP)","Übernehmen":"Apply","Server im Internet, von dem die Uhr die genaue Zeit holt (Standard: de.pool.ntp.org).":"Internet server from which the clock gets the exact time (default: de.pool.ntp.org).","OLED-Helligkeit":"OLED brightness","Helligkeit des kleinen Displays an der Uhr.":"Brightness of the small display on the clock.","OLED um 180° drehen":"Rotate OLED by 180°","Für ein kopfüber eingebautes Display.":"For a display mounted upside down.","OLED-Pixelverschiebung":"OLED pixel shift","Verschiebt das Bild jede Minute um wenige Pixel, gegen Einbrennen.":"Moves the picture by a few pixels every minute to prevent burn-in.","Auf Standardwerte zurücksetzen":"Reset to defaults","Änderungen wirken sofort und bleiben gespeichert. Standardwerte stammen aus config.h.":"Changes take effect immediately and are saved. Default values come from config.h.","Gespeicherte Netze":"Saved networks","Netze, mit denen sich die Uhr verbinden darf. Sie wählt automatisch das stärkste.":"Networks the clock may connect to. It automatically picks the strongest one.","wird geladen …":"loading …","Netze in Reichweite suchen":"Search for networks in range","Zeigt die Netze in der Nähe. Ein Netz antippen übernimmt seinen Namen ins Formular.":"Shows nearby networks. Tap a network to copy its name into the form.","Netz hinzufügen":"Add network","Für offene Netze das Passwort leer lassen.":"Leave the password empty for open networks.","Netzwerkname (SSID)":"Network name (SSID)","Passwort":"Password","Anzeigen":"Show","Ausblenden":"Hide","Netz speichern":"Save network","Neu verbinden (mit dem stärksten Netz)":"Reconnect (to the strongest network)","Trennt kurz und verbindet sich neu – etwa nach dem Hinzufügen eines Netzes. Gespeicherte Passwörter werden nie angezeigt. Netze aus secrets.h lassen sich hier nicht löschen.":"Briefly disconnects and reconnects – e.g. after adding a network. Saved passwords are never shown. Networks from secrets.h cannot be deleted here.","Meldungen der Uhr zu WLAN, Zeitabgleich und Einstellungen – hilfreich bei der Fehlersuche.":"Messages from the clock about Wi-Fi, time sync and settings – helpful for troubleshooting.","Protokoll, im Feld scrollbar":"Log, scrollable within the field","neueste Einträge unten":"newest entries at the bottom","Automatisch aktualisieren (alle 5 s)":"Refresh automatically (every 5 s)","Jetzt aktualisieren":"Refresh now","Alles anzeigen":"Show all","Weniger anzeigen":"Show less","„Alles anzeigen“ hebt die feste Höhe des Feldes auf. Die Uhr speichert die letzten 8 KB (ca. 120 Zeilen).":"“Show all” removes the fixed height of the field. The clock keeps the last 8 KB (approx. 120 lines).","Wechsel fehlgeschlagen":"Change failed","µs pro Schritt":"µs per step","sofortiger Sprung":"instant jump","× Zeichentempo":"× drawing speed","Wie schnell der Strahl zwischen zwei Linien springt. Höher = schwächere Rücklaufspuren, 0 = sofortiger Sprung.":"How fast the beam jumps between two lines. Higher = fainter retrace lines, 0 = instant jump.","Im Profil DIGITAL springt der Strahl immer sofort. Der ANALOG-Wert":"In profile DIGITAL the beam always jumps instantly. The ANALOG value","bleibt gespeichert.":"is kept.","Keine Antwort von der Uhr":"No answer from the clock","Bitte Datum und Uhrzeit eintragen":"Please enter date and time","Alle Einstellungen auf die Standardwerte aus config.h zurücksetzen? (gespeicherte WLANs bleiben erhalten)":"Reset all settings to the default values from config.h? (saved networks are kept)","Bilder/s":"frames/s","KW":"Week","Datum unbekannt":"Date unknown","Zeitabgleich (NTP)":"Time sync (NTP)","zuletzt":"last","aus – Uhrzeit von Hand gestellt":"off – time set by hand","wartet auf ersten Abgleich …":"waiting for the first sync …","aus (kein WLAN)":"off (no Wi-Fi)","sucht Netz …":"searching …","kein Netz eingetragen":"no network configured","Signalstärke":"Signal strength","über −67 dBm gut, unter −80 dBm schwach":"above −67 dBm good, below −80 dBm weak","Netzwerkadresse":"Network address","unter dieser Adresse ist die Uhr im Browser erreichbar":"the clock can be reached in the browser at this address","Setup-WLAN":"Setup network","Bildrate":"Frame rate","so oft pro Sekunde wird das Bild am Oszilloskop gezeichnet":"how often per second the picture is drawn on the oscilloscope","Laufzeit":"Uptime","seit dem letzten Neustart":"since the last restart","Arbeitsspeicher":"Memory","von":"of","KB frei":"KB free","Arbeitsspeicher, Tiefstwert":"Memory, minimum","seit dem Neustart":"since the restart","Größter freier Speicherblock":"Largest free memory block","Prozessorlast Kern 0":"CPU load core 0","WLAN, NTP, Webinterface, OLED, Uhrzeit, BOOT‑Taster":"Wi-Fi, NTP, web interface, OLED, time, BOOT button","Prozessorlast Kern 1":"CPU load core 1","Strahlausgabe an GPIO25/26 – läuft absichtlich ohne Pause":"beam output on GPIO25/26 – runs without pause on purpose","Grund des letzten Neustarts":"Reason for the last restart","Firmware-Version":"Firmware version","Verbindung":"Connection","keine Antwort von der Uhr":"no answer from the clock","Tag":"day","Tage":"days","Std.":"h","Min.":"min","noch keine gespeichert":"none saved yet","Löschen":"Delete","aus secrets.h":"from secrets.h","Suche läuft …":"Searching …","(ohne Passwort)":"(no password)","keine Netze gefunden":"no networks found","Zeilen":"lines","(leer)":"(empty)"};
+Object.assign(EN,{'Sommer-/Winterzeit':'Summer/winter time','Automatisch':'Automatic','Sommerzeit':'Summer time','Winterzeit':'Winter time',
+ 'Automatisch = nach den Regeln der Zeitzone. Sommer- oder Winterzeit fest wählen, falls die Uhr sonst eine Stunde falsch geht.':'Automatic = according to the rules of the time zone. Choose summer or winter time explicitly if the clock is otherwise off by one hour.'});
+const DE={};for(const k in EN)DE[EN[k]]=k;
+let lang='de';try{if(localStorage.getItem('lang')==='en')lang='en'}catch(e){}
+const t=s=>lang==='en'&&EN[s]||s;
+function trText(v){const k=v.trim();if(!k)return v;const de=DE[k]||k;const n=lang==='en'?(EN[de]||de):de;return n===k?v:v.replace(k,n)}
+function applyLang(){document.documentElement.lang=lang;
+ const w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT,{acceptNode:n=>/^(SCRIPT|STYLE|PRE)$/.test(n.parentNode.nodeName)?2:1});
+ for(let n;(n=w.nextNode());){const v=trText(n.nodeValue);if(v!==n.nodeValue)n.nodeValue=v}
+ document.querySelectorAll('[aria-label]').forEach(e=>{const v=trText(e.getAttribute('aria-label'));if(v!==e.getAttribute('aria-label'))e.setAttribute('aria-label',v)});
+ document.querySelectorAll('[data-lang]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lang===lang)))}
 // Uhrzeit anzeigen: Ziffern in <i> mit fester Breite (siehe CSS #clock i)
 function showClock(t){$('clock').innerHTML=String(t).replace(/[0-9-]/g,'<i>$&</i>')}
 const get=(u)=>fetch(u,{cache:'no-store'}).then(r=>{if(!r.ok)throw r.status;return r});
@@ -279,7 +312,7 @@ function row(k,v,c,note){const d=document.createElement('div');d.className='row'
 // WLAN-Signal (dBm) als Balkenanzeige für die Netzsuche
 function bars(r){return r>-55?'▂▄▆█':r>-67?'▂▄▆ ':r>-75?'▂▄  ':'▂   '}
 // Sekunden als "x Tage y Std. z Min."
-function dur(s){const d=Math.floor(s/86400),h=Math.floor(s/3600)%24,m=Math.floor(s/60)%60;return (d?d+(d===1?' Tag ':' Tage '):'')+h+' Std. '+m+' Min.'}
+function dur(s){const d=Math.floor(s/86400),h=Math.floor(s/3600)%24,m=Math.floor(s/60)%60;return (d?d+' '+t(d===1?'Tag':'Tage')+' ':'')+h+' '+t('Std.')+' '+m+' '+t('Min.')}
 // ---- Oszilloskop-Vorschau ---------------------------------------------------
 // Zeichnet dasselbe Bild wie die Uhr (Vektordaten von /api/vectors) auf ein
 // Canvas im Look eines Oszilloskop-Schirms. Die Zeigerstellung wird wie im
@@ -318,8 +351,8 @@ let tagTimer=0,dialBusy=false;
 function showTag(t){const e=$('dialTag');e.textContent=t;e.classList.add('show');clearTimeout(tagTimer);tagTimer=setTimeout(()=>e.classList.remove('show'),1600)}
 // step = +1 (nächstes) oder -1 (voriges Zifferblatt), reihum
 async function nextDial(step=1){
- if(dialBusy)return;dialBusy=true;const prev=dial;dial=(dial+step+DIALS.length)%DIALS.length;drawScope();showTag(DIALS[dial]);
- try{const r=await post('/api/dial',{style:dial});if(!r.ok)throw 0;if(S){S.dial=dial;renderSettings()}}catch(e){dial=prev;drawScope();showTag('Wechsel fehlgeschlagen')}
+ if(dialBusy)return;dialBusy=true;const prev=dial;dial=(dial+step+DIALS.length)%DIALS.length;drawScope();showTag(t(DIALS[dial]));
+ try{const r=await post('/api/dial',{style:dial});if(!r.ok)throw 0;if(S){S.dial=dial;renderSettings()}}catch(e){dial=prev;drawScope();showTag(t('Wechsel fehlgeschlagen'))}
  dialBusy=false}
 // Wischen über die Vorschau: nach links = nächstes, nach rechts = voriges Zifferblatt
 // (wie beim Blättern in Fotos). Pointer-Events decken Finger und Maus ab.
@@ -351,8 +384,8 @@ setInterval(()=>{if(tBase===null)return;const n=Math.floor((performance.now()-tA
 // Laden von /api/settings, jede Änderung sofort per POST übernehmen (Schieberegler
 // beim Loslassen, damit nicht bei jeder Bewegung in den Flash geschrieben wird).
 let S=null,setBusy=false;
-const fmtBeam=v=>(v/1000).toFixed(2).replace('.',',')+' µs pro Schritt';
-const fmtJump=v=>+v===0?'sofortiger Sprung':v+'× Zeichentempo';
+const fmtBeam=v=>{const x=(v/1000).toFixed(2);return (lang==='en'?x:x.replace('.',','))+' '+t('µs pro Schritt')};
+const fmtJump=v=>+v===0?t('sofortiger Sprung'):v+t('× Zeichentempo');
 const fmtOled=v=>Math.round(v/255*100)+' %';
 // Alle Einstellungs-Elemente aus S (Antwort von /api/settings) füllen
 function renderSettings(){
@@ -367,8 +400,9 @@ function renderSettings(){
  const ana=S.profile===0,jv=ana?S.jumpSpeed:0;
  $('sJump').value=jv;$('vJump').textContent=fmtJump(jv);
  $('jumpRow').classList.toggle('off',!ana);$('sJump').disabled=!ana;
- $('jumpHint').textContent=ana?'Wie schnell der Strahl zwischen zwei Linien springt. Höher = schwächere Rücklaufspuren, 0 = sofortiger Sprung.':'Im Profil DIGITAL springt der Strahl immer sofort. Der ANALOG-Wert ('+fmtJump(S.jumpSpeed)+') bleibt gespeichert.';
- const tz=$('sTz');if(!tz.options.length){for(const z of S.timezones){const o=document.createElement('option');o.value=z.tz;o.textContent=z.label;tz.append(o)}}
+ $('jumpHint').textContent=ana?t('Wie schnell der Strahl zwischen zwei Linien springt. Höher = schwächere Rücklaufspuren, 0 = sofortiger Sprung.'):t('Im Profil DIGITAL springt der Strahl immer sofort. Der ANALOG-Wert')+' ('+fmtJump(S.jumpSpeed)+') '+t('bleibt gespeichert.');
+ const tz=$('sTz'),tzk=S.timezones.map(z=>z.label).join('|');if(tz.dataset.k!==tzk){tz.replaceChildren();tz.dataset.k=tzk;   // neu aufbauen, wenn sich die Namen (Sprache) ändern
+ for(const z of S.timezones){const o=document.createElement('option');o.value=z.tz;o.textContent=z.label;tz.append(o)}}
  tz.value=S.tz;
  if(document.activeElement!==$('sNtp'))$('sNtp').value=S.ntp;
  $('sOled').value=S.oledContrast;$('vOled').textContent=fmtOled(S.oledContrast);
@@ -384,7 +418,7 @@ async function setSetting(d){
  setBusy=true;
  try{const r=await post('/api/settings',d);if(r.settings){S=r.settings;renderSettings()}setMsg(r);
   if('dial' in d&&r.ok){dial=S.dial;drawScope()}}
- catch(e){setMsg({ok:false,msg:'Keine Antwort von der Uhr'});loadSettings()}
+ catch(e){setMsg({ok:false,msg:t('Keine Antwort von der Uhr')});loadSettings()}
  setBusy=false}
 document.querySelectorAll('[data-profile]').forEach(b=>b.onclick=()=>setSetting({profile:b.dataset.profile}));
 $('sDial').onchange=e=>setSetting({dial:e.target.value});
@@ -403,18 +437,33 @@ $('sFlip').onchange=e=>setSetting({oledFlip:e.target.checked?1:0});
 // ---- Uhrzeit von Hand stellen (nur ohne Zeitserver sichtbar)
 const pad=v=>String(v).padStart(2,'0');
 // Block "Uhrzeit stellen" ein-/ausblenden, beim Einblenden mit der Gerätezeit vorbelegen
-function showTimeRow(on){const r=$('timeRow');if(r.hidden===!on)return;r.hidden=!on;
+// Sommer-/Winterzeit für die manuelle Eingabe: -1 = automatisch, 1 = Sommer-, 0 = Winterzeit
+let dstMode=-1;
+function showDst(){document.querySelectorAll('[data-dst]').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.dst===dstMode)))}
+document.querySelectorAll('[data-dst]').forEach(b=>b.onclick=()=>{dstMode=+b.dataset.dst;showDst()});
+function showTimeRow(on,dst){const r=$('timeRow');
+ $('tDstBox').hidden=!(S&&S.tz&&S.tz.includes(','));            // nur bei Zeitzonen mit Sommerzeit
+ if(r.hidden===!on)return;r.hidden=!on;
+ if(on&&typeof dst==='number'){dstMode=dst;showDst()}
  if(on){const d=new Date();$('tDate').value=d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
   $('tTime').value=pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds())}}
 // Meldung im Block "Uhrzeit stellen" anzeigen
 function tMsg(r){const m=$('tMsg');m.textContent=r.msg||'';m.className=r.ok?'ok':'err'}
 // Uhrzeit an die Uhr senden (epoch oder local, siehe POST /api/time)
-async function setClockTime(d){try{const r=await post('/api/time',d);tMsg(r);if(r.ok)status()}catch(e){tMsg({ok:false,msg:'Keine Antwort von der Uhr'})}}
+async function setClockTime(d){d.dst=dstMode;try{const r=await post('/api/time',d);tMsg(r);if(r.ok)status()}catch(e){tMsg({ok:false,msg:t('Keine Antwort von der Uhr')})}}
 $('tPhone').onclick=()=>setClockTime({epoch:Math.round(Date.now()/1000)});
-$('tSave').onclick=()=>{const d=$('tDate').value,t=$('tTime').value;
- if(!d||!t){tMsg({ok:false,msg:'Bitte Datum und Uhrzeit eintragen'});return}
- setClockTime({local:d+'T'+(t.length===5?t+':00':t)})};
-$('sReset').onclick=async()=>{if(!confirm('Alle Einstellungen auf die Standardwerte aus config.h zurücksetzen? (gespeicherte WLANs bleiben erhalten)'))return;
+$('tSave').onclick=()=>{const d=$('tDate').value,tm=$('tTime').value;
+ if(!d||!tm){tMsg({ok:false,msg:t('Bitte Datum und Uhrzeit eintragen')});return}
+ setClockTime({local:d+'T'+(tm.length===5?tm+':00':tm)})};
+// ---- Sprache umschalten: sofort auf der Seite, dann auf der Uhr speichern (OLED, Protokoll)
+let langBusy=false;
+function setLangLocal(l){lang=l;try{localStorage.setItem('lang',l)}catch(e){}applyLang();
+ ['tMsg','msg','setMsg'].forEach(i=>$(i).textContent='');   // alte Meldungen in der anderen Sprache entfernen
+
+ if(S)renderSettings();status();saved();log()}
+document.querySelectorAll('[data-lang]').forEach(b=>b.onclick=async()=>{const l=b.dataset.lang;if(l===lang)return;
+ langBusy=true;setLangLocal(l);await setSetting({lang:l});langBusy=false});
+$('sReset').onclick=async()=>{if(!confirm(t('Alle Einstellungen auf die Standardwerte aus config.h zurücksetzen? (gespeicherte WLANs bleiben erhalten)')))return;
  setBusy=true;try{const r=await post('/api/settings/reset',{});if(r.settings){S=r.settings;renderSettings();dial=S.dial;drawScope()}setMsg(r)}catch(e){}setBusy=false};
 
 let online=true;
@@ -423,50 +472,51 @@ async function status(){
  try{const s=await (await get('/api/status')).json();online=true;
   showClock(s.time);setTime(s.time);lastSec=-1;
   if(!dialBusy&&typeof s.dial==='number'&&s.dial!==dial){dial=s.dial;drawScope()}
-  $('vFps').textContent=s.fps+' Bilder/s';
-  showTimeRow(!s.ntp.synced);
-  if(S&&!setBusy){const p=s.profile==='DIGITAL'?1:0;if(p!==S.profile||s.dial!==S.dial){S.profile=p;S.dial=s.dial;renderSettings()}}$('date').textContent=s.date?('KW '+s.kw+' – '+s.date):'Datum unbekannt';
+  if(s.lang&&s.lang!==lang&&!langBusy)setLangLocal(s.lang);
+  $('vFps').textContent=s.fps+' '+t('Bilder/s');
+  showTimeRow(!s.ntp.synced,s.ntp.dst);
+  if(S&&!setBusy){const p=s.profile==='DIGITAL'?1:0;if(p!==S.profile||s.dial!==S.dial){S.profile=p;S.dial=s.dial;renderSettings()}}$('date').textContent=s.date?(t('KW')+' '+s.kw+' – '+(lang==='en'?s.date.split('.').reverse().join('-'):s.date)):t('Datum unbekannt');
   const st=$('status');st.replaceChildren(
-   row('Zeitabgleich (NTP)',s.ntp.synced?('zuletzt '+s.ntp.last):s.ntp.manual?'aus – Uhrzeit von Hand gestellt':(s.wifi.configured?'wartet auf ersten Abgleich …':'aus (kein WLAN)'),s.ntp.synced?(s.ntp.overdue?'warn':''):(s.ntp.manual?'':'warn')),
-   row('WLAN',s.wifi.connected?s.wifi.ssid:(s.wifi.configured?'sucht Netz …':'kein Netz eingetragen'),s.wifi.connected?'':'warn'),
-   ...(s.wifi.connected?[row('Signalstärke',s.wifi.rssi+' dBm',s.wifi.rssi<-80?'warn':'','über −67 dBm gut, unter −80 dBm schwach'),row('Netzwerkadresse',s.wifi.ip+'  ·  '+s.wifi.host,'','unter dieser Adresse ist die Uhr im Browser erreichbar')]:[]),
-   ...(s.ap.active?[row('Setup-WLAN',s.ap.ssid+' ('+s.ap.ip+')','warn')]:[]),
-   row('Oszilloskop-Profil',s.profile),
-   row('Bildrate',s.fps+' Bilder/s','','so oft pro Sekunde wird das Bild am Oszilloskop gezeichnet'),
-   row('Laufzeit',dur(s.uptime),'','seit dem letzten Neustart'),
-   row('Arbeitsspeicher',Math.round(s.heap/1024)+' von '+Math.round(s.heapTotal/1024)+' KB frei'),
-   row('Arbeitsspeicher, Tiefstwert',Math.round(s.heapMin/1024)+' KB frei',s.heapMin<20480?'warn':'','seit dem Neustart'),
-   row('Größter freier Speicherblock',Math.round(s.heapBlock/1024)+' KB',s.heapBlock<8192?'warn':''),
-   row('Prozessorlast Kern 0',s.cpu0+' %',s.cpu0>85?'warn':'','WLAN, NTP, Webinterface, OLED, Uhrzeit, BOOT\u2011Taster'),
-   row('Prozessorlast Kern 1','100 %','','Strahlausgabe an GPIO25/26 – läuft absichtlich ohne Pause'),
-   row('Grund des letzten Neustarts',s.reset,/Absturz|Watchdog|Unterspannung/.test(s.reset)?'warn':''),
-   row('Firmware-Version','v'+s.fw));
- }catch(e){if(online){$('status').replaceChildren(row('Verbindung','keine Antwort von der Uhr','err'))}online=false}
+   row(t('Zeitabgleich (NTP)'),s.ntp.synced?(t('zuletzt')+' '+s.ntp.last):s.ntp.manual?t('aus – Uhrzeit von Hand gestellt'):(s.wifi.configured?t('wartet auf ersten Abgleich …'):t('aus (kein WLAN)')),s.ntp.synced?(s.ntp.overdue?'warn':''):(s.ntp.manual?'':'warn')),
+   row(t('WLAN'),s.wifi.connected?s.wifi.ssid:(s.wifi.configured?t('sucht Netz …'):t('kein Netz eingetragen')),s.wifi.connected?'':'warn'),
+   ...(s.wifi.connected?[row(t('Signalstärke'),s.wifi.rssi+' dBm',s.wifi.rssi<-80?'warn':'',t('über −67 dBm gut, unter −80 dBm schwach')),row(t('Netzwerkadresse'),s.wifi.ip+'  ·  '+s.wifi.host,'',t('unter dieser Adresse ist die Uhr im Browser erreichbar'))]:[]),
+   ...(s.ap.active?[row(t('Setup-WLAN'),s.ap.ssid+' ('+s.ap.ip+')','warn')]:[]),
+   row(t('Oszilloskop-Profil'),s.profile),
+   row(t('Bildrate'),s.fps+' '+t('Bilder/s'),'',t('so oft pro Sekunde wird das Bild am Oszilloskop gezeichnet')),
+   row(t('Laufzeit'),dur(s.uptime),'',t('seit dem letzten Neustart')),
+   row(t('Arbeitsspeicher'),Math.round(s.heap/1024)+' '+t('von')+' '+Math.round(s.heapTotal/1024)+' '+t('KB frei')),
+   row(t('Arbeitsspeicher, Tiefstwert'),Math.round(s.heapMin/1024)+' '+t('KB frei'),s.heapMin<20480?'warn':'',t('seit dem Neustart')),
+   row(t('Größter freier Speicherblock'),Math.round(s.heapBlock/1024)+' KB',s.heapBlock<8192?'warn':''),
+   row(t('Prozessorlast Kern 0'),s.cpu0+' %',s.cpu0>85?'warn':'',t('WLAN, NTP, Webinterface, OLED, Uhrzeit, BOOT\u2011Taster')),
+   row(t('Prozessorlast Kern 1'),'100 %','',t('Strahlausgabe an GPIO25/26 – läuft absichtlich ohne Pause')),
+   row(t('Grund des letzten Neustarts'),s.reset,/Absturz|Watchdog|Unterspannung|Crash|Brown-out/.test(s.reset)?'warn':''),
+   row(t('Firmware-Version'),'v'+s.fw));
+ }catch(e){if(online){$('status').replaceChildren(row(t('Verbindung'),t('keine Antwort von der Uhr'),'err'))}online=false}
 }
 // Liste der gespeicherten WLANs laden (Netze aus dem Webinterface mit "Löschen")
 async function saved(){
  try{const l=await (await get('/api/networks')).json();const u=$('saved');u.replaceChildren();
-  if(!l.length){const li=document.createElement('li');li.innerHTML='<span class="hint">noch keine gespeichert</span>';u.append(li)}
+  if(!l.length){const li=document.createElement('li');li.innerHTML='<span class="hint">'+t('noch keine gespeichert')+'</span>';u.append(li)}
   for(const n of l){const li=document.createElement('li');const a=document.createElement('span');a.textContent=n.ssid;li.append(a);
-   if(n.source==='web'){const b=document.createElement('button');b.className='del';b.textContent='Löschen';
-    b.onclick=async()=>{if(!confirm('„'+n.ssid+'“ löschen? Die Uhr startet danach neu.'))return;const r=await post('/api/wifi/delete',{ssid:n.ssid});msg(r)};li.append(b)}
-   else{const c=document.createElement('span');c.className='hint';c.textContent='aus secrets.h';li.append(c)}
+   if(n.source==='web'){const b=document.createElement('button');b.className='del';b.textContent=t('Löschen');
+    b.onclick=async()=>{if(!confirm(lang==='en'?'Delete “'+n.ssid+'”? The clock restarts afterwards.':'„'+n.ssid+'“ löschen? Die Uhr startet danach neu.'))return;const r=await post('/api/wifi/delete',{ssid:n.ssid});msg(r)};li.append(b)}
+   else{const c=document.createElement('span');c.className='hint';c.textContent=t('aus secrets.h');li.append(c)}
    u.append(li)}
  }catch(e){}
 }
 let scanTimer=0;
 // WLAN-Suche starten und das Ergebnis abfragen, bis sie fertig ist
 async function scan(){
- $('scanBtn').disabled=true;$('scanBtn').textContent='Suche läuft …';
+ $('scanBtn').disabled=true;$('scanBtn').textContent=t('Suche läuft …');
  try{const r=await (await get('/api/scan')).json();
   if(r.running){scanTimer=setTimeout(scan,1500);return}
   const u=$('scan');u.replaceChildren();
   for(const n of r.networks){const li=document.createElement('li');li.className='tap';
-   const a=document.createElement('span');a.textContent=n.ssid+(n.open?' (ohne Passwort)':'');const b=document.createElement('span');b.className='bars';b.textContent=bars(n.rssi);
+   const a=document.createElement('span');a.textContent=n.ssid+(n.open?' '+t('(ohne Passwort)'):'');const b=document.createElement('span');b.className='bars';b.textContent=bars(n.rssi);
    li.append(a,b);li.onclick=()=>{$('ssid').value=n.ssid;$('pw').focus()};u.append(li)}
-  if(!r.networks.length){const li=document.createElement('li');li.innerHTML='<span class="hint">keine Netze gefunden</span>';u.append(li)}
+  if(!r.networks.length){const li=document.createElement('li');li.innerHTML='<span class="hint">'+t('keine Netze gefunden')+'</span>';u.append(li)}
  }catch(e){}
- $('scanBtn').disabled=false;$('scanBtn').textContent='Netze in Reichweite suchen';
+ $('scanBtn').disabled=false;$('scanBtn').textContent=t('Netze in Reichweite suchen');
 }
 // Meldung im WLAN-Formular anzeigen und die Netzliste neu laden
 function msg(r){const m=$('msg');m.textContent=r.msg||'';m.className=r.ok?'ok':'err';saved()}
@@ -475,19 +525,19 @@ let logAuto=true;
 // liest man weiter oben, bleibt die Position erhalten.
 let logFirst=true;
 // Protokoll laden; bleibt unten, wenn man unten war, sonst an der Leseposition
-async function log(){try{const t=await (await get('/api/log')).text();const p=$('log');
+async function log(){try{const txt=await (await get('/api/log')).text();const p=$('log');
  const end=logFirst||p.scrollTop+p.clientHeight>=p.scrollHeight-20,top=p.scrollTop;
- p.textContent=t||'(leer)';p.scrollTop=end?p.scrollHeight:top;logFirst=false;
- const n=t?t.replace(/\n$/,'').split('\n').length:0;$('logInfo').textContent=n+' Zeilen'}catch(e){}}
+ p.textContent=txt||t('(leer)');p.scrollTop=end?p.scrollHeight:top;logFirst=false;
+ const n=txt?txt.replace(/\n$/,'').split('\n').length:0;$('logInfo').textContent=n+' '+t('Zeilen')}catch(e){}}
 $('wf').onsubmit=async e=>{e.preventDefault();const r=await post('/api/wifi',{ssid:$('ssid').value.trim(),pw:$('pw').value});msg(r);if(r.ok)$('pw').value=''};
-$('eye').onclick=()=>{const p=$('pw');p.type=p.type==='password'?'text':'password';$('eye').textContent=p.type==='password'?'Anzeigen':'Ausblenden'};
+$('eye').onclick=()=>{const p=$('pw');p.type=p.type==='password'?'text':'password';$('eye').textContent=t(p.type==='password'?'Anzeigen':'Ausblenden')};
 $('scanBtn').onclick=scan;
 $('recon').onclick=async()=>msg(await post('/api/reconnect',{}));
 $('logBtn').onclick=log;
 $('logAuto').onchange=e=>{logAuto=e.target.checked;if(logAuto)log()};
-$('logFull').onclick=()=>{const p=$('log'),f=p.classList.toggle('full');$('logFull').textContent=f?'Weniger anzeigen':'Alles anzeigen';
+$('logFull').onclick=()=>{const p=$('log'),f=p.classList.toggle('full');$('logFull').textContent=t(f?'Weniger anzeigen':'Alles anzeigen');
  if(!f){p.scrollTop=p.scrollHeight;$('log-h').scrollIntoView()}};
-status();saved();log();loadSettings();
+applyLang();status();saved();log();loadSettings();
 setInterval(()=>{if(document.visibilityState==='visible')status()},2000);
 setInterval(()=>{if(logAuto&&document.visibilityState==='visible')log()},5000);
 </script>
