@@ -603,10 +603,10 @@ static const uint8_t *dialDigits(int style, int &size)
 static const char *dialName(int style)
 {
   switch (style) {
-    case 1:  return tr("Ziffern 12/3/6/9", "numbers 12/3/6/9");
+    case 1:  return "12/3/6/9";
     case 2:  return "I-XII";
     case 3:  return "XII/III/VI/IX";
-    default: return tr("Ziffern 1-12", "numbers 1-12");
+    default: return "1-12";
   }
 }
 
