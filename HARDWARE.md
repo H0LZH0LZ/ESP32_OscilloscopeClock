@@ -151,6 +151,10 @@ Ein Bild dauert ca. 4,3 ms, mit römischen Ziffern ca. 6,2 ms.
 - Beide Geräte hängen am selben PC, damit haben sie gemeinsame Masse, das ist unkritisch.
 
 ## Feinabstimmung in `config.h`
+Profil, Zifferblatt, Strahlgeschwindigkeit, Zeiger-Helligkeit, Rücklauf-Tempo, Zeitzone, NTP-Server
+und OLED lassen sich bequemer im **Webinterface unter „Einstellungen“** ändern, mit sofortiger Wirkung
+am Oszilloskop. Die Werte in `config.h` sind dann nur die Startwerte.
+
 | Parameter | Wirkung |
 |---|---|
 | `BEAM_NS_PER_UNIT` | Strahlgeschwindigkeit. Größer = hellere Linien, weniger Bilder/s (Standard 3000 ≈ 230 Bilder/s) |

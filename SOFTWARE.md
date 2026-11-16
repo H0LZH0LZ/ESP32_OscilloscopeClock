@@ -82,7 +82,8 @@ die Strahlausgabe auf Core 1 nicht.
 **Seite (`webpage.h`):** eine Seite mit **einklappbarem Seitenmenü** (☰ oben links, bleibt beim
 Scrollen sichtbar): Uhr, Status, WLAN, Log. Der oberste Abschnitt (Überschrift, Vorschau, Uhrzeit,
 Datum) ist zentriert. Die Abschnittsüberschriften bleiben beim Scrollen oben neben der Menütaste
-stehen (`position: sticky`), die nächste schiebt die vorige weg. Tippen auf einen Eintrag springt weich dorthin und
+stehen (`position: sticky`). Jede ist nur innerhalb ihres Abschnitts (`.grp`) angeheftet, so
+schiebt die nächste die vorige hinaus. Tippen auf einen Eintrag springt weich dorthin und
 schließt das Menü wieder, ebenso Tippen daneben oder Esc. Ganz oben steht eine **Live-Vorschau des Oszilloskop-Bildes**
 (Canvas im Look eines grünen Leuchtschirms mit 8×8-Raster). Die Seite lädt dafür einmal die
 Vektordaten von `/api/vectors`, also dieselben Tabellen, die der `scopeTask` zeichnet, und stellt
@@ -129,6 +130,9 @@ eingesetzt (`textContent`), nie als HTML.
 | `POST /api/wifi` | `ssid`, `pw` speichern bzw. Passwort ändern (SSID 1–32, Passwort leer oder 8–63 Zeichen) |
 | `POST /api/wifi/delete` | `ssid` löschen, danach Neustart (WiFiMulti kann Netze nicht vergessen) |
 | `POST /api/reconnect` | Verbindung trennen, `wifiTask` verbindet mit dem stärksten Netz |
+| `GET /api/settings` | aktuelle Einstellungen, Standardwerte (`defaults`) und Zeitzonen-Liste |
+| `POST /api/settings` | beliebige Felder `profile`, `dial`, `beamNs`, `handPct`, `jumpSpeed`, `tz`, `ntp`, `oledContrast`, `oledShift`: prüfen, sofort anwenden, speichern. Antwort `{ok, msg, settings}` |
+| `POST /api/settings/reset` | alle Einstellungen auf die Werte aus `config.h` |
 | `POST /api/dial` | `style` 0 = 1–12, 1 = 12/3/6/9, 2 = römisch I–XII, 3 = römisch XII/III/VI/IX: Zifferblatt umschalten (Oszilloskop und Vorschau), wird gespeichert |
 
 **Gespeicherte WLANs:** bis zu `WEB_MAX_NETWORKS` (5) Netze im NVS (Namensraum `scopeclock`,
@@ -150,6 +154,28 @@ schreiben können.
 
 **Bildrate:** `scopeTask` zählt die Bilder (`g_frameCount`), der `uiTask` rechnet daraus jede
 Sekunde die Bildrate für die Statusanzeige.
+
+## Einstellungen im Webinterface
+
+Der Abschnitt „Einstellungen“ ändert Werte im laufenden Betrieb. Jede Änderung wirkt sofort und wird
+im NVS gespeichert. Schieberegler senden beim Loslassen, damit nicht bei jeder Bewegung in den Flash
+geschrieben wird. `config.h` liefert nur die Startwerte. „Auf Standard zurücksetzen“ löscht die
+gespeicherten Werte, die WLANs bleiben erhalten.
+
+| Einstellung | NVS-Schlüssel | Bereich | Wirkung |
+|---|---|---|---|
+| Oszilloskop-Profil | `profile` | DIGITAL / ANALOG | `g_scopeProfile`, auch per BOOT-Taster |
+| Zifferblatt | `dial` | 4 Stile | `g_dialStyle`, synchron mit Tippen auf die Vorschau |
+| Strahlgeschwindigkeit | `beam` | 1.000–10.000 ns pro Schritt | `g_beamNs`, `scopeTask` berechnet das Timing zwischen zwei Bildern neu (`beamTiming()`) |
+| Zeiger-Helligkeit | `hand` | 30–100 % | `g_handPct` |
+| Rücklauf-Tempo | `jump` | 0 (hart) – 48 | `g_jumpSpeed`, nur im Profil ANALOG wirksam |
+| Zeitzone | `tz` | Liste `TIMEZONES[]` (bzw. `TZ_INFO`) | `configTzTime()` neu |
+| NTP-Server | `ntp` | Hostname, max. 63 Zeichen | erster Server, `configTzTime()` neu |
+| OLED-Helligkeit | `oled` | 1–255 | `u8g2.setContrast()` |
+| OLED-Pixel-Shift | `shift` | an/aus | Versatz gegen Einbrennen |
+
+Die Firmware prüft jeden Wert (`handleSettingsPost()`) und meldet ungültige Eingaben mit Grund
+zurück. `loadSettings()` liest alle Werte in `setup()`, bevor die Tasks starten.
 
 ## BOOT-Taster: Oszilloskop-Profil
 

@@ -3,6 +3,10 @@
   ESP32 Oscilloscope Clock v2.0
 
   Alle Einstellungen, die man typischerweise anpasst, stehen hier.
+  Profil, Zifferblatt, Strahlgeschwindigkeit, Zeiger-Helligkeit, Rücklauf-
+  Tempo, Zeitzone, erster NTP-Server und OLED-Helligkeit/-Pixel-Shift lassen
+  sich zusätzlich im Webinterface ändern – die Werte hier sind dann nur die
+  Startwerte (bzw. das Ziel von "Auf Standard zurücksetzen").
   WLAN-Zugangsdaten gehören NICHT hierher, sondern in secrets.h.
   Nach jeder Änderung neu kompilieren und hochladen.
 ******************************************************************************/

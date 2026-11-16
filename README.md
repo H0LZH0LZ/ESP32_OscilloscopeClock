@@ -23,7 +23,10 @@ Hardware angepasst: **ESP32-WROOM-32U DevKitC V4**, **Waveshare 2.42" OLED (I2C)
   Signal, Profil, Bildrate, Laufzeit, Speicher) und das Log. Außerdem dient es zum Eintragen von
   WLANs. Ein einklappbares Seitenmenü (☰) springt in die Abschnitte. **Tippen auf die Vorschau
   schaltet das Zifferblatt um**: 1–12, nur 12/3/6/9, römisch I–XII oder nur XII/III/VI/IX. Das gilt auch am Oszilloskop und bleibt
-  gespeichert. Das Webinterface ist immer erreichbar, sobald die Uhr im WLAN ist. Ohne bekanntes WLAN öffnet die Uhr das Setup-WLAN
+  gespeichert. Unter **Einstellungen** lassen sich Oszilloskop-Profil, Zifferblatt,
+  Strahlgeschwindigkeit, Zeiger-Helligkeit, Rücklauf-Tempo, Zeitzone, NTP-Server und OLED online
+  ändern. Die Änderungen wirken sofort und bleiben gespeichert. Das Webinterface ist immer
+  erreichbar, sobald die Uhr im WLAN ist. Ohne bekanntes WLAN öffnet die Uhr das Setup-WLAN
   **„ScopeClock-Setup“**, das Handy zeigt dann automatisch die Einrichtungsseite.
 - Eine Firmware für alle Oszilloskope: Das Profil DIGITAL (ab Werk) bzw. ANALOG wird im Betrieb
   per BOOT-Taster umgeschaltet und bleibt gespeichert. Getestet werden soll an Tektronix TDS3012,
@@ -60,7 +63,7 @@ Einstellungen (Zeitzone, Pins, Zifferblatt, Strahlgeschwindigkeit, Oszilloskop-P
 
 | Board-Paket | Programmspeicher | Globale Variablen (RAM) |
 |---|---|---|
-| esp32 3.3.12 | 1.158.950 Byte (88 %) | 65.556 Byte (20 %) |
+| esp32 3.3.12 | 1.174.462 Byte (89 %) | 65.668 Byte (20 %) |
 | esp32 2.0.17 | 866.053 Byte (66 %) | 61.048 Byte (18 %) – Stand vor Menü und Zifferblatt-Umschaltung |
 
 Die Konfigurationsvarianten (Profil ANALOG/DIGITAL, Z-Dunkeltastung, Zifferblatt 0/1/2,

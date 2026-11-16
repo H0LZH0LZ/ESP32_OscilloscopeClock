@@ -39,8 +39,9 @@
 
   Von Core 0 nach Core 1 gehen nur drei Werte, alle atomar lesbar:
   g_timePacked (32 Bit: Stunde/Minute/Sekunde, einmal pro Bild gelesen),
-  g_scopeProfile (1 Byte: ANALOG/DIGITAL) und g_dialStyle (1 Byte:
-  Zifferblatt). Der Zeichenpfad muss nie warten.
+  g_scopeProfile (1 Byte: ANALOG/DIGITAL), g_dialStyle (1 Byte: Zifferblatt)
+  sowie g_beamNs/g_handPct/g_jumpSpeed (Einstellungen). Der Zeichenpfad muss
+  nie warten; geänderte Werte übernimmt er zwischen zwei Bildern.
 
   ---------------------------------------------------------------------------
   Bedienung
@@ -54,8 +55,11 @@
   Vorschau, Status, Log, WLAN-Einrichtung, Seitenmenü; für Handys optimiert,
   ohne Passwort. Tippen auf die Vorschau schaltet das Zifferblatt um
   (1–12 / 12-3-6-9 / römisch / XII-III-VI-IX) – auch am Oszilloskop,
-  wird gespeichert. Ohne bekanntes
-  WLAN öffnet die Uhr das offene Setup-WLAN "ScopeClock-Setup"
+  wird gespeichert. Unter "Einstellungen" lassen sich Profil, Zifferblatt,
+  Strahlgeschwindigkeit, Zeiger-Helligkeit, Rücklauf-Tempo, Zeitzone,
+  NTP-Server und OLED online ändern (sofort wirksam, gespeichert; config.h
+  liefert nur die Startwerte). Ohne bekanntes WLAN öffnet die Uhr das offene
+  Setup-WLAN "ScopeClock-Setup"
   (Einrichtung unter http://192.168.4.1).
 
   ---------------------------------------------------------------------------
