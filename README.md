@@ -83,7 +83,8 @@ stehen in `ESP32_OscilloscopeClock_v2.0/config.h`. Im Betrieb ändert man sie be
 | 12/24-Stunden-Format | Einstellungen → „Zeitformat“ |
 | Sprache Deutsch/English | Seitenmenü (☰) → „Sprache“ (Auswahlliste) |
 | WLAN hinzufügen/löschen | Einstellungen → WLAN (auch direkt über das Seitenmenü) |
-| Oszilloskop einstellen | Einstellungen → Oszilloskop → „Testbild“ (Rahmen, Kreis, Mittelkreuz; wird nicht gespeichert) |
+| Oszilloskop einstellen | Einstellungen → Oszilloskop → „Testbild“ (Rahmen, Kreis, Mittelkreuz; wird nicht gespeichert). Nach dem Einschalten erscheint es automatisch 10 s lang |
+| Passwort vergessen | BOOT-Taster an der Uhr 10 s halten (OLED zählt herunter), keine Anmeldung nötig |
 | Gerätename, Passwort, Sicherung, alles zurücksetzen | Einstellungen → System |
 | Protokoll leeren | Abschnitt Protokoll → „Leeren“ |
 | Fehlersuche | Abschnitt Protokoll im Webinterface, oder serieller Monitor (115200 Baud) |
@@ -94,7 +95,7 @@ stehen in `ESP32_OscilloscopeClock_v2.0/config.h`. Im Betrieb ändert man sie be
 
 | Board-Paket | Programmspeicher | Globale Variablen (RAM) |
 |---|---|---|
-| esp32 3.3.12 | 1.293.314 Byte (98 %) | 74.924 Byte (22 %) |
+| esp32 3.3.12 | 1.294.854 Byte (98 %) | 74.932 Byte (22 %) |
 | esp32 2.0.17 | 866.053 Byte (66 %) | 61.048 Byte (18 %) – Stand vor Menü und Zifferblatt-Umschaltung |
 
 Die Konfigurationsvarianten (Profil ANALOG/DIGITAL, Z-Dunkeltastung, Zifferblatt 0/1/2,

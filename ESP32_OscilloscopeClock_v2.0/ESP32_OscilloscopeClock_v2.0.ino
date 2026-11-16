@@ -178,7 +178,8 @@ static uint8_t s_oledPct       = OLED_BRIGHT_PCT;          // OLED-Helligkeit 0�
 static bool    s_oledSec       = OLED_SECONDS;             // Uhrzeit mit Sekunden
 static char    s_host[33]      = WIFI_HOSTNAME;            // Gerätename (Router, http://<name>.local)
 static char    s_webPw[33]     = "";                       // optionales Passwort für Änderungen (leer = keins)
-static volatile bool g_testPattern = false;                // Testbild statt Uhr (nicht gespeichert)
+static volatile bool g_testPattern = BOOT_TEST_S > 0;    // beim Start BOOT_TEST_S Sekunden an
+static bool s_bootTest = BOOT_TEST_S > 0;                 // Start-Testbild läuft noch                // Testbild statt Uhr (nicht gespeichert)
 static bool    s_oledShift     = OLED_SHIFT_EVERY_S > 0;
 static bool    s_oledFlip      = OLED_FLIP;                // Anzeige um 180° gedreht
 static bool    s_h12           = CLOCK_12H;                // Uhrzeit im 12-Stunden-Format (AM/PM)
@@ -1272,8 +1273,8 @@ static void handleScan()
 // ---- Optionales Passwort für alle Änderungen ---------------------------------------
 // Ist eines gesetzt (Einstellungen → System), muss jede POST-Anfrage es im Header
 // "X-Pass" mitschicken; sonst Antwort 401 und die Seite fragt danach. Lesen (Status,
-// Protokoll, Vorschau) geht immer. Vergessen: in config.h WEB_PASSWORD_CLEAR 1 setzen,
-// hochladen (Passwort wird beim Start ignoriert und kann neu gesetzt werden), wieder 0.
+// Protokoll, Vorschau) geht immer. Vergessen: BOOT-Taster 10 s halten (buttonPoll), oder in
+// config.h WEB_PASSWORD_CLEAR 1 setzen, hochladen (Passwort wird ignoriert), wieder 0.
 static bool authOk()
 {
   if (!s_webPw[0] || web.header("X-Pass") == s_webPw) return true;
@@ -1724,6 +1725,7 @@ static void handleSettingsPost()
   // Testbild: nur bis zum Ausschalten oder Neustart (wird nicht gespeichert)
   if (web.hasArg("test")) {
     g_testPattern = web.arg("test") == "1" || web.arg("test") == "true"; changed++;
+    s_bootTest = false;                                  // von Hand geschaltet: Start-Testbild nicht mehr automatisch beenden
     logMsg(tr("[Web] Testbild: %s", "[Web] test pattern: %s"), g_testPattern ? tr("an", "on") : tr("aus", "off"));
   }
   if (web.hasArg("oledSec")) {
@@ -1800,7 +1802,7 @@ static void handleSettingsReset()
   }
   if (all) {
     s_lang = UI_LANG;
-    g_testPattern = false;
+    g_testPattern = false; s_bootTest = false;
     if (strcmp(s_host, WIFI_HOSTNAME) != 0) {           // Gerätename zurück auf WIFI_HOSTNAME
       strlcpy(s_host, WIFI_HOSTNAME, sizeof(s_host));
       WiFi.setHostname(s_host);
@@ -2122,6 +2124,11 @@ static void fitText(char *buf, size_t maxChars)
 // gehalten, startet der ESP32 im Download-Modus statt der Uhr.
 static uint32_t s_btnDownSince = 0;      // millis() beim Drücken, 0 = losgelassen
 static bool     s_btnHandled   = false;  // Umschaltung für diesen Tastendruck erledigt
+static bool     s_btnPwMode    = false;  // Passwort gesetzt: Profilwechsel erst beim Loslassen
+static uint32_t s_pwClearedAt  = 0;      // millis() der Passwort-Löschung (Meldung 3 s auf dem OLED)
+// Passwort vergessen: Ist eines gesetzt, wechselt das Profil erst beim Loslassen nach
+// BUTTON_LONG_MS. Wer weiter hält, löscht nach BUTTON_PW_CLEAR_MS das Passwort (ohne
+// Anmeldung – wer den Taster erreicht, hat ohnehin Zugriff auf die Uhr).
 
 static const char *profileName(uint8_t p)  { return p == 1 ? "DIGITAL" : "ANALOG"; }
 
@@ -2154,8 +2161,28 @@ static void buttonPoll()
 {
   const bool down = digitalRead(BOOT_BUTTON_PIN) == LOW;
   const uint32_t now = millis();
-  if (!down) { s_btnDownSince = 0; s_btnHandled = false; return; }
-  if (s_btnDownSince == 0) { s_btnDownSince = now ? now : 1; return; }
+  if (!down) {
+    // Passwort-Modus: Loslassen zwischen 3 s und 10 s schaltet das Profil um
+    if (s_btnDownSince && s_btnPwMode && !s_btnHandled && now - s_btnDownSince >= BUTTON_LONG_MS) {
+      const uint8_t p = g_scopeProfile ? 0 : 1;
+      g_scopeProfile = p;
+      saveSetting("profile", p);
+      logMsg(tr("[Scope] Profil umgeschaltet: %s, gespeichert", "[Scope] profile switched: %s, saved"), profileName(p));
+    }
+    s_btnDownSince = 0; s_btnHandled = false; return;
+  }
+  if (s_btnDownSince == 0) { s_btnDownSince = now ? now : 1; s_btnPwMode = s_webPw[0] != 0; return; }
+  if (s_btnPwMode) {
+    if (!s_btnHandled && now - s_btnDownSince >= BUTTON_PW_CLEAR_MS) {
+      s_btnHandled = true;
+      s_webPw[0] = 0;
+      Preferences pr;
+      if (pr.begin("scopeclock", false)) { pr.remove("upw"); pr.end(); }
+      s_pwClearedAt = now ? now : 1;
+      logMsg("%s", tr("[Web] Passwort per BOOT-Taster geloescht", "[Web] password cleared with BOOT button"));
+    }
+    return;
+  }
   if (!s_btnHandled && now - s_btnDownSince >= BUTTON_LONG_MS) {
     s_btnHandled = true;
     const uint8_t p = g_scopeProfile ? 0 : 1;
@@ -2173,11 +2200,39 @@ static void buttonPoll()
 //      DIGITAL > ANALOG       (fett)
 //              3              (Countdown 3, 2, 1 als 7-Segment-Ziffer,
 //                              9x16 px, etwas kleiner als die Uhrzeit)
+static bool btnOverlayActive()
+{
+  const uint32_t now = millis();
+  return (s_btnDownSince && !s_btnHandled && now - s_btnDownSince >= 300) ||
+         (s_pwClearedAt && now - s_pwClearedAt < 3000);
+}
+
 static bool oledProfileOverlay()
 {
   const uint32_t now = millis();
-  const bool holding = s_btnDownSince && !s_btnHandled && now - s_btnDownSince >= 300;
-  if (!holding) return false;
+  if (!btnOverlayActive()) return false;
+  // Mit 6x10-Font: max. 21 Zeichen pro Zeile
+  const int CW = 9, CH = 16, CT = 2;
+  if (s_pwClearedAt && now - s_pwClearedAt < 3000) {          // Bestätigung
+    u8g2.clearBuffer();
+    u8g2.setFont(u8g2_font_7x14B_tf);
+    drawCentered(tr("Passwort", "Password"), 26, 1);
+    drawCentered(tr("geloescht", "cleared"), 44, 1);
+    u8g2.sendBuffer();
+    return true;
+  }
+  if (s_btnPwMode && now - s_btnDownSince >= BUTTON_LONG_MS) {  // 3–10 s: Passwort-Countdown
+    const uint32_t left = (BUTTON_PW_CLEAR_MS - (now - s_btnDownSince) + 999) / 1000;
+    u8g2.clearBuffer();
+    u8g2.setFont(u8g2_font_6x10_tf);
+    drawCentered(tr("Loslassen: Profil", "Release: profile"), 11, 1);
+    drawCentered(tr("Halten: Passwort weg", "Hold: clear password"), 24, 1);
+    int x0 = (128 - 3 - CW) / 2 + 1;
+    if (left == 1) x0 -= (CW - CT) / 2;
+    drawSegDigit(x0, 36, (int)left, CW, CH, CT);
+    u8g2.sendBuffer();
+    return true;
+  }
 
   const uint8_t  cur  = g_scopeProfile;
   const uint8_t  next = cur ? 0 : 1;
@@ -2192,7 +2247,6 @@ static bool oledProfileOverlay()
   drawCentered(buf, 30, 1);                                        // max. 15 Zeichen = 105 px
   // Countdown-Ziffer: 9x16 px, Segmentstärke 2 px, zentriert.
   // Eine "1" besteht nur aus den rechten Segmenten – für die Mitte nach links rücken.
-  const int CW = 9, CH = 16, CT = 2;
   int x0 = (128 - 3 - CW) / 2 + 1;
   if (left == 1) x0 -= (CW - CT) / 2;
   drawSegDigit(x0, 40, (int)left, CW, CH, CT);
@@ -2203,8 +2257,7 @@ static bool oledProfileOverlay()
 // OLED neu zeichnen: Uhrzeit, KW/Datum, WLAN-Name, Signalstärke (1× pro Sekunde)
 static void oledUpdate()
 {
-  const bool overlay = s_btnDownSince && !s_btnHandled && millis() - s_btnDownSince >= 300;
-  oledApplyBrightness(overlay);
+  oledApplyBrightness(btnOverlayActive());
   if (oledProfileOverlay()) return;
   if (s_oledPct == 0) return;   // Display aus: nichts zeichnen
 
@@ -2293,6 +2346,10 @@ static void uiTask(void *)
   for (;;) {
     publishTime();
     buttonPoll();
+    if (s_bootTest && millis() >= (uint32_t)BOOT_TEST_S * 1000UL) {   // Start-Testbild beenden
+      s_bootTest = false; g_testPattern = false;
+      logMsg("%s", tr("[Scope] Start-Testbild beendet, Uhr laeuft", "[Scope] start-up test pattern finished, clock running"));
+    }
     webLoop();
 
     const uint32_t now = millis();
@@ -2332,6 +2389,7 @@ void setup()
   // Gespeicherte Einstellungen laden (Profil, Zifferblatt, Strahl, Zeit, OLED, Sprache) –
   // vor der ersten Ausgabe (wegen der Sprache) und vor dem Start der Tasks
   loadSettings();
+  if (BOOT_TEST_S > 0) logMsg(tr("[Scope] Testbild fuer %d s", "[Scope] test pattern for %d s"), (int)BOOT_TEST_S);
   logMsg(tr("ESP32 Oscilloscope Clock v" FW_VERSION " (Idee nach Mauro Pintus 2018)", "ESP32 Oscilloscope Clock v" FW_VERSION " (idea by Mauro Pintus 2018)"));
   logMsg("CPU: %lu MHz", (unsigned long)getCpuFrequencyMhz());
 

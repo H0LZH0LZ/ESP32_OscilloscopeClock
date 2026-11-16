@@ -93,7 +93,8 @@ interface.
 | 12/24-hour format | „Einstellungen“ → „Zeitformat“ (Time format) |
 | Language German/English | side menu (☰) → „Sprache“ (Language, drop-down list) |
 | Add/delete Wi-Fi networks | „Einstellungen“ → „WLAN“ (Settings → Wi-Fi, also directly via the side menu) |
-| Adjust the oscilloscope | „Einstellungen“ → „Oszilloskop“ → „Testbild“ (test pattern: frame, circle, centre cross; not saved) |
+| Adjust the oscilloscope | „Einstellungen“ → „Oszilloskop“ → „Testbild“ (test pattern: frame, circle, centre cross; not saved). After power-on it appears automatically for 10 s |
+| Forgotten password | hold the BOOT button on the clock for 10 s (the OLED counts down), no login needed |
 | Device name, password, backup, reset everything | „Einstellungen“ → „System“ |
 | Clear the log | „Protokoll“ section → „Leeren“ (Clear) |
 | Troubleshooting | „Protokoll“ (log) section of the web interface, or the serial monitor (115200 baud) |
@@ -104,7 +105,7 @@ interface.
 
 | Board package | Program memory | Global variables (RAM) |
 |---|---|---|
-| esp32 3.3.12 | 1,293,314 bytes (98 %) | 74,924 bytes (22 %) |
+| esp32 3.3.12 | 1,294,854 bytes (98 %) | 74,932 bytes (22 %) |
 | esp32 2.0.17 | 866,053 bytes (66 %) | 61,048 bytes (18 %) – state before the menu and dial switching |
 
 The configuration variants (profile ANALOG/DIGITAL, Z blanking, dial 0/1/2, `USE_FAST_DAC 0`,

@@ -117,7 +117,14 @@ Das Profil lässt sich auch im Webinterface umschalten („Einstellungen“ → 
 **Testbild:** „Einstellungen“ → „Oszilloskop“ → „Testbild“ zeigt statt der Uhr einen Rahmen mit
 Marken, einen Kreis und ein Mittelkreuz. Damit lassen sich Position (Kreuz in der Bildmitte), Größe
 (Rahmen füllt 8 × 8 Teilungen fast aus), gleiche Verstärkung von X und Y (der Kreis ist rund, nicht oval)
-und Fokus einstellen. Das Testbild wird nicht gespeichert, nach einem Neustart läuft wieder die Uhr.
+und Fokus einstellen. Das Testbild wird nicht gespeichert. **Nach jedem Einschalten erscheint es
+automatisch für 10 s** (`BOOT_TEST_S`), danach läuft die Uhr – so sieht man gleich, ob alles sitzt.
+
+**Passwort vergessen:** Ist im Webinterface ein Passwort gesetzt, den BOOT-Taster im Betrieb **10 s
+halten**. Nach 3 s zeigt das OLED „Loslassen: Profil / Halten: Passwort weg“ mit Countdown, nach 10 s
+„Passwort gelöscht“. Eine Anmeldung ist nicht nötig, wer an den Taster kommt, hat ohnehin Zugriff auf
+die Uhr. Bei gesetztem Passwort wechselt das Profil deshalb erst beim **Loslassen** nach 3 s (vor 10 s);
+ohne Passwort wie gewohnt schon während des Haltens.
 
 | Profil | für | Sprünge zwischen Linien |
 |---|---|---|
@@ -195,5 +202,7 @@ am Oszilloskop. Die Werte in `config.h` sind dann nur die Startwerte.
 | `OLED_SHIFT_EVERY_S` | Pixelverschiebung gegen OLED-Einbrennen: alle n Sekunden (0 = aus) |
 | `OLED_FLIP` | 1 = OLED-Anzeige um 180° drehen (Display kopfüber eingebaut), auch im Webinterface umschaltbar |
 | `CLOCK_12H` | Zeitformat für OLED und Webinterface: 0 = 24 Stunden (Standard), 1 = 12 Stunden mit AM/PM. Im Webinterface umschaltbar |
+| `BOOT_TEST_S` | Testbild nach dem Einschalten in Sekunden (Standard 10, 0 = aus) |
+| `BUTTON_PW_CLEAR_MS` | Haltedauer des BOOT-Tasters zum Löschen des Web-Passworts (Standard 10000 ms) |
 | `WEB_PASSWORD_CLEAR` | `1` löscht beim Start ein vergessenes Web-Passwort (einmal mit 1 hochladen, danach wieder 0). Ab Werk ist kein Passwort gesetzt |
 | `UI_LANG` | Sprache für Webinterface, OLED und Protokoll: 0 = Deutsch (Standard), 1 = English. Im Webinterface umschaltbar |

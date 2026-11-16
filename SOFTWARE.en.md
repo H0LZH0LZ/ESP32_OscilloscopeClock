@@ -301,11 +301,21 @@ No password is set by default. If one is set („System“ → „Passwort für 
 the `X-Pass` header on all changing requests (`POST /api/settings`, `/settings/reset`, `/wifi…`, `/time`,
 `/dial`, `/reconnect`, `/password`) and otherwise answers 401. The page then asks once for the password
 and remembers it for the session (`sessionStorage`). Viewing (status, preview, log) works without a
-password. It is stored in NVS (`upw`) and never output. Forgotten: upload once with
+password. It is stored in NVS (`upw`) and never output. Forgotten: hold the BOOT button for 10 s
+(`BUTTON_PW_CLEAR_MS`, see below) – no login needed. Alternatively upload once with
 `WEB_PASSWORD_CLEAR 1`, then back to 0. Without https it travels unencrypted over Wi-Fi – it protects
 against accidental changes, not against attackers on the network.
 
 ## BOOT button: oscilloscope profile
+
+**With a web password set** there is a second stage: the profile only switches on release between
+3 and 10 s. Holding until `BUTTON_PW_CLEAR_MS` (10 s) clears the password (RAM and NVS `upw`); from 3 s
+the OLED shows “Release: profile / Hold: clear password” with a countdown, then “Password cleared” for
+3 s. Without a password everything stays as described below.
+
+**Test pattern at start-up:** `g_testPattern` starts as `BOOT_TEST_S > 0`; the `uiTask` switches it off
+after `BOOT_TEST_S` seconds (log “start-up test pattern finished”) unless it was switched by hand in the
+web interface before.
 
 `buttonPoll()` in the `uiTask` polls the BOOT button (GPIO0, pressed = LOW) every 10 ms. After
 holding it for `BUTTON_LONG_MS` (3 s), `g_scopeProfile` is switched. It is one byte and therefore

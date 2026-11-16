@@ -295,10 +295,20 @@ Ab Werk ist kein Passwort gesetzt. Ist eines gesetzt (System → „Passwort fü
 `/dial`, `/reconnect`, `/password`) den Header `X-Pass` und antwortet sonst mit 401. Die Seite fragt
 dann einmal per Dialog nach dem Passwort und merkt es sich für die Sitzung (`sessionStorage`).
 Anzeigen (Status, Vorschau, Protokoll) geht ohne Passwort. Das Passwort liegt im NVS (`upw`) und wird
-nie ausgegeben. Vergessen: einmal mit `WEB_PASSWORD_CLEAR 1` hochladen, dann wieder 0. Ohne https wird
+nie ausgegeben. Vergessen: BOOT-Taster 10 s halten (`BUTTON_PW_CLEAR_MS`, siehe unten) – ohne
+Anmeldung. Alternativ einmal mit `WEB_PASSWORD_CLEAR 1` hochladen, dann wieder 0. Ohne https wird
 es im WLAN unverschlüsselt übertragen – es schützt vor versehentlichen Änderungen, nicht vor Angreifern im Netz.
 
 ## BOOT-Taster: Oszilloskop-Profil
+
+**Mit gesetztem Web-Passwort** gilt eine zweite Stufe: Das Profil wechselt erst beim Loslassen
+zwischen 3 und 10 s. Wer bis `BUTTON_PW_CLEAR_MS` (10 s) hält, löscht das Passwort (RAM und NVS `upw`);
+das OLED zeigt ab 3 s „Loslassen: Profil / Halten: Passwort weg“ mit Countdown und danach 3 s lang
+„Passwort gelöscht“. Ohne Passwort bleibt alles wie unten beschrieben.
+
+**Testbild beim Start:** `g_testPattern` startet mit `BOOT_TEST_S > 0`; der `uiTask` schaltet es nach
+`BOOT_TEST_S` Sekunden aus (Log „Start-Testbild beendet“), außer es wurde vorher im Webinterface von
+Hand geschaltet.
 
 `buttonPoll()` im `uiTask` fragt den BOOT-Taster (GPIO0, gedrückt = LOW) alle 10 ms ab.
 Nach `BUTTON_LONG_MS` (3 s) Halten wird `g_scopeProfile` umgeschaltet. Das ist ein Byte und

@@ -117,7 +117,14 @@ The profile can also be changed in the web interface („Einstellungen“ → �
 **Test pattern:** „Einstellungen“ → „Oszilloskop“ → „Testbild“ shows a frame with marks, a circle
 and a centre cross instead of the clock. Use it to adjust position (cross in the centre of the screen),
 size (the frame almost fills 8 × 8 divisions), equal X and Y gain (the circle is round, not oval) and
-focus. The test pattern is not saved; after a restart the clock runs again.
+focus. The test pattern is not saved. **After every power-on it appears automatically for 10 s**
+(`BOOT_TEST_S`), then the clock runs – so you see right away whether everything fits.
+
+**Forgotten password:** if a password is set in the web interface, **hold the BOOT button for 10 s**
+while running. After 3 s the OLED shows “Release: profile / Hold: clear password” with a countdown,
+after 10 s “Password cleared”. No login is needed – anyone who can reach the button has access to the
+clock anyway. With a password set, the profile therefore only switches on **release** after 3 s (before
+10 s); without a password it switches while holding as before.
 
 | Profile | for | Jumps between lines |
 |---|---|---|
@@ -196,5 +203,7 @@ the oscilloscope. The values in `config.h` are then only the start values.
 | `OLED_SHIFT_EVERY_S` | Pixel shift against OLED burn-in: every n seconds (0 = off) |
 | `OLED_FLIP` | 1 = rotate the OLED display by 180° (display mounted upside down), also switchable in the web interface |
 | `CLOCK_12H` | Time format for OLED and web interface: 0 = 24 hours (default), 1 = 12 hours with AM/PM. Switchable in the web interface |
+| `BOOT_TEST_S` | test pattern after power-on in seconds (default 10, 0 = off) |
+| `BUTTON_PW_CLEAR_MS` | how long to hold the BOOT button to clear the web password (default 10000 ms) |
 | `WEB_PASSWORD_CLEAR` | `1` clears a forgotten web password at start (upload once with 1, then back to 0). No password is set by default |
 | `UI_LANG` | Language for web interface, OLED and log: 0 = German (default), 1 = English. Switchable in the web interface |
