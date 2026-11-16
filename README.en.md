@@ -37,6 +37,7 @@ This documentation quotes the German labels and adds the English label in parent
   from the phone with one tap), optionally with summer or winter time fixed. Without any time source
   the clock counts from a fixed start time.
 - Several Wi-Fi networks: the clock automatically connects to the strongest known network.
+- **12- or 24-hour format** for OLED and web interface (12 h with AM/PM), switchable in the web interface.
 - **German or English** for the web interface, OLED display and log, switchable in the web
   interface (settings or side menu) and saved. Start value `UI_LANG` in `config.h`.
 - **Web interface** at `http://scope-clock.local`, optimised for phones, no password.
@@ -92,6 +93,7 @@ interface.
 | Change the dial | swipe left/right over the preview (on a PC: arrow keys), or „Einstellungen“ → „Zifferblatt“ (dial) |
 | Oscilloscope profile DIGITAL/ANALOG | hold the BOOT button for 3 s, or „Einstellungen“ → „Oszilloskop-Profil“ |
 | Set the time without internet | „Einstellungen“ → „Uhrzeit stellen“ (Set time; only shown while no time server has been reached); summer/winter time automatic or fixed |
+| 12/24-hour format | „Einstellungen“ → „Zeitformat“ (Time format) |
 | Language German/English | „Einstellungen“ → „Sprache“ (Language) or at the bottom of the side menu (☰) |
 | Add/delete Wi-Fi networks | „WLAN“ section of the web interface, or `secrets.h` |
 | Troubleshooting | „Protokoll“ (log) section of the web interface, or the serial monitor (115200 baud) |
@@ -102,7 +104,7 @@ interface.
 
 | Board package | Program memory | Global variables (RAM) |
 |---|---|---|
-| esp32 3.3.12 | 1,244,694 bytes (94 %) | 74,148 bytes (22 %) |
+| esp32 3.3.12 | 1,244,590 bytes (94 %) | 74,148 bytes (22 %) |
 | esp32 2.0.17 | 866,053 bytes (66 %) | 61,048 bytes (18 %) – state before the menu and dial switching |
 
 The configuration variants (profile ANALOG/DIGITAL, Z blanking, dial 0/1/2, `USE_FAST_DAC 0`,

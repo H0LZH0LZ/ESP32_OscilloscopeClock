@@ -18,7 +18,7 @@ German with the English label in parentheses. Code comments are in German.
 | `ESP32_OscilloscopeClock_v2.0/DataTable.h` | Vector data for dial, digits and hands – generated with `tools/gen_vectors.py` |
 | `tools/gen_vectors.py` | Generates `DataTable.h` (Python 3, no extra packages) |
 | `ESP32_OscilloscopeClock_v2.0/webpage.h` | Web interface: one page (HTML, CSS, JavaScript) in flash |
-| `ESP32_OscilloscopeClock_v2.0/font.h` | Web interface font (“ScopeClock Sans” = reduced Raleway, WOFF2, approx. 32 KB), served at `/font.woff2` – generated with `tools/gen_font.py` |
+| `ESP32_OscilloscopeClock_v2.0/font.h` | Web interface font (“ScopeClock Sans” = reduced Raleway, two static styles regular/semibold, WOFF2, approx. 30 KB in total), served at `/font.woff2` and `/font-600.woff2` – generated with `tools/gen_font.py` |
 | `tools/gen_font.py` | Generates `font.h` from `Raleway[wght].ttf` (needs `pip install fonttools brotli`) |
 | `fonts/OFL.txt` | Font licence (SIL Open Font License 1.1) |
 | `platformio.ini` | Alternative to the Arduino IDE |
@@ -182,8 +182,8 @@ inserted as text (`textContent`), never as HTML.
 | Method and path | Function |
 |---|---|
 | `GET /` | the page |
-| `GET /font.woff2` | font of the page (from `font.h`), cached by the browser for one year |
-| `GET /api/status` | JSON: `time`, `date`, `kw`, `ntp{synced,overdue,manual,dst,last,server}`, `wifi{configured,connected,ssid,rssi,ip,host}`, `ap{active,ssid,ip}`, `profile`, `dial`, `fps`, `heap`, `heapTotal`, `heapMin`, `heapBlock`, `cpu0`, `reset`, `uptime`, `fw`, `lang` |
+| `GET /font.woff2`, `GET /font-600.woff2` | font of the page, regular and semibold (from `font.h`), cached by the browser for one year. Two static styles instead of a variable font, because some Android browsers otherwise show bold text of a variable font in the system font |
+| `GET /api/status` | JSON: `time`, `date`, `kw`, `ntp{synced,overdue,manual,dst,last,server}`, `wifi{configured,connected,ssid,rssi,ip,host}`, `ap{active,ssid,ip}`, `profile`, `dial`, `fps`, `heap`, `heapTotal`, `heapMin`, `heapBlock`, `cpu0`, `reset`, `uptime`, `fw`, `lang`, `h12` |
 | `GET /api/log` | log as text, oldest line first |
 | `GET /api/networks` | saved networks `[{ssid, source:"secrets"/"web"}]`, never passwords |
 | `GET /api/vectors` | vector data for the preview (approx. 9 KB): `dial`, `digits` (all four dials, index = style), `hr`, `min`, `sec` (60 positions each). Polylines as `[x0,y0,x1,y1,…]`, 0–255, y upwards |
@@ -192,7 +192,7 @@ inserted as text (`textContent`), never as HTML.
 | `POST /api/wifi/delete` | delete `ssid`, then restart (WiFiMulti cannot forget networks) |
 | `POST /api/reconnect` | disconnect, `wifiTask` connects to the strongest network |
 | `GET /api/settings` | current settings, default values (`defaults`) and time zone list |
-| `POST /api/settings` | any of the fields `profile`, `dial`, `beamNs`, `handPct`, `jumpSpeed`, `tz`, `ntp`, `oledContrast`, `oledShift`, `oledFlip`, `lang` (`de`/`en`): validate, apply immediately, save. Answer `{ok, msg, settings}` |
+| `POST /api/settings` | any of the fields `profile`, `dial`, `beamNs`, `handPct`, `jumpSpeed`, `tz`, `ntp`, `oledContrast`, `oledShift`, `oledFlip`, `lang` (`de`/`en`), `h12` (0/1): validate, apply immediately, save. Answer `{ok, msg, settings}` |
 | `POST /api/settings/reset` | reset all settings to the values from `config.h` |
 | `POST /api/dial` | `style` 0 = 1–12, 1 = 12/3/6/9, 2 = Roman I–XII, 3 = Roman XII/III/VI/IX: change the dial (oscilloscope and preview), saved |
 | `POST /api/time` | `epoch` (Unix seconds, UTC) **or** `local` (`YYYY-MM-DDTHH:MM[:SS]`, local time), optional `dst` (-1 automatic, 1 summer time, 0 winter time): set the time by hand, 2024–2099 |
@@ -246,6 +246,7 @@ defaults) deletes the stored values; Wi-Fi networks are kept.
 | OLED pixel shift („OLED-Pixelverschiebung“) | `shift` | on/off | offset against burn-in |
 | Rotate OLED by 180° („OLED um 180° drehen“) | `flip` | on/off | `u8g2.setDisplayRotation(U8G2_R2)`, for a display mounted upside down |
 | Language („Sprache“) | `lang` | Deutsch / English | `s_lang`: web interface, OLED, log |
+| Time format („Zeitformat“) | `h12` | 24 hours / 12 hours (AM/PM) | `s_h12`: time on OLED and web page (log stays 24 h) |
 
 The firmware validates every value (`handleSettingsPost()`) and reports invalid input with a
 reason. `loadSettings()` reads all values in `setup()` before the tasks start.
@@ -303,7 +304,7 @@ Passwords are never printed.
 ## OLED display
 
 ```
-      22:15:06            7-segment, 24 h, digits 11×20 px (drawn by the firmware)
+      22:15:06            7-segment, digits 11×20 px (drawn by the firmware); 12 h: "10:15:06 PM" without leading zero, AM/PM small (font 5x8)
  KW 46 - 15.11.2026       font 6x10, calendar week (KW) according to ISO 8601
 WLAN Gastzugang           font 5x8, max. 25 characters (otherwise shortened with "..")
    Signal -61 dBm         font 5x8

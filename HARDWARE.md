@@ -186,4 +186,5 @@ am Oszilloskop. Die Werte in `config.h` sind dann nur die Startwerte.
 | `FALLBACK_H`, `FALLBACK_M`, `FALLBACK_S` | Startzeit, ab der die Uhr zählt, solange weder Zeitserver noch Handeingabe eine Uhrzeit geliefert haben |
 | `OLED_SHIFT_EVERY_S` | Pixelverschiebung gegen OLED-Einbrennen: alle n Sekunden (0 = aus) |
 | `OLED_FLIP` | 1 = OLED-Anzeige um 180° drehen (Display kopfüber eingebaut), auch im Webinterface umschaltbar |
+| `CLOCK_12H` | Zeitformat für OLED und Webinterface: 0 = 24 Stunden (Standard), 1 = 12 Stunden mit AM/PM. Im Webinterface umschaltbar |
 | `UI_LANG` | Sprache für Webinterface, OLED und Protokoll: 0 = Deutsch (Standard), 1 = English. Im Webinterface umschaltbar |

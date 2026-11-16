@@ -7,7 +7,9 @@ Grundlage ist Raleway (SIL Open Font License 1.1, siehe fonts/OFL.txt):
 
 Die Schrift wird für die Uhr verkleinert, damit sie in den Flash passt und die
 Seite auch ohne Internet (Setup-WLAN) richtig aussieht:
-  - nur Strichstärken 400–700 (variable Schrift, eine Datei für alle Stärken)
+  - zwei feste Schnitte: normal (400) und halbfett (600). Keine variable Schrift –
+    manche Android-Browser zeigen fette Texte einer variablen Schrift sonst in
+    der Systemschrift an.
   - nur die Zeichen, die in webpage.h und der Firmware vorkommen, plus
     ASCII, Umlaute und gängige Satzzeichen
   - WOFF2-komprimiert
@@ -37,8 +39,8 @@ def chars():
     return ''.join(sorted(ch for ch in c if ord(ch) >= 32))
 
 
-def build(src):
-    font = instancer.instantiateVariableFont(TTFont(src), {'wght': (400, 700)})
+def build(src, weight):
+    font = instancer.instantiateVariableFont(TTFont(src), {'wght': weight})
     opt = subset.Options()
     opt.layout_features = ['kern', 'liga', 'lnum']
     opt.flavor = 'woff2'
@@ -46,13 +48,16 @@ def build(src):
     sub = subset.Subsetter(opt)
     sub.populate(text=chars())
     sub.subset(font)
+    style = 'Regular' if weight == 400 else 'SemiBold'
     for rec in font['name'].names:                 # neuer Name (OFL: Reserved Font Name)
-        if rec.nameID in (1, 4, 16):
+        if rec.nameID in (1, 16):
             rec.string = NAME
+        elif rec.nameID == 4:
+            rec.string = NAME + ' ' + style
         elif rec.nameID == 6:
-            rec.string = NAME.replace(' ', '')
+            rec.string = NAME.replace(' ', '') + '-' + style
         elif rec.nameID == 3:
-            rec.string = NAME + ' (Raleway subset)'
+            rec.string = NAME + ' ' + style + ' (Raleway subset)'
     buf = io.BytesIO()
     font.flavor = 'woff2'
     font.save(buf)
@@ -60,14 +65,16 @@ def build(src):
 
 
 if __name__ == '__main__':
-    data = build(sys.argv[1])
     out = ['// ---- Erzeugt mit tools/gen_font.py – nicht von Hand ändern ----',
            f'// "{NAME}": verkleinerte Fassung von Raleway, Copyright 2010 The Raleway',
            '// Project Authors, SIL Open Font License 1.1 (Text: fonts/OFL.txt).',
-           f'// {len(data)} Byte WOFF2, ausgeliefert unter /font.woff2',
-           '#pragma once',
-           f'static const uint8_t FONT_WOFF2[{len(data)}] PROGMEM = {{']
-    for i in range(0, len(data), 24):
-        out.append('  ' + ','.join(f'0x{b:02x}' for b in data[i:i + 24]) + ',')
-    out.append('};')
+           '// Zwei Schnitte als WOFF2: /font.woff2 (400, normal) und /font-600.woff2 (halbfett).',
+           '#pragma once']
+    for name, w in (('FONT_WOFF2', 400), ('FONT_WOFF2_600', 600)):
+        data = build(sys.argv[1], w)
+        out.append(f'// Gewicht {w}: {len(data)} Byte')
+        out.append(f'static const uint8_t {name}[{len(data)}] PROGMEM = {{')
+        for i in range(0, len(data), 24):
+            out.append('  ' + ','.join(f'0x{b:02x}' for b in data[i:i + 24]) + ',')
+        out.append('};')
     print('\n'.join(out))

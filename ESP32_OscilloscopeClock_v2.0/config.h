@@ -146,6 +146,10 @@
 // Startwert – im Webinterface umschaltbar (wird gespeichert).
 #define UI_LANG           0
 
+// Zeitformat für OLED und Webinterface: 0 = 24 Stunden, 1 = 12 Stunden (AM/PM).
+// Startwert – im Webinterface umschaltbar (wird gespeichert).
+#define CLOCK_12H         0
+
 // ---------------------------------------------------------------------------
 // Webinterface (http://scope-clock.local bzw. IP-Adresse der Uhr)
 // ---------------------------------------------------------------------------

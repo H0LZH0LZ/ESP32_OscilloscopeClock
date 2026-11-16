@@ -149,7 +149,7 @@ static const size_t WIFI_NETWORK_COUNT = sizeof(WIFI_NETWORKS) / sizeof(WIFI_NET
 
 #include "DataTable.h"
 #include "webpage.h"          // HTML/CSS/JS des Webinterfaces (PROGMEM)
-#include "font.h"             // Schrift des Webinterfaces (WOFF2, PROGMEM, ca. 32 KB)
+#include "font.h"             // Schrift des Webinterfaces (2 Schnitte WOFF2, PROGMEM, ca. 30 KB)
 
 // Nur der klassische ESP32 hat DACs an GPIO25/26 (S2 hat andere Pins und nur
 // einen Kern; S3/C3/C6 haben gar keine DACs).
@@ -202,6 +202,7 @@ static char    s_ntpServer[64] = NTP_SERVER_1;             // erster NTP-Server 
 static uint8_t s_oledContrast  = OLED_CONTRAST;
 static bool    s_oledShift     = OLED_SHIFT_EVERY_S > 0;
 static bool    s_oledFlip      = OLED_FLIP;                // Anzeige um 180° gedreht
+static bool    s_h12           = CLOCK_12H;                // Uhrzeit im 12-Stunden-Format (AM/PM)
 static uint8_t s_lang          = UI_LANG;                  // Sprache: 0 = Deutsch, 1 = English
 
 // Text in der eingestellten Sprache (Webinterface-Meldungen, OLED, Protokoll)
@@ -1153,6 +1154,7 @@ static void handleStatus()
   o += ",\"cpu0\":";                 o += (int)s_cpu0Load;                    // Last Core 0 in %
   o += ",\"reset\":";                jsonStr(o, resetReasonText());
   o += ",\"fw\":";                   jsonStr(o, FW_VERSION);
+  o += ",\"h12\":";                  o += s_h12 ? "true" : "false";
   o += ",\"lang\":";                 o += s_lang ? "\"en\"" : "\"de\"";
   o += '}';
   web.send(200, "application/json", o);
@@ -1511,6 +1513,7 @@ static void loadSettings()
   s_oledContrast = oled ? oled : OLED_CONTRAST;
   s_oledShift    = p.getUChar("shift", OLED_SHIFT_EVERY_S > 0) != 0;
   s_oledFlip     = p.getUChar("flip", OLED_FLIP) != 0;
+  s_h12          = p.getUChar("h12", CLOCK_12H) != 0;
   s_lang         = p.getUChar("lang", UI_LANG) ? 1 : 0;
   p.end();
 }
@@ -1528,6 +1531,7 @@ static void settingsJson(String &o)
   o += ",\"oledContrast\":"; o += (int)s_oledContrast;
   o += ",\"oledShift\":";    o += s_oledShift ? "true" : "false";
   o += ",\"oledFlip\":";     o += s_oledFlip ? "true" : "false";
+  o += ",\"h12\":";          o += s_h12 ? "true" : "false";
   o += ",\"lang\":";         o += s_lang ? "\"en\"" : "\"de\"";
   o += ",\"defaults\":{\"profile\":"; o += SCOPE_PROFILE;
   o += ",\"dial\":";         o += DIAL_STYLE;
@@ -1539,6 +1543,7 @@ static void settingsJson(String &o)
   o += ",\"oledContrast\":"; o += OLED_CONTRAST;
   o += ",\"oledShift\":";    o += OLED_SHIFT_EVERY_S > 0 ? "true" : "false";
   o += ",\"oledFlip\":";     o += OLED_FLIP ? "true" : "false";
+  o += ",\"h12\":";          o += CLOCK_12H ? "true" : "false";
   o += ",\"lang\":";         o += UI_LANG ? "\"en\"" : "\"de\"";
   o += "},\"timezones\":[";
   bool cfgListed = false;
@@ -1630,6 +1635,12 @@ static void handleSettingsPost()
     if (v >= 1 && v <= 255) { s_oledContrast = v; oledSetContrast(v); p.putUChar("oled", v); changed++; }
     else bad(tr("OLED-Helligkeit: 1 bis 255", "OLED brightness: 1 to 255"));
   }
+  // Zeitformat für OLED und Webinterface: 12 Stunden (AM/PM) oder 24 Stunden
+  if (web.hasArg("h12")) {
+    s_h12 = web.arg("h12") == "1" || web.arg("h12") == "true";
+    p.putUChar("h12", s_h12); changed++;
+    logMsg(tr("[Web] Zeitformat: %s", "[Web] time format: %s"), s_h12 ? tr("12 Stunden", "12 hours") : tr("24 Stunden", "24 hours"));
+  }
   if (web.hasArg("oledFlip")) {
     s_oledFlip = web.arg("oledFlip") == "1" || web.arg("oledFlip") == "true";
     oledSetFlip(s_oledFlip);
@@ -1661,7 +1672,7 @@ static void handleSettingsReset()
 {
   Preferences p;
   if (p.begin("scopeclock", false)) {
-    for (const char *k : { "profile", "dial", "beam", "hand", "jump", "tz", "ntp", "oled", "shift", "flip", "lang" }) p.remove(k);
+    for (const char *k : { "profile", "dial", "beam", "hand", "jump", "tz", "ntp", "oled", "shift", "flip", "lang", "h12" }) p.remove(k);
     p.end();
   }
   g_scopeProfile = SCOPE_PROFILE;  g_dialStyle = DIAL_STYLE;
@@ -1671,6 +1682,7 @@ static void handleSettingsReset()
   s_oledContrast = OLED_CONTRAST;  oledSetContrast(s_oledContrast);
   s_oledShift = OLED_SHIFT_EVERY_S > 0;
   s_oledFlip  = OLED_FLIP;  oledSetFlip(s_oledFlip);
+  s_h12       = CLOCK_12H;
   s_lang      = UI_LANG;
   applyTime();
   logMsg(tr("[Web] Einstellungen auf Standardwerte zurueckgesetzt", "[Web] settings reset to defaults"));
@@ -1709,6 +1721,10 @@ static void webStart()
   web.on("/font.woff2",      HTTP_GET,  [] {
     web.sendHeader("Cache-Control", "max-age=31536000");
     web.send_P(200, "font/woff2", (const char *)FONT_WOFF2, sizeof(FONT_WOFF2));
+  });
+  web.on("/font-600.woff2",  HTTP_GET,  [] {                // halbfetter Schnitt (Überschriften, Knöpfe)
+    web.sendHeader("Cache-Control", "max-age=31536000");
+    web.send_P(200, "font/woff2", (const char *)FONT_WOFF2_600, sizeof(FONT_WOFF2_600));
   });
   web.on("/api/status",      HTTP_GET,  handleStatus);
   web.on("/api/log",         HTTP_GET,  [] { web.send(200, "text/plain; charset=utf-8", logRead()); });
@@ -1835,17 +1851,24 @@ static void drawSegDigit(int x, int y, int digit, int w, int h, int t)
 //   y   Oberkante der Ziffern
 //   dx  horizontaler Pixel-Shift (0…3)
 // Gesamtbreite: 6×11 + 3×2 + 2×(3+2+3) = 88 px.
+// 12-Stunden-Format (s_h12): Stunde 1–12 ohne führende Null, rechts daneben
+// klein "AM"/"PM" (Font 5x8, oben bündig). Der Block bleibt zentriert.
 static void drawSegTime(int y, int hh, int mm, int ss, int dx)
 {
   const int W = 11, H = 20, T = 2;   // Ziffer 11x20 px, Segment 2 px
   const int GAP = 2;                 // Abstand zwischen zwei Ziffern eines Paares
   const int COLON = 2, CGAP = 3;     // Doppelpunkt 2x2 px, 3 px Abstand je Seite
-  const int total = 6 * W + 3 * GAP + 2 * (CGAP + COLON + CGAP);
+  const int AMPM = s_h12 ? 3 + 10 : 0; // Abstand + "AM"/"PM" (2 Zeichen à 5 px)
+  const int total = 6 * W + 3 * GAP + 2 * (CGAP + COLON + CGAP) + AMPM;
   int x = (128 - 3 - total) / 2 + dx; // 3 px Reserve für den Pixel-Shift
 
+  const bool pm = hh >= 12;
+  if (s_h12) { hh %= 12; if (hh == 0) hh = 12; }
   const int v[3] = { hh, mm, ss };
   for (int i = 0; i < 3; i++) {
-    drawSegDigit(x, y, v[i] / 10, W, H, T);  x += W + GAP;   // Zehner
+    if (!(i == 0 && s_h12 && hh < 10))                       // 12h: keine führende Null
+      drawSegDigit(x, y, v[i] / 10, W, H, T);
+    x += W + GAP;                                            // Zehner
     drawSegDigit(x, y, v[i] % 10, W, H, T);  x += W;         // Einer
     if (i < 2) {                                             // Doppelpunkt
       x += CGAP;
@@ -1853,6 +1876,10 @@ static void drawSegTime(int y, int hh, int mm, int ss, int dx)
       u8g2.drawBox(x, y + 2 * H / 3 - 1, COLON, COLON);
       x += COLON + CGAP;
     }
+  }
+  if (s_h12) {
+    u8g2.setFont(u8g2_font_5x8_tf);
+    u8g2.drawStr(x + 3, y + 7, pm ? "PM" : "AM");
   }
 }
 

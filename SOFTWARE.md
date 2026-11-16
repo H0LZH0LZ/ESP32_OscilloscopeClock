@@ -16,7 +16,7 @@ Diese Datei beschreibt, wie die Firmware aufgebaut ist. Für Verdrahtung und Geh
 | `ESP32_OscilloscopeClock_v2.0/DataTable.h` | Vektordaten für Zifferblatt, Ziffern und Zeiger – erzeugt mit `tools/gen_vectors.py` |
 | `tools/gen_vectors.py` | Erzeugt `DataTable.h` (Python 3, keine Zusatzpakete) |
 | `ESP32_OscilloscopeClock_v2.0/webpage.h` | Webinterface: eine Seite (HTML, CSS, JavaScript) im Flash |
-| `ESP32_OscilloscopeClock_v2.0/font.h` | Schrift des Webinterfaces („ScopeClock Sans“ = verkleinertes Raleway, WOFF2, ca. 32 KB), ausgeliefert unter `/font.woff2` – erzeugt mit `tools/gen_font.py` |
+| `ESP32_OscilloscopeClock_v2.0/font.h` | Schrift des Webinterfaces („ScopeClock Sans“ = verkleinertes Raleway, zwei feste Schnitte normal/halbfett, WOFF2, zusammen ca. 30 KB), ausgeliefert unter `/font.woff2` und `/font-600.woff2` – erzeugt mit `tools/gen_font.py` |
 | `tools/gen_font.py` | Erzeugt `font.h` aus `Raleway[wght].ttf` (braucht `pip install fonttools brotli`) |
 | `fonts/OFL.txt` | Lizenz der Schrift (SIL Open Font License 1.1) |
 | `platformio.ini` | Alternative zur Arduino IDE |
@@ -176,17 +176,17 @@ eingesetzt (`textContent`), nie als HTML.
 | Methode und Pfad | Funktion |
 |---|---|
 | `GET /` | die Seite |
-| `GET /api/status` | JSON: `time`, `date`, `kw`, `ntp{synced,overdue,manual,dst,last,server}`, `wifi{configured,connected,ssid,rssi,ip,host}`, `ap{active,ssid,ip}`, `profile`, `dial`, `fps`, `heap`, `heapTotal`, `heapMin`, `heapBlock`, `cpu0`, `reset`, `uptime`, `fw`, `lang` |
+| `GET /api/status` | JSON: `time`, `date`, `kw`, `ntp{synced,overdue,manual,dst,last,server}`, `wifi{configured,connected,ssid,rssi,ip,host}`, `ap{active,ssid,ip}`, `profile`, `dial`, `fps`, `heap`, `heapTotal`, `heapMin`, `heapBlock`, `cpu0`, `reset`, `uptime`, `fw`, `lang`, `h12` |
 | `GET /api/log` | Log als Text, älteste Zeile zuerst |
 | `GET /api/networks` | gespeicherte Netze `[{ssid, source:"secrets"/"web"}]`, nie Passwörter |
-| `GET /font.woff2` | Schrift der Seite (aus `font.h`), wird ein Jahr im Browser zwischengespeichert |
+| `GET /font.woff2`, `GET /font-600.woff2` | Schrift der Seite, normal und halbfett (aus `font.h`), wird ein Jahr im Browser zwischengespeichert. Zwei feste Schnitte statt einer variablen Schrift, weil manche Android-Browser fette Texte einer variablen Schrift sonst in der Systemschrift zeigen |
 | `GET /api/vectors` | Vektordaten für die Vorschau (ca. 9 KB): `dial`, `digits` (alle vier Zifferblätter, Index = Stil), `hr`, `min`, `sec` (je 60 Stellungen). Linienzüge als `[x0,y0,x1,y1,…]`, 0–255, y nach oben |
 | `GET /api/scan` | Netzsuche im Hintergrund: erst `{"running":true}`, dann `{"networks":[{ssid,rssi,open}]}` |
 | `POST /api/wifi` | `ssid`, `pw` speichern bzw. Passwort ändern (SSID 1–32, Passwort leer oder 8–63 Zeichen) |
 | `POST /api/wifi/delete` | `ssid` löschen, danach Neustart (WiFiMulti kann Netze nicht vergessen) |
 | `POST /api/reconnect` | Verbindung trennen, `wifiTask` verbindet mit dem stärksten Netz |
 | `GET /api/settings` | aktuelle Einstellungen, Standardwerte (`defaults`) und Zeitzonen-Liste |
-| `POST /api/settings` | beliebige Felder `profile`, `dial`, `beamNs`, `handPct`, `jumpSpeed`, `tz`, `ntp`, `oledContrast`, `oledShift`, `oledFlip`, `lang` (`de`/`en`): prüfen, sofort anwenden, speichern. Antwort `{ok, msg, settings}` |
+| `POST /api/settings` | beliebige Felder `profile`, `dial`, `beamNs`, `handPct`, `jumpSpeed`, `tz`, `ntp`, `oledContrast`, `oledShift`, `oledFlip`, `lang` (`de`/`en`), `h12` (0/1): prüfen, sofort anwenden, speichern. Antwort `{ok, msg, settings}` |
 | `POST /api/settings/reset` | alle Einstellungen auf die Werte aus `config.h` |
 | `POST /api/dial` | `style` 0 = 1–12, 1 = 12/3/6/9, 2 = römisch I–XII, 3 = römisch XII/III/VI/IX: Zifferblatt umschalten (Oszilloskop und Vorschau), wird gespeichert |
 | `POST /api/time` | `epoch` (Unix-Sekunden, UTC) **oder** `local` (`JJJJ-MM-TTTHH:MM[:SS]`, Ortszeit), optional `dst` (-1 automatisch, 1 Sommerzeit, 0 Winterzeit): Uhrzeit von Hand stellen, 2024–2099 |
@@ -239,6 +239,7 @@ gespeicherten Werte, die WLANs bleiben erhalten.
 | OLED-Pixelverschiebung | `shift` | an/aus | Versatz gegen Einbrennen |
 | OLED um 180° drehen | `flip` | an/aus | `u8g2.setDisplayRotation(U8G2_R2)`, für ein kopfüber eingebautes Display |
 | Sprache | `lang` | Deutsch / English | `s_lang`: Webinterface, OLED, Protokoll |
+| Zeitformat | `h12` | 24 Stunden / 12 Stunden (AM/PM) | `s_h12`: Uhrzeit auf OLED und Webseite (Protokoll bleibt 24 h) |
 
 Die Firmware prüft jeden Wert (`handleSettingsPost()`) und meldet ungültige Eingaben mit Grund
 zurück. `loadSettings()` liest alle Werte in `setup()`, bevor die Tasks starten.
@@ -295,7 +296,7 @@ Passwörter werden nie ausgegeben.
 ## OLED-Anzeige
 
 ```
-      22:15:06            7-Segment, 24h, Ziffern 11×20 px (selbst gezeichnet)
+      22:15:06            7-Segment, Ziffern 11×20 px (selbst gezeichnet); 12 h: "10:15:06 PM" ohne führende Null, AM/PM klein (Font 5x8)
  KW 46 - 15.11.2026       Font 6x10, KW nach ISO 8601
 WLAN Gastzugang           Font 5x8, max. 25 Zeichen (sonst mit ".." gekürzt)
    Signal -61 dBm         Font 5x8
