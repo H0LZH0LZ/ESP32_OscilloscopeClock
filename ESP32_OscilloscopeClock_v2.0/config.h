@@ -7,7 +7,7 @@
   Tempo, Zeitzone, erster NTP-Server und OLED-Helligkeit/-Pixel-Shift/-Drehung lassen
   sich zusätzlich im Webinterface ändern – die Werte hier sind dann nur die
   Startwerte (bzw. das Ziel von "Auf Standard zurücksetzen").
-  WLAN-Zugangsdaten gehören NICHT hierher, sondern in secrets.h.
+  WLAN-Zugangsdaten gehören NICHT hierher – sie werden im Webinterface eingetragen.
   Nach jeder Änderung neu kompilieren und hochladen.
 ******************************************************************************/
 #pragma once
@@ -29,7 +29,7 @@
 #define NTP_SYNC_INTERVAL_MS (60UL * 60UL * 1000UL)  // Nachsynchronisieren: 1x pro Stunde
 
 // Startzeit, solange (noch) kein NTP-Sync erfolgt ist (wie im Original).
-// Gilt auch dauerhaft, wenn in secrets.h kein WLAN eingetragen ist.
+// Gilt auch dauerhaft ohne WLAN, solange die Uhrzeit nicht von Hand gestellt wird.
 #define FALLBACK_H  10
 #define FALLBACK_M   8
 #define FALLBACK_S  37
@@ -161,7 +161,6 @@
 //                         die Seite meist automatisch).
 //   WEB_SETUP_AP_AFTER_S  so lange ohne Verbindung, bis das Setup-WLAN startet
 //   WEB_MAX_NETWORKS      max. Anzahl im Webinterface gespeicherter WLANs
-//                         (zusätzlich zu secrets.h)
 //   LOG_BUFFER_SIZE       Größe des Log-Puffers für die Log-Anzeige (Byte, RAM;
 //                         8 KB ≈ 120 Zeilen, belegt 2 × diesen Wert im RAM)
 #define WEB_SETUP_AP_SSID    "ScopeClock-Setup"

@@ -62,15 +62,11 @@ This documentation quotes the German labels and adds the English label in parent
    program 3 MB instead of 1.25 MB (40 % used instead of 94 %). The clock uses neither OTA updates
    nor SPIFFS, and saved networks and settings survive the change.
 2. Library manager: install **U8g2** (by oliver).
-3. Enter your Wi-Fi in one of two ways:
-   - **in the web interface:** upload, then select the network **“ScopeClock-Setup”** on your
-     phone. The setup page opens automatically, otherwise open `http://192.168.4.1`. Enter your
-     network there.
-   - **or in `secrets.h`:** copy `secrets_example.h` to `secrets.h` and add one line
-     `{ "SSID", "password" },` per network. `secrets.h` is not committed.
-
+3. Open `ESP32_OscilloscopeClock_v2.0.ino` and upload. Set the serial monitor to 115200 baud.
+4. Enter your Wi-Fi: select the network **“ScopeClock-Setup”** on your phone. The setup page opens
+   automatically, otherwise open `http://192.168.4.1`. Enter your network in the „WLAN“ (Wi-Fi)
+   section (up to 5 networks). Credentials are never stored in the source code.
    The clock automatically connects to the strongest known network in range.
-4. Open `ESP32_OscilloscopeClock_v2.0.ino` and upload. Set the serial monitor to 115200 baud.
 5. Switch the oscilloscope to X/Y mode, 0.5 V/div, DC coupling. On digital oscilloscopes set the
    time base to approx. 1 ms/div and the trigger to Auto (details in HARDWARE.en.md).
 6. **Oscilloscope profile via BOOT button:** the default profile is DIGITAL (digital
@@ -95,7 +91,7 @@ interface.
 | Set the time without internet | „Einstellungen“ → „Uhrzeit stellen“ (Set time; only shown while no time server has been reached); summer/winter time automatic or fixed |
 | 12/24-hour format | „Einstellungen“ → „Zeitformat“ (Time format) |
 | Language German/English | side menu (☰) → „Sprache“ (Language, drop-down list) |
-| Add/delete Wi-Fi networks | „WLAN“ section of the web interface, or `secrets.h` |
+| Add/delete Wi-Fi networks | „WLAN“ section of the web interface |
 | Troubleshooting | „Protokoll“ (log) section of the web interface, or the serial monitor (115200 baud) |
 
 ### Status and tests

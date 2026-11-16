@@ -11,8 +11,6 @@ Diese Datei beschreibt, wie die Firmware aufgebaut ist. Für Verdrahtung und Geh
 |---|---|
 | `ESP32_OscilloscopeClock_v2.0/ESP32_OscilloscopeClock_v2.0.ino` | Firmware (Tasks, DAC, Zeit, WLAN, OLED, Webserver) |
 | `ESP32_OscilloscopeClock_v2.0/config.h` | Alle Einstellungen: Zeitzone, NTP, Pins, OLED, Strahlgeschwindigkeit, Oszilloskop-Profil, Zifferblatt |
-| `ESP32_OscilloscopeClock_v2.0/secrets.h` | WLAN-Liste, **nur lokal** (steht in `.gitignore`) |
-| `ESP32_OscilloscopeClock_v2.0/secrets_example.h` | Vorlage für `secrets.h`. Wird verwendet, wenn `secrets.h` fehlt (dann Offline-Betrieb) |
 | `ESP32_OscilloscopeClock_v2.0/DataTable.h` | Vektordaten für Zifferblatt, Ziffern und Zeiger – erzeugt mit `tools/gen_vectors.py` |
 | `tools/gen_vectors.py` | Erzeugt `DataTable.h` (Python 3, keine Zusatzpakete) |
 | `ESP32_OscilloscopeClock_v2.0/webpage.h` | Webinterface: eine Seite (HTML, CSS, JavaScript) im Flash |
@@ -97,12 +95,11 @@ Diese Datei beschreibt, wie die Firmware aufgebaut ist. Für Verdrahtung und Geh
 
 ## WLAN
 
-- `secrets.h` enthält eine Liste `WIFI_NETWORKS[]`. Alle Einträge mit nicht-leerer SSID werden
-  bei `WiFiMulti` angemeldet.
+- WLANs werden nur im Webinterface eingetragen (keine Zugangsdaten im Quelltext). Beim Start
+  meldet `webNetsLoad()` alle gespeicherten Netze bei `WiFiMulti` an.
 - `wifiTask` prüft alle 2 s die Verbindung. Ist sie weg, scannt `WiFiMulti::run()` und verbindet
   sich mit dem **stärksten bekannten** Netz. Der Scan blockiert einige Sekunden, deshalb läuft er
   im eigenen Task und das OLED läuft weiter.
-- Ein älteres `secrets.h` mit nur `WIFI_SSID`/`WIFI_PASSWORD` wird weiterhin akzeptiert.
 
 ## Webinterface
 
@@ -181,7 +178,7 @@ eingesetzt (`textContent`), nie als HTML.
 | `GET /` | die Seite |
 | `GET /api/status` | JSON: `time`, `date`, `kw`, `ntp{synced,overdue,manual,dst,last,server}`, `wifi{configured,connected,ssid,rssi,ip,host}`, `ap{active,ssid,ip}`, `profile`, `dial`, `fps`, `heap`, `heapTotal`, `heapMin`, `heapBlock`, `cpu0`, `reset`, `uptime`, `fw`, `lang`, `h12` |
 | `GET /api/log` | Log als Text, älteste Zeile zuerst |
-| `GET /api/networks` | gespeicherte Netze `[{ssid, source:"secrets"/"web"}]`, nie Passwörter |
+| `GET /api/networks` | gespeicherte Netze `[{ssid, source:"web"}]`, nie Passwörter |
 | `GET /font.woff2`, `GET /font-600.woff2` | Schrift der Seite, normal und halbfett (aus `font.h`), wird ein Jahr im Browser zwischengespeichert. Zwei feste Schnitte statt einer variablen Schrift, weil manche Android-Browser fette Texte einer variablen Schrift sonst in der Systemschrift zeigen |
 | `GET /api/vectors` | Vektordaten für die Vorschau (ca. 9 KB): `dial`, `digits` (alle vier Zifferblätter, Index = Stil), `hr`, `min`, `sec` (je 60 Stellungen). Linienzüge als `[x0,y0,x1,y1,…]`, 0–255, y nach oben |
 | `GET /api/scan` | Netzsuche im Hintergrund: erst `{"running":true}`, dann `{"networks":[{ssid,rssi,open}]}` |
@@ -195,7 +192,7 @@ eingesetzt (`textContent`), nie als HTML.
 | `POST /api/time` | `epoch` (Unix-Sekunden, UTC) **oder** `local` (`JJJJ-MM-TTTHH:MM[:SS]`, Ortszeit), optional `dst` (-1 automatisch, 1 Sommerzeit, 0 Winterzeit): Uhrzeit von Hand stellen, 2024–2099 |
 
 **Gespeicherte WLANs:** bis zu `WEB_MAX_NETWORKS` (5) Netze im NVS (Namensraum `scopeclock`,
-Schlüssel `netn`, `net_s0…`, `net_p0…`), zusätzlich zu `secrets.h`. Sie bleiben bei einem
+Schlüssel `netn`, `net_s0…`, `net_p0…`). Sie bleiben bei einem
 Firmware-Update erhalten.
 
 **Setup-WLAN (Captive Portal):** Ist kein WLAN eingetragen oder seit `WEB_SETUP_AP_AFTER_S`
@@ -280,8 +277,8 @@ Beide zeigen dieselben Zeilen, mit Zeitstempel (`+<s>s` bis zum ersten NTP-Sync)
 +0s [UI] laeuft auf Core 0
 +0s [Scope] laeuft auf Core 1
 +0s [Scope] Rundtour: 76 Linienzuege, Spruenge gesamt 1033 DAC-Einheiten
-+0s [WiFi] bekanntes Netz (secrets.h): "Gastzugang"
-+0s [WiFi] bekanntes Netz (Webinterface): "Werkstatt"
++0s [WiFi] bekanntes Netz: "Gastzugang"
++0s [WiFi] bekanntes Netz: "Werkstatt"
 +0s [Web] Webserver gestartet (Port 80)
 +3s [WiFi] verbunden mit "Gastzugang", IP 192.168.1.23, RSSI -61 dBm
 +3s [Web] erreichbar unter http://scope-clock.local und http://192.168.1.23

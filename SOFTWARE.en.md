@@ -13,8 +13,6 @@ German with the English label in parentheses. Code comments are in German.
 |---|---|
 | `ESP32_OscilloscopeClock_v2.0/ESP32_OscilloscopeClock_v2.0.ino` | Firmware (tasks, DAC, time, Wi-Fi, OLED, web server) |
 | `ESP32_OscilloscopeClock_v2.0/config.h` | All settings: time zone, NTP, pins, OLED, beam dwell time, oscilloscope profile, dial |
-| `ESP32_OscilloscopeClock_v2.0/secrets.h` | Wi-Fi list, **local only** (listed in `.gitignore`) |
-| `ESP32_OscilloscopeClock_v2.0/secrets_example.h` | Template for `secrets.h`. Used if `secrets.h` is missing (then offline operation) |
 | `ESP32_OscilloscopeClock_v2.0/DataTable.h` | Vector data for dial, digits and hands – generated with `tools/gen_vectors.py` |
 | `tools/gen_vectors.py` | Generates `DataTable.h` (Python 3, no extra packages) |
 | `ESP32_OscilloscopeClock_v2.0/webpage.h` | Web interface: one page (HTML, CSS, JavaScript) in flash |
@@ -101,12 +99,11 @@ German with the English label in parentheses. Code comments are in German.
 
 ## Wi-Fi
 
-- `secrets.h` contains a list `WIFI_NETWORKS[]`. All entries with a non-empty SSID are registered
-  with `WiFiMulti`.
+- Wi-Fi networks are only entered in the web interface (no credentials in the source code). At
+  start-up `webNetsLoad()` registers all saved networks with `WiFiMulti`.
 - `wifiTask` checks the connection every 2 s. If it is lost, `WiFiMulti::run()` scans and connects
   to the **strongest known** network. The scan blocks for a few seconds, which is why it runs in its
   own task and the OLED keeps running.
-- An older `secrets.h` with only `WIFI_SSID`/`WIFI_PASSWORD` is still accepted.
 
 ## Web interface
 
@@ -189,7 +186,7 @@ inserted as text (`textContent`), never as HTML.
 | `GET /font.woff2`, `GET /font-600.woff2` | font of the page, regular and semibold (from `font.h`), cached by the browser for one year. Two static styles instead of a variable font, because some Android browsers otherwise show bold text of a variable font in the system font |
 | `GET /api/status` | JSON: `time`, `date`, `kw`, `ntp{synced,overdue,manual,dst,last,server}`, `wifi{configured,connected,ssid,rssi,ip,host}`, `ap{active,ssid,ip}`, `profile`, `dial`, `fps`, `heap`, `heapTotal`, `heapMin`, `heapBlock`, `cpu0`, `reset`, `uptime`, `fw`, `lang`, `h12` |
 | `GET /api/log` | log as text, oldest line first |
-| `GET /api/networks` | saved networks `[{ssid, source:"secrets"/"web"}]`, never passwords |
+| `GET /api/networks` | saved networks `[{ssid, source:"web"}]`, never passwords |
 | `GET /api/vectors` | vector data for the preview (approx. 9 KB): `dial`, `digits` (all four dials, index = style), `hr`, `min`, `sec` (60 positions each). Polylines as `[x0,y0,x1,y1,…]`, 0–255, y upwards |
 | `GET /api/scan` | network scan in the background: first `{"running":true}`, then `{"networks":[{ssid,rssi,open}]}` |
 | `POST /api/wifi` | save `ssid`, `pw` or change the password (SSID 1–32, password empty or 8–63 characters) |
@@ -204,7 +201,7 @@ inserted as text (`textContent`), never as HTML.
 Messages returned by the interfaces (`msg`) are in the selected language.
 
 **Saved networks:** up to `WEB_MAX_NETWORKS` (5) networks in NVS (namespace `scopeclock`, keys
-`netn`, `net_s0…`, `net_p0…`), in addition to `secrets.h`. They survive a firmware update.
+`netn`, `net_s0…`, `net_p0…`). They survive a firmware update.
 
 **Setup network (captive portal):** if no network is configured or no connection has been possible
 for `WEB_SETUP_AP_AFTER_S` (60 s), `webApManage()` opens the open network `WEB_SETUP_AP_SSID`
@@ -287,8 +284,8 @@ Both show the same lines, with a timestamp (`+<s>s` until the time is valid):
 +0s [UI] laeuft auf Core 0
 +0s [Scope] laeuft auf Core 1
 +0s [Scope] Rundtour: 76 Linienzuege, Spruenge gesamt 1033 DAC-Einheiten
-+0s [WiFi] bekanntes Netz (secrets.h): "Gastzugang"
-+0s [WiFi] bekanntes Netz (Webinterface): "Werkstatt"
++0s [WiFi] bekanntes Netz: "Gastzugang"
++0s [WiFi] bekanntes Netz: "Werkstatt"
 +0s [Web] Webserver gestartet (Port 80)
 +3s [WiFi] verbunden mit "Gastzugang", IP 192.168.1.23, RSSI -61 dBm
 +3s [Web] erreichbar unter http://scope-clock.local und http://192.168.1.23

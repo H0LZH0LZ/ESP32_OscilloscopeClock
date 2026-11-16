@@ -66,8 +66,6 @@
     ESP32_OscilloscopeClock_v2.0.ino  dieser Sketch
     config.h                          Pins, Zeitzone, NTP, OLED, Strahl-
                                       geschwindigkeit, Oszilloskop-Profil
-    secrets.h                         WLAN-Liste (lokal, nicht im Git)
-    secrets_example.h                 Vorlage für secrets.h
     DataTable.h                       Vektordaten: Zifferblatt, Ziffern, Zeiger
     webpage.h                         Webinterface (HTML/CSS/JS, eine Seite)
     ../HARDWARE.md                    Verdrahtung, Gehäuse, Oszilloskop-Einstellungen
@@ -120,32 +118,6 @@ struct StoredNet {
   char ssid[33];       // max. 32 Zeichen + Nullbyte
   char pw[65];         // max. 64 Zeichen + Nullbyte (leer = offenes Netz)
 };
-
-//*****************************************************************************
-// WLAN-Zugangsdaten
-//*****************************************************************************
-// Ein WLAN-Eintrag. secrets.h definiert daraus das Array WIFI_NETWORKS[],
-// deshalb muss die Struktur VOR dem #include von secrets.h stehen.
-struct WifiCredential {
-  const char *ssid;       // Netzwerkname
-  const char *password;   // Passwort (wird nie ausgegeben)
-};
-
-// secrets.h ist optional: fehlt sie, wird die (leere) Vorlage verwendet und
-// die Uhr läuft offline. __has_include prüft das zur Übersetzungszeit.
-#if __has_include("secrets.h")
-  #include "secrets.h"
-#else
-  #include "secrets_example.h"
-#endif
-
-// Kompatibilität mit dem alten secrets.h-Format (nur ein Netz):
-//   #define WIFI_SSID     "..."
-//   #define WIFI_PASSWORD "..."
-#if defined(WIFI_SSID) && !defined(WIFI_NETWORKS_DEFINED)
-static const WifiCredential WIFI_NETWORKS[] = { { WIFI_SSID, WIFI_PASSWORD } };
-#endif
-static const size_t WIFI_NETWORK_COUNT = sizeof(WIFI_NETWORKS) / sizeof(WIFI_NETWORKS[0]);
 
 #include "DataTable.h"
 #include "webpage.h"          // HTML/CSS/JS des Webinterfaces (PROGMEM)
@@ -867,8 +839,8 @@ static void publishTime()
 //*****************************************************************************
 
 // ---- Im Webinterface gespeicherte WLANs ---------------------------------------
-// Zusätzlich zu secrets.h können im Webinterface bis zu WEB_MAX_NETWORKS Netze
-// eingetragen werden. Sie liegen im Flash (NVS, Namensraum "scopeclock",
+// WLANs werden ausschließlich im Webinterface eingetragen (bis zu
+// WEB_MAX_NETWORKS Netze). Sie liegen im Flash (NVS, Namensraum "scopeclock",
 // Schlüssel netn, net_s0…, net_p0…) und bleiben auch nach einem Update erhalten.
 static StoredNet s_webNets[WEB_MAX_NETWORKS];
 static int       s_webNetCount = 0;
@@ -905,16 +877,8 @@ static void webNetsSave()
   p.end();
 }
 
-// true, wenn secrets.h mindestens ein WLAN mit Namen enthält
-static bool secretsNetConfigured()
-{
-  for (size_t i = 0; i < WIFI_NETWORK_COUNT; i++)
-    if (WIFI_NETWORKS[i].ssid && WIFI_NETWORKS[i].ssid[0]) return true;
-  return false;
-}
-
-// true, sobald mindestens ein WLAN bekannt ist (secrets.h oder Webinterface).
-static bool wifiConfigured() { return secretsNetConfigured() || s_webNetCount > 0; }
+// true, sobald mindestens ein WLAN im Webinterface eingetragen ist
+static bool wifiConfigured() { return s_webNetCount > 0; }
 
 // Hält die WLAN-Verbindung. Läuft als eigener Task, weil WiFiMulti::run()
 // zuerst einen Scan macht und dabei mehrere Sekunden blockiert – im uiTask
@@ -944,17 +908,11 @@ static void wifiStart()
   WiFi.mode(WIFI_STA);                 // Client; das Setup-WLAN kommt bei Bedarf dazu
   WiFi.setHostname(WIFI_HOSTNAME);     // Name in der Geräteliste des Routers
 
-  // Alle bekannten Netze bei WiFiMulti anmelden (leere Einträge ignorieren)
-  for (size_t i = 0; i < WIFI_NETWORK_COUNT; i++) {
-    const WifiCredential &n = WIFI_NETWORKS[i];
-    if (!n.ssid || !n.ssid[0]) continue;
-    wifiMulti.addAP(n.ssid, n.password);
-    logMsg(tr("[WiFi] bekanntes Netz (secrets.h): \"%s\"", "[WiFi] known network (secrets.h): \"%s\""), n.ssid);   // Passwort wird nie ausgegeben
-  }
+  // Alle im Webinterface gespeicherten Netze bei WiFiMulti anmelden
   webNetsLoad();
   for (int i = 0; i < s_webNetCount; i++) {
     wifiMulti.addAP(s_webNets[i].ssid, s_webNets[i].pw);
-    logMsg(tr("[WiFi] bekanntes Netz (Webinterface): \"%s\"", "[WiFi] known network (web interface): \"%s\""), s_webNets[i].ssid);
+    logMsg(tr("[WiFi] bekanntes Netz: \"%s\"", "[WiFi] known network: \"%s\""), s_webNets[i].ssid);   // Passwort wird nie ausgegeben
   }
   if (!wifiConfigured())
     logMsg(tr("[WiFi] noch kein WLAN eingetragen – Einrichtung ueber das Setup-WLAN \"%s\"", "[WiFi] no network configured yet – set up via the setup network \"%s\""), WEB_SETUP_AP_SSID);
@@ -1228,12 +1186,6 @@ static void handleNetworks()
 {
   String o = "[";
   bool first = true;
-  for (size_t i = 0; i < WIFI_NETWORK_COUNT; i++) {
-    if (!WIFI_NETWORKS[i].ssid || !WIFI_NETWORKS[i].ssid[0]) continue;
-    if (!first) o += ',';
-    first = false;
-    o += "{\"ssid\":"; jsonStr(o, WIFI_NETWORKS[i].ssid); o += ",\"source\":\"secrets\"}";
-  }
   for (int i = 0; i < s_webNetCount; i++) {
     if (!first) o += ',';
     first = false;
