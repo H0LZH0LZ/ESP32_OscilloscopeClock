@@ -84,7 +84,7 @@ stehen in `ESP32_OscilloscopeClock_v2.0/config.h`. Im Betrieb ändert man sie be
 | Oszilloskop-Profil DIGITAL/ANALOG | BOOT-Taster 3 s halten, oder Einstellungen → Oszilloskop-Profil |
 | Uhrzeit ohne Internet stellen | Einstellungen → „Uhrzeit stellen“ (erscheint nur, solange kein Zeitserver erreichbar ist); Sommer-/Winterzeit automatisch oder fest |
 | 12/24-Stunden-Format | Einstellungen → „Zeitformat“ |
-| Sprache Deutsch/English | Einstellungen → „Sprache“ oder unten im Seitenmenü (☰) |
+| Sprache Deutsch/English | Einstellungen → „Sprache“ (Auswahlliste) |
 | WLAN hinzufügen/löschen | Abschnitt WLAN im Webinterface, oder `secrets.h` |
 | Fehlersuche | Abschnitt Protokoll im Webinterface, oder serieller Monitor (115200 Baud) |
 

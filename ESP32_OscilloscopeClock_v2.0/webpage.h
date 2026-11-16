@@ -159,7 +159,6 @@ html{scroll-behavior:smooth}
 #nav h3{font-size:13px;color:var(--mute);text-transform:uppercase;letter-spacing:.06em;margin:4px 8px 12px}
 #nav a{display:flex;align-items:center;min-height:48px;padding:0 12px;border-radius:10px;color:var(--fg);text-decoration:none;font-weight:500}
 #nav a:active,#nav a:hover{background:var(--bg)}
-#nav .navlang{margin:16px 8px 0}
 #shade{position:fixed;inset:0;z-index:35;background:rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .25s}
 #shade.open{opacity:1;pointer-events:auto}
 
@@ -173,9 +172,6 @@ html{scroll-behavior:smooth}
  <a href="#set-h">Einstellungen</a>
  <a href="#wlan-h">WLAN</a>
  <a href="#log-h">Protokoll</a>
- <div class="seg navlang" role="group" aria-label="Sprache">
-  <button type="button" data-lang="de" aria-pressed="true">Deutsch</button>
-  <button type="button" data-lang="en" aria-pressed="false">English</button></div>
 </nav>
 <div id="shade"></div>
 <main>
@@ -204,10 +200,8 @@ html{scroll-behavior:smooth}
   <button type="button" class="sec" id="tSave">Datum und Uhrzeit setzen</button>
   <div id="tMsg"></div>
   <div class="sub">Sobald ein Zeitserver erreichbar ist, stellt sich die Uhr wieder selbst. Nach einem Neustart muss die Zeit erneut gestellt werden.</div></div>
- <div class="set"><div class="head"><label>Sprache</label></div>
-  <div class="seg" role="group" aria-label="Sprache">
-   <button type="button" data-lang="de" aria-pressed="true">Deutsch</button>
-   <button type="button" data-lang="en" aria-pressed="false">English</button></div>
+ <div class="set"><div class="head"><label for="sLang">Sprache</label></div>
+  <select id="sLang"><option value="de" lang="de">Deutsch</option><option value="en" lang="en">English</option></select>
   <div class="sub">Gilt für Webinterface, OLED-Anzeige und Protokoll.</div></div>
  <div class="set"><div class="head"><label>Zeitformat</label></div>
   <div class="seg" role="group" aria-label="Zeitformat">
@@ -297,6 +291,8 @@ Object.assign(EN,{'Sommer-/Winterzeit':'Summer/winter time','Automatisch':'Autom
  'Automatisch = nach den Regeln der Zeitzone. Sommer- oder Winterzeit fest wählen, falls die Uhr sonst eine Stunde falsch geht.':'Automatic = according to the rules of the time zone. Choose summer or winter time explicitly if the clock is otherwise off by one hour.'});
 Object.assign(EN,{'Zeitformat':'Time format','24 Stunden':'24 hours','12 Stunden (AM/PM)':'12 hours (AM/PM)',
  'Für die Uhrzeit auf der OLED-Anzeige und auf dieser Seite.':'For the time on the OLED display and on this page.'});
+Object.assign(EN,{'Tiefstwert':'minimum','größter Block':'largest block','Prozessorlast':'CPU load',
+ 'Kern 0: WLAN, NTP, Webinterface, OLED. Kern 1 zeichnet ständig das Oszilloskop-Bild.':'Core 0: Wi-Fi, NTP, web interface, OLED. Core 1 draws the oscilloscope picture all the time.'});
 const DE={};for(const k in EN)DE[EN[k]]=k;
 let lang='de';try{if(localStorage.getItem('lang')==='en')lang='en'}catch(e){}
 const t=s=>lang==='en'&&EN[s]||s;
@@ -305,7 +301,7 @@ function applyLang(){document.documentElement.lang=lang;
  const w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT,{acceptNode:n=>/^(SCRIPT|STYLE|PRE)$/.test(n.parentNode.nodeName)?2:1});
  for(let n;(n=w.nextNode());){const v=trText(n.nodeValue);if(v!==n.nodeValue)n.nodeValue=v}
  document.querySelectorAll('[aria-label]').forEach(e=>{const v=trText(e.getAttribute('aria-label'));if(v!==e.getAttribute('aria-label'))e.setAttribute('aria-label',v)});
- document.querySelectorAll('[data-lang]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lang===lang)))}
+ $('sLang').value=lang}
 // Uhrzeit anzeigen: Ziffern in <i> mit fester Breite (siehe CSS #clock i)
 // 12-Stunden-Format (h12): Stunde 1–12, dahinter klein AM/PM
 let h12=false;
@@ -476,8 +472,8 @@ function setLangLocal(l){lang=l;try{localStorage.setItem('lang',l)}catch(e){}app
  ['tMsg','msg','setMsg'].forEach(i=>$(i).textContent='');   // alte Meldungen in der anderen Sprache entfernen
 
  if(S)renderSettings();status();saved();log()}
-document.querySelectorAll('[data-lang]').forEach(b=>b.onclick=async()=>{const l=b.dataset.lang;if(l===lang)return;
- langBusy=true;setLangLocal(l);await setSetting({lang:l});langBusy=false});
+$('sLang').onchange=async e=>{const l=e.target.value;if(l===lang)return;
+ langBusy=true;setLangLocal(l);await setSetting({lang:l});langBusy=false};
 $('sReset').onclick=async()=>{if(!confirm(t('Alle Einstellungen auf die Standardwerte aus config.h zurücksetzen? (gespeicherte WLANs bleiben erhalten)')))return;
  setBusy=true;try{const r=await post('/api/settings/reset',{});if(r.settings){S=r.settings;renderSettings();dial=S.dial;drawScope()}setMsg(r)}catch(e){}setBusy=false};
 
@@ -497,14 +493,12 @@ async function status(){
    row(t('WLAN'),s.wifi.connected?s.wifi.ssid:(s.wifi.configured?t('sucht Netz …'):t('kein Netz eingetragen')),s.wifi.connected?'':'warn'),
    ...(s.wifi.connected?[row(t('Signalstärke'),s.wifi.rssi+' dBm',s.wifi.rssi<-80?'warn':'',t('über −67 dBm gut, unter −80 dBm schwach')),row(t('Netzwerkadresse'),s.wifi.ip+'  ·  '+s.wifi.host,'',t('unter dieser Adresse ist die Uhr im Browser erreichbar'))]:[]),
    ...(s.ap.active?[row(t('Setup-WLAN'),s.ap.ssid+' ('+s.ap.ip+')','warn')]:[]),
-   row(t('Oszilloskop-Profil'),s.profile),
-   row(t('Bildrate'),s.fps+' '+t('Bilder/s'),'',t('so oft pro Sekunde wird das Bild am Oszilloskop gezeichnet')),
    row(t('Laufzeit'),dur(s.uptime),'',t('seit dem letzten Neustart')),
-   row(t('Arbeitsspeicher'),Math.round(s.heap/1024)+' '+t('von')+' '+Math.round(s.heapTotal/1024)+' '+t('KB frei')),
-   row(t('Arbeitsspeicher, Tiefstwert'),Math.round(s.heapMin/1024)+' '+t('KB frei'),s.heapMin<20480?'warn':'',t('seit dem Neustart')),
-   row(t('Größter freier Speicherblock'),Math.round(s.heapBlock/1024)+' KB',s.heapBlock<8192?'warn':''),
-   row(t('Prozessorlast Kern 0'),s.cpu0+' %',s.cpu0>85?'warn':'',t('WLAN, NTP, Webinterface, OLED, Uhrzeit, BOOT\u2011Taster')),
-   row(t('Prozessorlast Kern 1'),'100 %','',t('Strahlausgabe an GPIO25/26 – läuft absichtlich ohne Pause')),
+   // Arbeitsspeicher in einer Zeile: frei/gesamt, darunter Tiefstwert und größter Block
+   row(t('Arbeitsspeicher'),Math.round(s.heap/1024)+' '+t('von')+' '+Math.round(s.heapTotal/1024)+' '+t('KB frei'),
+    (s.heapMin<20480||s.heapBlock<8192)?'warn':'',t('Tiefstwert')+' '+Math.round(s.heapMin/1024)+' KB · '+t('größter Block')+' '+Math.round(s.heapBlock/1024)+' KB'),
+   // Kern 1 ist immer zu 100 % mit der Strahlausgabe belegt – das steht als Erläuterung bei Kern 0
+   row(t('Prozessorlast'),s.cpu0+' %',s.cpu0>85?'warn':'',t('Kern 0: WLAN, NTP, Webinterface, OLED. Kern 1 zeichnet ständig das Oszilloskop-Bild.')),
    row(t('Grund des letzten Neustarts'),s.reset,/Absturz|Watchdog|Unterspannung|Crash|Brown-out/.test(s.reset)?'warn':''),
    row(t('Firmware-Version'),'v'+s.fw));
  }catch(e){if(online){$('status').replaceChildren(row(t('Verbindung'),t('keine Antwort von der Uhr'),'err'))}online=false}

@@ -91,7 +91,7 @@ Diese Datei beschreibt, wie die Firmware aufgebaut ist. Für Verdrahtung und Geh
 - OLED auf Englisch: `WiFi …`, `Week 46 - 2026-11-15` (ISO-Datum), „Oscilloscope profile“.
 - Webseite: Sie ist auf Deutsch geschrieben, die Tabelle `EN` im Skript übersetzt. `applyLang()`
   übersetzt alle festen Texte (Textknoten, `aria-label`) – über die Rückwärtstabelle auch zurück –,
-  `t()` die Texte aus dem Skript. Umgeschaltet wird in den Einstellungen oder unten im Seitenmenü;
+  `t()` die Texte aus dem Skript. Umgeschaltet wird in den Einstellungen über die Auswahlliste „Sprache“;
   die Seite wechselt sofort und speichert die Sprache auf der Uhr (`POST /api/settings`, `lang`).
   Eine Änderung von einem anderen Gerät übernimmt die Seite mit der nächsten Statusabfrage.
 
@@ -145,11 +145,11 @@ und berechnet die Rundtour neu. Das dauert einige zehn Millisekunden, so lange s
 
 Darunter folgen vier Bereiche. Jede Einstellung und jede Schaltfläche hat eine kurze Beschreibung:
 - **Status:** große Uhrzeit, KW und Datum, Zeitabgleich (NTP) mit letztem Abgleich, WLAN,
-  Signalstärke, Netzwerkadresse, Profil, Bildrate, Laufzeit, Arbeitsspeicher (frei/gesamt,
-  Tiefstwert seit dem Neustart, größter freier Speicherblock), Prozessorlast beider Kerne (mit
-  kurzer Erläuterung, wofür der Kern zuständig ist: Kern 0 = WLAN, NTP, Webinterface, OLED,
-  Uhrzeit, BOOT-Taster; Kern 1 = Strahlausgabe), Grund des letzten Neustarts, Firmware-Version.
-  Wird alle 2 s aktualisiert.
+  Signalstärke, Netzwerkadresse, Laufzeit, Arbeitsspeicher (frei/gesamt, darunter Tiefstwert seit
+  dem Neustart und größter freier Block), Prozessorlast von Kern 0 (Kern 1 ist immer voll mit der
+  Strahlausgabe belegt – das steht als Erläuterung dabei), Grund des letzten Neustarts,
+  Firmware-Version. Wird alle 2 s aktualisiert. Oszilloskop-Profil und Bildrate stehen nicht doppelt
+  im Status, sondern nur in den Einstellungen (Profil-Auswahl, Bildrate bei „Verweilzeit des Strahls“).
   Farbig hervorgehoben werden nur Probleme: Orange = Warnung (NTP wartet oder überfällig, WLAN
   sucht, Signal unter −80 dBm, Setup-WLAN aktiv, Tiefstwert unter 20 KB, größter Block unter 8 KB, Kern 0 über 85 %,
   Neustart nach Absturz, Watchdog oder Unterspannung), Rot = Fehler (keine Antwort von der Uhr,

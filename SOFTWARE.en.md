@@ -95,7 +95,7 @@ German with the English label in parentheses. Code comments are in German.
 - OLED in English: `WiFi …`, `Week 46 - 2026-11-15` (ISO date), “Oscilloscope profile”.
 - Web page: written in German, the table `EN` in the script translates. `applyLang()` translates all
   fixed texts (text nodes, `aria-label`) – and back via the reverse table –, `t()` the texts from the
-  script. Switch in the settings or at the bottom of the side menu; the page changes immediately and
+  script. Switch in the settings with the drop-down list „Sprache“ (Language); the page changes immediately and
   stores the language on the clock (`POST /api/settings`, `lang`). A change from another device is
   picked up with the next status request.
 
@@ -151,10 +151,11 @@ value. All four digit sets are therefore kept in RAM (approx. 0.7 KB in total).
 
 Below follow four sections. Every setting and every button has a short description:
 - **Status:** large time, calendar week and date, time sync (NTP) with last sync, Wi-Fi, signal
-  strength, network address, profile, frame rate, uptime, memory (free/total, minimum since
-  restart, largest free block), CPU load of both cores (with a short note on what the core does:
-  core 0 = Wi-Fi, NTP, web interface, OLED, time, BOOT button; core 1 = beam output), reason for the
-  last restart, firmware version. Updated every 2 s.
+  strength, network address, uptime, memory (free/total, below it the minimum since restart and the
+  largest free block), CPU load of core 0 (core 1 is always fully busy with the beam output – noted
+  below the value), reason for the last restart, firmware version. Updated every 2 s. Oscilloscope
+  profile and frame rate are not duplicated in the status but only shown in the settings (profile
+  selection, frame rate under „Verweilzeit des Strahls“ – beam dwell time).
   Only problems are highlighted in colour: orange = warning (NTP waiting or overdue, Wi-Fi
   searching, signal below −80 dBm, setup network active, minimum below 20 KB, largest block below
   8 KB, core 0 above 85 %, restart after crash, watchdog or brown-out), red = error (no answer from

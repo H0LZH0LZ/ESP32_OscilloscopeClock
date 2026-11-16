@@ -94,7 +94,7 @@ interface.
 | Oscilloscope profile DIGITAL/ANALOG | hold the BOOT button for 3 s, or „Einstellungen“ → „Oszilloskop-Profil“ |
 | Set the time without internet | „Einstellungen“ → „Uhrzeit stellen“ (Set time; only shown while no time server has been reached); summer/winter time automatic or fixed |
 | 12/24-hour format | „Einstellungen“ → „Zeitformat“ (Time format) |
-| Language German/English | „Einstellungen“ → „Sprache“ (Language) or at the bottom of the side menu (☰) |
+| Language German/English | „Einstellungen“ → „Sprache“ (Language, drop-down list) |
 | Add/delete Wi-Fi networks | „WLAN“ section of the web interface, or `secrets.h` |
 | Troubleshooting | „Protokoll“ (log) section of the web interface, or the serial monitor (115200 baud) |
 
