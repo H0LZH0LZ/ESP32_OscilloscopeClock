@@ -168,7 +168,7 @@ Darunter folgen drei Bereiche. **Status** und **Protokoll** sind einklappbar (Pf
 - **WLAN** (Gruppe in den Einstellungen): gespeicherte Netze (bis zu 10, je mit „Löschen“), Netzsuche
   (stärkstes Netz oben, Balken und dBm, das verbundene Netz ist markiert; Netz antippen übernimmt den Namen), Formular „Netz hinzufügen“ (anfangs eingeklappt; offen, solange noch kein Netz gespeichert ist, und beim Antippen eines gefundenen Netzes), „Neu verbinden“, „WLAN zurücksetzen“ (alle Netze löschen).
 - **Protokoll** (das Log der Firmware): die letzten `LOG_BUFFER_SIZE` Byte (8 KB, ca. 120 Zeilen),
-  alle 5 s aktualisiert, solange „Automatisch aktualisieren“ an ist („Jetzt aktualisieren“ lädt sofort). Das Feld
+  alle 5 s aktualisiert, solange „Automatisch aktualisieren“ an ist („Aktualisieren“ lädt sofort). Das Feld
   hat eine feste Höhe (max. 60 % des Bildschirms) mit eigener Scrollleiste. Wischen im Feld scrollt
   nur das Log, nicht die Seite. Steht man unten, folgen neue Zeilen automatisch. Liest man weiter
   oben, bleibt die Position beim Aktualisieren erhalten. Darunter steht die Zeilenzahl.

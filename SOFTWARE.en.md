@@ -171,7 +171,7 @@ Below follow three sections. Every setting and every button has a short descript
 - **„WLAN“ (Wi-Fi, group in the settings):** saved networks (up to 10, each with “Delete”), network
   scan (strongest network first, bars and dBm, the connected network is marked; tapping a network takes over its name), form „Netz hinzufügen“ (add network; collapsed at first – open while no network is saved and when tapping a found network), „Neu verbinden“ (reconnect), „WLAN zurücksetzen“ (reset Wi-Fi: delete all networks).
 - **„Protokoll“ (log):** the last `LOG_BUFFER_SIZE` bytes (8 KB, approx. 120 lines), refreshed every
-  5 s while „Automatisch aktualisieren“ (auto refresh) is on („Jetzt aktualisieren“ – refresh now –
+  5 s while „Automatisch aktualisieren“ (auto refresh) is on („Aktualisieren“ – refresh –
   loads immediately). The field has a fixed height (max. 60 % of the screen) with its own scroll
   bar. Swiping inside the field only scrolls the log, not the page. If you are at the bottom, new
   lines follow automatically. If you are reading further up, the position is kept on refresh.
