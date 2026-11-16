@@ -69,6 +69,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .row:first-of-type{border-top:0}
 .row span:first-child{color:var(--mute)}
 .row span:last-child{text-align:right;overflow-wrap:anywhere}
+.row .note{display:block;font-size:12px;line-height:1.3;color:var(--mute);opacity:.85;margin-top:2px}
 /* Farbig hervorgehoben werden nur Probleme: Orange = Warnung, Rot = Fehler.
    Normale Zustände und Bestätigungen (.ok) stehen in normaler Schriftfarbe. */
 .ok{color:inherit}.warn{color:var(--warn)}.err{color:var(--err)}
@@ -222,8 +223,14 @@ html{scroll-behavior:smooth}
 const $=id=>document.getElementById(id);
 const get=(u)=>fetch(u,{cache:'no-store'}).then(r=>{if(!r.ok)throw r.status;return r});
 const post=(u,d)=>fetch(u,{method:'POST',body:new URLSearchParams(d)}).then(r=>r.json());
-function row(k,v,c){const d=document.createElement('div');d.className='row';
- const a=document.createElement('span');a.textContent=k;const b=document.createElement('span');b.textContent=v;if(c)b.className=c;d.append(a,b);return d}
+// Statuszeile: Bezeichnung links, Wert rechts, optional Klasse (warn/err) und
+// eine kleine Erläuterung unter der Bezeichnung.
+function row(k,v,c,note){const d=document.createElement('div');d.className='row';
+ const a=document.createElement('span');a.textContent=k;
+ if(note){const n=document.createElement('small');n.className='note';n.textContent=note;a.append(n)}
+ const b=document.createElement('span');b.textContent=v;if(c)b.className=c;
+ if(note)b.style.whiteSpace='nowrap';          // kurzer Wert neben der Erläuterung nicht umbrechen
+ d.append(a,b);return d}
 function bars(r){return r>-55?'▂▄▆█':r>-67?'▂▄▆ ':r>-75?'▂▄  ':'▂   '}
 function dur(s){const d=Math.floor(s/86400),h=Math.floor(s/3600)%24,m=Math.floor(s/60)%60;return (d?d+' d ':'')+h+' h '+m+' min'}
 // ---- Oszilloskop-Vorschau ---------------------------------------------------
@@ -345,8 +352,8 @@ async function status(){
    row('Arbeitsspeicher',Math.round(s.heap/1024)+' von '+Math.round(s.heapTotal/1024)+' KB frei'),
    row('RAM-Minimum seit Start',Math.round(s.heapMin/1024)+' KB frei',s.heapMin<20480?'warn':''),
    row('Größter freier RAM-Block',Math.round(s.heapBlock/1024)+' KB',s.heapBlock<8192?'warn':''),
-   row('CPU-Last Core 0',s.cpu0+' %',s.cpu0>85?'warn':''),
-   row('CPU-Last Core 1','100 % (Strahlausgabe)'),
+   row('CPU-Last Core 0',s.cpu0+' %',s.cpu0>85?'warn':'','WLAN, NTP, Webinterface, OLED, Uhrzeit, BOOT\u2011Taster'),
+   row('CPU-Last Core 1','100 %','','Strahlausgabe an GPIO25/26 – läuft absichtlich ohne Pause'),
    row('Letzter Neustart',s.reset,/Absturz|Watchdog|Unterspannung/.test(s.reset)?'warn':''),
    row('Firmware','v'+s.fw));
  }catch(e){if(online){$('status').replaceChildren(row('Verbindung','keine Antwort von der Uhr','err'))}online=false}
