@@ -152,7 +152,7 @@ und berechnet die Rundtour neu. Das dauert einige zehn Millisekunden, so lange s
 `config.h` ist nur der Startwert. Alle Ziffernsätze liegen deshalb im RAM (zusammen ca. 0,7 KB).
 
 Darunter folgen drei Bereiche. **Status** und **Protokoll** sind einklappbar (Pfeil V): Status ist anfangs offen, Protokoll zu
-(Zustand im Browser gespeichert; ein Sprung aus dem Menü klappt sie auf). Jede Einstellung und jede Schaltfläche hat eine kurze Beschreibung:
+(bei jedem Aufruf: Status offen, alles andere zu – nichts wird gespeichert; ein Sprung aus dem Menü klappt sie auf). Jede Einstellung und jede Schaltfläche hat eine kurze Beschreibung:
 - **Status:** große Uhrzeit, KW und Datum, WLAN, Signalstärke, Netzwerkadresse, darunter
   Zeitabgleich (NTP) mit letztem Abgleich, Laufzeit, darunter Grund des letzten Neustarts, Arbeitsspeicher (frei/gesamt, darunter Tiefstwert seit
   dem Neustart und größter freier Block), Prozessorauslastung Kern 0 und Kern 1 (je eine Zeile mit
@@ -185,8 +185,7 @@ Darunter folgen drei Bereiche. **Status** und **Protokoll** sind einklappbar (Pf
 **Bedienhilfen der Seite:**
 - **Punkte unter der Vorschau** zeigen das aktive Zifferblatt; Punkt oder Pfeil ‹ › antippen wechselt (zusätzlich zum Wischen).
   Beim Wechsel wird kein Name eingeblendet.
-- **Gruppen der Einstellungen** sind eingeklappt (Pfeil V) und öffnen sich per Tippen auf die Überschrift (Zustand im Browser
-  gespeichert). Menü-Unterpunkte öffnen ihre Gruppe; erscheint „Uhrzeit stellen“, öffnet sich „Uhrzeit“ von selbst und klappt wieder zu, sobald der Zeitserver wieder erreicht ist.
+- **Gruppen der Einstellungen** sind eingeklappt (Pfeil V) und öffnen sich per Tippen auf die Überschrift (bei jedem Aufruf wieder zu, nichts wird gespeichert). Menü-Unterpunkte öffnen ihre Gruppe; erscheint „Uhrzeit stellen“, öffnet sich „Uhrzeit“ von selbst und klappt wieder zu, sobald der Zeitserver wieder erreicht ist.
 - **„✓ Gespeichert“** erscheint kurz direkt an der geänderten Einstellung (Fehler in Rot).
 - **Vorschau beim Ziehen:** Verweilzeit ändert Helligkeit der Vorschau und zeigt die geschätzte Bildrate (~), das
   Rücklauf-Tempo zeigt im Profil ANALOG die Rücklaufspuren in der Vorschau (schwächer, je schneller).

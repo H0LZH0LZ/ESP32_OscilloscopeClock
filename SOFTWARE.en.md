@@ -183,12 +183,12 @@ Below follow three sections. Every setting and every button has a short descript
   settings (JSON file with all settings except Wi-Fi networks) and load them (sent to
   `POST /api/settings`), „Alle Einstellungen zurücksetzen“ (reset all settings: all groups, language and
   device name to `config.h`, test pattern off; Wi-Fi networks are kept; “Undo” for 8 s).
-- **Status** and **„Protokoll“** are collapsible (V arrow): status starts open, log closed (state saved in the browser; a jump from the menu opens them).
+- **Status** and **„Protokoll“** are collapsible (V arrow): status starts open, log closed (on every visit: status open, everything else closed – nothing is saved; a jump from the menu opens them).
 
 **Usability aids of the page:**
 - **Dots below the preview** show the active dial; tapping a dot or the arrows ‹ › changes it (in addition to swiping).
   No name is shown when switching.
-- **Settings groups** are collapsed (V arrow) and open by tapping the heading (state saved in the browser). Menu sub-entries
+- **Settings groups** are collapsed (V arrow) and open by tapping the heading (closed again on every visit, nothing is saved). Menu sub-entries
   open their group; when “Set time” appears, the time group opens by itself and closes again once the time server is reached again.
 - **“✓ Saved”** briefly appears right at the changed setting (errors in red).
 - **Preview while dragging:** the dwell time changes the preview brightness and shows the estimated frame rate (~);

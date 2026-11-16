@@ -735,20 +735,18 @@ document.querySelectorAll('[data-reset]').forEach(b=>b.onclick=async()=>{const g
     m.textContent=x.ok?t('Wiederhergestellt'):(x.msg||'');m.className='gmsg '+(x.ok?'ok':'err');m.t=setTimeout(()=>m.textContent='',2500)}catch(e){}};
    m.append(u);m.t=setTimeout(()=>m.textContent='',8000)}}
  catch(e){m.textContent=t('Keine Antwort von der Uhr');m.className='gmsg err'}setBusy=false});
-// ---- Status und Protokoll ein-/ausklappen (Status anfangs offen, Protokoll zu; Zustand im Browser gespeichert)
+// ---- Status und Protokoll ein-/ausklappen. Beim Aufruf immer: Status offen, alles andere zu (nichts gespeichert)
 function openSec(g,open){g.classList.toggle('closed',!open);g.firstElementChild.setAttribute('aria-expanded',String(open));
- try{localStorage.setItem('secs',JSON.stringify([...document.querySelectorAll('.grp')].filter(x=>x.firstElementChild.classList.contains('coll')&&!x.classList.contains('closed')).map(x=>x.firstElementChild.id)))}catch(e){}
  if(open&&g.firstElementChild.id==='log-h'){logFirst=true;showLog()}}
-{let o=null;try{o=JSON.parse(localStorage.getItem('secs'))}catch(e){}
- document.querySelectorAll('h2.coll').forEach(h=>{const g=h.parentNode,on=Array.isArray(o)?o.includes(h.id):h.id==='status-h';   // Status anfangs offen, Protokoll zu
+{try{localStorage.removeItem('secs');localStorage.removeItem('groups')}catch(e){}   // alte gespeicherte Zustände entfernen
+ document.querySelectorAll('h2.coll').forEach(h=>{const g=h.parentNode,on=h.id==='status-h';   // Status offen, Protokoll zu
   g.classList.toggle('closed',!on);h.setAttribute('aria-expanded',String(on));
   h.onclick=()=>openSec(g,g.classList.contains('closed'));
   h.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();h.onclick()}}})}
-// ---- Gruppen ein-/ausklappen (Überschrift antippen); Zustand im Browser gespeichert
-function openGroup(g,open){g.classList.toggle('closed',!open);g.firstElementChild.setAttribute('aria-expanded',String(open));
- try{const o=[...document.querySelectorAll('.sgroup')].filter(x=>!x.classList.contains('closed')).map(x=>x.firstElementChild.id);localStorage.setItem('groups',JSON.stringify(o))}catch(e){}}
-{let o=null;try{o=JSON.parse(localStorage.getItem('groups'))}catch(e){}   // Standard: alle Gruppen zu
- document.querySelectorAll('.sgroup').forEach(g=>{const h=g.firstElementChild,on=Array.isArray(o)&&o.includes(h.id);
+// ---- Gruppen ein-/ausklappen (Überschrift antippen) – beim Aufruf alle zu, nichts wird gespeichert
+function openGroup(g,open){g.classList.toggle('closed',!open);g.firstElementChild.setAttribute('aria-expanded',String(open));}
+{   // beim Aufruf alle Gruppen zu
+ document.querySelectorAll('.sgroup').forEach(g=>{const h=g.firstElementChild,on=false;
   g.classList.toggle('closed',!on);h.setAttribute('aria-expanded',String(on));
   h.onclick=()=>openGroup(g,g.classList.contains('closed'));
   h.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();h.onclick()}}})}
