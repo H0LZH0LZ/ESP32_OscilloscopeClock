@@ -35,6 +35,9 @@ Hardware angepasst: **ESP32-WROOM-32U DevKitC V4**, **Waveshare 2.42" OLED (SPI)
 
 ### Schnellstart (Arduino IDE 2.x)
 1. Boardverwalter: **esp32 by Espressif** (2.0.x oder 3.x) installieren, Board **ESP32 Dev Module**.
+   Unter **Werkzeuge → Partition Scheme** „**Huge APP (3MB No OTA/1MB SPIFFS)**“ wählen. Dann stehen
+   3 MB statt 1,25 MB für das Programm zur Verfügung (Belegung 37 % statt 90 %). Die Uhr nutzt weder
+   OTA-Updates noch SPIFFS, und gespeicherte WLANs und Einstellungen bleiben beim Umstellen erhalten.
 2. Bibliotheksverwalter: **U8g2** (by oliver) installieren.
 3. WLAN eintragen, auf einem von zwei Wegen:
    - **im Webinterface:** Hochladen, dann mit dem Handy das WLAN **„ScopeClock-Setup“** wählen.
@@ -53,7 +56,7 @@ Hardware angepasst: **ESP32-WROOM-32U DevKitC V4**, **Waveshare 2.42" OLED (SPI)
    es ist kein neues Hochladen nötig.
    (Den Taster nicht beim Einschalten drücken, sonst startet der ESP32 im Download-Modus.)
 
-Alternativ mit PlatformIO: `pio run -t upload` (siehe `platformio.ini`).
+Alternativ mit PlatformIO: `pio run -t upload` (siehe `platformio.ini`, Huge APP ist dort schon eingestellt).
 
 Einstellungen (Zeitzone, Pins, Zifferblatt, Strahlgeschwindigkeit, Oszilloskop-Profil) stehen in
 `ESP32_OscilloscopeClock_v2.0/config.h`.
@@ -69,7 +72,8 @@ Einstellungen (Zeitzone, Pins, Zifferblatt, Strahlgeschwindigkeit, Oszilloskop-P
 
 Die Konfigurationsvarianten (Profil ANALOG/DIGITAL, Z-Dunkeltastung, Zifferblatt 0/1/2,
 `USE_FAST_DAC 0`, EXCEL-Modus) wurden vor dem Webinterface ebenfalls ohne Warnungen gebaut.
-Wird der Programmspeicher einmal knapp: Werkzeuge → Partition Scheme → „Huge APP (3MB No OTA)“.
+Mit dem empfohlenen Partitionsschema **Huge APP** belegt dieselbe Firmware 1.182.866 von 3.145.728 Byte
+(**37 %**), mit „Minimal SPIFFS“ 60 %.
 
 Zusätzlich auf dem PC simuliert: Strahlverlauf (Helligkeit, Rücklaufspuren, Bildrate),
 OLED-Inhalt, BOOT-Taster, Kalenderwoche, Speicherzugriffe (AddressSanitizer). Die Webseite
