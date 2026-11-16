@@ -23,7 +23,7 @@ Diese Datei beschreibt, wie die Firmware aufgebaut ist. Für Verdrahtung und Geh
  │ scopeTask                │          │ uiTask (alle 10 ms)                    │
  │  endlos:                 │  g_time  │  publishTime()  → g_timePacked         │
  │   Zeit lesen  ◄──────────┼──Packed──┤  buttonPoll()   → g_scopeProfile       │
- │   Stunden-, Minutenzeiger│ (32 Bit) │  oledUpdate()   alle 200 ms (I2C)      │
+ │   Stunden-, Minutenzeiger│ (32 Bit) │  oledUpdate()   alle 200 ms (SPI)      │
  │   Sekundenzeiger hin     │          │  wifiLogChanges() jede Sekunde (Serial)│
  │   Rundtour Zifferblatt   │ g_scope- │                                        │
  │   Sekundenzeiger zurück  │◄─Profile─┤                                        │
@@ -36,7 +36,7 @@ Diese Datei beschreibt, wie die Firmware aufgebaut ist. Für Verdrahtung und Geh
 - **Core 1** zeichnet ohne jede Pause, damit das Bild auf dem Oszilloskop nicht flimmert.
   Der Task wartet nie auf eine Sperre, ruft kein `vTaskDelay()` auf und liest pro Bild genau
   einen 32-Bit-Wert. Der Idle-Watchdog von Core 1 ist deshalb abgeschaltet (`disableCore1WDT()`).
-- **Core 0** übernimmt alles andere. WLAN und I2C werden im `uiTask` initialisiert,
+- **Core 0** übernimmt alles andere. WLAN und der Display-Bus (SPI) werden im `uiTask` initialisiert,
   damit ihre Interrupts auf Core 0 laufen.
 - Die Funktionen des Zeichenpfads (`beamPoint`, `beamMove`, `PlotTable`, DAC-Zugriffe) liegen per
   `IRAM_ATTR` im internen RAM, die Tabellen in `DataTable.h` ebenfalls. Es gibt dadurch keine
@@ -339,4 +339,4 @@ bei Bedarf `BEAM_NS_PER_UNIT` erhöhen (hellere Spur, weniger Bilder/s).
 | Zeiger heller/dunkler als das Zifferblatt | `HAND_BRIGHT_PCT` anpassen |
 | Zeit falsch um ganze Stunden | `TZ_INFO` prüfen |
 | OLED-Bild 2 px versetzt | in der `.ino` `NONAME0` → `NONAME2` |
-| OLED bleibt dunkel | I2C-Adresse (`OLED_I2C_ADDR`), Pull-ups, Brücken für den I2C-Modus (siehe HARDWARE.md) |
+| OLED bleibt dunkel | Verdrahtung CS/DC/RST prüfen (GPIO5/17/4), VCC an 3V3; bei I2C-Variante Adresse, Pull-ups, Brücken (siehe HARDWARE.md) |

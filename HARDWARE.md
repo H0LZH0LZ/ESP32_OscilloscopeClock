@@ -9,7 +9,7 @@
 | 2,4-GHz-Stabantenne + IPEX→SMA-Pigtail | Pflicht beim *-32U*: das Modul hat **keine** PCB-Antenne |
 | 2× BNC-Einbaubuchse (Lötanschluss) | X- und Y-Ausgang zum Oszilloskop |
 | ABS-Abzweigdose 100 × 150 mm | Gehäuse (funkdurchlässig) |
-| Kleinteile | 2× 220 Ω (Serienwiderstand DAC), optional 2× 1 nF, optional 2× 4,7 kΩ (I2C-Pull-ups), Litze, Abstandsbolzen |
+| Kleinteile | 2× 220 Ω (Serienwiderstand DAC), optional 2× 1 nF, Litze, Abstandsbolzen |
 
 ## Verdrahtung
 
@@ -22,11 +22,11 @@ GND ──────────────────── BNC "X" + "Y" M
 
 3V3  ─────────────────── OLED VCC
 GND  ─────────────────── OLED GND
-GPIO21 (SDA) ─────────── OLED DIN   (im I2C-Modus = SDA)
-GPIO22 (SCL) ─────────── OLED CLK   (im I2C-Modus = SCL)
-GPIO4  ───────────────── OLED RES
-GND  ─────────────────── OLED CS
-GND  ─────────────────── OLED DC    (DC = GND → I2C-Adresse 0x3C, DC = 3V3 → 0x3D)
+GPIO18 (VSPI SCK) ────── OLED CLK
+GPIO23 (VSPI MOSI) ───── OLED DIN
+GPIO5  ───────────────── OLED CS
+GPIO17 ───────────────── OLED DC
+GPIO4  ───────────────── OLED RST
 
 IPEX/U.FL ── Pigtail ── SMA-Buchse in der Gehäusewand ── Stabantenne
 
@@ -35,8 +35,26 @@ GPIO27 ──[220Ω]──────── BNC "Z"  Mittelkontakt   ──> Z-
 GND ──────────────────── BNC "Z" Masse
 ```
 
-Die Pins stehen zentral in `ESP32_OscilloscopeClock_v2.0/config.h`. Nur GPIO25/26 sind fest vorgegeben,
-weil die DACs nur an diesen beiden Pins herausgeführt sind.
+Die Pins stehen zentral in `ESP32_OscilloscopeClock_v2.0/config.h`. Fest vorgegeben sind GPIO25/26
+(nur dort liegen die DACs) und GPIO18/23 (Hardware-SPI für das Display).
+
+### Pin-Positionen am DevKitC (gezählt von oben, Antennenbuchse oben, USB-C unten)
+
+| Leiste | Pos. | Pin | Anschluss |
+|---|---|---|---|
+| links | 1 | 3V3 | OLED VCC |
+| links | 9 | GPIO25 (DAC_1) | über 220 Ω → BNC „X“ Mitte |
+| links | 10 | GPIO26 (DAC_2) | über 220 Ω → BNC „Y“ Mitte |
+| links | 11 | GPIO27 | optional über 220 Ω → BNC „Z“ Mitte |
+| links | 14 | GND | Masse aller BNC-Buchsen |
+| rechts | 1 | GND | OLED GND |
+| rechts | 2 | GPIO23 | OLED DIN |
+| rechts | 9 | GPIO18 | OLED CLK |
+| rechts | 10 | GPIO5 | OLED CS |
+| rechts | 11 | GPIO17 | OLED DC |
+| rechts | 13 | GPIO4 | OLED RST |
+
+GPIO0 (rechts, Pos. 14) ist der BOOT-Taster auf dem Board – dort nichts anschließen.
 
 ### Optional: Dunkeltastung über den Z-Eingang
 Der ESP32 kann den Strahl nicht selbst abschalten. Zwischen zwei Linien bleibt deshalb eine sehr
@@ -58,17 +76,20 @@ Viele Röhrenoszilloskope haben auf der Rückseite eine BNC-Buchse **„Z“, �
   der die DAC-Stufen glättet. Wenn Ziffern dadurch „verrundet“ aussehen, den Kondensator weglassen.
 - Kein Pegelwandler und kein Verstärker nötig: das Oszilloskop hat 1 MΩ Eingangswiderstand.
 
-### OLED von SPI auf I2C umstellen (Waveshare 2.42")
-Das Modul ist ab Werk auf 4-Wire-SPI eingestellt.
+### OLED-Anschluss (Waveshare 2.42")
+Das Modul wird im **Auslieferungszustand (4-Wire-SPI)** betrieben, es muss nichts umgelötet werden.
+Der 7-polige Stecker wird wie oben verdrahtet (VCC an 3V3, nicht an 5V0). Ist das Bild um 2 Pixel
+horizontal verschoben, in der `.ino` `NONAME0` durch `NONAME2` ersetzen.
+
+**Alternative I2C** (nur nötig, wenn Pins knapp werden; `OLED_BUS_SPI 0` in `config.h`):
 1. Auf der Rückseite die 0-Ω-Brücken entsprechend dem Platinenaufdruck von **SPI** auf **I2C**
    umlöten. Die genaue Brückenbelegung steht im Waveshare-Wiki („2.42inch OLED Module“); bitte
    die Platinenrevision dort vergleichen.
-2. Im I2C-Modus: DIN = SDA, CLK = SCL, **CS auf GND**, **DC wählt die Adresse** (GND = 0x3C).
-3. RES an GPIO4. Alternativ RES fest an 3V3 legen und in `config.h` `OLED_RST_PIN` auf
+2. Im I2C-Modus: DIN = SDA (GPIO21), CLK = SCL (GPIO22), **CS auf GND**, **DC wählt die Adresse** (GND = 0x3C).
+3. RST an GPIO4. Alternativ RES fest an 3V3 legen und in `config.h` `OLED_RST_PIN` auf
    `U8X8_PIN_NONE` setzen. Mit GPIO-Reset startet das Display aber zuverlässiger.
 4. Bleibt das Display dunkel: prüfen, ob das Modul I2C-Pull-ups hat. Falls nicht,
    **4,7 kΩ von SDA und SCL nach 3V3** nachrüsten.
-5. Ist das Bild um 2 Pixel horizontal verschoben, in der `.ino` `NONAME0` durch `NONAME2` ersetzen.
 
 ### Antenne
 - Den ESP32-**WROOM-32U** nie ohne angeschlossene Antenne im WLAN-Betrieb laufen lassen.

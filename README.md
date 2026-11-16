@@ -1,14 +1,14 @@
 # ESP32 Oscilloscope Clock – v2.0 (Dual-Core, NTP, OLED)
 
 Diese Version baut auf dem Original von Mauro Pintus auf (siehe unten) und ist für folgende
-Hardware angepasst: **ESP32-WROOM-32U DevKitC V4**, **Waveshare 2.42" OLED (I2C)**, externe
+Hardware angepasst: **ESP32-WROOM-32U DevKitC V4**, **Waveshare 2.42" OLED (SPI)**, externe
 2,4-GHz-Antenne, BNC-Ausgänge und ein ABS-Gehäuse.
 
 **Aufbau und Verdrahtung: [HARDWARE.md](HARDWARE.md)** · **Aufbau der Software: [SOFTWARE.md](SOFTWARE.md)**
 
 ### Was ist neu
 - **Core 1** erzeugt ausschließlich die X/Y-Signale (GPIO25/26) – ohne Pausen, ohne Locks.
-- **Core 0** übernimmt WLAN, NTP und das OLED. WLAN und I2C werden dort initialisiert, damit ihre
+- **Core 0** übernimmt WLAN, NTP und das OLED. WLAN und der Display-Bus werden dort initialisiert, damit ihre
   Interrupts den Zeichenpfad nicht stören.
 - NTP über das eingebaute SNTP des ESP32. Die `NTPtimeESP`-Bibliothek entfällt.
   Zeitzone mit automatischer Sommer-/Winterzeit, stündliches Nachsynchronisieren.
@@ -64,7 +64,7 @@ Einstellungen (Zeitzone, Pins, Zifferblatt, Strahlgeschwindigkeit, Oszilloskop-P
 
 | Board-Paket | Programmspeicher | Globale Variablen (RAM) |
 |---|---|---|
-| esp32 3.3.12 | 1.180.578 Byte (90 %) | ca. 74 KB (22 %) |
+| esp32 3.3.12 | 1.182.850 Byte (90 %) | 73.876 Byte (22 %) |
 | esp32 2.0.17 | 866.053 Byte (66 %) | 61.048 Byte (18 %) – Stand vor Menü und Zifferblatt-Umschaltung |
 
 Die Konfigurationsvarianten (Profil ANALOG/DIGITAL, Z-Dunkeltastung, Zifferblatt 0/1/2,

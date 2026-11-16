@@ -83,7 +83,8 @@
 #include <Arduino.h>
 #include <WiFi.h>
 #include <WiFiMulti.h>        // mehrere WLANs, verbindet mit dem stärksten
-#include <Wire.h>             // I2C (wird von U8g2 benutzt)
+#include <SPI.h>              // OLED über Hardware-SPI (Standard)
+#include <Wire.h>             // OLED über I2C (Alternative, OLED_BUS_SPI 0)
 #include <time.h>             // time(), localtime_r(), struct tm
 #include <esp_sntp.h>         // NTP-Client des ESP-IDF (Sync-Callback, Intervall)
 #include <soc/soc.h>          // SET_PERI_REG_BITS()
@@ -1614,13 +1615,19 @@ static void webLoop()
 }
 
 //*****************************************************************************
-// OLED – Waveshare 2.42" SSD1309 128x64, I2C (Core 0)
+// OLED – Waveshare 2.42" SSD1309 128x64, SPI oder I2C (Core 0)
 //*****************************************************************************
 // "_F_" = voller Framebuffer (1 KB RAM): Das Bild wird komplett im RAM
-// aufgebaut und mit sendBuffer() in einem Rutsch übertragen (~25 ms bei
-// 400 kHz) – kein Flackern beim Neuzeichnen.
+// aufgebaut und mit sendBuffer() in einem Rutsch übertragen – kein Flackern.
+//   SPI (Standard): Hardware-SPI, CLK = GPIO18, DIN = GPIO23, CS/DC/RST aus
+//                   config.h; Übertragung ca. 1 ms bei 8 MHz.
+//   I2C:            SDA/SCL aus config.h; ca. 25 ms bei 400 kHz.
 // Falls das Bild um 2 Pixel verschoben erscheint: NONAME0 durch NONAME2 ersetzen.
+#if OLED_BUS_SPI
+static U8G2_SSD1309_128X64_NONAME0_F_4W_HW_SPI u8g2(U8G2_R0, OLED_CS_PIN, OLED_DC_PIN, OLED_RST_PIN);
+#else
 static U8G2_SSD1309_128X64_NONAME0_F_HW_I2C u8g2(U8G2_R0, OLED_RST_PIN, OLED_SCL_PIN, OLED_SDA_PIN);
+#endif
 
 // OLED-Helligkeit setzen (Einstellungen im Webinterface; läuft im uiTask).
 static void oledSetContrast(uint8_t v) { u8g2.setContrast(v); }
@@ -1630,11 +1637,15 @@ static void oledSetContrast(uint8_t v) { u8g2.setContrast(v); }
 static void oledSetFlip(bool flip) { u8g2.setDisplayRotation(flip ? U8G2_R2 : U8G2_R0); }
 
 // Display initialisieren und kurz einen Startbildschirm zeigen.
-// Wird im uiTask aufgerufen, damit der I2C-Interrupt auf Core 0 liegt.
+// Wird im uiTask aufgerufen, damit die Bus-Interrupts auf Core 0 liegen.
 static void oledInit()
 {
+#if OLED_BUS_SPI
+  u8g2.setBusClock(OLED_SPI_HZ);
+#else
   u8g2.setI2CAddress(OLED_I2C_ADDR << 1);   // U8g2 erwartet die 8-Bit-Adresse
   u8g2.setBusClock(OLED_I2C_HZ);
+#endif
   u8g2.begin();
   u8g2.setContrast(s_oledContrast);
   oledSetFlip(s_oledFlip);
@@ -1922,7 +1933,7 @@ static void oledUpdate()
   fitText(buf, LINE_CHARS);
   drawCentered(buf, Y_RSSI + dy, dx);
 
-  u8g2.sendBuffer();                // Framebuffer per I2C ans Display
+  u8g2.sendBuffer();                // Framebuffer per SPI (bzw. I2C) ans Display
 }
 
 //*****************************************************************************
@@ -1937,7 +1948,7 @@ static void oledUpdate()
 //                webApManage()    → Setup-WLAN ein/aus, Bildrate
 static void uiTask(void *)
 {
-  // WICHTIG: OLED (I2C) und WLAN werden HIER initialisiert, nicht in setup():
+  // WICHTIG: OLED (SPI/I2C) und WLAN werden HIER initialisiert, nicht in setup():
   // ihre Interrupts landen damit auf Core 0 und stören den Zeichenpfad nicht.
   logMsg("[UI] laeuft auf Core %d", xPortGetCoreID());
   oledInit();
@@ -1953,7 +1964,7 @@ static void uiTask(void *)
     const uint32_t now = millis();
     if (now - lastOled >= OLED_REFRESH_MS) {
       lastOled = now;
-      oledUpdate();                       // ~25 ms I2C-Transfer, blockiert nur Core 0
+      oledUpdate();                       // ~1 ms SPI- (bzw. ~25 ms I2C-)Transfer, nur Core 0
     }
     if (now - lastLog >= 1000) {
       // Bildrate aus dem Bildzähler des scopeTask
