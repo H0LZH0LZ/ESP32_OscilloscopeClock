@@ -118,7 +118,7 @@ pre.full{height:auto;overflow-y:visible}
 .logsw{min-height:44px;border-top:1px solid var(--line);margin-bottom:8px}
 /* Einstellungen */
 .set{border-top:1px solid var(--line);padding:10px 0}
-.set:first-of-type,#timeRow[hidden]+.set{border-top:0}   /* keine Linie über dem ersten sichtbaren Eintrag */
+.set:first-of-type{border-top:0}   /* keine Linie über dem ersten Eintrag */
 .set .head{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
 .set .head label{margin:0;color:var(--fg);font-size:16px}
 .set .val{color:var(--mute);font-variant-numeric:tabular-nums;white-space:nowrap}
@@ -159,6 +159,9 @@ html{scroll-behavior:smooth}
 #nav h3{font-size:13px;color:var(--mute);text-transform:uppercase;letter-spacing:.06em;margin:4px 8px 12px}
 #nav a{display:flex;align-items:center;min-height:48px;padding:0 12px;border-radius:10px;color:var(--fg);text-decoration:none;font-weight:500}
 #nav a:active,#nav a:hover{background:var(--bg)}
+#nav .navlang{margin:16px 12px 0;padding-top:12px;border-top:1px solid var(--line)}
+#nav .navlang label{margin:0 0 6px}
+#nav select{font:inherit;font-size:16px;width:100%;min-height:44px;padding:0 10px;margin-bottom:6px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--fg)}
 #shade{position:fixed;inset:0;z-index:35;background:rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .25s}
 #shade.open{opacity:1;pointer-events:auto}
 
@@ -172,6 +175,9 @@ html{scroll-behavior:smooth}
  <a href="#set-h">Einstellungen</a>
  <a href="#wlan-h">WLAN</a>
  <a href="#log-h">Protokoll</a>
+ <div class="navlang"><label for="sLang">Sprache</label>
+  <select id="sLang"><option value="de" lang="de">Deutsch</option><option value="en" lang="en">English</option></select>
+  <div class="desc">Gilt für Webinterface, OLED-Anzeige und Protokoll.</div></div>
 </nav>
 <div id="shade"></div>
 <main>
@@ -187,6 +193,12 @@ html{scroll-behavior:smooth}
 
 <div class="grp"><h2 id="set-h">Einstellungen</h2>
 <section id="settings">
+ <!-- An erster Stelle: Oszilloskop-Profil -->
+ <div class="set"><div class="head"><label>Oszilloskop-Profil</label></div>
+  <div class="seg" role="group" aria-label="Oszilloskop-Profil">
+   <button type="button" data-profile="1" aria-pressed="false">DIGITAL</button>
+   <button type="button" data-profile="0" aria-pressed="false">ANALOG</button></div>
+  <div class="sub">DIGITAL für digitale Oszilloskope, ANALOG für Röhren-Oszilloskope. Umschalten auch an der Uhr: BOOT-Taster 3 s halten.</div></div>
  <!-- Nur sichtbar, solange kein Zeitserver erreichbar war (kein Internet, Setup-WLAN) -->
  <div class="set" id="timeRow" hidden><div class="head"><label>Uhrzeit stellen</label></div>
   <div class="sub">Kein Zeitserver erreichbar (kein Internet). Die Uhrzeit lässt sich hier von Hand stellen.</div>
@@ -200,19 +212,11 @@ html{scroll-behavior:smooth}
   <button type="button" class="sec" id="tSave">Datum und Uhrzeit setzen</button>
   <div id="tMsg"></div>
   <div class="sub">Sobald ein Zeitserver erreichbar ist, stellt sich die Uhr wieder selbst. Nach einem Neustart muss die Zeit erneut gestellt werden.</div></div>
- <div class="set"><div class="head"><label for="sLang">Sprache</label></div>
-  <select id="sLang"><option value="de" lang="de">Deutsch</option><option value="en" lang="en">English</option></select>
-  <div class="sub">Gilt für Webinterface, OLED-Anzeige und Protokoll.</div></div>
  <div class="set"><div class="head"><label>Zeitformat</label></div>
   <div class="seg" role="group" aria-label="Zeitformat">
    <button type="button" data-h12="0" aria-pressed="true">24 Stunden</button>
    <button type="button" data-h12="1" aria-pressed="false">12 Stunden (AM/PM)</button></div>
   <div class="sub">Für die Uhrzeit auf der OLED-Anzeige und auf dieser Seite.</div></div>
- <div class="set"><div class="head"><label>Oszilloskop-Profil</label></div>
-  <div class="seg" role="group" aria-label="Oszilloskop-Profil">
-   <button type="button" data-profile="1" aria-pressed="false">DIGITAL</button>
-   <button type="button" data-profile="0" aria-pressed="false">ANALOG</button></div>
-  <div class="sub">DIGITAL für digitale Oszilloskope, ANALOG für Röhren-Oszilloskope. Umschalten auch an der Uhr: BOOT-Taster 3 s halten.</div></div>
  <div class="set"><div class="head"><label for="sDial">Zifferblatt</label></div>
   <select id="sDial"><option value="0">Ziffern 1–12</option><option value="1">12 · 3 · 6 · 9</option>
    <option value="2">Römisch I–XII</option><option value="3">Römisch XII · III · VI · IX</option></select>
@@ -291,8 +295,8 @@ Object.assign(EN,{'Sommer-/Winterzeit':'Summer/winter time','Automatisch':'Autom
  'Automatisch = nach den Regeln der Zeitzone. Sommer- oder Winterzeit fest wählen, falls die Uhr sonst eine Stunde falsch geht.':'Automatic = according to the rules of the time zone. Choose summer or winter time explicitly if the clock is otherwise off by one hour.'});
 Object.assign(EN,{'Zeitformat':'Time format','24 Stunden':'24 hours','12 Stunden (AM/PM)':'12 hours (AM/PM)',
  'Für die Uhrzeit auf der OLED-Anzeige und auf dieser Seite.':'For the time on the OLED display and on this page.'});
-Object.assign(EN,{'Tiefstwert':'minimum','größter Block':'largest block','Prozessorlast':'CPU load',
- 'Kern 0: WLAN, NTP, Webinterface, OLED. Kern 1 zeichnet ständig das Oszilloskop-Bild.':'Core 0: Wi-Fi, NTP, web interface, OLED. Core 1 draws the oscilloscope picture all the time.'});
+Object.assign(EN,{'Tiefstwert':'minimum','größter Block':'largest block','Prozessorauslastung Kern 0':'CPU usage core 0','Prozessorauslastung Kern 1':'CPU usage core 1',
+ 'zeichnet ständig das Oszilloskop-Bild – absichtlich ohne Pause':'draws the oscilloscope picture all the time – without pause on purpose'});
 const DE={};for(const k in EN)DE[EN[k]]=k;
 let lang='de';try{if(localStorage.getItem('lang')==='en')lang='en'}catch(e){}
 const t=s=>lang==='en'&&EN[s]||s;
@@ -497,8 +501,8 @@ async function status(){
    // Arbeitsspeicher in einer Zeile: frei/gesamt, darunter Tiefstwert und größter Block
    row(t('Arbeitsspeicher'),Math.round(s.heap/1024)+' '+t('von')+' '+Math.round(s.heapTotal/1024)+' '+t('KB frei'),
     (s.heapMin<20480||s.heapBlock<8192)?'warn':'',t('Tiefstwert')+' '+Math.round(s.heapMin/1024)+' KB · '+t('größter Block')+' '+Math.round(s.heapBlock/1024)+' KB'),
-   // Kern 1 ist immer zu 100 % mit der Strahlausgabe belegt – das steht als Erläuterung bei Kern 0
-   row(t('Prozessorlast'),s.cpu0+' %',s.cpu0>85?'warn':'',t('Kern 0: WLAN, NTP, Webinterface, OLED. Kern 1 zeichnet ständig das Oszilloskop-Bild.')),
+   row(t('Prozessorauslastung Kern 0'),s.cpu0+' %',s.cpu0>85?'warn':'',t('WLAN, NTP, Webinterface, OLED, Uhrzeit, BOOT\u2011Taster')),
+   row(t('Prozessorauslastung Kern 1'),'100 %','',t('zeichnet ständig das Oszilloskop-Bild – absichtlich ohne Pause')),
    row(t('Grund des letzten Neustarts'),s.reset,/Absturz|Watchdog|Unterspannung|Crash|Brown-out/.test(s.reset)?'warn':''),
    row(t('Firmware-Version'),'v'+s.fw));
  }catch(e){if(online){$('status').replaceChildren(row(t('Verbindung'),t('keine Antwort von der Uhr'),'err'))}online=false}

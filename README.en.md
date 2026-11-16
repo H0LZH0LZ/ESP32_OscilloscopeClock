@@ -39,7 +39,7 @@ This documentation quotes the German labels and adds the English label in parent
 - Several Wi-Fi networks: the clock automatically connects to the strongest known network.
 - **12- or 24-hour format** for OLED and web interface (12 h with AM/PM), switchable in the web interface.
 - **German or English** for the web interface, OLED display and log, switchable in the web
-  interface (settings or side menu) and saved. Start value `UI_LANG` in `config.h`.
+  interface (side menu) and saved. Start value `UI_LANG` in `config.h`.
 - **Web interface** at `http://scope-clock.local`, optimised for phones, no password.
   At the top it shows a live preview of the oscilloscope picture (transparent background in the
   light theme), below that the status (time sync, Wi-Fi, signal strength, profile, frame rate,
@@ -94,7 +94,7 @@ interface.
 | Oscilloscope profile DIGITAL/ANALOG | hold the BOOT button for 3 s, or „Einstellungen“ → „Oszilloskop-Profil“ |
 | Set the time without internet | „Einstellungen“ → „Uhrzeit stellen“ (Set time; only shown while no time server has been reached); summer/winter time automatic or fixed |
 | 12/24-hour format | „Einstellungen“ → „Zeitformat“ (Time format) |
-| Language German/English | „Einstellungen“ → „Sprache“ (Language, drop-down list) |
+| Language German/English | side menu (☰) → „Sprache“ (Language, drop-down list) |
 | Add/delete Wi-Fi networks | „WLAN“ section of the web interface, or `secrets.h` |
 | Troubleshooting | „Protokoll“ (log) section of the web interface, or the serial monitor (115200 baud) |
 

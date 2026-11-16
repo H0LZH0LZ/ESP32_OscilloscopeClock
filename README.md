@@ -31,7 +31,7 @@ Hardware angepasst: **ESP32-WROOM-32U DevKitC V4**, **Waveshare 2.42" OLED (SPI)
 - Mehrere WLANs: Die Uhr verbindet sich automatisch mit dem stärksten bekannten Netz.
 - **12- oder 24-Stunden-Format** für OLED und Webinterface (12 h mit AM/PM), umschaltbar im Webinterface.
 - **Sprache Deutsch oder Englisch** für Webinterface, OLED-Anzeige und Protokoll, umschaltbar im
-  Webinterface (Einstellungen oder Seitenmenü) und gespeichert. Startwert `UI_LANG` in `config.h`.
+  Webinterface (Seitenmenü) und gespeichert. Startwert `UI_LANG` in `config.h`.
 - **Webinterface** unter `http://scope-clock.local`, für Handys optimiert und ohne Passwort.
   Oben zeigt es eine Live-Vorschau des Oszilloskop-Bildes (im hellen Design ohne Hintergrund),
   darunter den Status (Zeitabgleich, WLAN, Signalstärke, Profil, Bildrate, Laufzeit, Arbeitsspeicher,
@@ -84,7 +84,7 @@ stehen in `ESP32_OscilloscopeClock_v2.0/config.h`. Im Betrieb ändert man sie be
 | Oszilloskop-Profil DIGITAL/ANALOG | BOOT-Taster 3 s halten, oder Einstellungen → Oszilloskop-Profil |
 | Uhrzeit ohne Internet stellen | Einstellungen → „Uhrzeit stellen“ (erscheint nur, solange kein Zeitserver erreichbar ist); Sommer-/Winterzeit automatisch oder fest |
 | 12/24-Stunden-Format | Einstellungen → „Zeitformat“ |
-| Sprache Deutsch/English | Einstellungen → „Sprache“ (Auswahlliste) |
+| Sprache Deutsch/English | Seitenmenü (☰) → „Sprache“ (Auswahlliste) |
 | WLAN hinzufügen/löschen | Abschnitt WLAN im Webinterface, oder `secrets.h` |
 | Fehlersuche | Abschnitt Protokoll im Webinterface, oder serieller Monitor (115200 Baud) |
 

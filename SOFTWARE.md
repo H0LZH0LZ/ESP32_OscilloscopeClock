@@ -91,7 +91,7 @@ Diese Datei beschreibt, wie die Firmware aufgebaut ist. Für Verdrahtung und Geh
 - OLED auf Englisch: `WiFi …`, `Week 46 - 2026-11-15` (ISO-Datum), „Oscilloscope profile“.
 - Webseite: Sie ist auf Deutsch geschrieben, die Tabelle `EN` im Skript übersetzt. `applyLang()`
   übersetzt alle festen Texte (Textknoten, `aria-label`) – über die Rückwärtstabelle auch zurück –,
-  `t()` die Texte aus dem Skript. Umgeschaltet wird in den Einstellungen über die Auswahlliste „Sprache“;
+  `t()` die Texte aus dem Skript. Umgeschaltet wird im Seitenmenü über die Auswahlliste „Sprache“;
   die Seite wechselt sofort und speichert die Sprache auf der Uhr (`POST /api/settings`, `lang`).
   Eine Änderung von einem anderen Gerät übernimmt die Seite mit der nächsten Statusabfrage.
 
@@ -111,7 +111,8 @@ Passwort. Das gilt immer, wenn die Uhr mit einem WLAN verbunden ist, nicht nur i
 die Strahlausgabe auf Core 1 nicht.
 
 **Seite (`webpage.h`):** eine Seite mit **einklappbarem Seitenmenü** (☰ oben links, bleibt beim
-Scrollen sichtbar): Uhr, Status, Einstellungen, WLAN, Protokoll. Der oberste Abschnitt (Überschrift, Vorschau, Uhrzeit,
+Scrollen sichtbar): Uhr, Status, Einstellungen, WLAN, Protokoll, darunter die Sprachauswahl.
+In den Einstellungen steht das Oszilloskop-Profil an erster Stelle. Der oberste Abschnitt (Überschrift, Vorschau, Uhrzeit,
 Datum) ist zentriert. Die Titelleiste „ESP32 Oscilloscope Clock“ bleibt immer oben neben der
 Menütaste stehen, die Abschnittsüberschriften direkt darunter (`position: sticky`). Jede
 Abschnittsüberschrift ist nur innerhalb ihres Abschnitts (`.grp`) angeheftet, so schiebt die
@@ -146,8 +147,8 @@ und berechnet die Rundtour neu. Das dauert einige zehn Millisekunden, so lange s
 Darunter folgen vier Bereiche. Jede Einstellung und jede Schaltfläche hat eine kurze Beschreibung:
 - **Status:** große Uhrzeit, KW und Datum, Zeitabgleich (NTP) mit letztem Abgleich, WLAN,
   Signalstärke, Netzwerkadresse, Laufzeit, Arbeitsspeicher (frei/gesamt, darunter Tiefstwert seit
-  dem Neustart und größter freier Block), Prozessorlast von Kern 0 (Kern 1 ist immer voll mit der
-  Strahlausgabe belegt – das steht als Erläuterung dabei), Grund des letzten Neustarts,
+  dem Neustart und größter freier Block), Prozessorauslastung Kern 0 und Kern 1 (je eine Zeile mit
+  kurzer Erläuterung; Kern 1 zeichnet ständig und steht immer auf 100 %), Grund des letzten Neustarts,
   Firmware-Version. Wird alle 2 s aktualisiert. Oszilloskop-Profil und Bildrate stehen nicht doppelt
   im Status, sondern nur in den Einstellungen (Profil-Auswahl, Bildrate bei „Verweilzeit des Strahls“).
   Farbig hervorgehoben werden nur Probleme: Orange = Warnung (NTP wartet oder überfällig, WLAN

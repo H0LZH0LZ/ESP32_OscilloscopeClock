@@ -95,7 +95,7 @@ German with the English label in parentheses. Code comments are in German.
 - OLED in English: `WiFi …`, `Week 46 - 2026-11-15` (ISO date), “Oscilloscope profile”.
 - Web page: written in German, the table `EN` in the script translates. `applyLang()` translates all
   fixed texts (text nodes, `aria-label`) – and back via the reverse table –, `t()` the texts from the
-  script. Switch in the settings with the drop-down list „Sprache“ (Language); the page changes immediately and
+  script. Switch in the side menu with the drop-down list „Sprache“ (Language); the page changes immediately and
   stores the language on the clock (`POST /api/settings`, `lang`). A change from another device is
   picked up with the next status request.
 
@@ -116,7 +116,8 @@ network. The `WebServer` runs in the `uiTask` on core 0 (`webLoop()` every 10 ms
 affect the beam output on core 1.
 
 **Page (`webpage.h`):** one page with a **collapsible side menu** (☰ top left, stays visible while
-scrolling): „Uhr“ (clock), Status, „Einstellungen“ (settings), „WLAN“ (Wi-Fi), „Protokoll“ (log).
+scrolling): „Uhr“ (clock), Status, „Einstellungen“ (settings), „WLAN“ (Wi-Fi), „Protokoll“ (log), below them
+the language selection. In the settings the oscilloscope profile comes first.
 The top section (title, preview, time, date) is centred. The title bar “ESP32 Oscilloscope Clock”
 always stays at the top next to the menu button, the section headings directly below it
 (`position: sticky`). Each section heading is only pinned within its section (`.grp`), so the
@@ -152,8 +153,8 @@ value. All four digit sets are therefore kept in RAM (approx. 0.7 KB in total).
 Below follow four sections. Every setting and every button has a short description:
 - **Status:** large time, calendar week and date, time sync (NTP) with last sync, Wi-Fi, signal
   strength, network address, uptime, memory (free/total, below it the minimum since restart and the
-  largest free block), CPU load of core 0 (core 1 is always fully busy with the beam output – noted
-  below the value), reason for the last restart, firmware version. Updated every 2 s. Oscilloscope
+  largest free block), CPU usage of core 0 and core 1 (one row each with a short note; core 1 draws
+  all the time and always shows 100 %), reason for the last restart, firmware version. Updated every 2 s. Oscilloscope
   profile and frame rate are not duplicated in the status but only shown in the settings (profile
   selection, frame rate under „Verweilzeit des Strahls“ – beam dwell time).
   Only problems are highlighted in colour: orange = warning (NTP waiting or overdue, Wi-Fi
