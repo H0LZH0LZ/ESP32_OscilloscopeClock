@@ -195,6 +195,7 @@ gespeicherten Werte, die WLANs bleiben erhalten.
 | NTP-Server | `ntp` | Hostname, max. 63 Zeichen | erster Server, `configTzTime()` neu |
 | OLED-Helligkeit | `oled` | 1–255 | `u8g2.setContrast()` |
 | OLED-Pixel-Shift | `shift` | an/aus | Versatz gegen Einbrennen |
+| OLED um 180° drehen | `flip` | an/aus | `u8g2.setDisplayRotation(U8G2_R2)`, für ein kopfüber eingebautes Display |
 
 Die Firmware prüft jeden Wert (`handleSettingsPost()`) und meldet ungültige Eingaben mit Grund
 zurück. `loadSettings()` liest alle Werte in `setup()`, bevor die Tasks starten.

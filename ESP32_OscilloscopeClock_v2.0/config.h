@@ -4,7 +4,7 @@
 
   Alle Einstellungen, die man typischerweise anpasst, stehen hier.
   Profil, Zifferblatt, Strahlgeschwindigkeit, Zeiger-Helligkeit, Rücklauf-
-  Tempo, Zeitzone, erster NTP-Server und OLED-Helligkeit/-Pixel-Shift lassen
+  Tempo, Zeitzone, erster NTP-Server und OLED-Helligkeit/-Pixel-Shift/-Drehung lassen
   sich zusätzlich im Webinterface ändern – die Werte hier sind dann nur die
   Startwerte (bzw. das Ziel von "Auf Standard zurücksetzen").
   WLAN-Zugangsdaten gehören NICHT hierher, sondern in secrets.h.
@@ -137,6 +137,7 @@
 #define OLED_REFRESH_MS   200        // Displayaktualisierung in ms (Sekunden laufen flüssig)
 #define OLED_SHIFT_EVERY_S 60        // Pixel-Shift gegen Einbrennen: alle n Sekunden (0 = aus)
 #define OLED_CONTRAST     0x80       // Helligkeit 0x00…0xFF (niedriger = langlebiger)
+#define OLED_FLIP         0          // 1 = Anzeige um 180° drehen (Display kopfüber eingebaut)
 
 // ---------------------------------------------------------------------------
 // Webinterface (http://scope-clock.local bzw. IP-Adresse der Uhr)

@@ -186,6 +186,8 @@ html{scroll-behavior:smooth}
   <button type="button" class="sec" id="sNtpSave">Übernehmen</button></div></div>
  <div class="set"><div class="head"><label for="sOled">OLED-Helligkeit</label><span class="val" id="vOled"></span></div>
   <input type="range" id="sOled" min="1" max="255" step="1"></div>
+ <div class="set"><label class="sw"><span>OLED um 180° drehen</span><input type="checkbox" id="sFlip"></label>
+  <div class="sub">Für ein kopfüber eingebautes Display.</div></div>
  <div class="set"><label class="sw"><span>OLED-Pixel-Shift gegen Einbrennen</span><input type="checkbox" id="sShift"></label></div>
  <div id="setMsg"></div>
  <button type="button" class="sec" id="sReset">Auf Standard zurücksetzen</button>
@@ -313,6 +315,7 @@ function renderSettings(){
  if(document.activeElement!==$('sNtp'))$('sNtp').value=S.ntp;
  $('sOled').value=S.oledContrast;$('vOled').textContent=fmtOled(S.oledContrast);
  $('sShift').checked=S.oledShift;
+ $('sFlip').checked=S.oledFlip;
 }
 function setMsg(r){const m=$('setMsg');m.textContent=r.msg||'';m.className=r.ok?'ok':'err';clearTimeout(setMsg.t);if(r.ok)setMsg.t=setTimeout(()=>m.textContent='',2500)}
 async function loadSettings(){try{S=(await (await get('/api/settings')).json()).settings;renderSettings()}catch(e){}}
@@ -335,6 +338,7 @@ $('sNtpSave').onclick=()=>setSetting({ntp:$('sNtp').value.trim()});
 $('sOled').oninput=e=>$('vOled').textContent=fmtOled(e.target.value);
 $('sOled').onchange=e=>setSetting({oledContrast:e.target.value});
 $('sShift').onchange=e=>setSetting({oledShift:e.target.checked?1:0});
+$('sFlip').onchange=e=>setSetting({oledFlip:e.target.checked?1:0});
 $('sReset').onclick=async()=>{if(!confirm('Alle Einstellungen auf die Standardwerte aus config.h zurücksetzen? (WLANs bleiben erhalten)'))return;
  setBusy=true;try{const r=await post('/api/settings/reset',{});if(r.settings){S=r.settings;renderSettings();dial=S.dial;drawScope()}setMsg(r)}catch(e){}setBusy=false};
 

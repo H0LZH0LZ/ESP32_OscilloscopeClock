@@ -201,6 +201,7 @@ static char    s_tz[48]        = TZ_INFO;                  // POSIX-Zeitzone
 static char    s_ntpServer[64] = NTP_SERVER_1;             // erster NTP-Server (muss dauerhaft gültig bleiben)
 static uint8_t s_oledContrast  = OLED_CONTRAST;
 static bool    s_oledShift     = OLED_SHIFT_EVERY_S > 0;
+static bool    s_oledFlip      = OLED_FLIP;                // Anzeige um 180° gedreht
 
 static volatile bool g_ntpSynced     = false;  // true nach dem ersten erfolgreichen Sync
 static time_t        g_lastSyncEpoch = 0;      // Unix-Zeit der letzten Synchronisierung
@@ -915,6 +916,7 @@ static void wifiTask(void *)
 
 static void webStart();                     // siehe Abschnitt "Webinterface"
 static void oledSetContrast(uint8_t v);     // siehe Abschnitt "OLED"
+static void oledSetFlip(bool flip);         // siehe Abschnitt "OLED"
 
 // Initialisiert WLAN, NTP und das Webinterface. Muss vom uiTask (Core 0) aus
 // aufgerufen werden: Der WLAN-Treiber legt seine Interrupts auf dem
@@ -1327,6 +1329,7 @@ static void handleDial()
 //   ntp        erster NTP-Server       Hostname, max. 63 Zeichen
 //   oled       OLED-Helligkeit         1…255
 //   shift      OLED-Pixel-Shift        0/1
+//   flip       OLED um 180° gedreht    0/1
 
 struct TzOption { const char *label; const char *tz; };
 static const TzOption TIMEZONES[] = {
@@ -1382,6 +1385,7 @@ static void loadSettings()
   const uint8_t oled = p.getUChar("oled", OLED_CONTRAST);
   s_oledContrast = oled ? oled : OLED_CONTRAST;
   s_oledShift    = p.getUChar("shift", OLED_SHIFT_EVERY_S > 0) != 0;
+  s_oledFlip     = p.getUChar("flip", OLED_FLIP) != 0;
   p.end();
 }
 
@@ -1397,6 +1401,7 @@ static void settingsJson(String &o)
   o += ",\"ntp\":";          jsonStr(o, s_ntpServer);
   o += ",\"oledContrast\":"; o += (int)s_oledContrast;
   o += ",\"oledShift\":";    o += s_oledShift ? "true" : "false";
+  o += ",\"oledFlip\":";     o += s_oledFlip ? "true" : "false";
   o += ",\"defaults\":{\"profile\":"; o += SCOPE_PROFILE;
   o += ",\"dial\":";         o += DIAL_STYLE;
   o += ",\"beamNs\":";       o += BEAM_NS_PER_UNIT;
@@ -1406,6 +1411,7 @@ static void settingsJson(String &o)
   o += ",\"ntp\":";          jsonStr(o, NTP_SERVER_1);
   o += ",\"oledContrast\":"; o += OLED_CONTRAST;
   o += ",\"oledShift\":";    o += OLED_SHIFT_EVERY_S > 0 ? "true" : "false";
+  o += ",\"oledFlip\":";     o += OLED_FLIP ? "true" : "false";
   o += "},\"timezones\":[";
   bool cfgListed = false;
   for (int i = 0; i < TIMEZONE_COUNT; i++) {
@@ -1494,6 +1500,12 @@ static void handleSettingsPost()
     if (v >= 1 && v <= 255) { s_oledContrast = v; oledSetContrast(v); p.putUChar("oled", v); changed++; }
     else bad("OLED-Helligkeit: 1 bis 255");
   }
+  if (web.hasArg("oledFlip")) {
+    s_oledFlip = web.arg("oledFlip") == "1" || web.arg("oledFlip") == "true";
+    oledSetFlip(s_oledFlip);
+    p.putUChar("flip", s_oledFlip); changed++;
+    logMsg("[Web] OLED-Ausrichtung: %s", s_oledFlip ? "um 180 Grad gedreht" : "normal");
+  }
   if (web.hasArg("oledShift")) {
     s_oledShift = web.arg("oledShift") == "1" || web.arg("oledShift") == "true";
     p.putUChar("shift", s_oledShift); changed++;
@@ -1510,7 +1522,7 @@ static void handleSettingsReset()
 {
   Preferences p;
   if (p.begin("scopeclock", false)) {
-    for (const char *k : { "profile", "dial", "beam", "hand", "jump", "tz", "ntp", "oled", "shift" }) p.remove(k);
+    for (const char *k : { "profile", "dial", "beam", "hand", "jump", "tz", "ntp", "oled", "shift", "flip" }) p.remove(k);
     p.end();
   }
   g_scopeProfile = SCOPE_PROFILE;  g_dialStyle = DIAL_STYLE;
@@ -1519,6 +1531,7 @@ static void handleSettingsReset()
   strlcpy(s_ntpServer, NTP_SERVER_1, sizeof(s_ntpServer));
   s_oledContrast = OLED_CONTRAST;  oledSetContrast(s_oledContrast);
   s_oledShift = OLED_SHIFT_EVERY_S > 0;
+  s_oledFlip  = OLED_FLIP;  oledSetFlip(s_oledFlip);
   applyTime();
   logMsg("[Web] Einstellungen auf Standard zurueckgesetzt");
   sendSettings(true, "Auf Standard zurückgesetzt");
@@ -1612,6 +1625,10 @@ static U8G2_SSD1309_128X64_NONAME0_F_HW_I2C u8g2(U8G2_R0, OLED_RST_PIN, OLED_SCL
 // OLED-Helligkeit setzen (Einstellungen im Webinterface; läuft im uiTask).
 static void oledSetContrast(uint8_t v) { u8g2.setContrast(v); }
 
+// Anzeige um 180° drehen (U8G2_R2) oder normal (U8G2_R0) – wirkt ab dem
+// nächsten Neuzeichnen (spätestens nach OLED_REFRESH_MS).
+static void oledSetFlip(bool flip) { u8g2.setDisplayRotation(flip ? U8G2_R2 : U8G2_R0); }
+
 // Display initialisieren und kurz einen Startbildschirm zeigen.
 // Wird im uiTask aufgerufen, damit der I2C-Interrupt auf Core 0 liegt.
 static void oledInit()
@@ -1620,6 +1637,7 @@ static void oledInit()
   u8g2.setBusClock(OLED_I2C_HZ);
   u8g2.begin();
   u8g2.setContrast(s_oledContrast);
+  oledSetFlip(s_oledFlip);
   u8g2.enableUTF8Print();
 
   u8g2.clearBuffer();

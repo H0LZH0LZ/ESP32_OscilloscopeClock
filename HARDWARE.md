@@ -168,3 +168,4 @@ am Oszilloskop. Die Werte in `config.h` sind dann nur die Startwerte.
 | `DIAL_STYLE` | Start-Zifferblatt: 0 = 1–12, 1 = 12/3/6/9, 2 = römisch I–XII, 3 = römisch XII/III/VI/IX. Im Webinterface durch Tippen auf die Vorschau umschaltbar, die Auswahl wird gespeichert |
 | `TZ_INFO` | Zeitzone inkl. Sommerzeitregel (Standard: Mitteleuropa) |
 | `OLED_SHIFT_EVERY_S` | Pixel-Shift gegen OLED-Einbrennen |
+| `OLED_FLIP` | 1 = OLED-Anzeige um 180° drehen (Display kopfüber eingebaut), auch im Webinterface umschaltbar |
