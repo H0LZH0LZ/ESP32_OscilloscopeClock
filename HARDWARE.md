@@ -114,6 +114,11 @@ startet der ESP32 im Download-Modus. Beim Umschalten kann einmal kurz ein Lichtp
 aufblitzen (Schreibzugriff auf den Flash).
 Das Profil lässt sich auch im Webinterface umschalten („Einstellungen“ → „Oszilloskop-Profil“).
 
+**Testbild:** „Einstellungen“ → „Oszilloskop“ → „Testbild“ zeigt statt der Uhr einen Rahmen mit
+Marken, einen Kreis und ein Mittelkreuz. Damit lassen sich Position (Kreuz in der Bildmitte), Größe
+(Rahmen füllt 8 × 8 Teilungen fast aus), gleiche Verstärkung von X und Y (der Kreis ist rund, nicht oval)
+und Fokus einstellen. Das Testbild wird nicht gespeichert, nach einem Neustart läuft wieder die Uhr.
+
 | Profil | für | Sprünge zwischen Linien |
 |---|---|---|
 | DIGITAL (ab Werk) | digitale Oszilloskope, Speicher-Oszilloskope | hart, damit keine Abtastpunkte unterwegs entstehen |
@@ -182,13 +187,13 @@ am Oszilloskop. Die Werte in `config.h` sind dann nur die Startwerte.
 | `TICK_BRIGHT_PCT`, `DIGIT_BRIGHT_PCT` | Helligkeit von Minutenstrichen und Ziffern, 0–100 % (Standard 100 %, 0 = ausgeblendet). Im Webinterface regelbar |
 | `OLED_BRIGHT_PCT` | OLED-Helligkeit 0–100 % (Standard 50 %, 0 = aus) |
 | `OLED_SECONDS` | 1 = OLED-Uhrzeit mit Sekunden, 0 = nur HH:MM |
-| `NIGHT_MODE`, `NIGHT_FROM_MIN`, `NIGHT_TO_MIN`, `NIGHT_BRIGHT_PCT` | Nachtmodus des OLED: Zeitfenster (Standard 22:00–07:00) mit eigener Helligkeit (Standard 0 % = aus) |
 | `USE_FAST_DAC` | `1` = direkte Registerzugriffe (Standard). `0` = `dacWrite()`, nur als Notlösung |
-| `DIAL_STYLE` | Start-Zifferblatt: 0 = 1–12, 1 = 12/3/6/9, 2 = römisch I–XII, 3 = römisch XII/III/VI/IX. Im Webinterface durch Wischen über die Vorschau umschaltbar, die Auswahl wird gespeichert |
+| `DIAL_STYLE` | Start-Zifferblatt: 0 = 1–12, 1 = 12/3/6/9, 2 = römisch I–XII, 3 = römisch XII/III/VI/IX, 4 = nur Striche (ohne Zahlen). Im Webinterface durch Wischen über die Vorschau umschaltbar, die Auswahl wird gespeichert |
 | `TZ_INFO` | Zeitzone inkl. Sommerzeitregel (Standard: Mitteleuropa) |
 | `NTP_SERVER_1` … `_3` | Zeitserver (der erste ist im Webinterface änderbar) |
 | `FALLBACK_H`, `FALLBACK_M`, `FALLBACK_S` | Startzeit, ab der die Uhr zählt, solange weder Zeitserver noch Handeingabe eine Uhrzeit geliefert haben |
 | `OLED_SHIFT_EVERY_S` | Pixelverschiebung gegen OLED-Einbrennen: alle n Sekunden (0 = aus) |
 | `OLED_FLIP` | 1 = OLED-Anzeige um 180° drehen (Display kopfüber eingebaut), auch im Webinterface umschaltbar |
 | `CLOCK_12H` | Zeitformat für OLED und Webinterface: 0 = 24 Stunden (Standard), 1 = 12 Stunden mit AM/PM. Im Webinterface umschaltbar |
+| `WEB_PASSWORD_CLEAR` | `1` löscht beim Start ein vergessenes Web-Passwort (einmal mit 1 hochladen, danach wieder 0). Ab Werk ist kein Passwort gesetzt |
 | `UI_LANG` | Sprache für Webinterface, OLED und Protokoll: 0 = Deutsch (Standard), 1 = English. Im Webinterface umschaltbar |

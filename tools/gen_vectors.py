@@ -195,6 +195,19 @@ def hand_table(polys_per_pos):
     return out
 
 
+# ---------------------------------------------------------------- Testbild
+def test_pattern():
+    """Testbild zum Einstellen des Oszilloskops: Rahmen (Bildgrenzen), Kreis
+    (Seitenverhältnis X/Y: muss rund sein), Mittelkreuz (Position) und je eine
+    kurze Marke an den Viertelpunkten des Rahmens."""
+    polys = [[(8, 8), (247, 8), (247, 247), (8, 247), (8, 8)]]              # Rahmen
+    polys.append([pt(100, a * 5) for a in range(73)])                       # Kreis r = 100
+    polys += [[(98, 128), (158, 128)], [(128, 98), (128, 158)]]             # Mittelkreuz
+    for v in (68, 188):                                                     # Marken auf dem Rahmen
+        polys += [[(v, 8), (v, 20)], [(v, 247), (v, 235)], [(8, v), (20, v)], [(247, v), (235, v)]]
+    return polys
+
+
 # ---------------------------------------------------------------- Ausgabe
 TABLES = {
     'DialData':         table(dial()),
@@ -202,6 +215,8 @@ TABLES = {
     'DialDigitsMin':    table(arabic([12, 3, 6, 9])),
     'DialDigitsRoman':  table(roman(range(1, 13))),
     'DialDigitsRoman4': table(roman([12, 3, 6, 9])),
+    'DialDigitsNone':   [0xFF],                       # Zifferblatt nur mit Strichen (keine Ziffern)
+    'TestData':         table(test_pattern()),
     'HrPtrData':        hand_table(hand_needle(60, 2)),
     'MinPtrData':       hand_table(hand_needle(100, 2)),
     'SecPtrData':       hand_table(hand_line(108)),
@@ -237,6 +252,8 @@ HEADER = """/*******************************************************************
   DialDigitsMin    nur 12, 3, 6, 9, 7-Segment-Stil           (DIAL_STYLE 1)
   DialDigitsRoman  römisch I–XII, serifenlos, 4 als "IIII"   (DIAL_STYLE 2)
   DialDigitsRoman4 nur XII, III, VI, IX                      (DIAL_STYLE 3)
+  DialDigitsNone   keine Ziffern, nur Minutenstriche          (DIAL_STYLE 4)
+  TestData         Testbild: Rahmen, Kreis, Mittelkreuz, Marken (Einstellungen → Testbild)
   HrPtrData        Stundenzeiger: 60 Stellungen × 9 Byte
                    = schmale Nadel, 4 Punkte (Basis links an der Mitte, Spitze,
                    Basis rechts, Basis links) + 0xFF

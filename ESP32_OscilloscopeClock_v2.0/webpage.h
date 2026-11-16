@@ -133,7 +133,7 @@ pre{font:12px/1.45 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere;heigh
 pre::-webkit-scrollbar{width:6px}pre::-webkit-scrollbar-thumb{background:var(--mute);border-radius:3px}
 pre.full{height:auto;overflow-y:visible}
 .loginfo{color:var(--mute);font-size:13px;margin:0 0 8px;display:flex;justify-content:space-between;gap:8px}
-.tools{display:flex;flex-wrap:wrap;gap:8px}.tools button{margin:0 0 10px;flex:1 1 40%}
+.tools{display:flex;flex-wrap:wrap;gap:8px}.tools button{margin:0 0 10px;flex:1 1 28%}
 .logsw{min-height:44px;border-top:1px solid var(--line);margin-bottom:0}
 /* Einstellungen */
 .set{border-top:1px solid var(--line);padding:10px 0}
@@ -154,8 +154,6 @@ pre.full{height:auto;overflow-y:visible}
 .seg button[aria-pressed="true"]{background:var(--acc);color:#fff;border-color:var(--acc);font-weight:600}
 .dt{display:flex;gap:8px;margin-top:6px}
 .dt .nl{margin:0;align-self:center;color:var(--mute);font-size:14px}
-#nightSet .head{margin-top:8px}
-#nightSet.off .nightf{opacity:.45;pointer-events:none}
 #tDst{margin-bottom:2px}#tDst button{padding:0 4px;font-size:15px}.dt input{flex:1 1 0;min-width:0}
 .sw{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:0;color:var(--fg);font-size:16px}
 .sw input{width:24px;height:24px;min-height:0;margin:0;flex:none;accent-color:var(--acc)}
@@ -175,7 +173,7 @@ html{scroll-behavior:smooth}
 /* Jede Überschrift ist nur innerhalb ihres Abschnitts (.grp) angeheftet:
    endet der Abschnitt, schiebt die nächste Überschrift die vorige hinaus. */
 .grp{position:relative}
-.grp:last-child{min-height:100vh}   /* auch der letzte Abschnitt (Log) lässt sich ganz nach oben scrollen */
+.grp:last-child:not(.closed){min-height:100vh}   /* auch der letzte Abschnitt (Log) lässt sich ganz nach oben scrollen */
 #menuBtn{position:fixed;top:calc(env(safe-area-inset-top) + 10px);left:calc(env(safe-area-inset-left) + 10px);z-index:30;
  width:44px;height:44px;min-height:44px;padding:0;margin:0;border-radius:12px;background:var(--card);color:var(--fg);
  border:1px solid var(--line);font-size:22px;line-height:1;box-shadow:0 2px 8px rgba(0,0,0,.15)}
@@ -207,6 +205,20 @@ html{scroll-behavior:smooth}
 .sgroup.closed>.grouphead::after{transform:rotate(45deg)}                    /* zu: V nach unten */
 .sgroup.closed>:not(.grouphead){display:none}
 .sgroup.closed>.grouphead{padding-bottom:14px}
+/* Status und Protokoll ebenfalls einklappbar (anfangs zu) */
+h2.coll{cursor:pointer;justify-content:space-between;user-select:none;-webkit-tap-highlight-color:transparent}
+h2.coll::after{content:"";width:8px;height:8px;margin:0 10px 4px 0;border:solid currentColor;border-width:0 2px 2px 0;
+ transition:transform .2s;transform:rotate(-135deg) translate(-2px,-2px)}
+.grp.closed>h2.coll::after{transform:rotate(45deg)}
+.grp.closed>section{display:none}
+/* Größere Vorschau auf Tablet und PC */
+@media (min-width:700px){.scope canvas{max-width:460px}}
+@media (min-width:1000px){main{max-width:760px}.scope canvas{max-width:560px}}
+/* Handy quer: Vorschau links, Uhrzeit rechts */
+@media (orientation:landscape) and (max-height:520px){
+ header{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"scope time" "dots time";align-items:center;column-gap:16px}
+ .scope{grid-area:scope;margin-top:4px}.dots{grid-area:dots}.tbox{grid-area:time}
+ .scope canvas{max-width:min(340px,62vh)}}
 /* Rückgängig nach dem Zurücksetzen */
 .undo{width:auto;min-height:32px;margin:0 0 0 10px;padding:0 12px;font-size:14px;display:inline-flex;align-items:center}
 /* Filter des Protokolls */
@@ -227,6 +239,7 @@ html{scroll-behavior:smooth}
  <a class="subnav" href="#time-h">Uhrzeit</a>
  <a class="subnav" href="#disp-h">Display</a>
  <a class="subnav" href="#wlan-h">WLAN</a>
+ <a class="subnav" href="#sys-h">System</a>
  <a href="#log-h">Protokoll</a>
  <!-- Sprache: Deutsch/English für Seite, OLED und Protokoll (wird auf der Uhr gespeichert) -->
  <div class="navlang"><label for="sLang">Sprache</label>
@@ -247,9 +260,9 @@ html{scroll-behavior:smooth}
 <!-- Punkte: aktives Zifferblatt (antippen wechselt), Pfeile = voriges/nächstes; Wischen geht weiterhin -->
 <div class="dots" id="dots"><button type="button" id="dPrev" aria-label="Voriges Zifferblatt">‹</button><span id="dotList" style="display:flex"></span><button type="button" id="dNext" aria-label="Nächstes Zifferblatt">›</button></div>
 <!-- Uhrzeit und Datum der Uhr (läuft zwischen den Statusabfragen im Browser weiter) -->
-<div id="clock">--:--:--</div><div id="date">&nbsp;</div></header>
+<div class="tbox"><div id="clock">--:--:--</div><div id="date">&nbsp;</div></div></header>
 
-<div class="grp"><h2 id="status-h">Status</h2>
+<div class="grp"><h2 id="status-h" class="coll" role="button" tabindex="0" aria-expanded="true">Status</h2>
 <!-- Statuszeilen: werden alle 2 s von status() neu aufgebaut -->
 <section id="status"></section></div>
 
@@ -264,7 +277,7 @@ html{scroll-behavior:smooth}
   <div class="sub">DIGITAL für digitale Oszilloskope, ANALOG für Röhren-Oszilloskope. Umschalten auch an der Uhr: BOOT-Taster 3 s halten.</div></div>
  <!-- Zifferblatt (auch per Wischen über die Vorschau) -->
  <div class="set"><div class="head"><label for="sDial">Zifferblatt</label></div>
-  <select id="sDial"><option value="0">Ziffern 1–12</option><option value="1">Ziffern 12 · 3 · 6 · 9</option>
+  <select id="sDial"><option value="0">Ziffern 1–12</option><option value="1">Ziffern 12 · 3 · 6 · 9</option><option value="4">Nur Striche</option>
    <option value="3">Römisch XII · III · VI · IX</option><option value="2">Römisch I–XII</option></select>
   <div class="sub">Ziffern auf dem Oszilloskop. Geht auch durch Wischen über die Vorschau oben.</div></div>
  <!-- Verweilzeit pro Schritt = Helligkeit/Bildrate -->
@@ -287,6 +300,9 @@ html{scroll-behavior:smooth}
  <div class="set" id="jumpRow"><div class="head"><label for="sJump">Rücklauf-Tempo</label><span class="val" id="vJump"></span></div>
   <input type="range" id="sJump" min="0" max="48" step="1">
   <div class="sub" id="jumpHint"></div></div>
+ <!-- Testbild zum Einstellen des Oszilloskops (nicht gespeichert) -->
+ <div class="set"><label class="sw"><span>Testbild</span><input type="checkbox" id="sTest"></label>
+  <div class="sub">Zeigt statt der Uhr Rahmen, Kreis und Mittelkreuz zum Einstellen von Position, Größe und Fokus. Der Kreis muss rund sein (X und Y gleich groß). Wird nicht gespeichert.</div></div>
   <div class="gmsg" data-gmsg="scope"></div>
   <!-- Nur diese Gruppe auf die Werte aus config.h zurücksetzen -->
   <button type="button" class="sec greset" data-reset="scope">Auf Standardwerte zurücksetzen</button>
@@ -338,13 +354,6 @@ html{scroll-behavior:smooth}
  <!-- Sekunden auf dem OLED -->
  <div class="set"><label class="sw"><span>Sekunden anzeigen</span><input type="checkbox" id="sSec"></label>
   <div class="sub">Uhrzeit auf dem OLED als HH:MM:SS oder nur HH:MM.</div></div>
- <!-- Nachtmodus: Zeitfenster mit eigener Helligkeit -->
- <div class="set" id="nightSet"><label class="sw"><span>Nachtmodus</span><input type="checkbox" id="sNight"></label>
-  <div class="dt nightf"><label class="nl" for="sNFrom">Von</label><input type="time" id="sNFrom" aria-label="Beginn Nachtmodus">
-   <label class="nl" for="sNTo">Bis</label><input type="time" id="sNTo" aria-label="Ende Nachtmodus"></div>
-  <div class="head nightf"><label for="sNPct">Helligkeit nachts</label><span class="val" id="vNPct"></span></div>
-  <input type="range" class="nightf" id="sNPct" min="0" max="100" step="1">
-  <div class="sub">Im gewählten Zeitraum gilt die Helligkeit nachts – 0 % schaltet das OLED dann ganz aus. Braucht eine gültige Uhrzeit.</div></div>
  <!-- OLED kopfüber -->
  <div class="set"><label class="sw"><span>OLED um 180° drehen</span><input type="checkbox" id="sFlip"></label>
   <div class="sub">Für ein kopfüber eingebautes Display.</div></div>
@@ -389,10 +398,27 @@ html{scroll-behavior:smooth}
  <button type="button" class="sec greset" id="wReset">WLAN zurücksetzen</button>
  <div class="desc">Löscht alle gespeicherten Netze. Die Uhr startet danach neu und öffnet das Setup-WLAN „ScopeClock-Setup“.</div>
  </div>
+ <!-- Gruppe System: Gerätename, Passwort, Einstellungen sichern/laden -->
+ <div class="sgroup"><div class="grouphead" id="sys-h" role="button" tabindex="0" aria-expanded="true">System</div>
+ <!-- Gerätename (Router, http://<name>.local) -->
+ <div class="set"><div class="head"><label for="sHost">Gerätename</label></div>
+  <div class="pw"><input id="sHost" maxlength="32" autocapitalize="none" autocorrect="off" spellcheck="false"><button type="button" class="sec" id="sHostSave">Übernehmen</button></div>
+  <div class="sub"><span>Name im Router und Adresse im Browser:</span> <b>http://<span id="vHost">scope-clock</span>.local</b> – <span>nur a–z, 0–9 und Bindestrich.</span></div></div>
+ <!-- Optionales Passwort für Änderungen (Standard: keins) -->
+ <div class="set"><div class="head"><label for="sPw">Passwort für Änderungen</label><span class="val" id="vPw"></span></div>
+  <div class="pw"><input id="sPw" type="password" maxlength="32" autocomplete="new-password" autocapitalize="none" autocorrect="off" spellcheck="false"><button type="button" class="sec" id="sPwSave">Setzen</button></div>
+  <button type="button" class="sec" id="sPwDel">Passwort entfernen</button>
+  <div class="sub">Standardmäßig ohne Passwort. Ist eines gesetzt, fragt die Seite bei Änderungen einmal danach; Anzeigen geht weiterhin ohne. 4–32 Zeichen.</div></div>
+ <!-- Einstellungen als Datei sichern und wieder laden -->
+ <div class="set"><div class="head"><label>Einstellungen sichern</label></div>
+  <div class="tools"><button type="button" class="sec" id="bkSave">Sichern (Datei)</button><button type="button" class="sec" id="bkLoad">Laden</button></div>
+  <input type="file" id="bkFile" accept=".json,application/json" hidden>
+  <div class="sub">Speichert alle Einstellungen außer WLANs und Passwort in einer Datei und spielt sie wieder ein – etwa nach einem Tausch des ESP32.</div></div>
+ </div>
 </section></div>
 
 
-<div class="grp"><h2 id="log-h">Protokoll</h2>
+<div class="grp"><h2 id="log-h" class="coll" role="button" tabindex="0" aria-expanded="true">Protokoll</h2>
 <section>
  <div class="desc top">Meldungen der Uhr zu WLAN, Zeitabgleich und Einstellungen – hilfreich bei der Fehlersuche.</div>
  <!-- Filter: nur Meldungen eines Bereichs anzeigen -->
@@ -408,8 +434,9 @@ html{scroll-behavior:smooth}
  <div class="desc">Lädt das Protokoll alle 5 Sekunden neu, solange die Seite sichtbar ist.</div>
  <!-- Sofort neu laden / feste Höhe aufheben -->
  <div class="tools"><button class="sec" id="logBtn">Jetzt aktualisieren</button>
- <button class="sec" id="logFull">Alles anzeigen</button></div>
- <p class="hint">„Jetzt aktualisieren“ lädt sofort neu. „Alles anzeigen“ hebt die feste Höhe des Feldes auf. Die Uhr speichert die letzten 8 KB (ca. 120 Zeilen).</p>
+ <button class="sec" id="logFull">Alles anzeigen</button>
+ <button class="sec" id="logCopy">Kopieren</button></div>
+ <p class="hint">„Jetzt aktualisieren“ lädt sofort neu. „Alles anzeigen“ hebt die feste Höhe des Feldes auf. „Kopieren“ legt die angezeigten Zeilen in die Zwischenablage, etwa für eine Fehlermeldung. Die Uhr speichert die letzten 8 KB (ca. 120 Zeilen).</p>
 </section></div>
 </main>
 <script>
@@ -430,9 +457,10 @@ Object.assign(EN,{'Tiefstwert':'minimum','größter Block':'largest block','Proz
 Object.assign(EN,{'Oszilloskop':'Oscilloscope','Display':'Display'});
 Object.assign(EN,{"Setzt nur die Einstellungen dieser Gruppe auf die Werte aus config.h zurück.": "Resets only the settings of this group to the values from config.h.", "Änderungen wirken sofort und bleiben gespeichert.": "Changes take effect immediately and are saved.", "Übernimmt Datum und Uhrzeit dieses Handys oder PCs.": "Takes over date and time from this phone or PC.", "Stellt die Uhr auf das oben eingetragene Datum und die Uhrzeit.": "Sets the clock to the date and time entered above.", "Server im Internet, von dem die Uhr die genaue Zeit holt (Standard: de.pool.ntp.org). „Übernehmen“ speichert den Namen und gleicht sofort neu ab.": "Internet server from which the clock gets the exact time (default: de.pool.ntp.org). “Apply” saves the name and syncs again right away.", "Netze, mit denen sich die Uhr verbinden darf. Sie wählt automatisch das stärkste. „Löschen“ entfernt ein Netz – die Uhr startet danach neu.": "Networks the clock may connect to. It automatically picks the strongest one. “Delete” removes a network – the clock restarts afterwards.", "Name des WLANs genau wie am Router (Groß-/Kleinschreibung beachten).": "Name of the network exactly as on the router (case-sensitive).", "Für offene Netze leer lassen. „Anzeigen“ blendet das Passwort beim Tippen ein.": "Leave empty for open networks. “Show” reveals the password while typing.", "Speichert das Netz auf der Uhr (bis zu 10 Netze).": "Saves the network on the clock (up to 10 networks).", "Lädt das Protokoll alle 5 Sekunden neu, solange die Seite sichtbar ist.": "Reloads the log every 5 seconds while the page is visible.", "„Jetzt aktualisieren“ lädt sofort neu. „Alles anzeigen“ hebt die feste Höhe des Feldes auf. Die Uhr speichert die letzten 8 KB (ca. 120 Zeilen).": "“Refresh now” reloads immediately. “Show all” removes the fixed height of the field. The clock keeps the last 8 KB (approx. 120 lines).", "Uhrzeit aus dem Internet, stündlich abgeglichen": "time from the internet, synced every hour", "verbundenes Netz": "connected network", "mit dem Handy verbinden, um die Uhr einzurichten": "connect with your phone to set up the clock", "hilft bei der Fehlersuche nach unerwarteten Neustarts": "helps to diagnose unexpected restarts", "installierte Programmversion": "installed program version"});
 Object.assign(EN,{"Helligkeit Minutenstriche": "Tick mark brightness", "Helligkeit Ziffern": "Numeral brightness", "Die 60 Striche am Rand. Über 100 % heller, aber weniger Bilder pro Sekunde.": "The 60 marks around the edge. Above 100 % brighter, but fewer frames per second.", "Die Zahlen auf dem Zifferblatt. Über 100 % heller, aber weniger Bilder pro Sekunde.": "The numerals on the dial. Above 100 % brighter, but fewer frames per second."});
-Object.assign(EN,{"Unter 100 %, weil die schmalen Zeiger sonst heller wirken als der Rest. 0 % blendet die Zeiger aus.": "Below 100 % because the narrow hands would otherwise look brighter than the rest. 0 % hides the hands.", "Die 60 Striche am Rand. 0 % blendet sie aus.": "The 60 marks around the edge. 0 % hides them.", "Die Zahlen auf dem Zifferblatt. 0 % blendet sie aus.": "The numerals on the dial. 0 % hides them.", "Helligkeit des kleinen Displays an der Uhr. 0 % schaltet es aus; niedrige Werte schonen das OLED.": "Brightness of the small display on the clock. 0 % switches it off; low values protect the OLED.", "Sekunden anzeigen": "Show seconds", "Uhrzeit auf dem OLED als HH:MM:SS oder nur HH:MM.": "Time on the OLED as HH:MM:SS or just HH:MM.", "Nachtmodus": "Night mode", "Von": "From", "Bis": "To", "Helligkeit nachts": "Brightness at night", "Im gewählten Zeitraum gilt die Helligkeit nachts – 0 % schaltet das OLED dann ganz aus. Braucht eine gültige Uhrzeit.": "During the selected period the night brightness applies – 0 % switches the OLED off completely. Requires a valid time.", "Beginn Nachtmodus": "Night mode start", "Ende Nachtmodus": "Night mode end", "aus": "off"});
+Object.assign(EN,{"Unter 100 %, weil die schmalen Zeiger sonst heller wirken als der Rest. 0 % blendet die Zeiger aus.": "Below 100 % because the narrow hands would otherwise look brighter than the rest. 0 % hides the hands.", "Die 60 Striche am Rand. 0 % blendet sie aus.": "The 60 marks around the edge. 0 % hides them.", "Die Zahlen auf dem Zifferblatt. 0 % blendet sie aus.": "The numerals on the dial. 0 % hides them.", "Helligkeit des kleinen Displays an der Uhr. 0 % schaltet es aus; niedrige Werte schonen das OLED.": "Brightness of the small display on the clock. 0 % switches it off; low values protect the OLED.", "Sekunden anzeigen": "Show seconds", "Uhrzeit auf dem OLED als HH:MM:SS oder nur HH:MM.": "Time on the OLED as HH:MM:SS or just HH:MM.", "aus": "off"});
 Object.assign(EN,{"WLAN zurücksetzen": "Reset Wi-Fi", "Löscht alle gespeicherten Netze. Die Uhr startet danach neu und öffnet das Setup-WLAN „ScopeClock-Setup“.": "Deletes all saved networks. The clock then restarts and opens the setup network “ScopeClock-Setup”."});
 Object.assign(EN,{"Darstellung": "Appearance", "Hell": "Light", "Dunkel": "Dark", "Hell, dunkel oder wie im System eingestellt. Wird nur in diesem Browser gespeichert.": "Light, dark or as set in the system. Saved only in this browser.", "Voriges Zifferblatt": "Previous dial", "Nächstes Zifferblatt": "Next dial", "Alle": "All", "Zeit": "Time", "Warnungen": "Warnings", "Zeigt nur Meldungen eines Bereichs; „Warnungen“ zeigt Probleme wie Verbindungsabbrüche.": "Shows only messages of one area; “Warnings” shows problems such as connection losses.", "Rückgängig": "Undo", "Wiederhergestellt": "Restored", "von Hand": "manual"});
+Object.assign(EN,{"Nur Striche": "Ticks only", "Testbild": "Test pattern", "Zeigt statt der Uhr Rahmen, Kreis und Mittelkreuz zum Einstellen von Position, Größe und Fokus. Der Kreis muss rund sein (X und Y gleich groß). Wird nicht gespeichert.": "Shows a frame, circle and centre cross instead of the clock to adjust position, size and focus. The circle must be round (X and Y equal). Not saved.", "Gerätename": "Device name", "Name im Router und Adresse im Browser:": "Name in the router and address in the browser:", "nur a–z, 0–9 und Bindestrich.": "only a–z, 0–9 and hyphen.", "Passwort für Änderungen": "Password for changes", "Setzen": "Set", "Passwort entfernen": "Remove password", "Standardmäßig ohne Passwort. Ist eines gesetzt, fragt die Seite bei Änderungen einmal danach; Anzeigen geht weiterhin ohne. 4–32 Zeichen.": "No password by default. If one is set, the page asks for it once when changing something; viewing still works without. 4–32 characters.", "Einstellungen sichern": "Back up settings", "Sichern (Datei)": "Save (file)", "Laden": "Load", "Speichert alle Einstellungen außer WLANs und Passwort in einer Datei und spielt sie wieder ein – etwa nach einem Tausch des ESP32.": "Saves all settings except Wi-Fi networks and password to a file and loads them back – e.g. after replacing the ESP32.", "Kopieren": "Copy", "„Jetzt aktualisieren“ lädt sofort neu. „Alles anzeigen“ hebt die feste Höhe des Feldes auf. „Kopieren“ legt die angezeigten Zeilen in die Zwischenablage, etwa für eine Fehlermeldung. Die Uhr speichert die letzten 8 KB (ca. 120 Zeilen).": "“Refresh now” reloads immediately. “Show all” removes the fixed height of the field. “Copy” puts the shown lines on the clipboard, e.g. for a bug report. The clock keeps the last 8 KB (approx. 120 lines).", "Passwort der Uhr eingeben": "Enter the clock password", "Passwort falsch – bitte erneut eingeben": "Wrong password – please try again", "Passwort erforderlich": "Password required", "Passwort falsch": "Wrong password", "gesetzt": "set", "keins": "none", "verbunden": "connected", "Kopiert": "Copied", "Kopieren nicht möglich": "Copy not possible", "Datei ungültig": "Invalid file", "Geladen": "Loaded"});
 const DE={};for(const k in EN)DE[EN[k]]=k;
 let lang='de';try{if(localStorage.getItem('lang')==='en')lang='en'}catch(e){}
 const t=s=>lang==='en'&&EN[s]||s;
@@ -449,7 +477,15 @@ function showClock(t){let s=String(t),ap='';const m=/^(\d\d):(\d\d:\d\d)$/.exec(
  if(h12&&m){const h=+m[1];ap=h>=12?'PM':'AM';s=(h%12||12)+':'+m[2]}
  $('clock').innerHTML=s.replace(/[0-9-]/g,'<i>$&</i>')+(ap?'<small class="ap">'+ap+'</small>':'')}
 const get=(u)=>fetch(u,{cache:'no-store'}).then(r=>{if(!r.ok)throw r.status;return r});
-const post=(u,d)=>fetch(u,{method:'POST',body:new URLSearchParams(d)}).then(r=>r.json());
+// POST an die Uhr. Ist ein Passwort gesetzt (Antwort 401), fragt die Seite danach und
+// merkt es sich für diese Sitzung (sessionStorage), dann wird die Anfrage wiederholt.
+let pass='';try{pass=sessionStorage.getItem('pw')||''}catch(e){}
+async function post(u,d){
+ for(let i=0;i<3;i++){const r=await fetch(u,{method:'POST',headers:pass?{'X-Pass':pass}:{},body:new URLSearchParams(d)});
+  if(r.status!==401)return r.json();
+  const p=prompt(t(i?'Passwort falsch – bitte erneut eingeben':'Passwort der Uhr eingeben'));if(p===null)return {ok:false,msg:t('Passwort erforderlich')};
+  pass=p;try{sessionStorage.setItem('pw',p)}catch(e){}}
+ return {ok:false,msg:t('Passwort falsch')}}
 // Statuszeile: Bezeichnung links, Wert rechts, optional Klasse (warn/err) und
 // eine kleine Erläuterung unter der Bezeichnung.
 function row(k,v,c,note){const d=document.createElement('div');d.className='row';
@@ -473,9 +509,11 @@ let V=null,tBase=null,tAt=0,dial=0;
 function scopeColors(){const c=getComputedStyle(document.documentElement),v=n=>c.getPropertyValue(n).trim();
  return {bg:v('--scope-bg')||'transparent',trace:v('--scope-trace')||'#0b7a3e',glow:v('--scope-glow')||'rgba(11,122,62,.12)',
   halo:v('--scope-halo')||'rgba(11,122,62,.35)',grid:v('--scope-grid')||'rgba(0,0,0,.07)'}}
-const DIALS=['Ziffern 1–12','Ziffern 12 · 3 · 6 · 9','Römisch I–XII','Römisch XII · III · VI · IX'];   // Index = Stil-Nummer der Uhr
-// Reihenfolge beim Wischen und in der Auswahlliste: 1–12, 12·3·6·9, römisch XII·III·VI·IX, römisch I–XII
-const DIAL_ORDER=[0,1,3,2];
+const DIALS=['Ziffern 1–12','Ziffern 12 · 3 · 6 · 9','Römisch I–XII','Römisch XII · III · VI · IX','Nur Striche'];   // Index = Stil-Nummer der Uhr
+// Reihenfolge beim Wischen und in der Auswahlliste: 1–12, 12·3·6·9, nur Striche, römisch XII·III·VI·IX, römisch I–XII
+const DIAL_ORDER=[0,1,4,3,2];
+// Sekundenzeiger in der Vorschau gleitend: zwischen Stellung s und s+1 nach Bruchteil fr
+function secHand(s,fr){const a=V.sec[s],b=V.sec[(s+1)%60];if(!a||!b||a.length!==b.length)return a;return a.map((v,i)=>v+(b[i]-v)*fr)}
 // Oszilloskop-Vorschau zeichnen: Raster, Zifferblatt, Ziffern, drei Zeiger
 function drawScope(){
  const c=$('scope'),g=c.getContext('2d'),W=c.width,k=W/256;
@@ -485,13 +523,17 @@ function drawScope(){
  for(let i=1;i<8;i++){const p=Math.round(i*W/8)+.5;g.beginPath();g.moveTo(p,0);g.lineTo(p,W);g.moveTo(0,p);g.lineTo(W,p);g.stroke()}
  showDots();                                     // Punkte gleich zeigen, auch ohne Vektordaten
  if(!V||tBase===null)return;
- const sec=(tBase+Math.floor((performance.now()-tAt)/1000))%86400;
+ if(S&&S.test&&V.test){g.lineCap='round';g.lineJoin='round';      // Testbild statt Uhr
+  for(const [w,col,blur] of [[5,SC.glow,10],[1.8,SC.trace,3]]){g.lineWidth=w*k/2;g.strokeStyle=col;g.shadowColor=SC.halo;g.shadowBlur=blur;g.beginPath();
+   for(const p of V.test){g.moveTo(p[0]*k,(255-p[1])*k);for(let i=2;i<p.length;i+=2)g.lineTo(p[i]*k,(255-p[i+1])*k)}g.stroke()}
+  g.shadowBlur=0;return}
+ const el=(performance.now()-tAt)/1000,sec=(tBase+Math.floor(el))%86400,fr=el%1;
  const h=Math.floor(sec/3600),m=Math.floor(sec/60)%60,s=sec%60;
  // Drei Gruppen mit eigener Helligkeit wie am Oszilloskop (Einstellungen, 100 % = normal):
  // Minutenstriche, Ziffern, Zeiger. Die Vorschau bildet das über die Deckkraft nach.
  const a=v=>v===undefined||v===null?1:(+v===0?0:Math.max(.25,Math.min(1,v/100*.8+.2)));
  const groups=[[V.dial,a(S&&S.tickPct)],[V.digits[dial]||[],a(S&&S.digitPct)],
-  [[V.hr[(h%12)*5+Math.floor(m/12)],V.min[m]],S&&S.handPct!==undefined?a(S.handPct/0.67>100?100:S.handPct/0.67):1],[[V.sec[s]],1]];
+  [[V.hr[(h%12)*5+Math.floor(m/12)],V.min[m]],S&&S.handPct!==undefined?a(S.handPct/0.67>100?100:S.handPct/0.67):1],[[secHand(s,fr)],1]];
  // Verweilzeit des Strahls: länger = heller (Vorschau ändert sich schon beim Ziehen)
  const bf=S&&S.beamNs?Math.max(.4,Math.min(1,S.beamNs/3000)):1;
  g.lineCap='round';g.lineJoin='round';
@@ -543,7 +585,8 @@ $('menuBtn').onclick=()=>menu(!$('nav').classList.contains('open'));
 $('shade').onclick=()=>menu(false);
 document.addEventListener('keydown',e=>{if(e.key==='Escape')menu(false)});
 document.querySelectorAll('#nav a').forEach(a=>a.addEventListener('click',()=>{menu(false);
- const h=document.querySelector(a.getAttribute('href'));if(h&&h.classList.contains('grouphead'))openGroup(h.parentNode,true)}));
+ const h=document.querySelector(a.getAttribute('href'));if(h&&h.classList.contains('grouphead'))openGroup(h.parentNode,true);
+ if(h&&h.classList.contains('coll'))openSec(h.parentNode,true)}));
 // Uhrzeit der Uhr (hh:mm:ss) übernehmen; die Seite zählt danach selbst weiter
 function setTime(t){const a=t.split(':').map(Number);if(a.length===3&&!a.some(isNaN)){tBase=a[0]*3600+a[1]*60+a[2];tAt=performance.now()}}
 drawScope();                                           // Schirm/Raster sofort zeichnen, noch vor den Daten
@@ -556,7 +599,9 @@ $('sTheme').onchange=e=>{const m=e.target.value,r=document.documentElement;
 get('/api/vectors').then(r=>r.json()).then(v=>{V=v;drawScope()}).catch(()=>{});
 let lastSec=-1;
 setInterval(()=>{if(tBase===null)return;const n=Math.floor((performance.now()-tAt)/1000);
- if(n!==lastSec){lastSec=n;const x=(tBase+n)%86400;showClock([x/3600|0,(x/60|0)%60,x%60].map(v=>String(v).padStart(2,'0')).join(':'));drawScope()}},200);
+ if(n!==lastSec){lastSec=n;const x=(tBase+n)%86400;showClock([x/3600|0,(x/60|0)%60,x%60].map(v=>String(v).padStart(2,'0')).join(':'))}},200);
+// Vorschau ca. 30× pro Sekunde neu zeichnen (gleitender Sekundenzeiger); pausiert im Hintergrund
+let rafT=0;(function anim(ts){if(ts-rafT>=33){rafT=ts;drawScope()}requestAnimationFrame(anim)})(0);
 
 // ---- Einstellungen ---------------------------------------------------------
 // Laden von /api/settings, jede Änderung sofort per POST übernehmen (Schieberegler
@@ -589,10 +634,8 @@ function renderSettings(){
  tz.value=S.tz;
  if(document.activeElement!==$('sNtp'))$('sNtp').value=S.ntp;
  $('sOled').value=S.oledPct;$('vOled').textContent=fmtPct(S.oledPct);
- $('sSec').checked=S.oledSec;$('sNight').checked=S.oledNight;$('nightSet').classList.toggle('off',!S.oledNight);
- if(document.activeElement!==$('sNFrom'))$('sNFrom').value=S.nightFrom;
- if(document.activeElement!==$('sNTo'))$('sNTo').value=S.nightTo;
- $('sNPct').value=S.nightPct;$('vNPct').textContent=fmtPct(S.nightPct);
+ $('sSec').checked=S.oledSec;$('sTest').checked=!!S.test;
+ if(document.activeElement!==$('sHost'))$('sHost').value=S.host||'';$('vHost').textContent=S.host||'scope-clock';
  $('sShift').checked=S.oledShift;
  $('sFlip').checked=S.oledFlip;
 }
@@ -634,13 +677,24 @@ $('sNtpSave').onclick=()=>setSetting({ntp:$('sNtp').value.trim()});
 $('sOled').oninput=e=>$('vOled').textContent=fmtPct(e.target.value);
 $('sOled').onchange=e=>setSetting({oledPct:e.target.value});
 $('sSec').onchange=e=>setSetting({oledSec:e.target.checked?1:0});
-$('sNight').onchange=e=>{$('nightSet').classList.toggle('off',!e.target.checked);setSetting({oledNight:e.target.checked?1:0})};
-$('sNFrom').onchange=e=>{if(e.target.value)setSetting({nightFrom:e.target.value})};
-$('sNTo').onchange=e=>{if(e.target.value)setSetting({nightTo:e.target.value})};
-$('sNPct').oninput=e=>$('vNPct').textContent=fmtPct(e.target.value);
-$('sNPct').onchange=e=>setSetting({nightPct:e.target.value});
 $('sShift').onchange=e=>setSetting({oledShift:e.target.checked?1:0});
 $('sFlip').onchange=e=>setSetting({oledFlip:e.target.checked?1:0});
+$('sHostSave').onclick=()=>setSetting({host:$('sHost').value.trim().toLowerCase()});
+$('sPwSave').onclick=async()=>{const v=$('sPw').value;const r=await post('/api/password',{pw:v});ctlMsg(r);if(r.ok){pass=v;try{sessionStorage.setItem('pw',v)}catch(e){}$('sPw').value='';status()}};
+$('sPwDel').onclick=async()=>{const r=await post('/api/password',{pw:''});ctlMsg(r);if(r.ok){pass='';try{sessionStorage.removeItem('pw')}catch(e){}status()}};
+// Sichern: alle Einstellungen (ohne WLANs/Passwort) als JSON-Datei herunterladen; Laden: Datei wählen, an die Uhr senden
+const BK=['profile','dial','beamNs','handPct','tickPct','digitPct','jumpSpeed','tz','ntp','h12','oledPct','oledSec','oledShift','oledFlip','lang','host'];
+$('bkSave').onclick=()=>{if(!S)return;const o={app:'scope-clock',version:1,settings:{}};for(const k of BK)if(k in S)o.settings[k]=S[k];
+ const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(o,null,1)],{type:'application/json'}));
+ a.download=(S.host||'scope-clock')+'-einstellungen.json';document.body.append(a);a.click();a.remove()};
+$('bkLoad').onclick=()=>$('bkFile').click();
+$('bkFile').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;
+ try{const o=JSON.parse(await f.text()),st=o&&o.settings,d={};if(!st)throw 0;
+  for(const k of BK)if(k in st)d[k]=typeof st[k]==='boolean'?(st[k]?1:0):st[k];
+  lastCtl=$('bkLoad');setBusy=true;const r=await post('/api/settings',d);if(r.settings){S=r.settings;h12=!!S.h12;lastSec=-1;renderSettings();dial=S.dial;drawScope()}
+  setBusy=false;ctlMsg(r.ok?{ok:true,msg:t('Geladen')}:r);if(S&&S.lang&&S.lang!==lang)setLangLocal(S.lang)}
+ catch(x){setBusy=false;lastCtl=$('bkLoad');ctlMsg({ok:false,msg:t('Datei ungültig')})}};
+$('sTest').onchange=e=>{if(S)S.test=e.target.checked;drawScope();setSetting({test:e.target.checked?1:0})};
 // ---- Uhrzeit von Hand stellen (nur ohne Zeitserver sichtbar)
 const pad=v=>String(v).padStart(2,'0');
 // Block "Uhrzeit stellen" ein-/ausblenden, beim Einblenden mit der Gerätezeit vorbelegen
@@ -675,7 +729,7 @@ $('sLang').onchange=async e=>{const l=e.target.value;if(l===lang)return;
 // Ohne Rückfrage: Die vorigen Werte werden gemerkt, 8 s lang lässt sich alles mit
 // „Rückgängig“ wiederherstellen (sendet die alten Werte per POST /api/settings).
 const GFIELDS={scope:['profile','dial','beamNs','handPct','tickPct','digitPct','jumpSpeed'],time:['tz','ntp','h12'],
- display:['oledPct','oledSec','oledNight','nightFrom','nightTo','nightPct','oledShift','oledFlip']};
+ display:['oledPct','oledSec','oledShift','oledFlip']};
 document.querySelectorAll('[data-reset]').forEach(b=>b.onclick=async()=>{const g=b.dataset.reset;
  const m=document.querySelector('[data-gmsg="'+g+'"]'),old={};
  if(S)for(const k of GFIELDS[g])old[k]=typeof S[k]==='boolean'?(S[k]?1:0):S[k];
@@ -686,6 +740,15 @@ document.querySelectorAll('[data-reset]').forEach(b=>b.onclick=async()=>{const g
     m.textContent=x.ok?t('Wiederhergestellt'):(x.msg||'');m.className='gmsg '+(x.ok?'ok':'err');m.t=setTimeout(()=>m.textContent='',2500)}catch(e){}};
    m.append(u);m.t=setTimeout(()=>m.textContent='',8000)}}
  catch(e){m.textContent=t('Keine Antwort von der Uhr');m.className='gmsg err'}setBusy=false});
+// ---- Status und Protokoll ein-/ausklappen (anfangs zu; Zustand im Browser gespeichert)
+function openSec(g,open){g.classList.toggle('closed',!open);g.firstElementChild.setAttribute('aria-expanded',String(open));
+ try{localStorage.setItem('secs',JSON.stringify([...document.querySelectorAll('.grp')].filter(x=>x.firstElementChild.classList.contains('coll')&&!x.classList.contains('closed')).map(x=>x.firstElementChild.id)))}catch(e){}
+ if(open&&g.firstElementChild.id==='log-h'){logFirst=true;showLog()}}
+{let o=null;try{o=JSON.parse(localStorage.getItem('secs'))}catch(e){}
+ document.querySelectorAll('h2.coll').forEach(h=>{const g=h.parentNode,on=Array.isArray(o)&&o.includes(h.id);
+  g.classList.toggle('closed',!on);h.setAttribute('aria-expanded',String(on));
+  h.onclick=()=>openSec(g,g.classList.contains('closed'));
+  h.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();h.onclick()}}})}
 // ---- Gruppen ein-/ausklappen (Überschrift antippen); Zustand im Browser gespeichert
 function openGroup(g,open){g.classList.toggle('closed',!open);g.firstElementChild.setAttribute('aria-expanded',String(open));
  try{const o=[...document.querySelectorAll('.sgroup')].filter(x=>!x.classList.contains('closed')).map(x=>x.firstElementChild.id);localStorage.setItem('groups',JSON.stringify(o))}catch(e){}}
@@ -695,7 +758,7 @@ function openGroup(g,open){g.classList.toggle('closed',!open);g.firstElementChil
   h.onclick=()=>openGroup(g,g.classList.contains('closed'));
   h.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();h.onclick()}}})}
 
-let online=true;
+let online=true,curSsid='';
 // Status holen (alle 2 s): Uhrzeit, Datum, Statusliste, Vorschau, Einstellungen abgleichen
 async function status(){
  try{const s=await (await get('/api/status')).json();online=true;
@@ -705,6 +768,8 @@ async function status(){
   if(typeof s.h12==='boolean'&&s.h12!==h12&&!setBusy){h12=s.h12;lastSec=-1}
   lastFps=s.fps;fpsNs=S?S.beamNs:0;if(document.activeElement!==$('sBeam'))$('vFps').textContent=s.fps+' '+t('Bilder/s');
   showTimeRow(!s.ntp.synced,s.ntp.dst);
+  curSsid=s.wifi.connected?s.wifi.ssid:'';$('vPw').textContent=t(s.auth?'gesetzt':'keins');
+  if(S&&!setBusy&&typeof s.test==='boolean'&&s.test!==!!S.test){S.test=s.test;renderSettings()}
   if(S&&!setBusy){const p=s.profile==='DIGITAL'?1:0;if(p!==S.profile||s.dial!==S.dial){S.profile=p;S.dial=s.dial;renderSettings()}}$('date').textContent=s.date?(t('KW')+' '+s.kw+' – '+(lang==='en'?s.date.split('.').reverse().join('-'):s.date)):t('Datum unbekannt');
   const st=$('status');st.replaceChildren(
    row(t('Zeitabgleich (NTP)'),s.ntp.synced?(t('zuletzt')+' '+s.ntp.last):s.ntp.manual?t('aus – Uhrzeit von Hand gestellt'):(s.wifi.configured?t('wartet auf ersten Abgleich …'):t('aus (kein WLAN)')),s.ntp.synced?(s.ntp.overdue?'warn':''):(s.ntp.manual?'':'warn'),t('Uhrzeit aus dem Internet, stündlich abgeglichen')),
@@ -738,8 +803,10 @@ async function scan(){
  try{const r=await (await get('/api/scan')).json();
   if(r.running){scanTimer=setTimeout(scan,1500);return}
   const u=$('scan');u.replaceChildren();
-  for(const n of r.networks){const li=document.createElement('li');li.className='tap';
-   const a=document.createElement('span');a.textContent=n.ssid+(n.open?' '+t('(ohne Passwort)'):'');const b=document.createElement('span');b.className='bars';b.textContent=bars(n.rssi);
+  for(const n of [...r.networks].sort((x,y)=>y.rssi-x.rssi)){const li=document.createElement('li');li.className='tap';   // stärkstes Netz oben
+   const a=document.createElement('span');a.textContent=n.ssid+(n.open?' '+t('(ohne Passwort)'):'')+(n.ssid===curSsid?' · '+t('verbunden'):'');
+   if(n.ssid===curSsid)a.style.fontWeight='600';
+   const b=document.createElement('span');b.className='bars';b.textContent=bars(n.rssi).trim()+' '+n.rssi+' dBm';
    li.append(a,b);li.onclick=()=>{$('ssid').value=n.ssid;$('pw').focus()};u.append(li)}
   if(!r.networks.length){const li=document.createElement('li');li.innerHTML='<span class="hint">'+t('keine Netze gefunden')+'</span>';u.append(li)}
  }catch(e){}
@@ -762,6 +829,12 @@ function showLog(){const p=$('log'),end=logFirst||p.scrollTop+p.clientHeight>=p.
  $('logInfo').textContent=(logF==='all'?'':ls.length+' '+t('von')+' ')+all.length+' '+t('Zeilen')}
 async function log(){try{logRaw=await (await get('/api/log')).text();showLog()}catch(e){}}
 $('logF').onchange=e=>{logF=e.target.value;logFirst=true;showLog()};
+// Kopieren: Clipboard-API nur in sicheren Kontexten (https) – über http (Uhr im WLAN) per Textfeld
+$('logCopy').onclick=async()=>{const txt=$('log').textContent,b=$('logCopy');let ok=false;
+ try{if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(txt);ok=true}}catch(e){}
+ if(!ok){const ta=document.createElement('textarea');ta.value=txt;ta.style.cssText='position:fixed;opacity:0';document.body.append(ta);ta.select();
+  try{ok=document.execCommand('copy')}catch(e){}ta.remove()}
+ b.textContent=t(ok?'Kopiert':'Kopieren nicht möglich');setTimeout(()=>b.textContent=t('Kopieren'),1500)};
 $('wf').onsubmit=async e=>{e.preventDefault();const r=await post('/api/wifi',{ssid:$('ssid').value.trim(),pw:$('pw').value});msg(r);if(r.ok)$('pw').value=''};
 $('eye').onclick=()=>{const p=$('pw');p.type=p.type==='password'?'text':'password';$('eye').textContent=t(p.type==='password'?'Anzeigen':'Ausblenden')};
 $('scanBtn').onclick=scan;

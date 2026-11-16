@@ -109,12 +109,12 @@ Passwort. Das gilt immer, wenn die Uhr mit einem WLAN verbunden ist, nicht nur i
 die Strahlausgabe auf Core 1 nicht.
 
 **Seite (`webpage.h`):** eine Seite mit **einklappbarem Seitenmenü** (☰ oben links, bleibt beim
-Scrollen sichtbar): Uhr, Status, Einstellungen mit den Unterpunkten Oszilloskop, Uhrzeit, Display
-und WLAN (springen direkt in die jeweilige Gruppe), Protokoll, darunter die Sprachauswahl.
-Die Einstellungen sind in vier Gruppen geteilt: **Oszilloskop** (Profil zuerst, Zifferblatt,
-Verweilzeit, Zeigerhelligkeit, Rücklauf-Tempo), **Uhrzeit** (ggf. „Uhrzeit stellen“, Zeitformat,
-Zeitzone, Zeitserver), **Display** (OLED-Helligkeit, Sekunden, Nachtmodus, Drehung, Pixelverschiebung)
-und **WLAN** (gespeicherte Netze, Netzsuche, Netz hinzufügen, Neu verbinden, WLAN zurücksetzen). Der oberste Abschnitt (Überschrift, Vorschau, Uhrzeit,
+Scrollen sichtbar): Uhr, Status, Einstellungen mit den Unterpunkten Oszilloskop, Uhrzeit, Display,
+WLAN und System (springen direkt in die jeweilige Gruppe), Protokoll, darunter die Sprachauswahl.
+Die Einstellungen sind in fünf Gruppen geteilt: **Oszilloskop** (Profil zuerst, Zifferblatt,
+Verweilzeit, Helligkeiten, Rücklauf-Tempo, Testbild), **Uhrzeit** (ggf. „Uhrzeit stellen“, Zeitformat,
+Zeitzone, Zeitserver), **Display** (OLED-Helligkeit, Sekunden, Drehung, Pixelverschiebung)
+und **WLAN** (gespeicherte Netze, Netzsuche, Netz hinzufügen, Neu verbinden, WLAN zurücksetzen) und **System** (Gerätename, Passwort, Einstellungen sichern/laden). Der oberste Abschnitt (Überschrift, Vorschau, Uhrzeit,
 Datum) ist zentriert. Die Titelleiste „ESP32 Oscilloscope Clock“ bleibt immer oben neben der
 Menütaste stehen, die Abschnittsüberschriften direkt darunter (`position: sticky`). Jede
 Abschnittsüberschrift ist nur innerhalb ihres Abschnitts (`.grp`) angeheftet, so schiebt die
@@ -127,14 +127,18 @@ und zartem Raster. Die Farben stehen in den CSS-Variablen `--scope-*`, das Canva
 Zeichnen neu, so greift ein Wechsel des Designs sofort. Die Seite lädt dafür einmal die
 Vektordaten von `/api/vectors`, also dieselben Tabellen, die der `scopeTask` zeichnet, und stellt
 die Zeiger selbst nach der Uhrzeit (Stunde = `(h%12)*5 + m/12`, wie in der Firmware). Zwischen den
-Statusabfragen läuft die Zeit im Browser sekundengenau weiter.
+Statusabfragen läuft die Zeit im Browser sekundengenau weiter. Die Vorschau wird per
+`requestAnimationFrame` etwa 30-mal pro Sekunde gezeichnet; der Sekundenzeiger gleitet dabei, indem er
+zwischen den Stellungen `sec[s]` und `sec[s+1]` linear überblendet wird (nur in der Vorschau – das
+Oszilloskop springt wie bisher sekundenweise). Auf Tablet/PC wird die Vorschau größer (bis 460 bzw.
+560 px), auf dem Handy im Querformat stehen Vorschau und Uhrzeit nebeneinander.
 
-**Zifferblatt wechseln:** Wischen über die Vorschau wechselt reihum zwischen vier Zifferblättern –
+**Zifferblatt wechseln:** Wischen über die Vorschau wechselt reihum zwischen fünf Zifferblättern –
 nach links zum nächsten, nach rechts zum vorigen (Pointer-Events, ab 40 px waagerecht; senkrechtes
 Wischen scrollt weiter die Seite, `touch-action: pan-y`). Am PC gehen auch die Pfeiltasten, wenn die
 Vorschau den Fokus hat. Tippen allein wechselt nicht. Reihenfolge beim Wischen und in der
-Auswahlliste: Ziffern 1–12 → Ziffern 12 · 3 · 6 · 9 → Römisch XII · III · VI · IX → Römisch I–XII
-(Stil 0, 1, 3, 2):
+Auswahlliste: Ziffern 1–12 → Ziffern 12 · 3 · 6 · 9 → Nur Striche → Römisch XII · III · VI · IX → Römisch I–XII
+(Stil 0, 1, 4, 3, 2 – „Nur Striche“ steht in der Mitte):
 
 | Stil | Ziffern | Tabelle |
 |---|---|---|
@@ -142,13 +146,15 @@ Auswahlliste: Ziffern 1–12 → Ziffern 12 · 3 · 6 · 9 → Römisch XII · I
 | 1 | nur 12, 3, 6, 9, 7-Segment-Stil | `DialDigitsMin` |
 | 2 | römisch I–XII, serifenlos, 4 als IIII | `DialDigitsRoman` |
 | 3 | nur XII, III, VI, IX | `DialDigitsRoman4` |
+| 4 | keine Ziffern, nur Minutenstriche | `DialDigitsNone` (leer) |
  Die Vorschau zeigt den neuen Stil sofort.
 `POST /api/dial` setzt `g_dialStyle`. Der `scopeTask` erkennt den Wechsel vor dem nächsten Bild
 und berechnet die Rundtour neu. Das dauert einige zehn Millisekunden, so lange steht der Strahl
 (kurzer Lichtpunkt). Die Auswahl wird im NVS gespeichert (Schlüssel `dial`), `DIAL_STYLE` in
-`config.h` ist nur der Startwert. Alle vier Ziffernsätze liegen deshalb im RAM (zusammen ca. 0,7 KB).
+`config.h` ist nur der Startwert. Alle Ziffernsätze liegen deshalb im RAM (zusammen ca. 0,7 KB).
 
-Darunter folgen drei Bereiche. Jede Einstellung und jede Schaltfläche hat eine kurze Beschreibung:
+Darunter folgen drei Bereiche. **Status** und **Protokoll** sind anfangs eingeklappt (Pfeil V,
+Zustand im Browser gespeichert; ein Sprung aus dem Menü klappt sie auf). Jede Einstellung und jede Schaltfläche hat eine kurze Beschreibung:
 - **Status:** große Uhrzeit, KW und Datum, Zeitabgleich (NTP) mit letztem Abgleich, WLAN,
   Signalstärke, Netzwerkadresse, Laufzeit, Arbeitsspeicher (frei/gesamt, darunter Tiefstwert seit
   dem Neustart und größter freier Block), Prozessorauslastung Kern 0 und Kern 1 (je eine Zeile mit
@@ -162,13 +168,18 @@ Darunter folgen drei Bereiche. Jede Einstellung und jede Schaltfläche hat eine 
 - **Einstellungen:** siehe [Einstellungen im Webinterface](#einstellungen-im-webinterface). Solange
   kein Zeitserver erreichbar war, steht ganz oben zusätzlich „Uhrzeit stellen“ (siehe [Zeit und NTP](#zeit-und-ntp)).
 - **WLAN** (Gruppe in den Einstellungen): gespeicherte Netze (bis zu 10, je mit „Löschen“), Netzsuche
-  (Netz antippen übernimmt den Namen), Formular, „Neu verbinden“, „WLAN zurücksetzen“ (alle Netze löschen).
+  (stärkstes Netz oben, Balken und dBm, das verbundene Netz ist markiert; Netz antippen übernimmt den Namen), Formular, „Neu verbinden“, „WLAN zurücksetzen“ (alle Netze löschen).
 - **Protokoll** (das Log der Firmware): die letzten `LOG_BUFFER_SIZE` Byte (8 KB, ca. 120 Zeilen),
   alle 5 s aktualisiert, solange „Automatisch aktualisieren“ an ist („Jetzt aktualisieren“ lädt sofort). Das Feld
   hat eine feste Höhe (max. 60 % des Bildschirms) mit eigener Scrollleiste. Wischen im Feld scrollt
   nur das Log, nicht die Seite. Steht man unten, folgen neue Zeilen automatisch. Liest man weiter
   oben, bleibt die Position beim Aktualisieren erhalten. „Alles anzeigen“ klappt das Log auf volle
-  Länge auf, darunter steht die Zeilenzahl.
+  Länge auf, darunter steht die Zeilenzahl. „Kopieren“ legt die gefilterten Zeilen in die
+  Zwischenablage (über http per verstecktem Textfeld, weil die Clipboard-API nur mit https geht).
+- **System** (Gruppe in den Einstellungen): Gerätename (`host`, a–z, 0–9, Bindestrich, max. 32; gilt
+  sofort für mDNS `http://<name>.local` und beim nächsten Verbinden für den Router), Passwort setzen/
+  entfernen, Einstellungen sichern (JSON-Datei mit allen Einstellungen außer WLANs und Passwort)
+  und laden (sendet die Werte an `POST /api/settings`).
 
 **Bedienhilfen der Seite:**
 - **Punkte unter der Vorschau** zeigen das aktive Zifferblatt; Punkt oder Pfeil ‹ › antippen wechselt (zusätzlich zum Wischen).
@@ -198,20 +209,21 @@ eingesetzt (`textContent`), nie als HTML.
 |---|---|
 | `GET /` | die Seite |
 | `GET /manifest.json`, `/icon.svg`, `/icon.png` | App-Manifest und Symbol für den Startbildschirm |
-| `GET /api/status` | JSON: `time`, `date`, `kw`, `ntp{synced,overdue,manual,dst,last,server}`, `wifi{configured,connected,ssid,rssi,ip,host}`, `ap{active,ssid,ip}`, `profile`, `dial`, `fps`, `heap`, `heapTotal`, `heapMin`, `heapBlock`, `cpu0`, `reset`, `uptime`, `fw`, `lang`, `h12` |
+| `GET /api/status` | JSON: `time`, `date`, `kw`, `ntp{synced,overdue,manual,dst,last,server}`, `wifi{configured,connected,ssid,rssi,ip,host}`, `ap{active,ssid,ip}`, `profile`, `dial`, `fps`, `heap`, `heapTotal`, `heapMin`, `heapBlock`, `cpu0`, `reset`, `uptime`, `fw`, `lang`, `h12`, `auth` (Passwort gesetzt), `test` (Testbild an) |
 | `GET /api/log` | Log als Text, älteste Zeile zuerst |
 | `GET /api/networks` | gespeicherte Netze `[{ssid, source:"web"}]`, nie Passwörter |
 | `GET /font.woff2`, `GET /font-600.woff2` | Schrift der Seite, Light und SemiBold (aus `font.h`), wird ein Jahr im Browser zwischengespeichert. Zwei feste Schnitte statt einer variablen Schrift, weil manche Android-Browser fette Texte einer variablen Schrift sonst in der Systemschrift zeigen |
-| `GET /api/vectors` | Vektordaten für die Vorschau (ca. 9 KB): `dial`, `digits` (alle vier Zifferblätter, Index = Stil), `hr`, `min`, `sec` (je 60 Stellungen). Linienzüge als `[x0,y0,x1,y1,…]`, 0–255, y nach oben |
+| `GET /api/vectors` | Vektordaten für die Vorschau (ca. 9 KB): `dial`, `digits` (alle Zifferblätter, Index = Stil), `test` (Testbild), `hr`, `min`, `sec` (je 60 Stellungen). Linienzüge als `[x0,y0,x1,y1,…]`, 0–255, y nach oben |
 | `GET /api/scan` | Netzsuche im Hintergrund: erst `{"running":true}`, dann `{"networks":[{ssid,rssi,open}]}` |
 | `POST /api/wifi` | `ssid`, `pw` speichern bzw. Passwort ändern (SSID 1–32, Passwort leer oder 8–63 Zeichen) |
 | `POST /api/wifi/delete` | `ssid` löschen, danach Neustart (WiFiMulti kann Netze nicht vergessen) |
 | `POST /api/wifi/reset` | alle gespeicherten Netze löschen, danach Neustart (Setup-WLAN öffnet sich) |
 | `POST /api/reconnect` | Verbindung trennen, `wifiTask` verbindet mit dem stärksten Netz |
 | `GET /api/settings` | aktuelle Einstellungen, Standardwerte (`defaults`) und Zeitzonen-Liste |
-| `POST /api/settings` | beliebige Felder `profile`, `dial`, `beamNs`, `handPct`, `tickPct`, `digitPct`, `jumpSpeed`, `tz`, `ntp`, `oledPct`, `oledSec`, `oledNight`, `nightFrom`/`nightTo` (`HH:MM`), `nightPct`, `oledShift`, `oledFlip`, `lang` (`de`/`en`), `h12` (0/1): prüfen, sofort anwenden, speichern. Antwort `{ok, msg, settings}` |
+| `POST /api/settings` | beliebige Felder `profile`, `dial`, `beamNs`, `handPct`, `tickPct`, `digitPct`, `jumpSpeed`, `tz`, `ntp`, `oledPct`, `oledSec`, `oledShift`, `oledFlip`, `lang` (`de`/`en`), `h12` (0/1), `host` (Gerätename), `test` (0/1, Testbild, nicht gespeichert): prüfen, sofort anwenden, speichern. Antwort `{ok, msg, settings}` |
 | `POST /api/settings/reset` | `group` = `scope` (Oszilloskop), `time` (Uhrzeit) oder `display`: nur diese Gruppe auf die Werte aus `config.h`; ohne `group` alles inkl. Sprache. WLANs bleiben immer erhalten |
-| `POST /api/dial` | `style` 0 = 1–12, 1 = 12/3/6/9, 2 = römisch I–XII, 3 = römisch XII/III/VI/IX: Zifferblatt umschalten (Oszilloskop und Vorschau), wird gespeichert |
+| `POST /api/password` | `pw` (4–32 Zeichen) setzt das Passwort, leer entfernt es (NVS `upw`) |
+| `POST /api/dial` | `style` 0 = 1–12, 1 = 12/3/6/9, 2 = römisch I–XII, 3 = römisch XII/III/VI/IX, 4 = nur Striche: Zifferblatt umschalten (Oszilloskop und Vorschau), wird gespeichert |
 | `POST /api/time` | `epoch` (Unix-Sekunden, UTC) **oder** `local` (`JJJJ-MM-TTTHH:MM[:SS]`, Ortszeit), optional `dst` (-1 automatisch, 1 Sommerzeit, 0 Winterzeit): Uhrzeit von Hand stellen, 2024–2099 |
 
 **Gespeicherte WLANs:** bis zu `WEB_MAX_NETWORKS` (10) Netze im NVS (Namensraum `scopeclock`,
@@ -252,7 +264,7 @@ Knopf „Auf Standardwerte zurücksetzen“: Er löscht nur die gespeicherten We
 | Einstellung | NVS-Schlüssel | Bereich | Wirkung |
 |---|---|---|---|
 | Oszilloskop-Profil | `profile` | DIGITAL / ANALOG | `g_scopeProfile`, auch per BOOT-Taster |
-| Zifferblatt | `dial` | 4 Stile | `g_dialStyle`, synchron mit dem Wischen über die Vorschau |
+| Zifferblatt | `dial` | 5 Stile | `g_dialStyle`, synchron mit dem Wischen über die Vorschau |
 | Verweilzeit des Strahls | `beam` | 1.000–10.000 ns pro Schritt | `g_beamNs`, `scopeTask` berechnet das Timing zwischen zwei Bildern neu (`beamTiming()`) |
 | Helligkeit Stunden-/Minutenzeiger | `hand` | 0–100 % (0 = aus) | `g_handPct` |
 | Helligkeit Minutenstriche | `tick` | 0–100 % (0 = aus) | `g_tickPct`: Verweilzeit der Striche (Tabelle `DialData`) in der Rundtour, in Prozent der normalen Verweilzeit |
@@ -262,14 +274,25 @@ Knopf „Auf Standardwerte zurücksetzen“: Er löscht nur die gespeicherten We
 | Zeitserver (NTP) | `ntp` | Hostname, max. 63 Zeichen | erster Server, `configTzTime()` neu |
 | OLED-Helligkeit | `oledp` | 0–100 % (0 = aus) | `oledApplyBrightness()`: 0 % = `setPowerSave(1)`, sonst Kontrast 1–255. Ein alter Wert `oled` (Kontrast) wird beim ersten Start umgerechnet |
 | Sekunden anzeigen | `osec` | an/aus | OLED-Uhrzeit HH:MM:SS oder HH:MM |
-| Nachtmodus | `night`, `nfrom`, `nto`, `npct` | an/aus, Von/Bis (HH:MM), 0–100 % | Im Zeitfenster gilt `npct` statt der normalen Helligkeit (auch über Mitternacht). Braucht eine gültige Uhrzeit. Beim Halten des BOOT-Tasters wird das OLED mit mindestens 50 % eingeschaltet |
 | OLED-Pixelverschiebung | `shift` | an/aus | Versatz gegen Einbrennen |
 | OLED um 180° drehen | `flip` | an/aus | `u8g2.setDisplayRotation(U8G2_R2)`, für ein kopfüber eingebautes Display |
+| Gerätename | `host` | a–z, 0–9, Bindestrich, max. 32 | `WiFi.setHostname()`, `MDNS.begin()` neu |
+| Passwort | `upw` | leer (Standard) oder 4–32 Zeichen | siehe [Passwort](#passwort) |
+| Testbild | – | an/aus | `g_testPattern`: `scopeTask` zeichnet `TestData` statt der Uhr; nicht gespeichert |
 | Sprache | `lang` | Deutsch / English | `s_lang`: Webinterface, OLED, Protokoll |
 | Zeitformat | `h12` | 24 Stunden / 12 Stunden (AM/PM) | `s_h12`: Uhrzeit auf OLED und Webseite (Protokoll bleibt 24 h) |
 
 Die Firmware prüft jeden Wert (`handleSettingsPost()`) und meldet ungültige Eingaben mit Grund
 zurück. `loadSettings()` liest alle Werte in `setup()`, bevor die Tasks starten.
+
+### Passwort
+Ab Werk ist kein Passwort gesetzt. Ist eines gesetzt (System → „Passwort für Änderungen“), prüft
+`authOk()` bei allen ändernden Anfragen (`POST /api/settings`, `/settings/reset`, `/wifi…`, `/time`,
+`/dial`, `/reconnect`, `/password`) den Header `X-Pass` und antwortet sonst mit 401. Die Seite fragt
+dann einmal per Dialog nach dem Passwort und merkt es sich für die Sitzung (`sessionStorage`).
+Anzeigen (Status, Vorschau, Protokoll) geht ohne Passwort. Das Passwort liegt im NVS (`upw`) und wird
+nie ausgegeben. Vergessen: einmal mit `WEB_PASSWORD_CLEAR 1` hochladen, dann wieder 0. Ohne https wird
+es im WLAN unverschlüsselt übertragen – es schützt vor versehentlichen Änderungen, nicht vor Angreifern im Netz.
 
 ## BOOT-Taster: Oszilloskop-Profil
 

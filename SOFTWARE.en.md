@@ -114,12 +114,12 @@ network. The `WebServer` runs in the `uiTask` on core 0 (`webLoop()` every 10 ms
 affect the beam output on core 1.
 
 **Page (`webpage.h`):** one page with a **collapsible side menu** (☰ top left, stays visible while
-scrolling): „Uhr“ (clock), Status, „Einstellungen“ (settings), with the sub-entries „Oszilloskop“, „Uhrzeit“, „Display“ and „WLAN“ (jump directly to that group of
+scrolling): „Uhr“ (clock), Status, „Einstellungen“ (settings), with the sub-entries „Oszilloskop“, „Uhrzeit“, „Display“, „WLAN“ and „System“ (jump directly to that group of
 the settings), „Protokoll“ (log), below them
-the language selection. The settings are split into four groups: **„Oszilloskop“** (Oscilloscope: profile first, dial,
-dwell time, hand brightness, retrace speed), **„Uhrzeit“** (Time: “Set time” if shown, time format,
-time zone, time server), **„Display“** (OLED brightness, seconds, night mode, rotation, pixel shift)
-and **„WLAN“** (Wi-Fi: saved networks, network scan, add network, reconnect, reset Wi-Fi).
+the language selection. The settings are split into five groups: **„Oszilloskop“** (Oscilloscope: profile first, dial,
+dwell time, brightness, retrace speed, test pattern), **„Uhrzeit“** (Time: “Set time” if shown, time format,
+time zone, time server), **„Display“** (OLED brightness, seconds, rotation, pixel shift)
+and **„WLAN“** (Wi-Fi: saved networks, network scan, add network, reconnect, reset Wi-Fi) and **„System“** (device name, password, back up/load settings).
 The top section (title, preview, time, date) is centred. The title bar “ESP32 Oscilloscope Clock”
 always stays at the top next to the menu button, the section headings directly below it
 (`position: sticky`). Each section heading is only pinned within its section (`.grp`), so the
@@ -138,7 +138,7 @@ time keeps running in the browser to the second.
 right for the previous one (pointer events, at least 40 px horizontally; vertical swiping still
 scrolls the page, `touch-action: pan-y`). On a PC the arrow keys work too when the preview has
 focus. A plain tap does not change the dial. Order when swiping and in the drop-down list:
-numbers 1–12 → numbers 12 · 3 · 6 · 9 → Roman XII · III · VI · IX → Roman I–XII (style 0, 1, 3, 2):
+numbers 1–12 → numbers 12 · 3 · 6 · 9 → ticks only → Roman XII · III · VI · IX → Roman I–XII (style 0, 1, 4, 3, 2 – “ticks only” sits in the middle):
 
 | Style | Digits | Table |
 |---|---|---|
@@ -146,6 +146,7 @@ numbers 1–12 → numbers 12 · 3 · 6 · 9 → Roman XII · III · VI · IX �
 | 1 | only 12, 3, 6, 9, 7-segment style | `DialDigitsMin` |
 | 2 | Roman I–XII, sans serif, 4 as IIII | `DialDigitsRoman` |
 | 3 | only XII, III, VI, IX | `DialDigitsRoman4` |
+| 4 | no numbers, tick marks only | `DialDigitsNone` (empty) |
 
 The preview shows the new style immediately. `POST /api/dial` sets
 `g_dialStyle`. The `scopeTask` detects the change before the next frame and recomputes the round
@@ -168,13 +169,20 @@ Below follow three sections. Every setting and every button has a short descript
   As long as no time server has been reached, „Uhrzeit stellen“ (set time) appears at the top
   (see [Time and NTP](#time-and-ntp)).
 - **„WLAN“ (Wi-Fi, group in the settings):** saved networks (up to 10, each with “Delete”), network
-  scan (tapping a network takes over its name), form, „Neu verbinden“ (reconnect), „WLAN zurücksetzen“ (reset Wi-Fi: delete all networks).
+  scan (strongest network first, bars and dBm, the connected network is marked; tapping a network takes over its name), form, „Neu verbinden“ (reconnect), „WLAN zurücksetzen“ (reset Wi-Fi: delete all networks).
 - **„Protokoll“ (log):** the last `LOG_BUFFER_SIZE` bytes (8 KB, approx. 120 lines), refreshed every
   5 s while „Automatisch aktualisieren“ (auto refresh) is on („Jetzt aktualisieren“ – refresh now –
   loads immediately). The field has a fixed height (max. 60 % of the screen) with its own scroll
   bar. Swiping inside the field only scrolls the log, not the page. If you are at the bottom, new
   lines follow automatically. If you are reading further up, the position is kept on refresh.
   „Alles anzeigen“ (show all) expands the log to full length; the line count is shown below.
+  „Kopieren“ (copy) puts the filtered lines on the clipboard (over http via a hidden text field, since
+  the Clipboard API needs https).
+- **„System“ (group in the settings):** device name (`host`, a–z, 0–9, hyphen, max. 32; applies at once
+  to mDNS `http://<name>.local` and to the router on the next connection), set/remove password, back up
+  settings (JSON file with all settings except Wi-Fi networks and password) and load them (sent to
+  `POST /api/settings`).
+- **Status** and **„Protokoll“** start collapsed (V arrow, state saved in the browser; a jump from the menu opens them).
 
 **Usability aids of the page:**
 - **Dots below the preview** show the active dial; tapping a dot or the arrows ‹ › changes it (in addition to swiping).
@@ -190,6 +198,9 @@ Below follow three sections. Every setting and every button has a short descript
 - **Appearance** in the side menu: automatic, light or dark (saved only in the browser, `data-theme`).
 - **Log filter** (drop-down list): all, Wi-Fi, time, web, oscilloscope, warnings.
 - **As an app:** manifest and icon allow “Add to home screen”; the page then opens without browser bar.
+- **Preview:** drawn about 30 times per second via `requestAnimationFrame`; the second hand glides
+  (linear blend between `sec[s]` and `sec[s+1]`, preview only – the oscilloscope still steps once a second).
+  Larger on tablet/PC (up to 460 or 560 px); on a phone in landscape, preview and time sit side by side.
 - **Font:** Raleway Light/SemiBold with Raleway's original old-style figures, text in black.
 
 Optimised for phones: one column, buttons at least 44 px high, input fields with 16 px text (iOS
@@ -205,19 +216,20 @@ inserted as text (`textContent`), never as HTML.
 | `GET /` | the page |
 | `GET /manifest.json`, `/icon.svg`, `/icon.png` | app manifest and icon for the home screen |
 | `GET /font.woff2`, `GET /font-600.woff2` | font of the page, Light and SemiBold (from `font.h`), cached by the browser for one year. Two static styles instead of a variable font, because some Android browsers otherwise show bold text of a variable font in the system font |
-| `GET /api/status` | JSON: `time`, `date`, `kw`, `ntp{synced,overdue,manual,dst,last,server}`, `wifi{configured,connected,ssid,rssi,ip,host}`, `ap{active,ssid,ip}`, `profile`, `dial`, `fps`, `heap`, `heapTotal`, `heapMin`, `heapBlock`, `cpu0`, `reset`, `uptime`, `fw`, `lang`, `h12` |
+| `GET /api/status` | JSON: `time`, `date`, `kw`, `ntp{synced,overdue,manual,dst,last,server}`, `wifi{configured,connected,ssid,rssi,ip,host}`, `ap{active,ssid,ip}`, `profile`, `dial`, `fps`, `heap`, `heapTotal`, `heapMin`, `heapBlock`, `cpu0`, `reset`, `uptime`, `fw`, `lang`, `h12`, `auth` (password set), `test` (test pattern on) |
 | `GET /api/log` | log as text, oldest line first |
 | `GET /api/networks` | saved networks `[{ssid, source:"web"}]`, never passwords |
-| `GET /api/vectors` | vector data for the preview (approx. 9 KB): `dial`, `digits` (all four dials, index = style), `hr`, `min`, `sec` (60 positions each). Polylines as `[x0,y0,x1,y1,…]`, 0–255, y upwards |
+| `GET /api/vectors` | vector data for the preview (approx. 9 KB): `dial`, `digits` (all dials, index = style), `test` (test pattern), `hr`, `min`, `sec` (60 positions each). Polylines as `[x0,y0,x1,y1,…]`, 0–255, y upwards |
 | `GET /api/scan` | network scan in the background: first `{"running":true}`, then `{"networks":[{ssid,rssi,open}]}` |
 | `POST /api/wifi` | save `ssid`, `pw` or change the password (SSID 1–32, password empty or 8–63 characters) |
 | `POST /api/wifi/delete` | delete `ssid`, then restart (WiFiMulti cannot forget networks) |
 | `POST /api/wifi/reset` | delete all saved networks, then restart (the setup network opens) |
 | `POST /api/reconnect` | disconnect, `wifiTask` connects to the strongest network |
 | `GET /api/settings` | current settings, default values (`defaults`) and time zone list |
-| `POST /api/settings` | any of the fields `profile`, `dial`, `beamNs`, `handPct`, `tickPct`, `digitPct`, `jumpSpeed`, `tz`, `ntp`, `oledPct`, `oledSec`, `oledNight`, `nightFrom`/`nightTo` (`HH:MM`), `nightPct`, `oledShift`, `oledFlip`, `lang` (`de`/`en`), `h12` (0/1): validate, apply immediately, save. Answer `{ok, msg, settings}` |
+| `POST /api/settings` | any of the fields `profile`, `dial`, `beamNs`, `handPct`, `tickPct`, `digitPct`, `jumpSpeed`, `tz`, `ntp`, `oledPct`, `oledSec`, `oledShift`, `oledFlip`, `lang` (`de`/`en`), `h12` (0/1), `host` (device name), `test` (0/1, test pattern, not saved): validate, apply immediately, save. Answer `{ok, msg, settings}` |
 | `POST /api/settings/reset` | `group` = `scope` (oscilloscope), `time` or `display`: reset only this group to the values from `config.h`; without `group` everything incl. language. Wi-Fi networks are always kept |
-| `POST /api/dial` | `style` 0 = 1–12, 1 = 12/3/6/9, 2 = Roman I–XII, 3 = Roman XII/III/VI/IX: change the dial (oscilloscope and preview), saved |
+| `POST /api/password` | `pw` (4–32 characters) sets the password, empty removes it (NVS `upw`) |
+| `POST /api/dial` | `style` 0 = 1–12, 1 = 12/3/6/9, 2 = Roman I–XII, 3 = Roman XII/III/VI/IX, 4 = ticks only: change the dial (oscilloscope and preview), saved |
 | `POST /api/time` | `epoch` (Unix seconds, UTC) **or** `local` (`YYYY-MM-DDTHH:MM[:SS]`, local time), optional `dst` (-1 automatic, 1 summer time, 0 winter time): set the time by hand, 2024–2099 |
 
 Messages returned by the interfaces (`msg`) are in the selected language.
@@ -260,7 +272,7 @@ that group; Wi-Fi networks are kept.
 | Setting (German label) | NVS key | Range | Effect |
 |---|---|---|---|
 | Oscilloscope profile („Oszilloskop-Profil“) | `profile` | DIGITAL / ANALOG | `g_scopeProfile`, also via BOOT button |
-| Dial („Zifferblatt“) | `dial` | 4 styles | `g_dialStyle`, in sync with swiping over the preview |
+| Dial („Zifferblatt“) | `dial` | 5 styles | `g_dialStyle`, in sync with swiping over the preview |
 | Beam dwell time („Verweilzeit des Strahls“) | `beam` | 1,000–10,000 ns per step | `g_beamNs`, `scopeTask` recalculates the timing between two frames (`beamTiming()`) |
 | Hour/minute hand brightness („Helligkeit Stunden-/Minutenzeiger“) | `hand` | 0–100 % (0 = off) | `g_handPct` |
 | Tick mark brightness („Helligkeit Minutenstriche“) | `tick` | 0–100 % (0 = off) | `g_tickPct`: dwell time of the marks (table `DialData`) in the round trip, in percent of the normal dwell time |
@@ -270,14 +282,25 @@ that group; Wi-Fi networks are kept.
 | Time server („Zeitserver (NTP)“) | `ntp` | host name, max. 63 characters | first server, `configTzTime()` again |
 | OLED brightness („OLED-Helligkeit“) | `oledp` | 0–100 % (0 = off) | `oledApplyBrightness()`: 0 % = `setPowerSave(1)`, otherwise contrast 1–255. An old value `oled` (contrast) is converted on first start |
 | Show seconds („Sekunden anzeigen“) | `osec` | on/off | OLED time HH:MM:SS or HH:MM |
-| Night mode („Nachtmodus“) | `night`, `nfrom`, `nto`, `npct` | on/off, from/to (HH:MM), 0–100 % | Within the time window `npct` replaces the normal brightness (also across midnight). Requires a valid time. While the BOOT button is held, the OLED is switched on with at least 50 % |
 | OLED pixel shift („OLED-Pixelverschiebung“) | `shift` | on/off | offset against burn-in |
 | Rotate OLED by 180° („OLED um 180° drehen“) | `flip` | on/off | `u8g2.setDisplayRotation(U8G2_R2)`, for a display mounted upside down |
+| Device name („Gerätename“) | `host` | a–z, 0–9, hyphen, max. 32 | `WiFi.setHostname()`, `MDNS.begin()` again |
+| Password („Passwort für Änderungen“) | `upw` | empty (default) or 4–32 characters | see [Password](#password) |
+| Test pattern („Testbild“) | – | on/off | `g_testPattern`: `scopeTask` draws `TestData` instead of the clock; not saved |
 | Language („Sprache“) | `lang` | Deutsch / English | `s_lang`: web interface, OLED, log |
 | Time format („Zeitformat“) | `h12` | 24 hours / 12 hours (AM/PM) | `s_h12`: time on OLED and web page (log stays 24 h) |
 
 The firmware validates every value (`handleSettingsPost()`) and reports invalid input with a
 reason. `loadSettings()` reads all values in `setup()` before the tasks start.
+
+### Password
+No password is set by default. If one is set („System“ → „Passwort für Änderungen“), `authOk()` checks
+the `X-Pass` header on all changing requests (`POST /api/settings`, `/settings/reset`, `/wifi…`, `/time`,
+`/dial`, `/reconnect`, `/password`) and otherwise answers 401. The page then asks once for the password
+and remembers it for the session (`sessionStorage`). Viewing (status, preview, log) works without a
+password. It is stored in NVS (`upw`) and never output. Forgotten: upload once with
+`WEB_PASSWORD_CLEAR 1`, then back to 0. Without https it travels unencrypted over Wi-Fi – it protects
+against accidental changes, not against attackers on the network.
 
 ## BOOT button: oscilloscope profile
 

@@ -146,12 +146,6 @@
 #define OLED_SHIFT_EVERY_S 60        // Pixel-Shift gegen Einbrennen: alle n Sekunden (0 = aus)
 #define OLED_BRIGHT_PCT   50         // Helligkeit 0–100 % (0 = aus; niedriger = langlebiger)
 #define OLED_SECONDS      1          // 1 = Uhrzeit mit Sekunden, 0 = nur HH:MM
-// Nachtmodus: im Zeitfenster eigene Helligkeit (z.B. 0 % = Display nachts aus).
-// Braucht eine gültige Uhrzeit (Zeitserver oder von Hand gestellt).
-#define NIGHT_MODE        0          // 1 = an
-#define NIGHT_FROM_MIN    (22 * 60)  // Beginn 22:00 (Minuten nach Mitternacht)
-#define NIGHT_TO_MIN      (7 * 60)   // Ende 07:00
-#define NIGHT_BRIGHT_PCT  0          // Helligkeit nachts 0–100 % (0 = aus)
 #define OLED_FLIP         0          // 1 = Anzeige um 180° drehen (Display kopfüber eingebaut)
 
 // Sprache für Webinterface, OLED und Protokoll: 0 = Deutsch, 1 = English.
@@ -183,7 +177,11 @@
 // ---------------------------------------------------------------------------
 // Diverses
 // ---------------------------------------------------------------------------
-#define WIFI_HOSTNAME "scope-clock"   // Gerätename im Router, Webinterface: http://scope-clock.local
+#define WIFI_HOSTNAME "scope-clock"   // Start-Gerätename (im Webinterface änderbar) im Router, Webinterface: http://scope-clock.local
+
+// Passwort für Änderungen im Webinterface vergessen? Auf 1 setzen und hochladen: Das
+// gespeicherte Passwort wird dann ignoriert und kann neu gesetzt werden. Danach wieder 0.
+#define WEB_PASSWORD_CLEAR 0
 #define SERIAL_BAUD   115200          // serielle Konsole (Arduino: Serieller Monitor)
 
 // Zifferblatt-Variante auf dem Oszilloskop (Startwert – im Betrieb im
@@ -192,6 +190,7 @@
 //   1 = nur die vier Hauptziffern 12, 3, 6, 9
 //   2 = römische Ziffern I–XII
 //   3 = nur die vier römischen Hauptziffern XII, III, VI, IX
+//   4 = keine Ziffern, nur Minutenstriche
 #define DIAL_STYLE 0
 
 // EXCEL-Modus (Diagnose ohne Oszilloskop): zeichnet genau ein

@@ -40,16 +40,16 @@ This documentation quotes the German labels and adds the English label in parent
 - **12- or 24-hour format** for OLED and web interface (12 h with AM/PM), switchable in the web interface.
 - **German or English** for the web interface, OLED display and log, switchable in the web
   interface (side menu) and saved. Start value `UI_LANG` in `config.h`.
-- **Web interface** at `http://scope-clock.local`, optimised for phones, no password, also as an app on the
+- **Web interface** at `http://scope-clock.local`, optimised for phones, optional password for changes (none by default), also as an app on the
   home screen. Light/dark/automatic appearance, log with filter, reset with “Undo”.
   At the top it shows a live preview of the oscilloscope picture (transparent background in the
   light theme), below that the status (time sync, Wi-Fi, signal strength, profile, frame rate,
   uptime, memory, CPU load, reason for the last restart) and the log („Protokoll“). It is also used
   to add Wi-Fi networks. A collapsible side menu (☰) jumps to the sections. **Swiping left or right
-  over the preview changes the dial**: 1–12, only 12/3/6/9, Roman I–XII or only XII/III/VI/IX. This
+  over the preview changes the dial**: 1–12, only 12/3/6/9, ticks only (no numbers), only Roman XII/III/VI/IX or Roman I–XII. This
   also applies to the oscilloscope and is saved. Under „Einstellungen“ (settings) you can change
   the oscilloscope profile, dial, beam dwell time, brightness of hands, tick marks and numerals, retrace speed, time zone, time
-  server (NTP) and OLED (brightness 0–100 %, seconds, night mode with its own brightness, pixel shift, 180° rotation) online. Changes apply immediately
+  server (NTP) and OLED (brightness 0–100 %, seconds, pixel shift, 180° rotation) online. In addition there is a **test pattern** for adjusting the oscilloscope, the **device name**, an optional **password** and **back up/load settings** (as a file). Changes apply immediately
   and are saved. The web interface is always reachable as soon as the clock is on Wi-Fi. Without
   a known network the clock opens the setup network **“ScopeClock-Setup”**, and the phone shows
   the setup page automatically.
@@ -93,6 +93,8 @@ interface.
 | 12/24-hour format | „Einstellungen“ → „Zeitformat“ (Time format) |
 | Language German/English | side menu (☰) → „Sprache“ (Language, drop-down list) |
 | Add/delete Wi-Fi networks | „Einstellungen“ → „WLAN“ (Settings → Wi-Fi, also directly via the side menu) |
+| Adjust the oscilloscope | „Einstellungen“ → „Oszilloskop“ → „Testbild“ (test pattern: frame, circle, centre cross; not saved) |
+| Device name, password, backup | „Einstellungen“ → „System“ |
 | Troubleshooting | „Protokoll“ (log) section of the web interface, or the serial monitor (115200 baud) |
 
 ### Status and tests
@@ -101,12 +103,12 @@ interface.
 
 | Board package | Program memory | Global variables (RAM) |
 |---|---|---|
-| esp32 3.3.12 | 1,280,054 bytes (97 %) | 74,148 bytes (22 %) |
+| esp32 3.3.12 | 1,289,902 bytes (98 %) | 74,924 bytes (22 %) |
 | esp32 2.0.17 | 866,053 bytes (66 %) | 61,048 bytes (18 %) – state before the menu and dial switching |
 
 The configuration variants (profile ANALOG/DIGITAL, Z blanking, dial 0/1/2, `USE_FAST_DAC 0`,
 EXCEL mode) were also built without warnings before the web interface was added. With the
-recommended partition scheme **Huge APP** the same firmware uses approx. 1,280,000 of 3,145,728
+recommended partition scheme **Huge APP** the same firmware uses approx. 1,290,000 of 3,145,728
 bytes (**41 %**), with “Minimal SPIFFS” 65 %.
 
 Also simulated on a PC: beam path (brightness, retrace lines, frame rate), OLED content, BOOT

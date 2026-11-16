@@ -114,6 +114,11 @@ upload is needed. Do **not** press the button **while powering up**, otherwise t
 download mode. When switching, a bright dot may flash briefly on the oscilloscope (flash write).
 The profile can also be changed in the web interface („Einstellungen“ → „Oszilloskop-Profil“).
 
+**Test pattern:** „Einstellungen“ → „Oszilloskop“ → „Testbild“ shows a frame with marks, a circle
+and a centre cross instead of the clock. Use it to adjust position (cross in the centre of the screen),
+size (the frame almost fills 8 × 8 divisions), equal X and Y gain (the circle is round, not oval) and
+focus. The test pattern is not saved; after a restart the clock runs again.
+
 | Profile | for | Jumps between lines |
 |---|---|---|
 | DIGITAL (default) | digital oscilloscopes, storage oscilloscopes | instant, so no sample points appear along the way |
@@ -183,13 +188,13 @@ the oscilloscope. The values in `config.h` are then only the start values.
 | `TICK_BRIGHT_PCT`, `DIGIT_BRIGHT_PCT` | Brightness of tick marks and numerals, 0–100 % (default 100 %, 0 = hidden). Adjustable in the web interface |
 | `OLED_BRIGHT_PCT` | OLED brightness 0–100 % (default 50 %, 0 = off) |
 | `OLED_SECONDS` | 1 = OLED time with seconds, 0 = HH:MM only |
-| `NIGHT_MODE`, `NIGHT_FROM_MIN`, `NIGHT_TO_MIN`, `NIGHT_BRIGHT_PCT` | OLED night mode: time window (default 22:00–07:00) with its own brightness (default 0 % = off) |
 | `USE_FAST_DAC` | `1` = direct register access (default). `0` = `dacWrite()`, only as a fallback |
-| `DIAL_STYLE` | Start dial: 0 = 1–12, 1 = 12/3/6/9, 2 = Roman I–XII, 3 = Roman XII/III/VI/IX. Switchable in the web interface by swiping over the preview, the choice is saved |
+| `DIAL_STYLE` | Start dial: 0 = 1–12, 1 = 12/3/6/9, 2 = Roman I–XII, 3 = Roman XII/III/VI/IX, 4 = ticks only (no numbers). Switchable in the web interface by swiping over the preview, the choice is saved |
 | `TZ_INFO` | Time zone incl. daylight saving rule (default: Central Europe) |
 | `NTP_SERVER_1` … `_3` | Time servers (the first one can be changed in the web interface) |
 | `FALLBACK_H`, `FALLBACK_M`, `FALLBACK_S` | Start time from which the clock counts as long as neither a time server nor manual input has provided the time |
 | `OLED_SHIFT_EVERY_S` | Pixel shift against OLED burn-in: every n seconds (0 = off) |
 | `OLED_FLIP` | 1 = rotate the OLED display by 180° (display mounted upside down), also switchable in the web interface |
 | `CLOCK_12H` | Time format for OLED and web interface: 0 = 24 hours (default), 1 = 12 hours with AM/PM. Switchable in the web interface |
+| `WEB_PASSWORD_CLEAR` | `1` clears a forgotten web password at start (upload once with 1, then back to 0). No password is set by default |
 | `UI_LANG` | Language for web interface, OLED and log: 0 = German (default), 1 = English. Switchable in the web interface |

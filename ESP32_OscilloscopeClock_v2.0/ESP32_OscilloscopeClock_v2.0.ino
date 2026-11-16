@@ -176,10 +176,9 @@ static char    s_tz[48]        = TZ_INFO;                  // POSIX-Zeitzone
 static char    s_ntpServer[64] = NTP_SERVER_1;             // erster NTP-Server (muss dauerhaft gültig bleiben)
 static uint8_t s_oledPct       = OLED_BRIGHT_PCT;          // OLED-Helligkeit 0–100 % (0 = aus)
 static bool    s_oledSec       = OLED_SECONDS;             // Uhrzeit mit Sekunden
-static bool    s_nightOn       = NIGHT_MODE;               // Nachtmodus an/aus
-static uint16_t s_nightFrom    = NIGHT_FROM_MIN;           // Beginn (Minuten nach Mitternacht)
-static uint16_t s_nightTo      = NIGHT_TO_MIN;             // Ende
-static uint8_t s_nightPct      = NIGHT_BRIGHT_PCT;         // Helligkeit nachts 0–100 % (0 = aus)
+static char    s_host[33]      = WIFI_HOSTNAME;            // Gerätename (Router, http://<name>.local)
+static char    s_webPw[33]     = "";                       // optionales Passwort für Änderungen (leer = keins)
+static volatile bool g_testPattern = false;                // Testbild statt Uhr (nicht gespeichert)
 static bool    s_oledShift     = OLED_SHIFT_EVERY_S > 0;
 static bool    s_oledFlip      = OLED_FLIP;                // Anzeige um 180° gedreht
 static bool    s_h12           = CLOCK_12H;                // Uhrzeit im 12-Stunden-Format (AM/PM)
@@ -596,7 +595,8 @@ static void IRAM_ATTR PlotTable(const byte *table, int size, byte sep, int offse
 // Liefert die Ziffern-Tabelle zum Zifferblatt-Stil und ihre Größe in Bytes:
 //   0 = Ziffern 1–12          1 = nur 12, 3, 6, 9
 //   2 = römisch I–XII         3 = nur XII, III, VI, IX
-static const int DIAL_STYLES = 4;                         // Anzahl der Zifferblätter
+//   4 = keine Ziffern, nur Minutenstriche
+static const int DIAL_STYLES = 5;                         // Anzahl der Zifferblätter
 
 static const uint8_t *dialDigits(int style, int &size)
 {
@@ -604,6 +604,7 @@ static const uint8_t *dialDigits(int style, int &size)
     case 1:  size = sizeof(DialDigitsMin);    return DialDigitsMin;
     case 2:  size = sizeof(DialDigitsRoman);  return DialDigitsRoman;
     case 3:  size = sizeof(DialDigitsRoman4); return DialDigitsRoman4;
+    case 4:  size = sizeof(DialDigitsNone);   return DialDigitsNone;
     default: size = sizeof(DialDigits12);    return DialDigits12;
   }
 }
@@ -614,6 +615,7 @@ static const char *dialName(int style)
     case 1:  return "12/3/6/9";
     case 2:  return "I-XII";
     case 3:  return "XII/III/VI/IX";
+    case 4:  return tr("nur Striche", "ticks only");
     default: return "1-12";
   }
 }
@@ -749,6 +751,14 @@ static void IRAM_ATTR scopeTask(void *)
       const uint8_t *digits = dialDigits(dial, size);
       buildTour(digits, size);
       builtDial = dial;
+    }
+
+    // Testbild (Einstellungen → Testbild): Rahmen, Kreis, Mittelkreuz statt der Uhr –
+    // zum Einstellen von Position, Größe, X/Y-Verhältnis und Fokus am Oszilloskop
+    if (g_testPattern) {
+      PlotTable(TestData, sizeof(TestData), 0x00, 0);
+      g_frameCount = g_frameCount + 1;
+      continue;
     }
 
     // Uhrzeit einmal pro Bild atomar lesen, damit alle drei Zeiger
@@ -923,7 +933,7 @@ static void oledSetFlip(bool flip);         // siehe Abschnitt "OLED"
 static void wifiStart()
 {
   WiFi.mode(WIFI_STA);                 // Client; das Setup-WLAN kommt bei Bedarf dazu
-  WiFi.setHostname(WIFI_HOSTNAME);     // Name in der Geräteliste des Routers
+  WiFi.setHostname(s_host);            // Name in der Geräteliste des Routers (Einstellungen → System)
 
   // Alle im Webinterface gespeicherten Netze bei WiFiMulti anmelden
   webNetsLoad();
@@ -968,11 +978,11 @@ static void wifiLogChanges()
     if (st == WL_CONNECTED) {
       logMsg(tr("[WiFi] verbunden mit \"%s\", IP %s, RSSI %d dBm", "[WiFi] connected to \"%s\", IP %s, RSSI %d dBm"),
              WiFi.SSID().c_str(), WiFi.localIP().toString().c_str(), WiFi.RSSI());
-      if (!mdnsStarted && MDNS.begin(WIFI_HOSTNAME)) {
+      if (!mdnsStarted && MDNS.begin(s_host)) {
         MDNS.addService("http", "tcp", 80);
         mdnsStarted = true;
         logMsg(tr("[Web] erreichbar unter http://%s.local und http://%s", "[Web] reachable at http://%s.local and http://%s"),
-               WIFI_HOSTNAME, WiFi.localIP().toString().c_str());
+               s_host, WiFi.localIP().toString().c_str());
       }
     } else if (last == WL_CONNECTED) {
       logMsg(tr("[WiFi] Verbindung verloren – versuche erneut", "[WiFi] connection lost – retrying"));
@@ -1114,7 +1124,7 @@ static void handleStatus()
   o += ",\"ssid\":";                 jsonStr(o, conn ? WiFi.SSID().c_str() : "");
   o += ",\"rssi\":";                 o += conn ? WiFi.RSSI() : 0;
   o += ",\"ip\":";                   jsonStr(o, conn ? WiFi.localIP().toString().c_str() : "");
-  o += ",\"host\":";                 jsonStr(o, WIFI_HOSTNAME ".local");
+  o += ",\"host\":";                 jsonStr(o, (String(s_host) + ".local").c_str());
   o += "},\"ap\":{\"active\":";      o += s_apActive ? "true" : "false";
   o += ",\"ssid\":";                 jsonStr(o, WEB_SETUP_AP_SSID);
   o += ",\"ip\":";                   jsonStr(o, WiFi.softAPIP().toString().c_str());
@@ -1129,6 +1139,8 @@ static void handleStatus()
   o += ",\"cpu0\":";                 o += (int)s_cpu0Load;                    // Last Core 0 in %
   o += ",\"reset\":";                jsonStr(o, resetReasonText());
   o += ",\"fw\":";                   jsonStr(o, FW_VERSION);
+  o += ",\"auth\":";                 o += s_webPw[0] ? "true" : "false";
+  o += ",\"test\":";                 o += g_testPattern ? "true" : "false";
   o += ",\"h12\":";                  o += s_h12 ? "true" : "false";
   o += ",\"lang\":";                 o += s_lang ? "\"en\"" : "\"de\"";
   o += '}';
@@ -1193,6 +1205,7 @@ static void handleVectors()
   o += ",\"hr\":";  appendHand(o, HrPtrData,  sizeof(HrPtrData),  9);
   o += ",\"min\":"; appendHand(o, MinPtrData, sizeof(MinPtrData), 9);
   o += ",\"sec\":"; appendHand(o, SecPtrData, sizeof(SecPtrData), 5);
+  o += ",\"test\":"; appendStrokes(o, TestData, sizeof(TestData), 0x00, 0, false);
   o += '}';
   web.sendHeader("Cache-Control", "max-age=3600");
   web.send(200, "application/json", o);
@@ -1247,8 +1260,45 @@ static void handleScan()
 }
 
 // POST /api/wifi (ssid, pw) – Netz speichern bzw. Passwort ändern
+// ---- Optionales Passwort für alle Änderungen ---------------------------------------
+// Ist eines gesetzt (Einstellungen → System), muss jede POST-Anfrage es im Header
+// "X-Pass" mitschicken; sonst Antwort 401 und die Seite fragt danach. Lesen (Status,
+// Protokoll, Vorschau) geht immer. Vergessen: in config.h WEB_PASSWORD_CLEAR 1 setzen,
+// hochladen (Passwort wird beim Start ignoriert und kann neu gesetzt werden), wieder 0.
+static bool authOk()
+{
+  if (!s_webPw[0] || web.header("X-Pass") == s_webPw) return true;
+  String o = "{\"ok\":false,\"auth\":true,\"msg\":";
+  jsonStr(o, tr("Passwort erforderlich", "Password required"));
+  o += '}';
+  web.send(401, "application/json", o);
+  return false;
+}
+
+// POST /api/password – Passwort setzen (pw = 4–32 Zeichen) oder entfernen (pw leer)
+static void handlePassword()
+{
+  if (!authOk()) return;
+  const String pw = web.arg("pw");
+  if (pw.length() && (pw.length() < 4 || pw.length() > 32)) { sendJsonResult(false, tr("Passwort: 4 bis 32 Zeichen", "Password: 4 to 32 characters")); return; }
+  strlcpy(s_webPw, pw.c_str(), sizeof(s_webPw));
+  Preferences p;
+  if (p.begin("scopeclock", false)) { if (pw.length()) p.putString("upw", s_webPw); else p.remove("upw"); p.end(); }
+  logMsg("%s", pw.length() ? tr("[Web] Passwort gesetzt", "[Web] password set") : tr("[Web] Passwort entfernt", "[Web] password removed"));
+  sendJsonResult(true, pw.length() ? tr("Passwort gesetzt", "Password set") : tr("Passwort entfernt", "Password removed"));
+}
+
+// Gerätename prüfen: 1–32 Zeichen, a–z, 0–9, Bindestrich (nicht am Anfang/Ende)
+static bool hostValid(const String &h)
+{
+  if (h.length() < 1 || h.length() > 32 || h[0] == '-' || h[h.length() - 1] == '-') return false;
+  for (size_t i = 0; i < h.length(); i++) { const char c = h[i]; if (!((c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '-')) return false; }
+  return true;
+}
+
 static void handleWifiSave()
 {
+  if (!authOk()) return;
   const String ssid = web.arg("ssid");
   const String pw   = web.arg("pw");
   if (ssid.length() < 1 || ssid.length() > 32) { sendJsonResult(false, tr("Netzwerkname: 1 bis 32 Zeichen", "Network name: 1 to 32 characters")); return; }
@@ -1277,6 +1327,7 @@ static void handleWifiSave()
 // WiFiMulti kann Netze nicht wieder vergessen, deshalb startet die Uhr neu.
 static void handleWifiDelete()
 {
+  if (!authOk()) return;
   const String ssid = web.arg("ssid");
   int slot = -1;
   for (int i = 0; i < s_webNetCount; i++) if (ssid == s_webNets[i].ssid) slot = i;
@@ -1293,6 +1344,7 @@ static void handleWifiDelete()
 // Ohne bekanntes Netz öffnet die Uhr anschließend das Setup-WLAN.
 static void handleWifiReset()
 {
+  if (!authOk()) return;
   s_webNetCount = 0;
   webNetsSave();
   logMsg(tr("[Web] alle WLANs geloescht – Neustart", "[Web] all networks deleted – restarting"));
@@ -1360,6 +1412,7 @@ static bool applyDstOverride(int mode)
 // Ein späterer NTP-Abgleich überschreibt die Zeit wieder (gewollt).
 static void handleTimeSet()
 {
+  if (!authOk()) return;
   // Sommer-/Winterzeit zuerst festlegen – mktime() rechnet dann mit dem richtigen Versatz
   int dst = web.hasArg("dst") ? web.arg("dst").toInt() : -1;
   if (dst > 1) dst = 1;
@@ -1405,8 +1458,9 @@ static void handleTimeSet()
 // für das Oszilloskop (scopeTask baut die Rundtour neu) und wird gespeichert.
 static void handleDial()
 {
+  if (!authOk()) return;
   const int st = web.arg("style").toInt();
-  if (!web.hasArg("style") || st < 0 || st >= DIAL_STYLES) { sendJsonResult(false, tr("Zifferblatt: 0 bis 3", "Dial: 0 to 3")); return; }
+  if (!web.hasArg("style") || st < 0 || st >= DIAL_STYLES) { sendJsonResult(false, tr("Zifferblatt: 0 bis 4", "Dial: 0 to 4")); return; }
   if (st != g_dialStyle) {
     g_dialStyle = (uint8_t)st;
     saveSetting("dial", (uint8_t)st);
@@ -1498,25 +1552,14 @@ static void loadSettings()
   if (p.isKey("oledp")) s_oledPct = min((int)p.getUChar("oledp", OLED_BRIGHT_PCT), 100);
   else if (p.isKey("oled")) s_oledPct = (p.getUChar("oled", 128) * 100 + 127) / 255;
   s_oledSec      = p.getUChar("osec", OLED_SECONDS) != 0;
-  s_nightOn      = p.getUChar("night", NIGHT_MODE) != 0;
-  s_nightFrom    = min((int)p.getUShort("nfrom", NIGHT_FROM_MIN), 1439);
-  s_nightTo      = min((int)p.getUShort("nto", NIGHT_TO_MIN), 1439);
-  s_nightPct     = min((int)p.getUChar("npct", NIGHT_BRIGHT_PCT), 100);
+  char hb[33];
+  if (p.getString("host", hb, sizeof(hb)) && hostValid(String(hb))) strlcpy(s_host, hb, sizeof(s_host));
+  if (!WEB_PASSWORD_CLEAR) p.getString("upw", s_webPw, sizeof(s_webPw));
   s_oledShift    = p.getUChar("shift", OLED_SHIFT_EVERY_S > 0) != 0;
   s_oledFlip     = p.getUChar("flip", OLED_FLIP) != 0;
   s_h12          = p.getUChar("h12", CLOCK_12H) != 0;
   s_lang         = p.getUChar("lang", UI_LANG) ? 1 : 0;
   p.end();
-}
-
-// Minuten nach Mitternacht als "HH:MM" (JSON-String) bzw. aus "HH:MM" lesen (-1 = ungültig)
-static void jsonHm(String &o, int min) { char b[16]; snprintf(b, sizeof(b), "\"%02d:%02d\"", min / 60, min % 60); o += b; }
-static int parseHm(const String &s)
-{
-  const int c = s.indexOf(':');
-  if (c < 1) return -1;
-  const int h = s.substring(0, c).toInt(), m = s.substring(c + 1).toInt();
-  return (h >= 0 && h < 24 && m >= 0 && m < 60) ? h * 60 + m : -1;
 }
 
 // Aktuelle Einstellungen, Standardwerte und Zeitzonen als JSON.
@@ -1533,10 +1576,8 @@ static void settingsJson(String &o)
   o += ",\"ntp\":";          jsonStr(o, s_ntpServer);
   o += ",\"oledPct\":";      o += (int)s_oledPct;
   o += ",\"oledSec\":";      o += s_oledSec ? "true" : "false";
-  o += ",\"oledNight\":";    o += s_nightOn ? "true" : "false";
-  o += ",\"nightFrom\":";    jsonHm(o, s_nightFrom);
-  o += ",\"nightTo\":";      jsonHm(o, s_nightTo);
-  o += ",\"nightPct\":";     o += (int)s_nightPct;
+  o += ",\"host\":";         jsonStr(o, s_host);
+  o += ",\"test\":";         o += g_testPattern ? "true" : "false";
   o += ",\"oledShift\":";    o += s_oledShift ? "true" : "false";
   o += ",\"oledFlip\":";     o += s_oledFlip ? "true" : "false";
   o += ",\"h12\":";          o += s_h12 ? "true" : "false";
@@ -1552,10 +1593,7 @@ static void settingsJson(String &o)
   o += ",\"ntp\":";          jsonStr(o, NTP_SERVER_1);
   o += ",\"oledPct\":";      o += OLED_BRIGHT_PCT;
   o += ",\"oledSec\":";      o += OLED_SECONDS ? "true" : "false";
-  o += ",\"oledNight\":";    o += NIGHT_MODE ? "true" : "false";
-  o += ",\"nightFrom\":";    jsonHm(o, NIGHT_FROM_MIN);
-  o += ",\"nightTo\":";      jsonHm(o, NIGHT_TO_MIN);
-  o += ",\"nightPct\":";     o += NIGHT_BRIGHT_PCT;
+  o += ",\"host\":";         jsonStr(o, WIFI_HOSTNAME);
   o += ",\"oledShift\":";    o += OLED_SHIFT_EVERY_S > 0 ? "true" : "false";
   o += ",\"oledFlip\":";     o += OLED_FLIP ? "true" : "false";
   o += ",\"h12\":";          o += CLOCK_12H ? "true" : "false";
@@ -1596,6 +1634,7 @@ static void handleSettingsGet() { sendSettings(true, ""); }
 // sofort angewendet und gespeichert.
 static void handleSettingsPost()
 {
+  if (!authOk()) return;
   Preferences p;
   if (!p.begin("scopeclock", false)) { sendSettings(false, tr("Flash-Speicher nicht verfügbar", "Flash storage not available")); return; }
   String err;
@@ -1657,32 +1696,30 @@ static void handleSettingsPost()
       logMsg(tr("[Web] Zeitserver: %s", "[Web] time server: %s"), s_ntpServer); }
     else bad(tr("Zeitserver: nur Buchstaben, Ziffern, Punkt und Bindestrich (max. 63 Zeichen)", "Time server: only letters, digits, dot and hyphen (max. 63 characters)"));
   }
-  // OLED: Helligkeit 0–100 % (0 = aus), Sekunden, Nachtmodus (wirkt beim nächsten Neuzeichnen)
+  // OLED: Helligkeit 0–100 % (0 = aus), Sekunden (wirkt beim nächsten Neuzeichnen)
   if (web.hasArg("oledPct")) {
     const int v = web.arg("oledPct").toInt();
     if (v >= 0 && v <= 100) { s_oledPct = v; p.putUChar("oledp", v); changed++; }
     else bad(tr("OLED-Helligkeit: 0 bis 100 %", "OLED brightness: 0 to 100 %"));
   }
+  // Gerätename: wirkt sofort für http://<name>.local, im Router nach dem nächsten Verbinden
+  if (web.hasArg("host")) {
+    String v = web.arg("host"); v.toLowerCase();
+    if (hostValid(v)) {
+      strlcpy(s_host, v.c_str(), sizeof(s_host)); p.putString("host", s_host); changed++;
+      WiFi.setHostname(s_host);
+      if (WiFi.status() == WL_CONNECTED) { MDNS.end(); if (MDNS.begin(s_host)) MDNS.addService("http", "tcp", 80); }
+      logMsg(tr("[Web] Geraetename: %s (http://%s.local)", "[Web] device name: %s (http://%s.local)"), s_host, s_host);
+    } else bad(tr("Gerätename: 1–32 Zeichen, nur a–z, 0–9 und Bindestrich", "Device name: 1–32 characters, only a–z, 0–9 and hyphen"));
+  }
+  // Testbild: nur bis zum Ausschalten oder Neustart (wird nicht gespeichert)
+  if (web.hasArg("test")) {
+    g_testPattern = web.arg("test") == "1" || web.arg("test") == "true"; changed++;
+    logMsg(tr("[Web] Testbild: %s", "[Web] test pattern: %s"), g_testPattern ? tr("an", "on") : tr("aus", "off"));
+  }
   if (web.hasArg("oledSec")) {
     s_oledSec = web.arg("oledSec") == "1" || web.arg("oledSec") == "true";
     p.putUChar("osec", s_oledSec); changed++;
-  }
-  if (web.hasArg("oledNight")) {
-    s_nightOn = web.arg("oledNight") == "1" || web.arg("oledNight") == "true";
-    p.putUChar("night", s_nightOn); changed++;
-    logMsg(tr("[Web] OLED-Nachtmodus: %s", "[Web] OLED night mode: %s"), s_nightOn ? tr("an", "on") : tr("aus", "off"));
-  }
-  for (const char *k : { "nightFrom", "nightTo" }) {
-    if (!web.hasArg(k)) continue;
-    const int v = parseHm(web.arg(k));
-    if (v < 0) { bad(tr("Nachtmodus: Uhrzeit als HH:MM", "Night mode: time as HH:MM")); continue; }
-    if (k[5] == 'F') { s_nightFrom = v; p.putUShort("nfrom", v); } else { s_nightTo = v; p.putUShort("nto", v); }
-    changed++;
-  }
-  if (web.hasArg("nightPct")) {
-    const int v = web.arg("nightPct").toInt();
-    if (v >= 0 && v <= 100) { s_nightPct = v; p.putUChar("npct", v); changed++; }
-    else bad(tr("Helligkeit nachts: 0 bis 100 %", "Night brightness: 0 to 100 %"));
   }
   // Zeitformat für OLED und Webinterface: 12 Stunden (AM/PM) oder 24 Stunden
   if (web.hasArg("h12")) {
@@ -1723,6 +1760,7 @@ static void handleSettingsPost()
 //   ohne group     alles (auch die Sprache); gespeicherte WLANs bleiben immer erhalten
 static void handleSettingsReset()
 {
+  if (!authOk()) return;
   const String g = web.arg("group");
   const bool all = g.length() == 0;
   const bool scope = all || g == "scope", tim = all || g == "time", disp = all || g == "display";
@@ -1748,7 +1786,6 @@ static void handleSettingsReset()
   }
   if (disp) {
     s_oledPct = OLED_BRIGHT_PCT;     s_oledSec = OLED_SECONDS;
-    s_nightOn = NIGHT_MODE;          s_nightFrom = NIGHT_FROM_MIN;  s_nightTo = NIGHT_TO_MIN;  s_nightPct = NIGHT_BRIGHT_PCT;
     s_oledShift = OLED_SHIFT_EVERY_S > 0;
     s_oledFlip  = OLED_FLIP;  oledSetFlip(s_oledFlip);
   }
@@ -1763,6 +1800,7 @@ static void handleSettingsReset()
 // dem stärksten bekannten Netz (z.B. nach dem Eintragen eines neuen Netzes)
 static void handleReconnect()
 {
+  if (!authOk()) return;
   if (!wifiConfigured()) { sendJsonResult(false, tr("Noch kein WLAN eingetragen", "No network configured yet")); return; }
   logMsg(tr("[Web] Neu verbinden angefordert", "[Web] reconnect requested"));
   sendJsonResult(true, tr("Verbinde neu … die Seite ist kurz nicht erreichbar.", "Reconnecting … the page is briefly unavailable."));
@@ -1823,7 +1861,10 @@ static void webStart()
   web.on("/api/settings",       HTTP_GET,  handleSettingsGet);
   web.on("/api/settings",       HTTP_POST, handleSettingsPost);
   web.on("/api/settings/reset", HTTP_POST, handleSettingsReset);
+  web.on("/api/password",       HTTP_POST, handlePassword);
   web.onNotFound(handleNotFound);
+  static const char *hdrs[] = { "X-Pass" };                  // Passwort-Header auswerten können
+  web.collectHeaders(hdrs, 1);
   web.begin();
   logMsg(tr("[Web] Webserver gestartet (Port 80)", "[Web] web server started (port 80)"));
 }
@@ -1872,24 +1913,15 @@ static void webLoop()
 static U8G2_SSD1309_128X64_NONAME0_F_4W_HW_SPI u8g2(U8G2_R0, OLED_CS_PIN, OLED_DC_PIN, OLED_RST_PIN);
 
 // ---- OLED-Helligkeit -----------------------------------------------------------
-// Wirksame Helligkeit in Prozent: tagsüber s_oledPct, im Nachtmodus-Zeitfenster
-// s_nightPct; während der BOOT-Taster gehalten wird mindestens 50 %, damit der
-// Countdown auch bei ausgeschaltetem Display zu sehen ist.
+// Wirksame Helligkeit in Prozent (s_oledPct); während der BOOT-Taster gehalten wird
+// mindestens 50 %, damit der Countdown auch bei ausgeschaltetem Display zu sehen ist.
 // 0 % schaltet das Panel ab (Power-Save), sonst Kontrast 1…255.
-static bool nightActive()
-{
-  if (!s_nightOn || !timeValid()) return false;
-  struct tm t; currentTime(t);
-  const int now = t.tm_hour * 60 + t.tm_min;
-  return s_nightFrom <= s_nightTo ? (now >= s_nightFrom && now < s_nightTo)    // z.B. 01:00–06:00
-                                  : (now >= s_nightFrom || now < s_nightTo);   // über Mitternacht
-}
 
 // Helligkeit anwenden – nur bei Änderung (wird bei jedem Neuzeichnen aufgerufen)
 static void oledApplyBrightness(bool overlay)
 {
   static int last = -1;
-  int pct = nightActive() ? s_nightPct : s_oledPct;
+  int pct = s_oledPct;
   if (overlay && pct < 50) pct = 50;
   if (pct == last) return;
   last = pct;
@@ -2151,7 +2183,7 @@ static void oledUpdate()
   const bool overlay = s_btnDownSince && !s_btnHandled && millis() - s_btnDownSince >= 300;
   oledApplyBrightness(overlay);
   if (oledProfileOverlay()) return;
-  if ((nightActive() ? s_nightPct : s_oledPct) == 0) return;   // Display aus: nichts zeichnen
+  if (s_oledPct == 0) return;   // Display aus: nichts zeichnen
 
   const size_t LINE_CHARS = 25;     // 5x8-Font: 125 px Breite + 3 px Shift-Reserve
   struct tm t;
