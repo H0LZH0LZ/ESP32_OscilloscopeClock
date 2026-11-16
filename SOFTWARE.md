@@ -85,7 +85,10 @@ Datum) ist zentriert. Die Abschnittsüberschriften bleiben beim Scrollen oben ne
 stehen (`position: sticky`). Jede ist nur innerhalb ihres Abschnitts (`.grp`) angeheftet, so
 schiebt die nächste die vorige hinaus. Tippen auf einen Eintrag springt weich dorthin und
 schließt das Menü wieder, ebenso Tippen daneben oder Esc. Ganz oben steht eine **Live-Vorschau des Oszilloskop-Bildes**
-(Canvas im Look eines grünen Leuchtschirms mit 8×8-Raster). Die Seite lädt dafür einmal die
+(Canvas im Look eines grünen Leuchtschirms mit 8×8-Raster). Der Schirm ist im hellen und im dunklen
+Design immer dunkel (eigene Farb-Variablen `--scope-*`, die kein Farbschema umstellt). Er wird sofort
+beim Laden gezeichnet und bleibt auch bei Farbumkehr (`inverted-colors`) und erzwungenen Farben
+(`forced-color-adjust: none`) dunkel. Die Seite lädt dafür einmal die
 Vektordaten von `/api/vectors`, also dieselben Tabellen, die der `scopeTask` zeichnet, und stellt
 die Zeiger selbst nach der Uhrzeit (Stunde = `(h%12)*5 + m/12`, wie in der Firmware). Zwischen den
 Statusabfragen läuft die Zeit im Browser sekundengenau weiter.
