@@ -10,7 +10,9 @@
   Die Reihenfolge der Einträge spielt keine Rolle.
 
   Solange secrets.h fehlt (oder alle SSIDs leer sind), wird diese Vorlage
-  verwendet: die Uhr läuft dann ohne WLAN ab der Startzeit aus config.h.
+  verwendet. Die Uhr öffnet dann das Setup-WLAN "ScopeClock-Setup": Damit
+  verbinden und unter http://192.168.4.1 das WLAN im Webinterface eintragen.
+  secrets.h ist also optional – beide Wege lassen sich auch kombinieren.
 ******************************************************************************/
 #pragma once
 #define WIFI_NETWORKS_DEFINED

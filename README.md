@@ -18,6 +18,10 @@ Hardware angepasst: **ESP32-WROOM-32U DevKitC V4**, **Waveshare 2.42" OLED (I2C)
 - Jede NTP-Synchronisierung wird mit Datum und Uhrzeit auf der seriellen Konsole (115200 Baud) gemeldet, ebenso eine Warnung, falls sie ausbleibt.
 - Ohne WLAN-Zugangsdaten läuft die Uhr offline ab einer festen Startzeit, wie im Original.
 - Mehrere WLANs: Die Uhr verbindet sich automatisch mit dem stärksten bekannten Netz.
+- **Webinterface** unter `http://scope-clock.local`, für Handys optimiert und ohne Passwort.
+  Es zeigt den Status (NTP, WLAN, Signal, Profil, Bildrate, Laufzeit, Speicher) und das Log und
+  dient zum Eintragen von WLANs. Ohne bekanntes WLAN öffnet die Uhr das Setup-WLAN
+  **„ScopeClock-Setup“**, das Handy zeigt dann automatisch die Einrichtungsseite.
 - Eine Firmware für alle Oszilloskope: Das Profil DIGITAL (ab Werk) bzw. ANALOG wird im Betrieb
   per BOOT-Taster umgeschaltet und bleibt gespeichert. Getestet werden soll an Tektronix TDS3012,
   HP 54200A und Digilent Analog Discovery 2.
@@ -25,10 +29,14 @@ Hardware angepasst: **ESP32-WROOM-32U DevKitC V4**, **Waveshare 2.42" OLED (I2C)
 ### Schnellstart (Arduino IDE 2.x)
 1. Boardverwalter: **esp32 by Espressif** (2.0.x oder 3.x) installieren, Board **ESP32 Dev Module**.
 2. Bibliotheksverwalter: **U8g2** (by oliver) installieren.
-3. Im Ordner `ESP32_OscilloscopeClock_v2.0/` die Datei `secrets_example.h` nach `secrets.h`
-   kopieren und ein oder mehrere WLANs eintragen (eine Zeile `{ "SSID", "Passwort" },` pro Netz).
+3. WLAN eintragen, auf einem von zwei Wegen:
+   - **im Webinterface:** Hochladen, dann mit dem Handy das WLAN **„ScopeClock-Setup“** wählen.
+     Die Einrichtungsseite öffnet sich automatisch, sonst `http://192.168.4.1` aufrufen. Dort das
+     Netz eintragen.
+   - **oder in `secrets.h`:** `secrets_example.h` nach `secrets.h` kopieren und eine Zeile
+     `{ "SSID", "Passwort" },` pro Netz eintragen. `secrets.h` wird nicht eingecheckt.
+
    Die Uhr verbindet sich automatisch mit dem stärksten bekannten Netz in Reichweite.
-   `secrets.h` wird nicht eingecheckt.
 4. `ESP32_OscilloscopeClock_v2.0.ino` öffnen und hochladen. Seriellen Monitor auf 115200 Baud stellen.
 5. Oszilloskop in den X/Y-Modus schalten, 0,5 V/Div, DC-Kopplung. Bei digitalen Oszilloskopen die Zeitbasis
    auf ca. 1 ms/Div und den Trigger auf Auto stellen (Details in HARDWARE.md).
@@ -47,17 +55,19 @@ Einstellungen (Zeitzone, Pins, Zifferblatt, Strahlgeschwindigkeit, Oszilloskop-P
 **Echter Build** mit Arduino-CLI 1.6.0, Board „ESP32 Dev Module“, Standard-Partitionsschema
 (1,25 MB Programm), alle Warnungen eingeschaltet. Er läuft ohne Fehler und ohne Warnungen durch:
 
-| Board-Paket | Programmspeicher | Globale Variablen (RAM) | IRAM (Code) |
-|---|---|---|---|
-| esp32 3.3.12 | 1.050.910 Byte (80 %) | 53.716 Byte (16 %) | 90.499 von 131.072 Byte |
-| esp32 2.0.17 | 778.265 Byte (59 %) | 49.552 Byte (15 %) | – |
+| Board-Paket | Programmspeicher | Globale Variablen (RAM) |
+|---|---|---|
+| esp32 3.3.12 | 1.150.354 Byte (87 %) | 65.060 Byte (19 %) |
+| esp32 2.0.17 | 862.713 Byte (65 %) | 61.048 Byte (18 %) |
 
-Alle Konfigurationsvarianten (Profil ANALOG/DIGITAL, Z-Dunkeltastung, Zifferblatt 0/1/2,
-`USE_FAST_DAC 0`, EXCEL-Modus) kompilieren ebenfalls ohne Warnungen und liegen bei 80 %.
+Die Konfigurationsvarianten (Profil ANALOG/DIGITAL, Z-Dunkeltastung, Zifferblatt 0/1/2,
+`USE_FAST_DAC 0`, EXCEL-Modus) wurden vor dem Webinterface ebenfalls ohne Warnungen gebaut.
 Wird der Programmspeicher einmal knapp: Werkzeuge → Partition Scheme → „Huge APP (3MB No OTA)“.
 
 Zusätzlich auf dem PC simuliert: Strahlverlauf (Helligkeit, Rücklaufspuren, Bildrate),
-OLED-Inhalt, BOOT-Taster, Kalenderwoche, Speicherzugriffe (AddressSanitizer).
+OLED-Inhalt, BOOT-Taster, Kalenderwoche, Speicherzugriffe (AddressSanitizer). Die Webseite
+wurde in Chromium mit iPhone-Bildschirmgröße gegen nachgebildete Schnittstellen der Uhr
+getestet: ohne JavaScript-Fehler, ohne seitliches Scrollen, im hellen und im dunklen Design.
 **Noch nicht auf echter Hardware getestet.** Typische Stellschrauben für den ersten Test stehen in
 [HARDWARE.md](HARDWARE.md) und [SOFTWARE.md](SOFTWARE.md).
 

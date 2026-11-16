@@ -33,6 +33,7 @@
     Core 0 │ uiTask     │ Uhrzeit berechnen + an Core 1 übergeben (alle 10 ms),
            │            │ BOOT-Taster abfragen (10 ms), OLED (200 ms),
            │            │ Konsolen-Log (1 s)
+           │            │ Webinterface + Setup-WLAN (handleClient alle 10 ms)
            │ wifiTask   │ WLAN-Verbindung aufbauen/halten (WiFiMulti)
            │ (System)   │ WLAN-Stack, SNTP (NTP-Client des ESP-IDF)
 
@@ -48,6 +49,11 @@
   "DIGITAL > ANALOG" und einen Countdown 3, 2, 1; das Profil wird im Flash
   gespeichert. Nicht beim Einschalten drücken (Download-Modus).
 
+  Webinterface: http://scope-clock.local (oder IP-Adresse der Uhr) – Status,
+  Log, WLAN-Einrichtung; für Handys optimiert, ohne Passwort. Ohne bekanntes
+  WLAN öffnet die Uhr das offene Setup-WLAN "ScopeClock-Setup"
+  (Einrichtung unter http://192.168.4.1).
+
   ---------------------------------------------------------------------------
   Dateien
   ---------------------------------------------------------------------------
@@ -57,6 +63,7 @@
     secrets.h                         WLAN-Liste (lokal, nicht im Git)
     secrets_example.h                 Vorlage für secrets.h
     DataTable.h                       Vektordaten: Zifferblatt, Ziffern, Zeiger
+    webpage.h                         Webinterface (HTML/CSS/JS, eine Seite)
     ../HARDWARE.md                    Verdrahtung, Gehäuse, Oszilloskop-Einstellungen
     ../SOFTWARE.md                    Aufbau der Software, Tabellenformat, Tuning
 
@@ -75,7 +82,11 @@
 #include <soc/rtc_io_reg.h>   // Registeradressen der DAC-Pads
 #include <soc/gpio_reg.h>     // GPIO-Setzen/Löschen für die optionale Dunkeltastung
 #include <U8g2lib.h>          // OLED-Treiber
-#include <Preferences.h>      // dauerhafte Einstellungen im Flash (NVS): Oszilloskop-Profil
+#include <Preferences.h>      // dauerhafte Einstellungen im Flash (NVS): Profil, WLANs
+#include <WebServer.h>        // Webinterface (HTTP, Port 80)
+#include <DNSServer.h>        // Setup-WLAN: alle Namen auf die Uhr umleiten (Captive Portal)
+#include <ESPmDNS.h>          // Erreichbar als http://<WIFI_HOSTNAME>.local
+#include <stdarg.h>
 
 #include "config.h"
 
@@ -93,6 +104,12 @@
 struct Stroke {
   const uint8_t *t;
   int16_t a, b;
+};
+
+// Ein im Webinterface eingetragenes WLAN (gespeichert im Flash/NVS).
+struct StoredNet {
+  char ssid[33];       // max. 32 Zeichen + Nullbyte
+  char pw[65];         // max. 64 Zeichen + Nullbyte (leer = offenes Netz)
 };
 
 //*****************************************************************************
@@ -122,6 +139,7 @@ static const WifiCredential WIFI_NETWORKS[] = { { WIFI_SSID, WIFI_PASSWORD } };
 static const size_t WIFI_NETWORK_COUNT = sizeof(WIFI_NETWORKS) / sizeof(WIFI_NETWORKS[0]);
 
 #include "DataTable.h"
+#include "webpage.h"          // HTML/CSS/JS des Webinterfaces (PROGMEM)
 
 // Nur der klassische ESP32 hat DACs an GPIO25/26 (S2 hat andere Pins und nur
 // einen Kern; S3/C3/C6 haben gar keine DACs).
@@ -164,6 +182,77 @@ static time_t lastSyncEpoch()
   const time_t e = g_lastSyncEpoch;
   portEXIT_CRITICAL(&g_syncMux);
   return e;
+}
+
+// Bildzähler: scopeTask erhöht ihn pro Bild (32 Bit, atomar), der uiTask
+// berechnet daraus die Bildrate für das Webinterface.
+static volatile uint32_t g_frameCount = 0;
+
+//*****************************************************************************
+// Log: serielle Konsole + Ringpuffer für das Webinterface
+//*****************************************************************************
+// logMsg() schreibt eine Zeile mit Zeitstempel auf die Konsole und in einen
+// Ringpuffer (LOG_BUFFER_SIZE Byte, die ältesten Zeilen werden überschrieben).
+// Das Webinterface zeigt den Puffer unter /api/log an.
+// Zeitstempel: hh:mm:ss nach dem ersten NTP-Sync, davor "+<Sekunden seit Start>s".
+// Aufrufbar von beiden Kernen; der Spinlock schützt nur das kurze Kopieren.
+static char         s_logBuf[LOG_BUFFER_SIZE];
+static size_t       s_logHead    = 0;       // nächste Schreibposition
+static bool         s_logWrapped = false;   // Puffer schon einmal voll gelaufen
+static portMUX_TYPE s_logMux     = portMUX_INITIALIZER_UNLOCKED;
+
+static void logMsg(const char *fmt, ...) __attribute__((format(printf, 1, 2)));
+static void logMsg(const char *fmt, ...)
+{
+  char line[192];
+  int n;
+  if (g_ntpSynced) {
+    const time_t now = time(nullptr);
+    struct tm t;
+    localtime_r(&now, &t);
+    n = snprintf(line, sizeof(line), "%02d:%02d:%02d ", t.tm_hour, t.tm_min, t.tm_sec);
+  } else {
+    n = snprintf(line, sizeof(line), "+%lus ", (unsigned long)(millis() / 1000UL));
+  }
+  va_list ap;
+  va_start(ap, fmt);
+  vsnprintf(line + n, sizeof(line) - n, fmt, ap);
+  va_end(ap);
+  size_t len = strlen(line);
+  if (len == 0 || line[len - 1] != '\n') {             // jede Meldung endet mit Zeilenumbruch
+    if (len < sizeof(line) - 1) { line[len++] = '\n'; line[len] = 0; }
+    else line[len - 1] = '\n';
+  }
+  Serial.print(line);
+
+  portENTER_CRITICAL(&s_logMux);
+  for (size_t i = 0; i < len; i++) {
+    s_logBuf[s_logHead] = line[i];
+    if (++s_logHead >= sizeof(s_logBuf)) { s_logHead = 0; s_logWrapped = true; }
+  }
+  portEXIT_CRITICAL(&s_logMux);
+}
+
+// Liefert den Log-Inhalt in zeitlicher Reihenfolge (älteste Zeile zuerst).
+// Nach einem Überlauf wird die angeschnittene erste Zeile weggelassen.
+static String logRead()
+{
+  static char copy[LOG_BUFFER_SIZE];
+  size_t head; bool wrapped;
+  portENTER_CRITICAL(&s_logMux);
+  memcpy(copy, s_logBuf, sizeof(copy));
+  head = s_logHead; wrapped = s_logWrapped;
+  portEXIT_CRITICAL(&s_logMux);
+
+  String out;
+  out.reserve(sizeof(copy) + 1);
+  if (wrapped) {
+    size_t start = head;
+    while (start < sizeof(copy) && copy[start] != '\n') start++;   // angeschnittene Zeile überspringen
+    for (size_t i = start + 1; i < sizeof(copy); i++) out += copy[i];
+  }
+  for (size_t i = 0; i < head; i++) out += copy[i];
+  return out;
 }
 
 static TaskHandle_t scopeTaskHandle = nullptr;
@@ -546,7 +635,7 @@ static void buildTour(const byte *digits, int digitsSize)
 
   float total = 0;
   for (int k = 0; k < n; k++) total += tourGap(s_tour[k], s_tour[(k + 1) % n]);
-  Serial.printf("[Scope] Rundtour: %d Linienzuege, Spruenge gesamt %.0f DAC-Einheiten\n", n, total);
+  logMsg("[Scope] Rundtour: %d Linienzuege, Spruenge gesamt %.0f DAC-Einheiten", n, total);
 }
 
 //*****************************************************************************
@@ -573,7 +662,7 @@ static void IRAM_ATTR scopeTask(void *)
   // Core-Version aktiv ist, würde er auslösen. Deshalb hier abschalten.
   disableCore1WDT();
   dacInit();
-  Serial.printf("[Scope] laeuft auf Core %d\n", xPortGetCoreID());
+  logMsg("[Scope] laeuft auf Core %d", xPortGetCoreID());
 
 #if DIAL_STYLE == 1
   buildTour(DialDigits24, sizeof(DialDigits24));          // Ziffern 13-24
@@ -617,6 +706,7 @@ static void IRAM_ATTR scopeTask(void *)
 
     // 4. Sekundenzeiger zurück zur Mitte (statt eines langen Rücksprungs)
     drawStroke(secBack, secCycles);
+    g_frameCount = g_frameCount + 1;                     // für die Bildrate im Webinterface
 
 #if defined EXCEL
     // Diagnosemodus: nach einem Bild anhalten (alle Punkte wurden ausgegeben)
@@ -678,49 +768,93 @@ static void publishTime()
 // WLAN (Core 0)
 //*****************************************************************************
 
-// true, sobald in secrets.h mindestens ein Netz mit nicht-leerer SSID steht.
-static bool wifiConfigured()
+// ---- Im Webinterface gespeicherte WLANs ---------------------------------------
+// Zusätzlich zu secrets.h können im Webinterface bis zu WEB_MAX_NETWORKS Netze
+// eingetragen werden. Sie liegen im Flash (NVS, Namensraum "scopeclock",
+// Schlüssel netn, net_s0…, net_p0…) und bleiben auch nach einem Update erhalten.
+static StoredNet s_webNets[WEB_MAX_NETWORKS];
+static int       s_webNetCount = 0;
+
+static void webNetsLoad()
+{
+  Preferences p;
+  s_webNetCount = 0;
+  if (!p.begin("scopeclock", true)) return;
+  const int n = p.getUChar("netn", 0);
+  for (int i = 0; i < n && i < WEB_MAX_NETWORKS; i++) {
+    char k[12];
+    snprintf(k, sizeof(k), "net_s%d", i); p.getString(k, s_webNets[s_webNetCount].ssid, sizeof(s_webNets[0].ssid));
+    snprintf(k, sizeof(k), "net_p%d", i); p.getString(k, s_webNets[s_webNetCount].pw,   sizeof(s_webNets[0].pw));
+    if (s_webNets[s_webNetCount].ssid[0]) s_webNetCount++;
+  }
+  p.end();
+}
+
+static void webNetsSave()
+{
+  Preferences p;
+  if (!p.begin("scopeclock", false)) return;
+  for (int i = 0; i < WEB_MAX_NETWORKS; i++) {
+    char k[12];
+    snprintf(k, sizeof(k), "net_s%d", i);
+    if (i < s_webNetCount) p.putString(k, s_webNets[i].ssid); else p.remove(k);
+    snprintf(k, sizeof(k), "net_p%d", i);
+    if (i < s_webNetCount) p.putString(k, s_webNets[i].pw);   else p.remove(k);
+  }
+  p.putUChar("netn", (uint8_t)s_webNetCount);
+  p.end();
+}
+
+static bool secretsNetConfigured()
 {
   for (size_t i = 0; i < WIFI_NETWORK_COUNT; i++)
     if (WIFI_NETWORKS[i].ssid && WIFI_NETWORKS[i].ssid[0]) return true;
   return false;
 }
 
+// true, sobald mindestens ein WLAN bekannt ist (secrets.h oder Webinterface).
+static bool wifiConfigured() { return secretsNetConfigured() || s_webNetCount > 0; }
+
 // Hält die WLAN-Verbindung. Läuft als eigener Task, weil WiFiMulti::run()
 // zuerst einen Scan macht und dabei mehrere Sekunden blockiert – im uiTask
 // würde das OLED so lange stehen bleiben.
 // Ablauf: nicht verbunden → alle Netze scannen → mit dem stärksten bekannten
-// verbinden (max. 10 s) → alle 2 s Verbindung prüfen.
+// verbinden (max. 10 s) → alle 2 s Verbindung prüfen. Ohne bekanntes Netz
+// wartet der Task, bis im Webinterface eins eingetragen wird.
 static void wifiTask(void *)
 {
   for (;;) {
-    if (WiFi.status() != WL_CONNECTED) {
+    if (wifiConfigured() && WiFi.status() != WL_CONNECTED) {
       wifiMulti.run(10000);
     }
     vTaskDelay(pdMS_TO_TICKS(2000));
   }
 }
 
-// Initialisiert WLAN und NTP. Muss vom uiTask (Core 0) aus aufgerufen werden:
-// Der WLAN-Treiber legt seine Interrupts auf dem aufrufenden Kern an, und sie
-// sollen den Zeichenpfad auf Core 1 nicht unterbrechen.
+static void webStart();   // siehe Abschnitt "Webinterface"
+
+// Initialisiert WLAN, NTP und das Webinterface. Muss vom uiTask (Core 0) aus
+// aufgerufen werden: Der WLAN-Treiber legt seine Interrupts auf dem
+// aufrufenden Kern an, und sie sollen den Zeichenpfad auf Core 1 nicht stören.
 static void wifiStart()
 {
-  if (!wifiConfigured()) {
-    Serial.println("[WiFi] keine Zugangsdaten (secrets.h) – Offline-Betrieb");
-    WiFi.mode(WIFI_OFF);
-    return;
-  }
-  WiFi.mode(WIFI_STA);                 // nur Client, kein eigener Access Point
+  WiFi.mode(WIFI_STA);                 // Client; das Setup-WLAN kommt bei Bedarf dazu
   WiFi.setHostname(WIFI_HOSTNAME);     // Name in der Geräteliste des Routers
 
-  // Alle eingetragenen Netze bei WiFiMulti anmelden (leere Einträge ignorieren)
+  // Alle bekannten Netze bei WiFiMulti anmelden (leere Einträge ignorieren)
   for (size_t i = 0; i < WIFI_NETWORK_COUNT; i++) {
     const WifiCredential &n = WIFI_NETWORKS[i];
     if (!n.ssid || !n.ssid[0]) continue;
     wifiMulti.addAP(n.ssid, n.password);
-    Serial.printf("[WiFi] bekanntes Netz: \"%s\"\n", n.ssid);   // Passwort wird nie ausgegeben
+    logMsg("[WiFi] bekanntes Netz (secrets.h): \"%s\"", n.ssid);   // Passwort wird nie ausgegeben
   }
+  webNetsLoad();
+  for (int i = 0; i < s_webNetCount; i++) {
+    wifiMulti.addAP(s_webNets[i].ssid, s_webNets[i].pw);
+    logMsg("[WiFi] bekanntes Netz (Webinterface): \"%s\"", s_webNets[i].ssid);
+  }
+  if (!wifiConfigured())
+    logMsg("[WiFi] noch kein WLAN eingetragen – Einrichtung ueber das Setup-WLAN \"%s\"", WEB_SETUP_AP_SSID);
 
   // NTP: configTzTime() setzt die Zeitzone (inkl. Sommerzeitregel) und startet
   // den SNTP-Client im Hintergrund. Er wartet selbstständig, bis das WLAN steht,
@@ -730,25 +864,40 @@ static void wifiStart()
   configTzTime(TZ_INFO, NTP_SERVER_1, NTP_SERVER_2, NTP_SERVER_3);
 
   xTaskCreatePinnedToCore(wifiTask, "wifi", 4096, nullptr, 1, &wifiTaskHandle, UI_CORE);
+  webStart();
 }
 
-// Schreibt Statusänderungen auf die serielle Konsole (aufgerufen 1× pro Sekunde):
+// Schreibt Statusänderungen ins Log (aufgerufen 1× pro Sekunde):
 //  - WLAN verbunden (mit SSID, IP, Signal) / Verbindung verloren
+//  - beim ersten Verbinden: mDNS starten (http://<WIFI_HOSTNAME>.local)
 //  - jede NTP-Synchronisierung mit Datum und Uhrzeit
 //  - einmalige Warnung, wenn der letzte Sync länger als 2 Intervalle her ist
+static bool ntpOverdue()
+{
+  return g_ntpSynced && time(nullptr) - lastSyncEpoch() > (time_t)(2 * NTP_SYNC_INTERVAL_MS / 1000UL);
+}
+
 static void wifiLogChanges()
 {
   static wl_status_t last = WL_IDLE_STATUS;
   static time_t lastLoggedSync = 0;
   static bool   overdueLogged  = false;
+  static bool   mdnsStarted    = false;
 
   wl_status_t st = WiFi.status();
   if (st != last) {
-    if (st == WL_CONNECTED)
-      Serial.printf("[WiFi] verbunden mit \"%s\", IP %s, RSSI %d dBm\n",
-                    WiFi.SSID().c_str(), WiFi.localIP().toString().c_str(), WiFi.RSSI());
-    else if (last == WL_CONNECTED)
-      Serial.println("[WiFi] Verbindung verloren – versuche erneut");
+    if (st == WL_CONNECTED) {
+      logMsg("[WiFi] verbunden mit \"%s\", IP %s, RSSI %d dBm",
+             WiFi.SSID().c_str(), WiFi.localIP().toString().c_str(), WiFi.RSSI());
+      if (!mdnsStarted && MDNS.begin(WIFI_HOSTNAME)) {
+        MDNS.addService("http", "tcp", 80);
+        mdnsStarted = true;
+        logMsg("[Web] erreichbar unter http://%s.local und http://%s",
+               WIFI_HOSTNAME, WiFi.localIP().toString().c_str());
+      }
+    } else if (last == WL_CONNECTED) {
+      logMsg("[WiFi] Verbindung verloren – versuche erneut");
+    }
     last = st;
   }
 
@@ -757,19 +906,274 @@ static void wifiLogChanges()
   if (g_ntpSynced && syncEpoch != lastLoggedSync) {
     struct tm st;
     localtime_r(&syncEpoch, &st);
-    Serial.printf("[NTP] Sync %02d.%02d.%04d %02d:%02d:%02d, naechster in ca. %lu min\n",
-                  st.tm_mday, st.tm_mon + 1, st.tm_year + 1900, st.tm_hour, st.tm_min, st.tm_sec,
-                  (unsigned long)(NTP_SYNC_INTERVAL_MS / 60000UL));
+    logMsg("[NTP] Sync %02d.%02d.%04d %02d:%02d:%02d, naechster in ca. %lu min",
+           st.tm_mday, st.tm_mon + 1, st.tm_year + 1900, st.tm_hour, st.tm_min, st.tm_sec,
+           (unsigned long)(NTP_SYNC_INTERVAL_MS / 60000UL));
     lastLoggedSync = syncEpoch;
     overdueLogged  = false;
   }
 
   // Überfällig? (z.B. WLAN dauerhaft weg oder NTP-Server nicht erreichbar)
-  if (g_ntpSynced && !overdueLogged &&
-      time(nullptr) - syncEpoch > (time_t)(2 * NTP_SYNC_INTERVAL_MS / 1000UL)) {
-    Serial.println("[NTP] Warnung: letzter Sync liegt mehr als 2 Intervalle zurueck");
+  if (!overdueLogged && ntpOverdue()) {
+    logMsg("[NTP] Warnung: letzter Sync liegt mehr als 2 Intervalle zurueck");
     overdueLogged = true;
   }
+}
+
+//*****************************************************************************
+// Webinterface (Core 0)
+//*****************************************************************************
+// Eine einzige Seite (webpage.h) plus kleine JSON-Schnittstellen. Der Server
+// läuft im uiTask auf Core 0 (handleClient alle 10 ms) und beeinflusst die
+// Strahlausgabe auf Core 1 nicht. Kein Passwort: Jeder im selben Netz kann
+// die Seite öffnen und WLANs eintragen; gespeicherte Passwörter werden aber
+// nie ausgegeben.
+//
+// Setup-WLAN (Captive Portal): Ist kein WLAN eingetragen oder seit
+// WEB_SETUP_AP_AFTER_S Sekunden keine Verbindung möglich, öffnet die Uhr das
+// offene WLAN WEB_SETUP_AP_SSID. Handy/Laptop zeigen dann automatisch die
+// Einrichtungsseite (alle DNS-Anfragen zeigen auf die Uhr, 192.168.4.1).
+// Steht die Verbindung zu einem bekannten WLAN 30 s lang, schließt das
+// Setup-WLAN wieder.
+static WebServer web(80);
+static DNSServer dns;
+static bool      s_apActive     = false;
+static uint32_t  s_lastConnMs   = 0;    // zuletzt mit WLAN verbunden (0 = noch nie)
+static uint32_t  s_connSinceMs  = 0;    // verbunden seit (0 = nicht verbunden)
+static uint32_t  s_restartAtMs  = 0;    // geplanter Neustart (0 = keiner)
+static uint32_t  s_fps          = 0;    // Bildrate des Oszilloskop-Bildes
+
+// Hängt s als JSON-String (mit Anführungszeichen, Sonderzeichen maskiert) an out an.
+static void jsonStr(String &out, const char *s)
+{
+  out += '"';
+  for (; *s; s++) {
+    const char c = *s;
+    if (c == '"' || c == '\\') { out += '\\'; out += c; }
+    else if ((uint8_t)c < 0x20) { char b[8]; snprintf(b, sizeof(b), "\\u%04x", c); out += b; }
+    else out += c;
+  }
+  out += '"';
+}
+
+static void sendJsonResult(bool ok, const char *msg)
+{
+  String o = "{\"ok\":";
+  o += ok ? "true" : "false";
+  o += ",\"msg\":";
+  jsonStr(o, msg);
+  o += '}';
+  web.send(200, "application/json", o);
+}
+
+// GET /api/status – alles, was die Statusanzeige der Seite braucht
+static void handleStatus()
+{
+  struct tm t;
+  const bool valid = currentTime(t);
+  char b[64];
+  String o;
+  o.reserve(700);
+  snprintf(b, sizeof(b), "{\"time\":\"%02d:%02d:%02d\",\"date\":", t.tm_hour, t.tm_min, t.tm_sec);
+  o += b;
+  if (valid) { snprintf(b, sizeof(b), "\"%02d.%02d.%04d\",\"kw\":%d", t.tm_mday, t.tm_mon + 1, t.tm_year + 1900, isoWeek(t)); o += b; }
+  else o += "null,\"kw\":null";
+
+  o += ",\"ntp\":{\"synced\":"; o += g_ntpSynced ? "true" : "false";
+  o += ",\"overdue\":";         o += ntpOverdue() ? "true" : "false";
+  o += ",\"last\":";
+  if (g_ntpSynced) {
+    const time_t e = lastSyncEpoch(); struct tm st; localtime_r(&e, &st);
+    snprintf(b, sizeof(b), "\"%02d.%02d. %02d:%02d:%02d\"", st.tm_mday, st.tm_mon + 1, st.tm_hour, st.tm_min, st.tm_sec);
+    o += b;
+  } else o += "null";
+  o += ",\"server\":"; jsonStr(o, NTP_SERVER_1); o += '}';
+
+  const bool conn = WiFi.status() == WL_CONNECTED;
+  o += ",\"wifi\":{\"configured\":"; o += wifiConfigured() ? "true" : "false";
+  o += ",\"connected\":";            o += conn ? "true" : "false";
+  o += ",\"ssid\":";                 jsonStr(o, conn ? WiFi.SSID().c_str() : "");
+  o += ",\"rssi\":";                 o += conn ? WiFi.RSSI() : 0;
+  o += ",\"ip\":";                   jsonStr(o, conn ? WiFi.localIP().toString().c_str() : "");
+  o += ",\"host\":";                 jsonStr(o, WIFI_HOSTNAME ".local");
+  o += "},\"ap\":{\"active\":";      o += s_apActive ? "true" : "false";
+  o += ",\"ssid\":";                 jsonStr(o, WEB_SETUP_AP_SSID);
+  o += ",\"ip\":";                   jsonStr(o, WiFi.softAPIP().toString().c_str());
+  o += "},\"profile\":";             jsonStr(o, profileName(g_scopeProfile));
+  o += ",\"fps\":";                  o += s_fps;
+  o += ",\"uptime\":";               o += (uint32_t)(millis() / 1000UL);
+  o += ",\"heap\":";                 o += (uint32_t)ESP.getFreeHeap();
+  o += ",\"fw\":";                   jsonStr(o, FW_VERSION);
+  o += '}';
+  web.send(200, "application/json", o);
+}
+
+// GET /api/networks – gespeicherte Netze (nur Namen, nie Passwörter)
+static void handleNetworks()
+{
+  String o = "[";
+  bool first = true;
+  for (size_t i = 0; i < WIFI_NETWORK_COUNT; i++) {
+    if (!WIFI_NETWORKS[i].ssid || !WIFI_NETWORKS[i].ssid[0]) continue;
+    if (!first) o += ',';
+    first = false;
+    o += "{\"ssid\":"; jsonStr(o, WIFI_NETWORKS[i].ssid); o += ",\"source\":\"secrets\"}";
+  }
+  for (int i = 0; i < s_webNetCount; i++) {
+    if (!first) o += ',';
+    first = false;
+    o += "{\"ssid\":"; jsonStr(o, s_webNets[i].ssid); o += ",\"source\":\"web\"}";
+  }
+  o += ']';
+  web.send(200, "application/json", o);
+}
+
+// GET /api/scan – startet beim ersten Aufruf eine Suche im Hintergrund
+// ({"running":true}); die Seite fragt dann nach, bis die Liste da ist.
+// Gleiche Namen werden zusammengefasst (stärkstes Signal), sortiert nach Signal.
+static void handleScan()
+{
+  const int n = WiFi.scanComplete();
+  if (n == WIFI_SCAN_RUNNING) { web.send(200, "application/json", "{\"running\":true}"); return; }
+  if (n < 0) { WiFi.scanNetworks(true); web.send(200, "application/json", "{\"running\":true}"); return; }
+
+  const int MAXN = 20;
+  int idx[MAXN]; int cnt = 0;
+  for (int i = 0; i < n; i++) {
+    if (WiFi.SSID(i).length() == 0) continue;               // versteckte Netze
+    int dup = -1;
+    for (int k = 0; k < cnt; k++) if (WiFi.SSID(idx[k]) == WiFi.SSID(i)) dup = k;
+    if (dup >= 0) { if (WiFi.RSSI(i) > WiFi.RSSI(idx[dup])) idx[dup] = i; continue; }
+    if (cnt < MAXN) idx[cnt++] = i;
+  }
+  for (int a = 1; a < cnt; a++)                              // nach Signal sortieren
+    for (int k = a; k > 0 && WiFi.RSSI(idx[k]) > WiFi.RSSI(idx[k - 1]); k--) { int t = idx[k]; idx[k] = idx[k - 1]; idx[k - 1] = t; }
+
+  String o = "{\"running\":false,\"networks\":[";
+  for (int k = 0; k < cnt; k++) {
+    if (k) o += ',';
+    o += "{\"ssid\":"; jsonStr(o, WiFi.SSID(idx[k]).c_str());
+    o += ",\"rssi\":"; o += WiFi.RSSI(idx[k]);
+    o += ",\"open\":"; o += WiFi.encryptionType(idx[k]) == WIFI_AUTH_OPEN ? "true" : "false";
+    o += '}';
+  }
+  o += "]}";
+  WiFi.scanDelete();
+  web.send(200, "application/json", o);
+}
+
+// POST /api/wifi (ssid, pw) – Netz speichern bzw. Passwort ändern
+static void handleWifiSave()
+{
+  const String ssid = web.arg("ssid");
+  const String pw   = web.arg("pw");
+  if (ssid.length() < 1 || ssid.length() > 32) { sendJsonResult(false, "Netzwerkname: 1 bis 32 Zeichen"); return; }
+  if (pw.length() > 0 && (pw.length() < 8 || pw.length() > 63)) { sendJsonResult(false, "Passwort: 8 bis 63 Zeichen (oder leer für offene Netze)"); return; }
+
+  int slot = -1;
+  for (int i = 0; i < s_webNetCount; i++) if (ssid == s_webNets[i].ssid) slot = i;   // vorhandenes ersetzen
+  const bool isNew = slot < 0;
+  if (isNew) {
+    if (s_webNetCount >= WEB_MAX_NETWORKS) { sendJsonResult(false, "Speicher voll – bitte zuerst ein Netz löschen"); return; }
+    slot = s_webNetCount++;
+  }
+  strlcpy(s_webNets[slot].ssid, ssid.c_str(), sizeof(s_webNets[slot].ssid));
+  strlcpy(s_webNets[slot].pw,   pw.c_str(),   sizeof(s_webNets[slot].pw));
+  webNetsSave();
+  wifiMulti.addAP(s_webNets[slot].ssid, s_webNets[slot].pw);   // ab sofort bekannt
+  logMsg("[Web] WLAN \"%s\" %s", s_webNets[slot].ssid, isNew ? "gespeichert" : "aktualisiert");
+
+  if (WiFi.status() == WL_CONNECTED)
+    sendJsonResult(true, "Gespeichert. Wird beim nächsten Verbindungsaufbau genutzt – oder „Neu verbinden“ antippen.");
+  else
+    sendJsonResult(true, "Gespeichert. Die Uhr verbindet sich jetzt …");
+}
+
+// POST /api/wifi/delete (ssid) – nur im Webinterface gespeicherte Netze.
+// WiFiMulti kann Netze nicht wieder vergessen, deshalb startet die Uhr neu.
+static void handleWifiDelete()
+{
+  const String ssid = web.arg("ssid");
+  int slot = -1;
+  for (int i = 0; i < s_webNetCount; i++) if (ssid == s_webNets[i].ssid) slot = i;
+  if (slot < 0) { sendJsonResult(false, "Dieses Netz ist nicht im Webinterface gespeichert"); return; }
+  for (int i = slot; i < s_webNetCount - 1; i++) s_webNets[i] = s_webNets[i + 1];
+  s_webNetCount--;
+  webNetsSave();
+  logMsg("[Web] WLAN \"%s\" geloescht – Neustart", ssid.c_str());
+  sendJsonResult(true, "Gelöscht. Die Uhr startet neu – Seite in ca. 10 s neu laden.");
+  s_restartAtMs = millis() + 1500;
+}
+
+// POST /api/reconnect – Verbindung trennen; wifiTask verbindet sich dann mit
+// dem stärksten bekannten Netz (z.B. nach dem Eintragen eines neuen Netzes)
+static void handleReconnect()
+{
+  if (!wifiConfigured()) { sendJsonResult(false, "Noch kein WLAN eingetragen"); return; }
+  logMsg("[Web] Neu verbinden angefordert");
+  sendJsonResult(true, "Verbinde neu … die Seite ist kurz nicht erreichbar.");
+  web.client().flush();
+  delay(100);
+  WiFi.disconnect(false, false);
+}
+
+// Unbekannte Adressen: im Setup-WLAN auf die Einrichtungsseite umleiten
+// (so erkennen Handys das Captive Portal), sonst ebenfalls zur Startseite.
+static void handleNotFound()
+{
+  const String target = s_apActive && web.hostHeader() != WiFi.softAPIP().toString()
+                        ? String("http://") + WiFi.softAPIP().toString() + "/"
+                        : String("/");
+  web.sendHeader("Location", target, true);
+  web.send(302, "text/plain", "");
+}
+
+static void webStart()
+{
+  web.on("/",                HTTP_GET,  [] { web.send_P(200, "text/html; charset=utf-8", INDEX_HTML); });
+  web.on("/api/status",      HTTP_GET,  handleStatus);
+  web.on("/api/log",         HTTP_GET,  [] { web.send(200, "text/plain; charset=utf-8", logRead()); });
+  web.on("/api/networks",    HTTP_GET,  handleNetworks);
+  web.on("/api/scan",        HTTP_GET,  handleScan);
+  web.on("/api/wifi",        HTTP_POST, handleWifiSave);
+  web.on("/api/wifi/delete", HTTP_POST, handleWifiDelete);
+  web.on("/api/reconnect",   HTTP_POST, handleReconnect);
+  web.onNotFound(handleNotFound);
+  web.begin();
+  logMsg("[Web] Webserver gestartet (Port 80)");
+}
+
+// Setup-WLAN ein-/ausschalten (aufgerufen 1× pro Sekunde, siehe oben).
+static void webApManage()
+{
+  const uint32_t now  = millis();
+  const bool     conn = WiFi.status() == WL_CONNECTED;
+  if (conn) { s_lastConnMs = now; if (!s_connSinceMs) s_connSinceMs = now; }
+  else      { s_connSinceMs = 0; }
+
+  const bool want = !conn && (!wifiConfigured() || now - s_lastConnMs >= WEB_SETUP_AP_AFTER_S * 1000UL);
+  if (want && !s_apActive) {
+    WiFi.mode(WIFI_AP_STA);
+    WiFi.softAP(WEB_SETUP_AP_SSID);                      // offenes WLAN, ohne Passwort
+    dns.start(53, "*", WiFi.softAPIP());                 // jeder Name → Uhr (Captive Portal)
+    s_apActive = true;
+    logMsg("[Web] Setup-WLAN \"%s\" aktiv – Einrichtung unter http://%s",
+           WEB_SETUP_AP_SSID, WiFi.softAPIP().toString().c_str());
+  } else if (s_apActive && conn && now - s_connSinceMs >= 30000UL) {
+    dns.stop();
+    WiFi.softAPdisconnect(true);
+    WiFi.mode(WIFI_STA);
+    s_apActive = false;
+    logMsg("[Web] Setup-WLAN beendet (verbunden mit \"%s\")", WiFi.SSID().c_str());
+  }
+}
+
+// Wird im uiTask alle 10 ms aufgerufen.
+static void webLoop()
+{
+  if (s_apActive) dns.processNextRequest();
+  web.handleClient();
+  if (s_restartAtMs && (int32_t)(millis() - s_restartAtMs) >= 0) ESP.restart();
 }
 
 //*****************************************************************************
@@ -971,7 +1375,7 @@ static void buttonPoll()
     const uint8_t p = g_scopeProfile ? 0 : 1;
     g_scopeProfile = p;                       // gilt ab dem nächsten Sprung
     saveProfile(p);
-    Serial.printf("[Scope] Profil umgeschaltet: %s, gespeichert\n", profileName(p));
+    logMsg("[Scope] Profil umgeschaltet: %s, gespeichert", profileName(p));
   }
 }
 
@@ -1049,9 +1453,10 @@ static void oledUpdate()
   u8g2.setFont(u8g2_font_5x8_tf);
   const bool connected = wifiConfigured() && WiFi.status() == WL_CONNECTED;
 
-  // 3) Netzwerkname: verbundenes Netz / Suche läuft / kein WLAN eingetragen
-  if (!wifiConfigured())  snprintf(buf, sizeof(buf), "WLAN aus");
-  else if (connected)     snprintf(buf, sizeof(buf), "WLAN %s", WiFi.SSID().c_str());
+  // 3) Netzwerkname: verbundenes Netz / Setup-WLAN / Suche läuft
+  if (connected)          snprintf(buf, sizeof(buf), "WLAN %s", WiFi.SSID().c_str());
+  else if (s_apActive)    snprintf(buf, sizeof(buf), "Setup %s", WEB_SETUP_AP_SSID);
+  else if (!wifiConfigured()) snprintf(buf, sizeof(buf), "WLAN aus");
   else                    snprintf(buf, sizeof(buf), "WLAN suche ...");
   fitText(buf, LINE_CHARS);
   drawCentered(buf, Y_SSID + dy, dx);
@@ -1059,6 +1464,8 @@ static void oledUpdate()
   // 4) Signalstärke (RSSI in dBm; näher an 0 = besser, z.B. -50 sehr gut, -85 schwach)
   if (connected) {
     snprintf(buf, sizeof(buf), "Signal %d dBm", (int)WiFi.RSSI());
+  } else if (s_apActive) {
+    snprintf(buf, sizeof(buf), "http://%s", WiFi.softAPIP().toString().c_str());
   } else if (wifiConfigured()) {
     snprintf(buf, sizeof(buf), "keine Verbindung");
   } else {
@@ -1076,13 +1483,15 @@ static void oledUpdate()
 // Einfacher Zeitplan ohne weitere Tasks:
 //   alle  10 ms  publishTime()    → Sekundenzeiger springt max. 10 ms zu spät
 //                buttonPoll()     → BOOT-Taster (Oszilloskop-Profil)
+//                webLoop()        → Webinterface, DNS im Setup-WLAN
 //   alle 200 ms  oledUpdate()     → Sekundenanzeige auf dem OLED flüssig
-//   alle   1 s   wifiLogChanges() → Statusmeldungen auf der Konsole
+//   alle   1 s   wifiLogChanges() → Statusmeldungen ins Log
+//                webApManage()    → Setup-WLAN ein/aus, Bildrate
 static void uiTask(void *)
 {
   // WICHTIG: OLED (I2C) und WLAN werden HIER initialisiert, nicht in setup():
   // ihre Interrupts landen damit auf Core 0 und stören den Zeichenpfad nicht.
-  Serial.printf("[UI] laeuft auf Core %d\n", xPortGetCoreID());
+  logMsg("[UI] laeuft auf Core %d", xPortGetCoreID());
   oledInit();
   wifiStart();
   pinMode(BOOT_BUTTON_PIN, INPUT_PULLUP);    // DevKitC hat zusätzlich einen externen Pull-up
@@ -1091,6 +1500,7 @@ static void uiTask(void *)
   for (;;) {
     publishTime();
     buttonPoll();
+    webLoop();
 
     const uint32_t now = millis();
     if (now - lastOled >= OLED_REFRESH_MS) {
@@ -1098,8 +1508,14 @@ static void uiTask(void *)
       oledUpdate();                       // ~25 ms I2C-Transfer, blockiert nur Core 0
     }
     if (now - lastLog >= 1000) {
+      // Bildrate aus dem Bildzähler des scopeTask
+      static uint32_t lastFrames = 0;
+      const uint32_t f = g_frameCount;
+      s_fps = (f - lastFrames) * 1000UL / (now - lastLog);
+      lastFrames = f;
       lastLog = now;
       wifiLogChanges();
+      webApManage();
     }
     vTaskDelay(pdMS_TO_TICKS(10));        // Rechenzeit an WLAN-Stack & Co. abgeben
   }
@@ -1114,16 +1530,16 @@ void setup()
 {
   Serial.begin(SERIAL_BAUD);
   delay(200);                             // USB-Seriell kurz Zeit geben
-  Serial.println("\nESP32 Oscilloscope Clock v" FW_VERSION);
-  Serial.println("basierend auf v1.0 von Mauro Pintus 2018");
-  Serial.printf("CPU: %lu MHz\n", (unsigned long)getCpuFrequencyMhz());
+  Serial.println();
+  logMsg("ESP32 Oscilloscope Clock v" FW_VERSION " (basierend auf v1.0 von Mauro Pintus 2018)");
+  logMsg("CPU: %lu MHz", (unsigned long)getCpuFrequencyMhz());
 
   // Bis zum ersten publishTime() die Startzeit anzeigen
   g_timePacked = packTime(FALLBACK_H, FALLBACK_M, FALLBACK_S);
 
   // Gespeichertes Oszilloskop-Profil laden (vor dem Start des scopeTask)
   g_scopeProfile = loadProfile();
-  Serial.printf("[Scope] Profil: %s – BOOT-Taster %u s halten zum Umschalten\n",
+  logMsg("[Scope] Profil: %s – BOOT-Taster %u s halten zum Umschalten",
                 profileName(g_scopeProfile), (unsigned)(BUTTON_LONG_MS / 1000));
 
   //                      Funktion   Name     Stack  Param    Prio Handle           Kern

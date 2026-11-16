@@ -135,9 +135,27 @@
 #define OLED_CONTRAST     0x80       // Helligkeit 0x00…0xFF (niedriger = langlebiger)
 
 // ---------------------------------------------------------------------------
+// Webinterface (http://scope-clock.local bzw. IP-Adresse der Uhr)
+// ---------------------------------------------------------------------------
+// Statusseite (NTP, WLAN, Profil, Bildrate, Log) und WLAN-Einrichtung, ohne
+// Passwort. Für Handys optimiert.
+//   WEB_SETUP_AP_SSID     offenes Setup-WLAN, das die Uhr selbst aufspannt, wenn
+//                         kein WLAN eingetragen ist oder keine Verbindung klappt.
+//                         Einrichtung dann unter http://192.168.4.1 (Handys öffnen
+//                         die Seite meist automatisch).
+//   WEB_SETUP_AP_AFTER_S  so lange ohne Verbindung, bis das Setup-WLAN startet
+//   WEB_MAX_NETWORKS      max. Anzahl im Webinterface gespeicherter WLANs
+//                         (zusätzlich zu secrets.h)
+//   LOG_BUFFER_SIZE       Größe des Log-Puffers für die Log-Anzeige (Byte, RAM)
+#define WEB_SETUP_AP_SSID    "ScopeClock-Setup"
+#define WEB_SETUP_AP_AFTER_S 60
+#define WEB_MAX_NETWORKS     5
+#define LOG_BUFFER_SIZE      4096
+
+// ---------------------------------------------------------------------------
 // Diverses
 // ---------------------------------------------------------------------------
-#define WIFI_HOSTNAME "scope-clock"   // Gerätename im Router
+#define WIFI_HOSTNAME "scope-clock"   // Gerätename im Router, Webinterface: http://scope-clock.local
 #define SERIAL_BAUD   115200          // serielle Konsole (Arduino: Serieller Monitor)
 
 // Zifferblatt-Variante auf dem Oszilloskop:

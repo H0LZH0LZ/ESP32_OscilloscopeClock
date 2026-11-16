@@ -12,6 +12,7 @@ Diese Datei beschreibt, wie die Firmware aufgebaut ist. Für Verdrahtung und Geh
 | `ESP32_OscilloscopeClock_v2.0/secrets.h` | WLAN-Liste, **nur lokal** (steht in `.gitignore`) |
 | `ESP32_OscilloscopeClock_v2.0/secrets_example.h` | Vorlage für `secrets.h`. Wird verwendet, wenn `secrets.h` fehlt (dann Offline-Betrieb) |
 | `ESP32_OscilloscopeClock_v2.0/DataTable.h` | Vektordaten für Zifferblatt, Ziffern und Zeiger (aus v1.0) |
+| `ESP32_OscilloscopeClock_v2.0/webpage.h` | Webinterface: eine Seite (HTML, CSS, JavaScript) im Flash |
 | `platformio.ini` | Alternative zur Arduino IDE |
 
 ## Aufgabenteilung auf die beiden Kerne
@@ -47,6 +48,8 @@ Diese Datei beschreibt, wie die Firmware aufgebaut ist. Für Verdrahtung und Geh
 |---|---|---|---|
 | `g_timePacked` (Std/Min/Sek) | uiTask | scopeTask | 32-Bit-Zugriff ist atomar |
 | `g_scopeProfile` (ANALOG/DIGITAL) | uiTask (BOOT-Taster), `setup()` | scopeTask (`beamJump`) | 1 Byte, atomar |
+| `g_frameCount` (Bildzähler) | scopeTask | uiTask (Bildrate) | 32-Bit-Zugriff ist atomar |
+| Log-Ringpuffer | `logMsg()` auf beiden Kernen | Webinterface | Spinlock |
 | `g_ntpSynced` | SNTP-Callback | uiTask | `bool`, atomar |
 | `g_lastSyncEpoch` | SNTP-Callback | uiTask | Spinlock (`time_t` ist 64 Bit) |
 
@@ -69,6 +72,58 @@ Diese Datei beschreibt, wie die Firmware aufgebaut ist. Für Verdrahtung und Geh
   im eigenen Task und das OLED läuft weiter.
 - Ein älteres `secrets.h` mit nur `WIFI_SSID`/`WIFI_PASSWORD` wird weiterhin akzeptiert.
 
+## Webinterface
+
+Erreichbar unter `http://scope-clock.local` bzw. der IP-Adresse der Uhr (steht im Log), ohne
+Passwort. Der `WebServer` läuft im `uiTask` auf Core 0 (`webLoop()` alle 10 ms) und beeinflusst
+die Strahlausgabe auf Core 1 nicht.
+
+**Seite (`webpage.h`):** eine Seite mit drei Bereichen.
+- **Status:** große Uhrzeit, KW und Datum, NTP mit letztem Sync, WLAN, Signal, Adresse, Profil,
+  Bildrate, Laufzeit, freier Speicher. Wird alle 2 s aktualisiert.
+- **WLAN:** gespeicherte Netze (Netze aus dem Webinterface lassen sich löschen), Netzsuche
+  (Netz antippen übernimmt den Namen), Formular, „Neu verbinden“.
+- **Log:** die letzten `LOG_BUFFER_SIZE` Byte, alle 5 s aktualisiert, scrollt automatisch mit.
+
+Für Handys optimiert: eine Spalte, Schaltflächen mindestens 44 px hoch, Eingabefelder mit 16 px
+Schrift (iOS zoomt sonst), helles/dunkles Design nach Systemeinstellung, Rand für Notch und
+Home-Balken, keine externen Dateien (funktioniert im Setup-WLAN ohne Internet). Abfragen
+pausieren, solange die Seite im Hintergrund ist. Texte von der Uhr werden immer als Text
+eingesetzt (`textContent`), nie als HTML.
+
+**Schnittstellen:**
+
+| Methode und Pfad | Funktion |
+|---|---|
+| `GET /` | die Seite |
+| `GET /api/status` | JSON: `time`, `date`, `kw`, `ntp{synced,overdue,last,server}`, `wifi{configured,connected,ssid,rssi,ip,host}`, `ap{active,ssid,ip}`, `profile`, `fps`, `uptime`, `heap`, `fw` |
+| `GET /api/log` | Log als Text, älteste Zeile zuerst |
+| `GET /api/networks` | gespeicherte Netze `[{ssid, source:"secrets"/"web"}]`, nie Passwörter |
+| `GET /api/scan` | Netzsuche im Hintergrund: erst `{"running":true}`, dann `{"networks":[{ssid,rssi,open}]}` |
+| `POST /api/wifi` | `ssid`, `pw` speichern bzw. Passwort ändern (SSID 1–32, Passwort leer oder 8–63 Zeichen) |
+| `POST /api/wifi/delete` | `ssid` löschen, danach Neustart (WiFiMulti kann Netze nicht vergessen) |
+| `POST /api/reconnect` | Verbindung trennen, `wifiTask` verbindet mit dem stärksten Netz |
+
+**Gespeicherte WLANs:** bis zu `WEB_MAX_NETWORKS` (5) Netze im NVS (Namensraum `scopeclock`,
+Schlüssel `netn`, `net_s0…`, `net_p0…`), zusätzlich zu `secrets.h`. Sie bleiben bei einem
+Firmware-Update erhalten.
+
+**Setup-WLAN (Captive Portal):** Ist kein WLAN eingetragen oder seit `WEB_SETUP_AP_AFTER_S`
+(60 s) keine Verbindung möglich, öffnet `webApManage()` das offene WLAN `WEB_SETUP_AP_SSID`
+(„ScopeClock-Setup“) im Modus AP+STA. Ein `DNSServer` beantwortet jeden Namen mit 192.168.4.1,
+unbekannte Adressen werden auf die Startseite umgeleitet. So öffnen Handys die
+Einrichtungsseite automatisch. Steht die Verbindung zu einem bekannten WLAN 30 s lang, schließt
+das Setup-WLAN wieder. Das OLED zeigt in dieser Zeit „Setup ScopeClock-Setup“ und
+„http://192.168.4.1“.
+
+**Log:** `logMsg()` ersetzt die direkten `Serial`-Ausgaben. Jede Zeile bekommt einen Zeitstempel
+(`hh:mm:ss` nach dem ersten NTP-Sync, davor `+<s>s` seit dem Start) und geht an die Konsole und in
+einen Ringpuffer (`LOG_BUFFER_SIZE`, 4 KB). Ein Spinlock schützt den Puffer, weil beide Kerne
+schreiben können.
+
+**Bildrate:** `scopeTask` zählt die Bilder (`g_frameCount`), der `uiTask` rechnet daraus jede
+Sekunde die Bildrate für die Statusanzeige.
+
 ## BOOT-Taster: Oszilloskop-Profil
 
 `buttonPoll()` im `uiTask` fragt den BOOT-Taster (GPIO0, gedrückt = LOW) alle 10 ms ab.
@@ -90,22 +145,28 @@ Während des Haltens (ab 0,3 s) ersetzt `oledProfileOverlay()` die normale Anzei
 Eine „1“ besteht nur aus den rechten Segmenten und wird im Countdown deshalb optisch zur Mitte
 gerückt. Nach der Umschaltung erscheint sofort wieder die normale Anzeige.
 
-## Konsolenausgaben (115200 Baud)
+## Konsolenausgaben (115200 Baud) und Log im Webinterface
+
+Beide zeigen dieselben Zeilen, mit Zeitstempel (`+<s>s` bis zum ersten NTP-Sync):
 
 ```
-ESP32 Oscilloscope Clock v2.0
-CPU: 240 MHz
-[Scope] Profil: DIGITAL – BOOT-Taster 3 s halten zum Umschalten
-[UI] laeuft auf Core 0
-[Scope] laeuft auf Core 1
-[Scope] Rundtour: 76 Linienzuege, Spruenge gesamt 1033 DAC-Einheiten
-[WiFi] bekanntes Netz: "Gastzugang"
-[WiFi] bekanntes Netz: "iPhone SE"
-[WiFi] verbunden mit "Gastzugang", IP 192.168.1.23, RSSI -61 dBm
-[NTP] Sync 15.11.2026 21:15:06, naechster in ca. 60 min
-[WiFi] Verbindung verloren – versuche erneut
-[NTP] Warnung: letzter Sync liegt mehr als 2 Intervalle zurueck
-[Scope] Profil umgeschaltet: ANALOG, gespeichert
++0s ESP32 Oscilloscope Clock v2.0 (basierend auf v1.0 von Mauro Pintus 2018)
++0s CPU: 240 MHz
++0s [Scope] Profil: DIGITAL – BOOT-Taster 3 s halten zum Umschalten
++0s [UI] laeuft auf Core 0
++0s [Scope] laeuft auf Core 1
++0s [Scope] Rundtour: 76 Linienzuege, Spruenge gesamt 1033 DAC-Einheiten
++0s [WiFi] bekanntes Netz (secrets.h): "Gastzugang"
++0s [WiFi] bekanntes Netz (Webinterface): "Werkstatt"
++0s [Web] Webserver gestartet (Port 80)
++3s [WiFi] verbunden mit "Gastzugang", IP 192.168.1.23, RSSI -61 dBm
++3s [Web] erreichbar unter http://scope-clock.local und http://192.168.1.23
+21:15:06 [NTP] Sync 15.11.2026 21:15:06, naechster in ca. 60 min
+21:40:12 [WiFi] Verbindung verloren – versuche erneut
+21:41:12 [Web] Setup-WLAN "ScopeClock-Setup" aktiv – Einrichtung unter http://192.168.4.1
+22:02:30 [Web] WLAN "Werkstatt" gespeichert
+23:15:06 [NTP] Warnung: letzter Sync liegt mehr als 2 Intervalle zurueck
+23:20:00 [Scope] Profil umgeschaltet: ANALOG, gespeichert
 ```
 
 Passwörter werden nie ausgegeben.
@@ -118,6 +179,8 @@ Passwörter werden nie ausgegeben.
 WLAN Gastzugang           Font 5x8, max. 25 Zeichen (sonst mit ".." gekürzt)
    Signal -61 dBm         Font 5x8
 ```
+
+Im Setup-WLAN stehen in den beiden unteren Zeilen „Setup ScopeClock-Setup“ und „http://192.168.4.1“.
 
 - **7-Segment-Ziffern:** Die fertigen 7-Segment-Fonts von U8g2 sind für `HH:MM:SS` auf 128 px zu
   breit. `drawSegDigit()` setzt jede Ziffer deshalb aus bis zu 7 Rechtecken zusammen. Welche
