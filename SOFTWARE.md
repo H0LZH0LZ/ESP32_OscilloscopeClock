@@ -111,8 +111,10 @@ Darunter folgen drei Bereiche:
 - **Status:** große Uhrzeit, KW und Datum, NTP mit letztem Sync, WLAN, Signal, Adresse, Profil,
   Bildrate, Laufzeit, Arbeitsspeicher (frei/gesamt, Minimum seit Start, größter freier Block),
   CPU-Last beider Kerne, Grund des letzten Neustarts, Firmware. Wird alle 2 s aktualisiert.
-  Auffällige Werte erscheinen orange: RAM-Minimum unter 20 KB, größter Block unter 8 KB,
-  Core 0 über 85 %, Neustart nach Absturz, Watchdog oder Unterspannung.
+  Farbig hervorgehoben werden nur Probleme: Orange = Warnung (NTP wartet oder überfällig, WLAN
+  sucht, Setup-WLAN aktiv, RAM-Minimum unter 20 KB, größter Block unter 8 KB, Core 0 über 85 %,
+  Neustart nach Absturz, Watchdog oder Unterspannung), Rot = Fehler (keine Antwort von der Uhr,
+  abgelehnte Eingaben). Normale Zustände und Bestätigungen stehen in normaler Schriftfarbe.
 - **WLAN:** gespeicherte Netze (Netze aus dem Webinterface lassen sich löschen), Netzsuche
   (Netz antippen übernimmt den Namen), Formular, „Neu verbinden“.
 - **Log:** die letzten `LOG_BUFFER_SIZE` Byte (8 KB, ca. 120 Zeilen), alle 5 s aktualisiert. Das Feld

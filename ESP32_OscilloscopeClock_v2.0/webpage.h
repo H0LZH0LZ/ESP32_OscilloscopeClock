@@ -69,7 +69,9 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .row:first-of-type{border-top:0}
 .row span:first-child{color:var(--mute)}
 .row span:last-child{text-align:right;overflow-wrap:anywhere}
-.ok{color:var(--acc)}.warn{color:var(--warn)}.err{color:var(--err)}
+/* Farbig hervorgehoben werden nur Probleme: Orange = Warnung, Rot = Fehler.
+   Normale Zustände und Bestätigungen (.ok) stehen in normaler Schriftfarbe. */
+.ok{color:inherit}.warn{color:var(--warn)}.err{color:var(--err)}
 button{font:inherit;min-height:44px;border:0;border-radius:10px;padding:0 16px;background:var(--acc);color:#fff;font-weight:600;width:100%;margin:6px 0}
 button.sec{background:transparent;color:var(--acc);border:1px solid var(--line)}
 button.del{width:auto;min-height:36px;padding:0 12px;background:transparent;color:var(--err);border:1px solid var(--line);margin:0}
@@ -333,8 +335,8 @@ async function status(){
   $('vFps').textContent=s.fps+' Bilder/s';
   if(S&&!setBusy){const p=s.profile==='DIGITAL'?1:0;if(p!==S.profile||s.dial!==S.dial){S.profile=p;S.dial=s.dial;renderSettings()}}$('date').textContent=s.date?('KW '+s.kw+' – '+s.date):'Datum unbekannt';
   const st=$('status');st.replaceChildren(
-   row('NTP',s.ntp.synced?('synchronisiert, '+s.ntp.last):(s.wifi.configured?'warte auf Sync …':'aus (kein WLAN)'),s.ntp.synced?(s.ntp.overdue?'warn':'ok'):'warn'),
-   row('WLAN',s.wifi.connected?s.wifi.ssid:(s.wifi.configured?'sucht …':'kein Netz eingetragen'),s.wifi.connected?'ok':'warn'),
+   row('NTP',s.ntp.synced?('synchronisiert, '+s.ntp.last):(s.wifi.configured?'warte auf Sync …':'aus (kein WLAN)'),s.ntp.synced?(s.ntp.overdue?'warn':''):'warn'),
+   row('WLAN',s.wifi.connected?s.wifi.ssid:(s.wifi.configured?'sucht …':'kein Netz eingetragen'),s.wifi.connected?'':'warn'),
    ...(s.wifi.connected?[row('Signal',s.wifi.rssi+' dBm'),row('Adresse',s.wifi.ip+'  ·  '+s.wifi.host)]:[]),
    ...(s.ap.active?[row('Setup-WLAN',s.ap.ssid+' ('+s.ap.ip+')','warn')]:[]),
    row('Oszilloskop-Profil',s.profile),
