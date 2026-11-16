@@ -1074,7 +1074,7 @@ static const char *resetReasonText()
     case ESP_RST_DEEPSLEEP: return tr("Aufwachen aus Tiefschlaf", "Wake from deep sleep");
     case ESP_RST_BROWNOUT:  return tr("Unterspannung", "Brown-out");
     case ESP_RST_SDIO:      return "SDIO";
-    default:                return tr("unbekannt", "unknown");
+    default:                return tr("Unbekannt", "Unknown");
   }
 }
 
@@ -1426,7 +1426,10 @@ static void handleTimeSet()
          dst < 0 ? tr("Sommer-/Winterzeit automatisch", "summer/winter time automatic")
                  : dst ? tr("Sommerzeit", "summer time") : tr("Winterzeit", "winter time"),
          lt.tm_mday, lt.tm_mon + 1, lt.tm_year + 1900, lt.tm_hour, lt.tm_min, lt.tm_sec);
-  sendJsonResult(true, tr("Uhrzeit gestellt", "Time set"));
+  char msg[64];                                         // Rückmeldung mit der gestellten Zeit
+  if (s_lang) snprintf(msg, sizeof(msg), "Time set: %04d-%02d-%02d %02d:%02d:%02d", lt.tm_year + 1900, lt.tm_mon + 1, lt.tm_mday, lt.tm_hour, lt.tm_min, lt.tm_sec);
+  else        snprintf(msg, sizeof(msg), "Uhrzeit gestellt: %02d.%02d.%04d %02d:%02d:%02d", lt.tm_mday, lt.tm_mon + 1, lt.tm_year + 1900, lt.tm_hour, lt.tm_min, lt.tm_sec);
+  sendJsonResult(true, msg);
 }
 
 // POST /api/dial (style = 0 … DIAL_STYLES-1, siehe dialDigits) – Zifferblatt umschalten: gilt sofort
@@ -2218,7 +2221,7 @@ static void oledUpdate()
   } else if (s_apActive) {
     snprintf(buf, sizeof(buf), "http://%s", WiFi.softAPIP().toString().c_str());
   } else if (wifiConfigured()) {
-    snprintf(buf, sizeof(buf), "%s", tr("keine Verbindung", "not connected"));
+    snprintf(buf, sizeof(buf), "%s", tr("Keine Verbindung", "Not connected"));
   } else {
     snprintf(buf, sizeof(buf), "%s", tr("Offline-Betrieb", "Offline mode"));
   }
