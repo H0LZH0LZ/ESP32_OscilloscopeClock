@@ -198,20 +198,19 @@ html{scroll-behavior:smooth}
 .dots .dot{width:30px;padding:0;display:flex;align-items:center;justify-content:center}
 .dots .dot::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--mute);opacity:.3}
 .dots .dot[aria-current="true"]::before{background:var(--acc);opacity:1;width:10px;height:10px}
-/* Kurzstatus unter dem Datum */
-.quick{display:inline-block;font-size:14px;color:var(--fg);margin:6px 0 2px;text-decoration:none}
 /* „✓ Gespeichert“ direkt an der geänderten Einstellung */
 .svd{font-size:13px;margin-top:4px;color:var(--acc);font-weight:600}.svd.err{color:var(--err)}
 /* Gruppen der Einstellungen ein-/ausklappbar (Überschrift antippen) */
 .grouphead{cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none;-webkit-tap-highlight-color:transparent}
-.grouphead::after{content:"›";font-size:22px;font-weight:300;line-height:1;transition:transform .2s;transform:rotate(90deg)}
-.sgroup.closed>.grouphead::after{transform:none}
+.grouphead::after{content:"";width:8px;height:8px;margin:0 6px 4px 0;border:solid currentColor;border-width:0 2px 2px 0;
+ transition:transform .2s;transform:rotate(-135deg) translate(-2px,-2px)}   /* offen: ^ */
+.sgroup.closed>.grouphead::after{transform:rotate(45deg)}                    /* zu: V nach unten */
 .sgroup.closed>:not(.grouphead){display:none}
 .sgroup.closed>.grouphead{padding-bottom:14px}
 /* Rückgängig nach dem Zurücksetzen */
 .undo{width:auto;min-height:32px;margin:0 0 0 10px;padding:0 12px;font-size:14px;display:inline-flex;align-items:center}
 /* Filter des Protokolls */
-.logf{flex-wrap:wrap;margin-top:10px}.logf button{flex:1 1 28%;min-height:38px;font-size:14px;padding:0 6px}
+.logsel{font:inherit;font-size:16px;width:100%;min-height:44px;padding:0 10px;margin-top:6px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--fg)}
 
 </style></head>
 <body>
@@ -248,9 +247,7 @@ html{scroll-behavior:smooth}
 <!-- Punkte: aktives Zifferblatt (antippen wechselt), Pfeile = voriges/nächstes; Wischen geht weiterhin -->
 <div class="dots" id="dots"><button type="button" id="dPrev" aria-label="Voriges Zifferblatt">‹</button><span id="dotList" style="display:flex"></span><button type="button" id="dNext" aria-label="Nächstes Zifferblatt">›</button></div>
 <!-- Uhrzeit und Datum der Uhr (läuft zwischen den Statusabfragen im Browser weiter) -->
-<div id="clock">--:--:--</div><div id="date">&nbsp;</div>
-<!-- Kurzstatus: WLAN · Zeitabgleich · Profil (antippen springt zum Status) -->
-<a class="quick" id="quick" href="#status-h"></a></header>
+<div id="clock">--:--:--</div><div id="date">&nbsp;</div></header>
 
 <div class="grp"><h2 id="status-h">Status</h2>
 <!-- Statuszeilen: werden alle 2 s von status() neu aufgebaut -->
@@ -399,13 +396,9 @@ html{scroll-behavior:smooth}
 <section>
  <div class="desc top">Meldungen der Uhr zu WLAN, Zeitabgleich und Einstellungen – hilfreich bei der Fehlersuche.</div>
  <!-- Filter: nur Meldungen eines Bereichs anzeigen -->
- <div class="seg logf" role="group" aria-label="Filter">
-  <button type="button" data-lf="all" aria-pressed="true">Alle</button>
-  <button type="button" data-lf="wifi" aria-pressed="false">WLAN</button>
-  <button type="button" data-lf="time" aria-pressed="false">Zeit</button>
-  <button type="button" data-lf="web" aria-pressed="false">Web</button>
-  <button type="button" data-lf="scope" aria-pressed="false">Oszilloskop</button>
-  <button type="button" data-lf="warn" aria-pressed="false">Warnungen</button></div>
+ <div class="head" style="margin-top:10px"><label for="logF" style="margin:0;color:var(--fg);font-size:16px">Filter</label></div>
+ <select id="logF" class="logsel"><option value="all">Alle</option><option value="wifi">WLAN</option><option value="time">Zeit</option>
+  <option value="web">Web</option><option value="scope">Oszilloskop</option><option value="warn">Warnungen</option></select>
  <div class="desc" style="margin-top:6px">Zeigt nur Meldungen eines Bereichs; „Warnungen“ zeigt Probleme wie Verbindungsabbrüche.</div>
  <!-- Protokoll-Feld mit eigener Scrollleiste -->
  <pre id="log" tabindex="0" aria-label="Protokoll, im Feld scrollbar">wird geladen …</pre>
@@ -527,7 +520,7 @@ let tagTimer=0,dialBusy=false;
 function showTag(t){const e=$('dialTag');e.textContent=t;e.classList.add('show');clearTimeout(tagTimer);tagTimer=setTimeout(()=>e.classList.remove('show'),1600)}
 // Zifferblatt auf Stil st stellen (Vorschau sofort, Uhr per POST /api/dial)
 async function setDialTo(st){
- if(dialBusy||st===dial)return;dialBusy=true;const prev=dial;dial=st;drawScope();showTag(t(DIALS[dial]));
+ if(dialBusy||st===dial)return;dialBusy=true;const prev=dial;dial=st;drawScope();
  try{const r=await post('/api/dial',{style:dial});if(!r.ok)throw 0;if(S){S.dial=dial;renderSettings()}}catch(e){dial=prev;drawScope();showTag(t('Wechsel fehlgeschlagen'))}
  dialBusy=false}
 // step = +1 (nächstes) oder -1 (voriges Zifferblatt), reihum in DIAL_ORDER
@@ -713,11 +706,6 @@ async function status(){
   lastFps=s.fps;fpsNs=S?S.beamNs:0;if(document.activeElement!==$('sBeam'))$('vFps').textContent=s.fps+' '+t('Bilder/s');
   showTimeRow(!s.ntp.synced,s.ntp.dst);
   if(S&&!setBusy){const p=s.profile==='DIGITAL'?1:0;if(p!==S.profile||s.dial!==S.dial){S.profile=p;S.dial=s.dial;renderSettings()}}$('date').textContent=s.date?(t('KW')+' '+s.kw+' – '+(lang==='en'?s.date.split('.').reverse().join('-'):s.date)):t('Datum unbekannt');
-  // Kurzstatus unter dem Datum: WLAN · Zeitabgleich · Profil; Probleme in Orange
-  {const q=$('quick');q.replaceChildren();const it=[
-   [t('WLAN')+(s.wifi.connected?' ✓':s.ap.active?': Setup':' ✗'),!s.wifi.connected],
-   ['NTP'+(s.ntp.synced?' ✓':s.ntp.manual?': '+t('von Hand'):' ✗'),!s.ntp.synced&&!s.ntp.manual],[s.profile,false]];
-   it.forEach(([x,w],i)=>{if(i)q.append(' · ');const e=document.createElement('span');e.textContent=x;if(w)e.className='warn';q.append(e)})}
   const st=$('status');st.replaceChildren(
    row(t('Zeitabgleich (NTP)'),s.ntp.synced?(t('zuletzt')+' '+s.ntp.last):s.ntp.manual?t('aus – Uhrzeit von Hand gestellt'):(s.wifi.configured?t('wartet auf ersten Abgleich …'):t('aus (kein WLAN)')),s.ntp.synced?(s.ntp.overdue?'warn':''):(s.ntp.manual?'':'warn'),t('Uhrzeit aus dem Internet, stündlich abgeglichen')),
    row(t('WLAN'),s.wifi.connected?s.wifi.ssid:(s.wifi.configured?t('sucht Netz …'):t('kein Netz eingetragen')),s.wifi.connected?'':'warn',t('verbundenes Netz')),
@@ -773,8 +761,7 @@ function showLog(){const p=$('log'),end=logFirst||p.scrollTop+p.clientHeight>=p.
  p.textContent=ls.length?ls.join('\n'):t('(leer)');p.scrollTop=end?p.scrollHeight:top;logFirst=false;
  $('logInfo').textContent=(logF==='all'?'':ls.length+' '+t('von')+' ')+all.length+' '+t('Zeilen')}
 async function log(){try{logRaw=await (await get('/api/log')).text();showLog()}catch(e){}}
-document.querySelectorAll('[data-lf]').forEach(b=>b.onclick=()=>{logF=b.dataset.lf;logFirst=true;
- document.querySelectorAll('[data-lf]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));showLog()});
+$('logF').onchange=e=>{logF=e.target.value;logFirst=true;showLog()};
 $('wf').onsubmit=async e=>{e.preventDefault();const r=await post('/api/wifi',{ssid:$('ssid').value.trim(),pw:$('pw').value});msg(r);if(r.ok)$('pw').value=''};
 $('eye').onclick=()=>{const p=$('pw');p.type=p.type==='password'?'text':'password';$('eye').textContent=t(p.type==='password'?'Anzeigen':'Ausblenden')};
 $('scanBtn').onclick=scan;

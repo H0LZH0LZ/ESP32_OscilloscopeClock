@@ -33,7 +33,7 @@ Hardware angepasst: **ESP32-WROOM-32U DevKitC V4**, **Waveshare 2.42" OLED (SPI)
 - **Sprache Deutsch oder Englisch** für Webinterface, OLED-Anzeige und Protokoll, umschaltbar im
   Webinterface (Seitenmenü) und gespeichert. Startwert `UI_LANG` in `config.h`.
 - **Webinterface** unter `http://scope-clock.local`, für Handys optimiert und ohne Passwort, auch als App auf den
-  Startbildschirm. Darstellung hell/dunkel/automatisch, Protokoll mit Filter, Zurücksetzen mit „Rückgängig“.
+  Startbildschirm. Darstellung hell/dunkel/automatisch, Protokoll mit Filter (Auswahlliste), Zurücksetzen mit „Rückgängig“.
   Oben zeigt es eine Live-Vorschau des Oszilloskop-Bildes (im hellen Design ohne Hintergrund),
   darunter den Status (Zeitabgleich, WLAN, Signalstärke, Profil, Bildrate, Laufzeit, Arbeitsspeicher,
   Prozessorlast, Grund des letzten Neustarts) und das Protokoll. Außerdem dient es zum Eintragen von

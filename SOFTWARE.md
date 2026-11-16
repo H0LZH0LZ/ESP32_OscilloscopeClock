@@ -142,7 +142,7 @@ Auswahlliste: Ziffern 1–12 → Ziffern 12 · 3 · 6 · 9 → Römisch XII · I
 | 1 | nur 12, 3, 6, 9, 7-Segment-Stil | `DialDigitsMin` |
 | 2 | römisch I–XII, serifenlos, 4 als IIII | `DialDigitsRoman` |
 | 3 | nur XII, III, VI, IX | `DialDigitsRoman4` |
- Die Vorschau zeigt den neuen Stil sofort, kurz blendet sie seinen Namen ein.
+ Die Vorschau zeigt den neuen Stil sofort.
 `POST /api/dial` setzt `g_dialStyle`. Der `scopeTask` erkennt den Wechsel vor dem nächsten Bild
 und berechnet die Rundtour neu. Das dauert einige zehn Millisekunden, so lange steht der Strahl
 (kurzer Lichtpunkt). Die Auswahl wird im NVS gespeichert (Schlüssel `dial`), `DIAL_STYLE` in
@@ -172,8 +172,8 @@ Darunter folgen drei Bereiche. Jede Einstellung und jede Schaltfläche hat eine 
 
 **Bedienhilfen der Seite:**
 - **Punkte unter der Vorschau** zeigen das aktive Zifferblatt; Punkt oder Pfeil ‹ › antippen wechselt (zusätzlich zum Wischen).
-- **Kurzstatus** unter dem Datum: „WLAN ✓ · NTP ✓ · DIGITAL“, Probleme in Orange; antippen springt zum Status.
-- **Gruppen der Einstellungen** sind eingeklappt und öffnen sich per Tippen auf die Überschrift (Zustand im Browser
+  Beim Wechsel wird kein Name eingeblendet.
+- **Gruppen der Einstellungen** sind eingeklappt (Pfeil V) und öffnen sich per Tippen auf die Überschrift (Zustand im Browser
   gespeichert). Menü-Unterpunkte öffnen ihre Gruppe; erscheint „Uhrzeit stellen“, öffnet sich „Uhrzeit“ von selbst.
 - **„✓ Gespeichert“** erscheint kurz direkt an der geänderten Einstellung (Fehler in Rot).
 - **Vorschau beim Ziehen:** Verweilzeit ändert Helligkeit der Vorschau und zeigt die geschätzte Bildrate (~), das
@@ -182,7 +182,7 @@ Darunter folgen drei Bereiche. Jede Einstellung und jede Schaltfläche hat eine 
   „WLAN zurücksetzen“ fragt weiterhin nach (Neustart, nicht umkehrbar).
 - **Signalstärke** im Status mit Balken.
 - **Darstellung** im Seitenmenü: Automatisch, Hell oder Dunkel (nur im Browser gespeichert, `data-theme`).
-- **Protokoll-Filter:** Alle, WLAN, Zeit, Web, Oszilloskop, Warnungen.
+- **Protokoll-Filter** (Auswahlliste): Alle, WLAN, Zeit, Web, Oszilloskop, Warnungen.
 - **Als App:** Manifest und Symbol erlauben „Zum Startbildschirm hinzufügen“; die Seite öffnet sich dann ohne Browserleiste.
 - **Schrift:** Raleway Light/SemiBold mit Raleways Original-Ziffern (Mediävalziffern), Text in Schwarz.
 

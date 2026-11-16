@@ -147,7 +147,7 @@ numbers 1–12 → numbers 12 · 3 · 6 · 9 → Roman XII · III · VI · IX �
 | 2 | Roman I–XII, sans serif, 4 as IIII | `DialDigitsRoman` |
 | 3 | only XII, III, VI, IX | `DialDigitsRoman4` |
 
-The preview shows the new style immediately and briefly displays its name. `POST /api/dial` sets
+The preview shows the new style immediately. `POST /api/dial` sets
 `g_dialStyle`. The `scopeTask` detects the change before the next frame and recomputes the round
 trip. This takes a few tens of milliseconds, during which the beam stands still (short bright
 dot). The choice is stored in NVS (key `dial`); `DIAL_STYLE` in `config.h` is only the start
@@ -178,8 +178,8 @@ Below follow three sections. Every setting and every button has a short descript
 
 **Usability aids of the page:**
 - **Dots below the preview** show the active dial; tapping a dot or the arrows ‹ › changes it (in addition to swiping).
-- **Short status** below the date: “Wi-Fi ✓ · NTP ✓ · DIGITAL”, problems in orange; tapping jumps to the status.
-- **Settings groups** are collapsed and open by tapping the heading (state saved in the browser). Menu sub-entries
+  No name is shown when switching.
+- **Settings groups** are collapsed (V arrow) and open by tapping the heading (state saved in the browser). Menu sub-entries
   open their group; when “Set time” appears, the time group opens by itself.
 - **“✓ Saved”** briefly appears right at the changed setting (errors in red).
 - **Preview while dragging:** the dwell time changes the preview brightness and shows the estimated frame rate (~);
@@ -188,7 +188,7 @@ Below follow three sections. Every setting and every button has a short descript
   “Reset Wi-Fi” still asks (restart, cannot be undone).
 - **Signal strength** in the status with bars.
 - **Appearance** in the side menu: automatic, light or dark (saved only in the browser, `data-theme`).
-- **Log filter:** all, Wi-Fi, time, web, oscilloscope, warnings.
+- **Log filter** (drop-down list): all, Wi-Fi, time, web, oscilloscope, warnings.
 - **As an app:** manifest and icon allow “Add to home screen”; the page then opens without browser bar.
 - **Font:** Raleway Light/SemiBold with Raleway's original old-style figures, text in black.
 
