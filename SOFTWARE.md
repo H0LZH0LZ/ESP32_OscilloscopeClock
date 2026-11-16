@@ -112,7 +112,9 @@ die Strahlausgabe auf Core 1 nicht.
 
 **Seite (`webpage.h`):** eine Seite mit **einklappbarem Seitenmenü** (☰ oben links, bleibt beim
 Scrollen sichtbar): Uhr, Status, Einstellungen, WLAN, Protokoll, darunter die Sprachauswahl.
-In den Einstellungen steht das Oszilloskop-Profil an erster Stelle. Der oberste Abschnitt (Überschrift, Vorschau, Uhrzeit,
+Die Einstellungen sind in drei Gruppen geteilt: **Oszilloskop** (Profil zuerst, Zifferblatt,
+Verweilzeit, Zeigerhelligkeit, Rücklauf-Tempo), **Uhrzeit** (ggf. „Uhrzeit stellen“, Zeitformat,
+Zeitzone, Zeitserver) und **Display** (OLED-Helligkeit, Drehung, Pixelverschiebung). Der oberste Abschnitt (Überschrift, Vorschau, Uhrzeit,
 Datum) ist zentriert. Die Titelleiste „ESP32 Oscilloscope Clock“ bleibt immer oben neben der
 Menütaste stehen, die Abschnittsüberschriften direkt darunter (`position: sticky`). Jede
 Abschnittsüberschrift ist nur innerhalb ihres Abschnitts (`.grp`) angeheftet, so schiebt die

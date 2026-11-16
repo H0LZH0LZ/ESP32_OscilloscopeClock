@@ -117,7 +117,9 @@ affect the beam output on core 1.
 
 **Page (`webpage.h`):** one page with a **collapsible side menu** (☰ top left, stays visible while
 scrolling): „Uhr“ (clock), Status, „Einstellungen“ (settings), „WLAN“ (Wi-Fi), „Protokoll“ (log), below them
-the language selection. In the settings the oscilloscope profile comes first.
+the language selection. The settings are split into three groups: **„Oszilloskop“** (Oscilloscope: profile first, dial,
+dwell time, hand brightness, retrace speed), **„Uhrzeit“** (Time: “Set time” if shown, time format,
+time zone, time server) and **„Display“** (OLED brightness, rotation, pixel shift).
 The top section (title, preview, time, date) is centred. The title bar “ESP32 Oscilloscope Clock”
 always stays at the top next to the menu button, the section headings directly below it
 (`position: sticky`). Each section heading is only pinned within its section (`.grp`), so the

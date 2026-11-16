@@ -118,7 +118,10 @@ pre.full{height:auto;overflow-y:visible}
 .logsw{min-height:44px;border-top:1px solid var(--line);margin-bottom:8px}
 /* Einstellungen */
 .set{border-top:1px solid var(--line);padding:10px 0}
-.set:first-of-type{border-top:0}   /* keine Linie über dem ersten Eintrag */
+.grouphead+.set,.grouphead+.set[hidden]+.set{border-top:0}   /* keine Linie direkt unter einer Gruppenüberschrift */
+/* Gruppen der Einstellungen: Oszilloskop, Uhrzeit, Display */
+.grouphead{font-size:13px;font-weight:600;color:var(--acc);text-transform:uppercase;letter-spacing:.06em;padding:14px 0 2px}
+.sgroup+.sgroup{border-top:2px solid var(--line);margin-top:6px}
 .set .head{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
 .set .head label{margin:0;color:var(--fg);font-size:16px}
 .set .val{color:var(--mute);font-variant-numeric:tabular-nums;white-space:nowrap}
@@ -193,12 +196,27 @@ html{scroll-behavior:smooth}
 
 <div class="grp"><h2 id="set-h">Einstellungen</h2>
 <section id="settings">
- <!-- An erster Stelle: Oszilloskop-Profil -->
+ <div class="sgroup"><div class="grouphead">Oszilloskop</div>
  <div class="set"><div class="head"><label>Oszilloskop-Profil</label></div>
   <div class="seg" role="group" aria-label="Oszilloskop-Profil">
    <button type="button" data-profile="1" aria-pressed="false">DIGITAL</button>
    <button type="button" data-profile="0" aria-pressed="false">ANALOG</button></div>
   <div class="sub">DIGITAL für digitale Oszilloskope, ANALOG für Röhren-Oszilloskope. Umschalten auch an der Uhr: BOOT-Taster 3 s halten.</div></div>
+ <div class="set"><div class="head"><label for="sDial">Zifferblatt</label></div>
+  <select id="sDial"><option value="0">Ziffern 1–12</option><option value="1">12 · 3 · 6 · 9</option>
+   <option value="2">Römisch I–XII</option><option value="3">Römisch XII · III · VI · IX</option></select>
+  <div class="sub">Ziffern auf dem Oszilloskop. Geht auch durch Wischen über die Vorschau oben.</div></div>
+ <div class="set"><div class="head"><label for="sBeam">Verweilzeit des Strahls</label><span class="val" id="vBeam"></span></div>
+  <input type="range" id="sBeam" min="1000" max="10000" step="250">
+  <div class="sub">Länger = hellere Linien, aber weniger Bilder pro Sekunde (jetzt <span id="vFps">–</span>).</div></div>
+ <div class="set"><div class="head"><label for="sHand">Helligkeit Stunden-/Minutenzeiger</label><span class="val" id="vHand"></span></div>
+  <input type="range" id="sHand" min="30" max="100" step="1">
+  <div class="sub">Unter 100 %, weil die schmalen Zeiger sonst heller wirken als der Rest.</div></div>
+ <div class="set" id="jumpRow"><div class="head"><label for="sJump">Rücklauf-Tempo</label><span class="val" id="vJump"></span></div>
+  <input type="range" id="sJump" min="0" max="48" step="1">
+  <div class="sub" id="jumpHint"></div></div>
+ </div>
+ <div class="sgroup"><div class="grouphead">Uhrzeit</div>
  <!-- Nur sichtbar, solange kein Zeitserver erreichbar war (kein Internet, Setup-WLAN) -->
  <div class="set" id="timeRow" hidden><div class="head"><label>Uhrzeit stellen</label></div>
   <div class="sub">Kein Zeitserver erreichbar (kein Internet). Die Uhrzeit lässt sich hier von Hand stellen.</div>
@@ -217,25 +235,14 @@ html{scroll-behavior:smooth}
    <button type="button" data-h12="0" aria-pressed="true">24 Stunden</button>
    <button type="button" data-h12="1" aria-pressed="false">12 Stunden (AM/PM)</button></div>
   <div class="sub">Für die Uhrzeit auf der OLED-Anzeige und auf dieser Seite.</div></div>
- <div class="set"><div class="head"><label for="sDial">Zifferblatt</label></div>
-  <select id="sDial"><option value="0">Ziffern 1–12</option><option value="1">12 · 3 · 6 · 9</option>
-   <option value="2">Römisch I–XII</option><option value="3">Römisch XII · III · VI · IX</option></select>
-  <div class="sub">Ziffern auf dem Oszilloskop. Geht auch durch Wischen über die Vorschau oben.</div></div>
- <div class="set"><div class="head"><label for="sBeam">Verweilzeit des Strahls</label><span class="val" id="vBeam"></span></div>
-  <input type="range" id="sBeam" min="1000" max="10000" step="250">
-  <div class="sub">Länger = hellere Linien, aber weniger Bilder pro Sekunde (jetzt <span id="vFps">–</span>).</div></div>
- <div class="set"><div class="head"><label for="sHand">Helligkeit Stunden-/Minutenzeiger</label><span class="val" id="vHand"></span></div>
-  <input type="range" id="sHand" min="30" max="100" step="1">
-  <div class="sub">Unter 100 %, weil die schmalen Zeiger sonst heller wirken als der Rest.</div></div>
- <div class="set" id="jumpRow"><div class="head"><label for="sJump">Rücklauf-Tempo</label><span class="val" id="vJump"></span></div>
-  <input type="range" id="sJump" min="0" max="48" step="1">
-  <div class="sub" id="jumpHint"></div></div>
  <div class="set"><div class="head"><label for="sTz">Zeitzone</label></div><select id="sTz"></select>
   <div class="sub">Bestimmt die Ortszeit samt automatischer Sommer-/Winterzeit.</div></div>
  <div class="set"><div class="head"><label for="sNtp">Zeitserver (NTP)</label></div>
   <div class="pw"><input id="sNtp" maxlength="63" autocapitalize="none" autocorrect="off" spellcheck="false">
   <button type="button" class="sec" id="sNtpSave">Übernehmen</button></div>
   <div class="sub">Server im Internet, von dem die Uhr die genaue Zeit holt (Standard: de.pool.ntp.org).</div></div>
+ </div>
+ <div class="sgroup"><div class="grouphead">Display</div>
  <div class="set"><div class="head"><label for="sOled">OLED-Helligkeit</label><span class="val" id="vOled"></span></div>
   <input type="range" id="sOled" min="1" max="255" step="1">
   <div class="sub">Helligkeit des kleinen Displays an der Uhr.</div></div>
@@ -243,6 +250,7 @@ html{scroll-behavior:smooth}
   <div class="sub">Für ein kopfüber eingebautes Display.</div></div>
  <div class="set"><label class="sw"><span>OLED-Pixelverschiebung</span><input type="checkbox" id="sShift"></label>
   <div class="sub">Verschiebt das Bild jede Minute um wenige Pixel, gegen Einbrennen.</div></div>
+ </div>
  <div id="setMsg"></div>
  <button type="button" class="sec" id="sReset">Auf Standardwerte zurücksetzen</button>
  <p class="hint">Änderungen wirken sofort und bleiben gespeichert. Standardwerte stammen aus config.h.</p>
@@ -297,6 +305,7 @@ Object.assign(EN,{'Zeitformat':'Time format','24 Stunden':'24 hours','12 Stunden
  'Für die Uhrzeit auf der OLED-Anzeige und auf dieser Seite.':'For the time on the OLED display and on this page.'});
 Object.assign(EN,{'Tiefstwert':'minimum','größter Block':'largest block','Prozessorauslastung Kern 0':'CPU usage core 0','Prozessorauslastung Kern 1':'CPU usage core 1',
  'zeichnet ständig das Oszilloskop-Bild – absichtlich ohne Pause':'draws the oscilloscope picture all the time – without pause on purpose'});
+Object.assign(EN,{'Oszilloskop':'Oscilloscope','Display':'Display'});
 const DE={};for(const k in EN)DE[EN[k]]=k;
 let lang='de';try{if(localStorage.getItem('lang')==='en')lang='en'}catch(e){}
 const t=s=>lang==='en'&&EN[s]||s;
