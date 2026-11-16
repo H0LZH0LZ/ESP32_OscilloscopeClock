@@ -66,7 +66,7 @@ header{padding:0 0 4px;text-align:center;scroll-margin-top:calc(env(safe-area-in
 #clock i{display:inline-block;width:.62em;font-style:normal;text-align:center}
 #date{color:var(--mute)}
 .scope canvas{margin:0 auto}
-section{background:var(--card);border-radius:14px;margin:0 0 14px;padding:4px 16px}
+section{background:var(--card);border-radius:14px;margin:0 0 14px;padding:6px 16px}   /* oben/unten 6 px + Innenabstand der Zeilen ≈ 16 px wie links/rechts */
 /* Abschnittsüberschriften bleiben beim Scrollen direkt unter der Titelleiste
    stehen. Die nächste Überschrift schiebt die vorige weg; so ist immer zu sehen,
    in welchem Abschnitt man ist. scroll-margin: Sprungziele aus dem Menü landen
@@ -89,6 +89,7 @@ button.sec{background:transparent;color:var(--acc);border:1px solid var(--line)}
 button.del{width:auto;min-height:36px;padding:0 12px;background:transparent;color:var(--err);border:1px solid var(--line);margin:0}
 button:disabled{opacity:.5}
 label{display:block;color:var(--mute);font-size:14px;margin:10px 0 4px}
+.subhead{color:var(--fg);font-size:16px;margin:10px 0 2px}   /* Zwischenüberschrift wie die Einstellungen */
 input{font:inherit;font-size:16px;width:100%;min-height:44px;padding:0 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--fg)}
 .pw{display:flex;gap:8px}.pw button{width:auto;margin:0;white-space:nowrap}
 ul{list-style:none;margin:0;padding:0}
@@ -97,18 +98,20 @@ li:first-child{border-top:0}
 li.tap{cursor:pointer}
 .bars{font-family:var(--mono);color:var(--mute);white-space:nowrap}
 .hint{color:var(--mute);font-size:14px;margin:6px 0 12px}
-#msg{min-height:20px;font-size:14px;margin:4px 0}
+#msg{font-size:14px;margin:4px 0}
+#msg:empty,#setMsg:empty{display:none}   /* kein Leerraum, solange keine Meldung da ist */
 /* Log-Feld: feste Höhe, eigener Scrollbereich. Wischen im Feld scrollt nur das Log
-   (overscroll-behavior), die Scrollleiste bleibt sichtbar. "Alle Zeilen" hebt die
+   (overscroll-behavior), die Scrollleiste bleibt sichtbar. "Alles anzeigen" hebt die
    Höhenbegrenzung auf. */
-/* margin-top 12px + 4px Abschnitts-Innenabstand = 16px, gleich wie links/rechts */
-pre{font:12px/1.45 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere;height:min(60vh,520px);overflow-y:auto;margin:12px 0 6px;
+/* margin-top 10px + 6px Abschnitts-Innenabstand = 16px, gleich wie links/rechts */
+pre{font:12px/1.45 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere;height:min(60vh,520px);overflow-y:auto;margin:10px 0 6px;
  background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px;-webkit-overflow-scrolling:touch;
  overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:var(--mute) transparent}
 pre::-webkit-scrollbar{width:6px}pre::-webkit-scrollbar-thumb{background:var(--mute);border-radius:3px}
 pre.full{height:auto;overflow-y:visible}
 .loginfo{color:var(--mute);font-size:13px;margin:0 0 8px;display:flex;justify-content:space-between;gap:8px}
-.tools{display:flex;flex-wrap:wrap;gap:8px}.tools button{margin:0 0 12px;flex:1 1 30%}
+.tools{display:flex;flex-wrap:wrap;gap:8px}.tools button{margin:0 0 10px;flex:1 1 40%}
+.logsw{min-height:44px;border-top:1px solid var(--line);margin-bottom:8px}
 /* Einstellungen */
 .set{border-top:1px solid var(--line);padding:10px 0}
 .set:first-of-type{border-top:0}
@@ -124,7 +127,7 @@ pre.full{height:auto;overflow-y:visible}
 .sw{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:0;color:var(--fg);font-size:16px}
 .sw input{width:24px;height:24px;min-height:0;margin:0;flex:none;accent-color:var(--acc)}
 .set.off{opacity:.55}
-#setMsg{min-height:20px;font-size:14px;margin:6px 0}
+#setMsg{font-size:14px;margin:6px 0}
 /* Oszilloskop-Schirm: im hellen Design durchsichtig mit dunkelgrünen Linien,
    im dunklen Design schwarzer Schirm mit leuchtend grünen Linien (Farben --scope-*). */
 .scope{background:var(--scope-bg);border-radius:14px;margin:12px 0 4px;padding:10px;display:flex;justify-content:center;forced-color-adjust:none}
@@ -156,20 +159,20 @@ html{scroll-behavior:smooth}
 <body>
 <button id="menuBtn" aria-label="Menü" aria-controls="nav" aria-expanded="false">☰</button>
 <nav id="nav" aria-label="Abschnitte" aria-hidden="true">
- <h3>Scope Clock</h3>
+ <h3>Abschnitte</h3>
  <a href="#uhr">Uhr</a>
  <a href="#status-h">Status</a>
  <a href="#set-h">Einstellungen</a>
  <a href="#wlan-h">WLAN</a>
- <a href="#log-h">Log</a>
+ <a href="#log-h">Protokoll</a>
 </nav>
 <div id="shade"></div>
 <main>
 <h1>ESP32 Oscilloscope Clock</h1>
 <header id="uhr">
 <div class="scope"><canvas id="scope" width="512" height="512" role="button" tabindex="0"
- aria-label="Vorschau des Oszilloskop-Bildes – tippen, um das Zifferblatt umzuschalten"></canvas><div class="dialtag" id="dialTag"></div></div>
-<p class="scopehint">Tippen, um das Zifferblatt umzuschalten</p>
+ aria-label="Vorschau des Oszilloskop-Bildes – antippen, um das Zifferblatt zu wechseln"></canvas><div class="dialtag" id="dialTag"></div></div>
+<p class="scopehint">Antippen, um das Zifferblatt zu wechseln</p>
 <div id="clock">--:--:--</div><div id="date">&nbsp;</div></header>
 
 <div class="grp"><h2 id="status-h">Status</h2>
@@ -181,36 +184,37 @@ html{scroll-behavior:smooth}
   <div class="seg" role="group" aria-label="Oszilloskop-Profil">
    <button type="button" data-profile="1" aria-pressed="false">DIGITAL</button>
    <button type="button" data-profile="0" aria-pressed="false">ANALOG</button></div>
-  <div class="sub">DIGITAL für digitale Oszilloskope, ANALOG für Röhren-Oszilloskope (auch per BOOT-Taster).</div></div>
+  <div class="sub">DIGITAL für digitale Oszilloskope, ANALOG für Röhren-Oszilloskope. Umschalten auch an der Uhr: BOOT-Taster 3 s halten.</div></div>
  <div class="set"><div class="head"><label for="sDial">Zifferblatt</label></div>
   <select id="sDial"><option value="0">Ziffern 1–12</option><option value="1">12 · 3 · 6 · 9</option>
    <option value="2">Römisch I–XII</option><option value="3">Römisch XII · III · VI · IX</option></select></div>
- <div class="set"><div class="head"><label for="sBeam">Strahlgeschwindigkeit</label><span class="val" id="vBeam"></span></div>
+ <div class="set"><div class="head"><label for="sBeam">Verweilzeit des Strahls</label><span class="val" id="vBeam"></span></div>
   <input type="range" id="sBeam" min="1000" max="10000" step="250">
-  <div class="sub">Länger = hellere Linien, weniger Bilder pro Sekunde. Bildrate jetzt: <span id="vFps">–</span></div></div>
+  <div class="sub">Länger = hellere Linien, aber weniger Bilder pro Sekunde (jetzt <span id="vFps">–</span>).</div></div>
  <div class="set"><div class="head"><label for="sHand">Helligkeit Stunden-/Minutenzeiger</label><span class="val" id="vHand"></span></div>
-  <input type="range" id="sHand" min="30" max="100" step="1"></div>
+  <input type="range" id="sHand" min="30" max="100" step="1">
+  <div class="sub">Unter 100 %, weil die schmalen Zeiger sonst heller wirken als der Rest.</div></div>
  <div class="set" id="jumpRow"><div class="head"><label for="sJump">Rücklauf-Tempo</label><span class="val" id="vJump"></span></div>
   <input type="range" id="sJump" min="0" max="48" step="1">
-  <div class="sub" id="jumpHint">Schneller = schwächere Rücklaufspur. 0 = harter Sprung.</div></div>
+  <div class="sub" id="jumpHint"></div></div>
  <div class="set"><div class="head"><label for="sTz">Zeitzone</label></div><select id="sTz"></select></div>
- <div class="set"><div class="head"><label for="sNtp">NTP-Server</label></div>
+ <div class="set"><div class="head"><label for="sNtp">Zeitserver (NTP)</label></div>
   <div class="pw"><input id="sNtp" maxlength="63" autocapitalize="none" autocorrect="off" spellcheck="false">
   <button type="button" class="sec" id="sNtpSave">Übernehmen</button></div></div>
  <div class="set"><div class="head"><label for="sOled">OLED-Helligkeit</label><span class="val" id="vOled"></span></div>
   <input type="range" id="sOled" min="1" max="255" step="1"></div>
  <div class="set"><label class="sw"><span>OLED um 180° drehen</span><input type="checkbox" id="sFlip"></label>
   <div class="sub">Für ein kopfüber eingebautes Display.</div></div>
- <div class="set"><label class="sw"><span>OLED-Pixel-Shift</span><input type="checkbox" id="sShift"></label>
+ <div class="set"><label class="sw"><span>OLED-Pixelverschiebung</span><input type="checkbox" id="sShift"></label>
   <div class="sub">Verschiebt das Bild jede Minute um wenige Pixel, gegen Einbrennen.</div></div>
  <div id="setMsg"></div>
- <button type="button" class="sec" id="sReset">Auf Standard zurücksetzen</button>
+ <button type="button" class="sec" id="sReset">Auf Standardwerte zurücksetzen</button>
  <p class="hint">Änderungen wirken sofort und bleiben gespeichert. Standardwerte stammen aus config.h.</p>
 </section></div>
 
 <div class="grp"><h2 id="wlan-h">WLAN</h2>
 <section>
- <label>Gespeicherte Netze</label>
+ <div class="subhead">Gespeicherte Netze</div>
  <ul id="saved"><li><span class="hint">wird geladen …</span></li></ul>
  <button class="sec" id="scanBtn">Netze in Reichweite suchen</button>
  <ul id="scan"></ul>
@@ -219,20 +223,21 @@ html{scroll-behavior:smooth}
   <input id="ssid" name="ssid" maxlength="32" autocapitalize="none" autocorrect="off" spellcheck="false" required>
   <label for="pw">Passwort</label>
   <div class="pw"><input id="pw" name="pw" type="password" maxlength="63" autocapitalize="none" autocorrect="off" spellcheck="false">
-  <button type="button" class="sec" id="eye">Zeigen</button></div>
+  <button type="button" class="sec" id="eye">Anzeigen</button></div>
   <div id="msg"></div>
-  <button type="submit">Speichern</button>
+  <button type="submit">Netz speichern</button>
  </form>
- <button class="sec" id="recon">Neu verbinden (stärkstes Netz)</button>
+ <button class="sec" id="recon">Neu verbinden (mit dem stärksten Netz)</button>
  <p class="hint">Gespeicherte Passwörter werden nie angezeigt. Netze aus secrets.h lassen sich hier nicht löschen.</p>
 </section></div>
 
-<div class="grp"><h2 id="log-h">Log</h2>
+<div class="grp"><h2 id="log-h">Protokoll</h2>
 <section>
- <pre id="log" tabindex="0" aria-label="Log, im Feld scrollbar">wird geladen …</pre>
- <div class="loginfo"><span id="logInfo"></span><span>neueste Zeile unten</span></div>
- <div class="tools"><button class="sec" id="logBtn">Aktualisieren</button><button class="sec" id="logAuto">Auto: an</button>
- <button class="sec" id="logFull">Alle Zeilen</button></div>
+ <pre id="log" tabindex="0" aria-label="Protokoll, im Feld scrollbar">wird geladen …</pre>
+ <div class="loginfo"><span id="logInfo"></span><span>neueste Einträge unten</span></div>
+ <label class="sw logsw"><span>Automatisch aktualisieren (alle 5 s)</span><input type="checkbox" id="logAuto" checked></label>
+ <div class="tools"><button class="sec" id="logBtn">Jetzt aktualisieren</button>
+ <button class="sec" id="logFull">Alles anzeigen</button></div>
 </section></div>
 </main>
 <script>
@@ -250,7 +255,7 @@ function row(k,v,c,note){const d=document.createElement('div');d.className='row'
  if(note)b.style.whiteSpace='nowrap';          // kurzer Wert neben der Erläuterung nicht umbrechen
  d.append(a,b);return d}
 function bars(r){return r>-55?'▂▄▆█':r>-67?'▂▄▆ ':r>-75?'▂▄  ':'▂   '}
-function dur(s){const d=Math.floor(s/86400),h=Math.floor(s/3600)%24,m=Math.floor(s/60)%60;return (d?d+' d ':'')+h+' h '+m+' min'}
+function dur(s){const d=Math.floor(s/86400),h=Math.floor(s/3600)%24,m=Math.floor(s/60)%60;return (d?d+(d===1?' Tag ':' Tage '):'')+h+' Std. '+m+' Min.'}
 // ---- Oszilloskop-Vorschau ---------------------------------------------------
 // Zeichnet dasselbe Bild wie die Uhr (Vektordaten von /api/vectors) auf ein
 // Canvas im Look eines Oszilloskop-Schirms. Die Zeigerstellung wird wie im
@@ -287,7 +292,7 @@ let tagTimer=0,dialBusy=false;
 function showTag(t){const e=$('dialTag');e.textContent=t;e.classList.add('show');clearTimeout(tagTimer);tagTimer=setTimeout(()=>e.classList.remove('show'),1600)}
 async function nextDial(){
  if(dialBusy)return;dialBusy=true;const prev=dial;dial=(dial+1)%DIALS.length;drawScope();showTag(DIALS[dial]);
- try{const r=await post('/api/dial',{style:dial});if(!r.ok)throw 0;if(S){S.dial=dial;renderSettings()}}catch(e){dial=prev;drawScope();showTag('Umschalten fehlgeschlagen')}
+ try{const r=await post('/api/dial',{style:dial});if(!r.ok)throw 0;if(S){S.dial=dial;renderSettings()}}catch(e){dial=prev;drawScope();showTag('Wechsel fehlgeschlagen')}
  dialBusy=false}
 $('scope').addEventListener('click',nextDial);
 $('scope').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();nextDial()}});
@@ -311,7 +316,7 @@ setInterval(()=>{if(tBase===null)return;const n=Math.floor((performance.now()-tA
 // beim Loslassen, damit nicht bei jeder Bewegung in den Flash geschrieben wird).
 let S=null,setBusy=false;
 const fmtBeam=v=>(v/1000).toFixed(2).replace('.',',')+' µs pro Schritt';
-const fmtJump=v=>+v===0?'hart (wie Original)':v+'× schneller';
+const fmtJump=v=>+v===0?'sofortiger Sprung':v+'× Zeichentempo';
 const fmtOled=v=>Math.round(v/255*100)+' %';
 function renderSettings(){
  if(!S)return;
@@ -325,7 +330,7 @@ function renderSettings(){
  const ana=S.profile===0,jv=ana?S.jumpSpeed:0;
  $('sJump').value=jv;$('vJump').textContent=fmtJump(jv);
  $('jumpRow').classList.toggle('off',!ana);$('sJump').disabled=!ana;
- $('jumpHint').textContent=ana?'Schneller = schwächere Rücklaufspur. 0 = harter Sprung.':'Im Profil DIGITAL immer 0 (harter Sprung). Dein ANALOG-Wert ('+fmtJump(S.jumpSpeed)+') bleibt gespeichert.';
+ $('jumpHint').textContent=ana?'Wie schnell der Strahl zwischen zwei Linien springt. Höher = schwächere Rücklaufspuren, 0 = sofortiger Sprung.':'Im Profil DIGITAL springt der Strahl immer sofort. Der ANALOG-Wert ('+fmtJump(S.jumpSpeed)+') bleibt gespeichert.';
  const tz=$('sTz');if(!tz.options.length){for(const z of S.timezones){const o=document.createElement('option');o.value=z.tz;o.textContent=z.label;tz.append(o)}}
  tz.value=S.tz;
  if(document.activeElement!==$('sNtp'))$('sNtp').value=S.ntp;
@@ -355,7 +360,7 @@ $('sOled').oninput=e=>$('vOled').textContent=fmtOled(e.target.value);
 $('sOled').onchange=e=>setSetting({oledContrast:e.target.value});
 $('sShift').onchange=e=>setSetting({oledShift:e.target.checked?1:0});
 $('sFlip').onchange=e=>setSetting({oledFlip:e.target.checked?1:0});
-$('sReset').onclick=async()=>{if(!confirm('Alle Einstellungen auf die Standardwerte aus config.h zurücksetzen? (WLANs bleiben erhalten)'))return;
+$('sReset').onclick=async()=>{if(!confirm('Alle Einstellungen auf die Standardwerte aus config.h zurücksetzen? (gespeicherte WLANs bleiben erhalten)'))return;
  setBusy=true;try{const r=await post('/api/settings/reset',{});if(r.settings){S=r.settings;renderSettings();dial=S.dial;drawScope()}setMsg(r)}catch(e){}setBusy=false};
 
 let online=true;
@@ -366,29 +371,29 @@ async function status(){
   $('vFps').textContent=s.fps+' Bilder/s';
   if(S&&!setBusy){const p=s.profile==='DIGITAL'?1:0;if(p!==S.profile||s.dial!==S.dial){S.profile=p;S.dial=s.dial;renderSettings()}}$('date').textContent=s.date?('KW '+s.kw+' – '+s.date):'Datum unbekannt';
   const st=$('status');st.replaceChildren(
-   row('NTP',s.ntp.synced?('synchronisiert, '+s.ntp.last):(s.wifi.configured?'warte auf Sync …':'aus (kein WLAN)'),s.ntp.synced?(s.ntp.overdue?'warn':''):'warn'),
-   row('WLAN',s.wifi.connected?s.wifi.ssid:(s.wifi.configured?'sucht …':'kein Netz eingetragen'),s.wifi.connected?'':'warn'),
-   ...(s.wifi.connected?[row('Signal',s.wifi.rssi+' dBm'),row('Adresse',s.wifi.ip+'  ·  '+s.wifi.host)]:[]),
+   row('Zeitabgleich (NTP)',s.ntp.synced?('zuletzt '+s.ntp.last):(s.wifi.configured?'wartet auf ersten Abgleich …':'aus (kein WLAN)'),s.ntp.synced?(s.ntp.overdue?'warn':''):'warn'),
+   row('WLAN',s.wifi.connected?s.wifi.ssid:(s.wifi.configured?'sucht Netz …':'kein Netz eingetragen'),s.wifi.connected?'':'warn'),
+   ...(s.wifi.connected?[row('Signalstärke',s.wifi.rssi+' dBm'),row('Netzwerkadresse',s.wifi.ip+'  ·  '+s.wifi.host)]:[]),
    ...(s.ap.active?[row('Setup-WLAN',s.ap.ssid+' ('+s.ap.ip+')','warn')]:[]),
    row('Oszilloskop-Profil',s.profile),
    row('Bildrate',s.fps+' Bilder/s'),
    row('Laufzeit',dur(s.uptime)),
    row('Arbeitsspeicher',Math.round(s.heap/1024)+' von '+Math.round(s.heapTotal/1024)+' KB frei'),
-   row('RAM-Minimum seit Start',Math.round(s.heapMin/1024)+' KB frei',s.heapMin<20480?'warn':''),
-   row('Größter freier RAM-Block',Math.round(s.heapBlock/1024)+' KB',s.heapBlock<8192?'warn':''),
-   row('CPU-Last Core 0',s.cpu0+' %',s.cpu0>85?'warn':'','WLAN, NTP, Webinterface, OLED, Uhrzeit, BOOT\u2011Taster'),
-   row('CPU-Last Core 1','100 %','','Strahlausgabe an GPIO25/26 – läuft absichtlich ohne Pause'),
-   row('Letzter Neustart',s.reset,/Absturz|Watchdog|Unterspannung/.test(s.reset)?'warn':''),
-   row('Firmware','v'+s.fw));
+   row('Arbeitsspeicher, Tiefstwert',Math.round(s.heapMin/1024)+' KB frei',s.heapMin<20480?'warn':'','seit dem Neustart'),
+   row('Größter freier Speicherblock',Math.round(s.heapBlock/1024)+' KB',s.heapBlock<8192?'warn':''),
+   row('Prozessorlast Kern 0',s.cpu0+' %',s.cpu0>85?'warn':'','WLAN, NTP, Webinterface, OLED, Uhrzeit, BOOT\u2011Taster'),
+   row('Prozessorlast Kern 1','100 %','','Strahlausgabe an GPIO25/26 – läuft absichtlich ohne Pause'),
+   row('Grund des letzten Neustarts',s.reset,/Absturz|Watchdog|Unterspannung/.test(s.reset)?'warn':''),
+   row('Firmware-Version','v'+s.fw));
  }catch(e){if(online){$('status').replaceChildren(row('Verbindung','keine Antwort von der Uhr','err'))}online=false}
 }
 async function saved(){
  try{const l=await (await get('/api/networks')).json();const u=$('saved');u.replaceChildren();
-  if(!l.length){const li=document.createElement('li');li.innerHTML='<span class="hint">noch keins</span>';u.append(li)}
+  if(!l.length){const li=document.createElement('li');li.innerHTML='<span class="hint">noch keine gespeichert</span>';u.append(li)}
   for(const n of l){const li=document.createElement('li');const a=document.createElement('span');a.textContent=n.ssid;li.append(a);
    if(n.source==='web'){const b=document.createElement('button');b.className='del';b.textContent='Löschen';
     b.onclick=async()=>{if(!confirm('„'+n.ssid+'“ löschen? Die Uhr startet danach neu.'))return;const r=await post('/api/wifi/delete',{ssid:n.ssid});msg(r)};li.append(b)}
-   else{const c=document.createElement('span');c.className='hint';c.textContent='secrets.h';li.append(c)}
+   else{const c=document.createElement('span');c.className='hint';c.textContent='aus secrets.h';li.append(c)}
    u.append(li)}
  }catch(e){}
 }
@@ -399,7 +404,7 @@ async function scan(){
   if(r.running){scanTimer=setTimeout(scan,1500);return}
   const u=$('scan');u.replaceChildren();
   for(const n of r.networks){const li=document.createElement('li');li.className='tap';
-   const a=document.createElement('span');a.textContent=n.ssid+(n.open?' (offen)':'');const b=document.createElement('span');b.className='bars';b.textContent=bars(n.rssi);
+   const a=document.createElement('span');a.textContent=n.ssid+(n.open?' (ohne Passwort)':'');const b=document.createElement('span');b.className='bars';b.textContent=bars(n.rssi);
    li.append(a,b);li.onclick=()=>{$('ssid').value=n.ssid;$('pw').focus()};u.append(li)}
   if(!r.networks.length){const li=document.createElement('li');li.innerHTML='<span class="hint">keine Netze gefunden</span>';u.append(li)}
  }catch(e){}
@@ -415,12 +420,12 @@ async function log(){try{const t=await (await get('/api/log')).text();const p=$(
  p.textContent=t||'(leer)';p.scrollTop=end?p.scrollHeight:top;logFirst=false;
  const n=t?t.replace(/\n$/,'').split('\n').length:0;$('logInfo').textContent=n+' Zeilen'}catch(e){}}
 $('wf').onsubmit=async e=>{e.preventDefault();const r=await post('/api/wifi',{ssid:$('ssid').value.trim(),pw:$('pw').value});msg(r);if(r.ok)$('pw').value=''};
-$('eye').onclick=()=>{const p=$('pw');p.type=p.type==='password'?'text':'password';$('eye').textContent=p.type==='password'?'Zeigen':'Verbergen'};
+$('eye').onclick=()=>{const p=$('pw');p.type=p.type==='password'?'text':'password';$('eye').textContent=p.type==='password'?'Anzeigen':'Ausblenden'};
 $('scanBtn').onclick=scan;
 $('recon').onclick=async()=>msg(await post('/api/reconnect',{}));
 $('logBtn').onclick=log;
-$('logAuto').onclick=()=>{logAuto=!logAuto;$('logAuto').textContent='Auto: '+(logAuto?'an':'aus')};
-$('logFull').onclick=()=>{const p=$('log'),f=p.classList.toggle('full');$('logFull').textContent=f?'Weniger':'Alle Zeilen';
+$('logAuto').onchange=e=>{logAuto=e.target.checked;if(logAuto)log()};
+$('logFull').onclick=()=>{const p=$('log'),f=p.classList.toggle('full');$('logFull').textContent=f?'Weniger anzeigen':'Alles anzeigen';
  if(!f){p.scrollTop=p.scrollHeight;$('log-h').scrollIntoView()}};
 status();saved();log();loadSettings();
 setInterval(()=>{if(document.visibilityState==='visible')status()},2000);

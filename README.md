@@ -20,13 +20,13 @@ Hardware angepasst: **ESP32-WROOM-32U DevKitC V4**, **Waveshare 2.42" OLED (SPI)
 - Mehrere WLANs: Die Uhr verbindet sich automatisch mit dem stärksten bekannten Netz.
 - **Webinterface** unter `http://scope-clock.local`, für Handys optimiert und ohne Passwort.
   Oben zeigt es eine Live-Vorschau des Oszilloskop-Bildes (im hellen Design ohne Hintergrund),
-  darunter den Status (NTP, WLAN, Signal, Profil, Bildrate, Laufzeit, Arbeitsspeicher, CPU-Last,
-  Grund des letzten Neustarts) und das Log. Außerdem dient es zum Eintragen von
-  WLANs. Ein einklappbares Seitenmenü (☰) springt in die Abschnitte. **Tippen auf die Vorschau
-  schaltet das Zifferblatt um**: 1–12, nur 12/3/6/9, römisch I–XII oder nur XII/III/VI/IX. Das gilt auch am Oszilloskop und bleibt
+  darunter den Status (Zeitabgleich, WLAN, Signalstärke, Profil, Bildrate, Laufzeit, Arbeitsspeicher,
+  Prozessorlast, Grund des letzten Neustarts) und das Protokoll. Außerdem dient es zum Eintragen von
+  WLANs. Ein einklappbares Seitenmenü (☰) springt in die Abschnitte. **Antippen der Vorschau
+  wechselt das Zifferblatt**: 1–12, nur 12/3/6/9, römisch I–XII oder nur XII/III/VI/IX. Das gilt auch am Oszilloskop und bleibt
   gespeichert. Unter **Einstellungen** lassen sich Oszilloskop-Profil, Zifferblatt,
-  Strahlgeschwindigkeit, Zeiger-Helligkeit, Rücklauf-Tempo, Zeitzone, NTP-Server und OLED
-  (Helligkeit, Pixel-Shift, Drehung um 180°) online ändern. Die Änderungen wirken sofort und bleiben gespeichert. Das Webinterface ist immer
+  Verweilzeit des Strahls, Zeigerhelligkeit, Rücklauf-Tempo, Zeitzone, Zeitserver (NTP) und OLED
+  (Helligkeit, Pixelverschiebung, Drehung um 180°) online ändern. Die Änderungen wirken sofort und bleiben gespeichert. Das Webinterface ist immer
   erreichbar, sobald die Uhr im WLAN ist. Ohne bekanntes WLAN öffnet die Uhr das Setup-WLAN
   **„ScopeClock-Setup“**, das Handy zeigt dann automatisch die Einrichtungsseite.
 - Eine Firmware für alle Oszilloskope: Das Profil DIGITAL (ab Werk) bzw. ANALOG wird im Betrieb

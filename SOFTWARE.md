@@ -114,21 +114,23 @@ und berechnet die Rundtour neu. Das dauert einige zehn Millisekunden, so lange s
 `config.h` ist nur der Startwert. Alle vier Ziffernsätze liegen deshalb im RAM (zusammen ca. 0,7 KB).
 
 Darunter folgen drei Bereiche:
-- **Status:** große Uhrzeit, KW und Datum, NTP mit letztem Sync, WLAN, Signal, Adresse, Profil,
-  Bildrate, Laufzeit, Arbeitsspeicher (frei/gesamt, Minimum seit Start, größter freier Block),
-  CPU-Last beider Kerne (mit kurzer Erläuterung, wofür der Kern zuständig ist: Core 0 = WLAN,
-  NTP, Webinterface, OLED, Uhrzeit, BOOT-Taster; Core 1 = Strahlausgabe), Grund des letzten
-  Neustarts, Firmware. Wird alle 2 s aktualisiert.
+- **Status:** große Uhrzeit, KW und Datum, Zeitabgleich (NTP) mit letztem Abgleich, WLAN,
+  Signalstärke, Netzwerkadresse, Profil, Bildrate, Laufzeit, Arbeitsspeicher (frei/gesamt,
+  Tiefstwert seit dem Neustart, größter freier Speicherblock), Prozessorlast beider Kerne (mit
+  kurzer Erläuterung, wofür der Kern zuständig ist: Kern 0 = WLAN, NTP, Webinterface, OLED,
+  Uhrzeit, BOOT-Taster; Kern 1 = Strahlausgabe), Grund des letzten Neustarts, Firmware-Version.
+  Wird alle 2 s aktualisiert.
   Farbig hervorgehoben werden nur Probleme: Orange = Warnung (NTP wartet oder überfällig, WLAN
-  sucht, Setup-WLAN aktiv, RAM-Minimum unter 20 KB, größter Block unter 8 KB, Core 0 über 85 %,
+  sucht, Setup-WLAN aktiv, Tiefstwert unter 20 KB, größter Block unter 8 KB, Kern 0 über 85 %,
   Neustart nach Absturz, Watchdog oder Unterspannung), Rot = Fehler (keine Antwort von der Uhr,
   abgelehnte Eingaben). Normale Zustände und Bestätigungen stehen in normaler Schriftfarbe.
 - **WLAN:** gespeicherte Netze (Netze aus dem Webinterface lassen sich löschen), Netzsuche
   (Netz antippen übernimmt den Namen), Formular, „Neu verbinden“.
-- **Log:** die letzten `LOG_BUFFER_SIZE` Byte (8 KB, ca. 120 Zeilen), alle 5 s aktualisiert. Das Feld
+- **Protokoll** (das Log der Firmware): die letzten `LOG_BUFFER_SIZE` Byte (8 KB, ca. 120 Zeilen),
+  alle 5 s aktualisiert, solange „Automatisch aktualisieren“ an ist („Jetzt aktualisieren“ lädt sofort). Das Feld
   hat eine feste Höhe (max. 60 % des Bildschirms) mit eigener Scrollleiste. Wischen im Feld scrollt
   nur das Log, nicht die Seite. Steht man unten, folgen neue Zeilen automatisch. Liest man weiter
-  oben, bleibt die Position beim Aktualisieren erhalten. „Alle Zeilen“ klappt das Log auf volle
+  oben, bleibt die Position beim Aktualisieren erhalten. „Alles anzeigen“ klappt das Log auf volle
   Länge auf, darunter steht die Zeilenzahl.
 
 Für Handys optimiert: eine Spalte, Schaltflächen mindestens 44 px hoch, Eingabefelder mit 16 px
@@ -195,13 +197,13 @@ gespeicherten Werte, die WLANs bleiben erhalten.
 |---|---|---|---|
 | Oszilloskop-Profil | `profile` | DIGITAL / ANALOG | `g_scopeProfile`, auch per BOOT-Taster |
 | Zifferblatt | `dial` | 4 Stile | `g_dialStyle`, synchron mit Tippen auf die Vorschau |
-| Strahlgeschwindigkeit | `beam` | 1.000–10.000 ns pro Schritt | `g_beamNs`, `scopeTask` berechnet das Timing zwischen zwei Bildern neu (`beamTiming()`) |
-| Zeiger-Helligkeit | `hand` | 30–100 % | `g_handPct` |
-| Rücklauf-Tempo | `jump` | 0 (hart) – 48 | `g_jumpSpeed`, nur im Profil ANALOG wirksam. Bei DIGITAL zeigt der Regler ausgegraut 0 (harter Sprung); der ANALOG-Wert bleibt gespeichert und erscheint beim Zurückschalten wieder |
+| Verweilzeit des Strahls | `beam` | 1.000–10.000 ns pro Schritt | `g_beamNs`, `scopeTask` berechnet das Timing zwischen zwei Bildern neu (`beamTiming()`) |
+| Helligkeit Stunden-/Minutenzeiger | `hand` | 30–100 % | `g_handPct` |
+| Rücklauf-Tempo | `jump` | 0 (sofortiger Sprung) – 48 (× Zeichentempo) | `g_jumpSpeed`, nur im Profil ANALOG wirksam. Bei DIGITAL zeigt der Regler ausgegraut 0 (sofortiger Sprung); der ANALOG-Wert bleibt gespeichert und erscheint beim Zurückschalten wieder |
 | Zeitzone | `tz` | Liste `TIMEZONES[]` (bzw. `TZ_INFO`) | `configTzTime()` neu |
-| NTP-Server | `ntp` | Hostname, max. 63 Zeichen | erster Server, `configTzTime()` neu |
+| Zeitserver (NTP) | `ntp` | Hostname, max. 63 Zeichen | erster Server, `configTzTime()` neu |
 | OLED-Helligkeit | `oled` | 1–255 | `u8g2.setContrast()` |
-| OLED-Pixel-Shift | `shift` | an/aus | Versatz gegen Einbrennen |
+| OLED-Pixelverschiebung | `shift` | an/aus | Versatz gegen Einbrennen |
 | OLED um 180° drehen | `flip` | an/aus | `u8g2.setDisplayRotation(U8G2_R2)`, für ein kopfüber eingebautes Display |
 
 Die Firmware prüft jeden Wert (`handleSettingsPost()`) und meldet ungültige Eingaben mit Grund

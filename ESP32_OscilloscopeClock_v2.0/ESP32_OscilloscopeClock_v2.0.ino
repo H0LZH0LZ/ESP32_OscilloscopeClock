@@ -1052,12 +1052,12 @@ static const char *resetReasonText()
     case ESP_RST_POWERON:   return "Einschalten";
     case ESP_RST_EXT:       return "Reset-Taster";
     case ESP_RST_SW:        return "Neustart durch Software";
-    case ESP_RST_PANIC:     return "Absturz (Exception)";
-    case ESP_RST_INT_WDT:   return "Watchdog (Interrupt)";
-    case ESP_RST_TASK_WDT:  return "Watchdog (Task)";
-    case ESP_RST_WDT:       return "Watchdog";
+    case ESP_RST_PANIC:     return "Absturz (Programmfehler)";
+    case ESP_RST_INT_WDT:   return "Absturz (Interrupt-Watchdog)";
+    case ESP_RST_TASK_WDT:  return "Absturz (Task-Watchdog)";
+    case ESP_RST_WDT:       return "Absturz (Watchdog)";
     case ESP_RST_DEEPSLEEP: return "Aufwachen aus Tiefschlaf";
-    case ESP_RST_BROWNOUT:  return "Unterspannung (Brownout)";
+    case ESP_RST_BROWNOUT:  return "Unterspannung";
     case ESP_RST_SDIO:      return "SDIO";
     default:                return "unbekannt";
   }
@@ -1299,7 +1299,7 @@ static void handleWifiDelete()
 static void handleDial()
 {
   const int st = web.arg("style").toInt();
-  if (!web.hasArg("style") || st < 0 || st >= DIAL_STYLES) { sendJsonResult(false, "style muss 0 bis 3 sein"); return; }
+  if (!web.hasArg("style") || st < 0 || st >= DIAL_STYLES) { sendJsonResult(false, "Zifferblatt: 0 bis 3"); return; }
   if (st != g_dialStyle) {
     g_dialStyle = (uint8_t)st;
     saveSetting("dial", (uint8_t)st);
@@ -1455,7 +1455,7 @@ static void handleSettingsPost()
     const int v = web.arg("profile").toInt();
     if (v == 0 || v == 1) { g_scopeProfile = v; p.putUChar("profile", v); changed++;
       logMsg("[Web] Oszilloskop-Profil: %s", profileName(v)); }
-    else bad("Profil ungültig");
+    else bad("Oszilloskop-Profil ungültig");
   }
   if (web.hasArg("dial")) {
     const int v = web.arg("dial").toInt();
@@ -1467,13 +1467,13 @@ static void handleSettingsPost()
     const int v = web.arg("beamNs").toInt();
     if (v >= 1000 && v <= 10000) { g_beamNs = v; p.putUShort("beam", v); changed++;
       logMsg("[Web] Strahlgeschwindigkeit: %d ns pro Schritt", v); }
-    else bad("Strahlgeschwindigkeit: 1000 bis 10000 ns");
+    else bad("Verweilzeit des Strahls: 1 bis 10 µs");
   }
   if (web.hasArg("handPct")) {
     const int v = web.arg("handPct").toInt();
     if (v >= 30 && v <= 100) { g_handPct = v; p.putUChar("hand", v); changed++;
       logMsg("[Web] Zeiger-Helligkeit: %d %%", v); }
-    else bad("Zeiger-Helligkeit: 30 bis 100 %");
+    else bad("Zeigerhelligkeit: 30 bis 100 %");
   }
   if (web.hasArg("jumpSpeed")) {
     const int v = web.arg("jumpSpeed").toInt();
@@ -1492,7 +1492,7 @@ static void handleSettingsPost()
     const String v = web.arg("ntp");
     if (hostnameValid(v)) { strlcpy(s_ntpServer, v.c_str(), sizeof(s_ntpServer)); p.putString("ntp", s_ntpServer); changed++; timeChanged = true;
       logMsg("[Web] NTP-Server: %s", s_ntpServer); }
-    else bad("NTP-Server: nur Buchstaben, Ziffern, Punkt und Bindestrich (max. 63)");
+    else bad("Zeitserver: nur Buchstaben, Ziffern, Punkt und Bindestrich (max. 63 Zeichen)");
   }
   if (web.hasArg("oledContrast")) {
     const int v = web.arg("oledContrast").toInt();
@@ -1533,7 +1533,7 @@ static void handleSettingsReset()
   s_oledFlip  = OLED_FLIP;  oledSetFlip(s_oledFlip);
   applyTime();
   logMsg("[Web] Einstellungen auf Standard zurueckgesetzt");
-  sendSettings(true, "Auf Standard zurückgesetzt");
+  sendSettings(true, "Auf Standardwerte zurückgesetzt");
 }
 
 // POST /api/reconnect – Verbindung trennen; wifiTask verbindet sich dann mit

@@ -162,7 +162,7 @@ Ein Bild dauert ca. 4,3 ms, mit römischen Ziffern ca. 6,2 ms.
 - Beide Geräte hängen am selben PC, damit haben sie gemeinsame Masse, das ist unkritisch.
 
 ## Feinabstimmung in `config.h`
-Profil, Zifferblatt, Strahlgeschwindigkeit, Zeiger-Helligkeit, Rücklauf-Tempo, Zeitzone, NTP-Server
+Profil, Zifferblatt, Verweilzeit des Strahls, Zeigerhelligkeit, Rücklauf-Tempo, Zeitzone, Zeitserver (NTP)
 und OLED lassen sich bequemer im **Webinterface unter „Einstellungen“** ändern, mit sofortiger Wirkung
 am Oszilloskop. Die Werte in `config.h` sind dann nur die Startwerte.
 
