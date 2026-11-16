@@ -170,6 +170,7 @@ static const size_t WIFI_NETWORK_COUNT = sizeof(WIFI_NETWORKS) / sizeof(WIFI_NET
 // nie eine "halbe" Uhrzeit sehen – ganz ohne Mutex, der Core 1 bremsen würde.
 static volatile uint32_t g_timePacked = 0;
 
+// Stunde, Minute, Sekunde in ein 32-Bit-Wort packen (h<<16 | m<<8 | s)
 static inline uint32_t packTime(int h, int m, int s) {
   return ((uint32_t)h << 16) | ((uint32_t)m << 8) | (uint32_t)s;
 }
@@ -203,9 +204,14 @@ static bool    s_oledShift     = OLED_SHIFT_EVERY_S > 0;
 static bool    s_oledFlip      = OLED_FLIP;                // Anzeige um 180° gedreht
 
 static volatile bool g_ntpSynced     = false;  // true nach dem ersten erfolgreichen Sync
+static volatile bool g_timeManual    = false;  // true, wenn die Zeit im Webinterface gestellt wurde
 static time_t        g_lastSyncEpoch = 0;      // Unix-Zeit der letzten Synchronisierung
+
+// Gültige Uhrzeit mit Datum: per NTP oder von Hand gestellt (ohne Internet).
+static inline bool timeValid() { return g_ntpSynced || g_timeManual; }
 static portMUX_TYPE  g_syncMux       = portMUX_INITIALIZER_UNLOCKED;
 
+// Zeitpunkt der letzten NTP-Synchronisierung lesen (unter Spinlock, da 64 Bit)
 static time_t lastSyncEpoch()
 {
   portENTER_CRITICAL(&g_syncMux);
@@ -236,7 +242,7 @@ static void logMsg(const char *fmt, ...)
 {
   char line[192];
   int n;
-  if (g_ntpSynced) {
+  if (timeValid()) {
     const time_t now = time(nullptr);
     struct tm t;
     localtime_r(&now, &t);
@@ -647,6 +653,7 @@ static float tourGap(const Stroke &from, const Stroke &to)       // Sprung from.
   return sqrtf(dx * dx + dy * dy);
 }
 
+// Alle Linienzüge einer Tabelle an die Rundtour anhängen (bis TOUR_MAX)
 static void tourAdd(const byte *table, int size)
 {
   int i = 0;
@@ -654,8 +661,10 @@ static void tourAdd(const byte *table, int size)
   while (s_tourLen < TOUR_MAX && nextStroke(table, size, 0x00, i, st)) s_tour[s_tourLen++] = st;
 }
 
+// Linienzug umdrehen (Anfang und Ende tauschen)
 static void reverseStroke(Stroke &st) { const int16_t tmp = st.a; st.a = st.b; st.b = tmp; }
 
+// Rundtour aus Zifferblatt + Ziffern bauen und sortieren (siehe Erklärung oben)
 static void buildTour(const uint8_t *digits, int digitsSize)
 {
   s_tourLen = 0;
@@ -816,14 +825,15 @@ static void onNtpSync(struct timeval *tv)
 }
 
 // Liefert die aktuelle lokale Zeit (Zeitzone/Sommerzeit aus TZ_INFO).
-// Rückgabe true  = echte Zeit nach NTP-Sync (inkl. Datum),
-//         false = noch kein Sync: Zeit läuft ab FALLBACK_H:M:S seit Einschalten,
+// Rückgabe true  = echte Zeit nach NTP-Sync oder von Hand gestellt (inkl. Datum),
+//         false = weder noch: Zeit läuft ab FALLBACK_H:M:S seit Einschalten,
 //                 Datumsfelder sind 0 und dürfen nicht angezeigt werden.
-// Nach dem ersten Sync läuft die Systemuhr des ESP32 selbstständig weiter,
-// auch wenn das WLAN später wegfällt.
+// Danach läuft die Systemuhr des ESP32 selbstständig weiter, auch wenn das
+// WLAN später wegfällt. Eine von Hand gestellte Zeit geht beim Neustart
+// verloren (der ESP32 hat keine gepufferte Echtzeituhr).
 static bool currentTime(struct tm &out)
 {
-  if (g_ntpSynced) {
+  if (timeValid()) {
     time_t now = time(nullptr);
     localtime_r(&now, &out);
     return true;
@@ -857,6 +867,7 @@ static void publishTime()
 static StoredNet s_webNets[WEB_MAX_NETWORKS];
 static int       s_webNetCount = 0;
 
+// Im Webinterface gespeicherte WLANs aus dem NVS laden
 static void webNetsLoad()
 {
   Preferences p;
@@ -872,6 +883,7 @@ static void webNetsLoad()
   p.end();
 }
 
+// Im Webinterface gespeicherte WLANs ins NVS schreiben
 static void webNetsSave()
 {
   Preferences p;
@@ -887,6 +899,7 @@ static void webNetsSave()
   p.end();
 }
 
+// true, wenn secrets.h mindestens ein WLAN mit Namen enthält
 static bool secretsNetConfigured()
 {
   for (size_t i = 0; i < WIFI_NETWORK_COUNT; i++)
@@ -951,16 +964,17 @@ static void wifiStart()
   webStart();
 }
 
-// Schreibt Statusänderungen ins Log (aufgerufen 1× pro Sekunde):
-//  - WLAN verbunden (mit SSID, IP, Signal) / Verbindung verloren
-//  - beim ersten Verbinden: mDNS starten (http://<WIFI_HOSTNAME>.local)
-//  - jede NTP-Synchronisierung mit Datum und Uhrzeit
-//  - einmalige Warnung, wenn der letzte Sync länger als 2 Intervalle her ist
+// true, wenn der letzte NTP-Abgleich länger als 2 Intervalle zurückliegt
 static bool ntpOverdue()
 {
   return g_ntpSynced && time(nullptr) - lastSyncEpoch() > (time_t)(2 * NTP_SYNC_INTERVAL_MS / 1000UL);
 }
 
+// Schreibt Statusänderungen ins Log (aufgerufen 1× pro Sekunde):
+//  - WLAN verbunden (mit SSID, IP, Signal) / Verbindung verloren
+//  - beim ersten Verbinden: mDNS starten (http://<WIFI_HOSTNAME>.local)
+//  - jede NTP-Synchronisierung mit Datum und Uhrzeit
+//  - einmalige Warnung, wenn der letzte Sync länger als 2 Intervalle her ist
 static void wifiLogChanges()
 {
   static wl_status_t last = WL_IDLE_STATUS;
@@ -1076,6 +1090,7 @@ static void jsonStr(String &out, const char *s)
   out += '"';
 }
 
+// Antwort {"ok":…,"msg":"…"} an das Webinterface senden
 static void sendJsonResult(bool ok, const char *msg)
 {
   String o = "{\"ok\":";
@@ -1101,6 +1116,7 @@ static void handleStatus()
 
   o += ",\"ntp\":{\"synced\":"; o += g_ntpSynced ? "true" : "false";
   o += ",\"overdue\":";         o += ntpOverdue() ? "true" : "false";
+  o += ",\"manual\":";          o += g_timeManual ? "true" : "false";
   o += ",\"last\":";
   if (g_ntpSynced) {
     const time_t e = lastSyncEpoch(); struct tm st; localtime_r(&e, &st);
@@ -1294,6 +1310,48 @@ static void handleWifiDelete()
   s_restartAtMs = millis() + 1500;
 }
 
+// POST /api/time – Uhrzeit von Hand stellen (für den Betrieb ohne Internet).
+//   epoch=<Unix-Sekunden, UTC>        "Uhrzeit vom Handy übernehmen"
+//   local=JJJJ-MM-TTTHH:MM[:SS]       Datum/Uhrzeit aus den Eingabefeldern,
+//                                     gilt in der eingestellten Zeitzone
+// Ein späterer NTP-Abgleich überschreibt die Zeit wieder (gewollt).
+static void handleTimeSet()
+{
+  time_t e = 0;
+  if (web.hasArg("epoch")) {
+    e = (time_t)strtoll(web.arg("epoch").c_str(), nullptr, 10);
+  } else if (web.hasArg("local")) {
+    struct tm t = {};
+    // Zahlen der Reihe nach lesen (ohne sscanf – spart ca. 20 KB Flash)
+    int v[6] = {0, 0, 0, 0, 0, 0}, n = 0;
+    const String arg = web.arg("local");                 // String muss leben, solange c darauf zeigt
+    for (const char *c = arg.c_str(); *c && n < 6; ) {
+      if (*c < '0' || *c > '9') { c++; continue; }
+      while (*c >= '0' && *c <= '9') v[n] = v[n] * 10 + (*c++ - '0');
+      n++;
+    }
+    const int Y = v[0], M = v[1], D = v[2], h = v[3], m = v[4], sec = v[5];
+    if (n < 5 || M < 1 || M > 12 || D < 1 || D > 31 || h < 0 || h > 23 || m < 0 || m > 59 || sec < 0 || sec > 59) {
+      sendJsonResult(false, "Datum oder Uhrzeit ungültig"); return;
+    }
+    t.tm_year = Y - 1900; t.tm_mon = M - 1; t.tm_mday = D;
+    t.tm_hour = h; t.tm_min = m; t.tm_sec = sec;
+    t.tm_isdst = -1;                                      // Sommerzeit aus der Zeitzone bestimmen
+    e = mktime(&t);
+  }
+  // Plausibel: 2024 bis 2099
+  if (e < (time_t)1704067200 || e > (time_t)4102444800LL) { sendJsonResult(false, "Datum muss zwischen 2024 und 2099 liegen"); return; }
+  struct timeval tv = { e, 0 };
+  settimeofday(&tv, nullptr);
+  g_timeManual = true;
+  struct tm lt;
+  localtime_r(&e, &lt);
+  logMsg("[Zeit] von Hand gestellt (%s): %02d.%02d.%04d %02d:%02d:%02d",
+         web.hasArg("epoch") ? "vom Handy" : "Eingabe",
+         lt.tm_mday, lt.tm_mon + 1, lt.tm_year + 1900, lt.tm_hour, lt.tm_min, lt.tm_sec);
+  sendJsonResult(true, "Uhrzeit gestellt");
+}
+
 // POST /api/dial (style = 0 … DIAL_STYLES-1, siehe dialDigits) – Zifferblatt umschalten: gilt sofort
 // für das Oszilloskop (scopeTask baut die Rundtour neu) und wird gespeichert.
 static void handleDial()
@@ -1348,6 +1406,7 @@ static const TzOption TIMEZONES[] = {
 };
 static const int TIMEZONE_COUNT = sizeof(TIMEZONES) / sizeof(TIMEZONES[0]);
 
+// true, wenn die Zeitzone aus der Liste stammt (oder TZ_INFO aus config.h ist)
 static bool tzAllowed(const char *tz)
 {
   if (!strcmp(tz, TZ_INFO)) return true;
@@ -1355,6 +1414,7 @@ static bool tzAllowed(const char *tz)
   return false;
 }
 
+// Prüft einen NTP-Servernamen: 1–63 Zeichen, nur Buchstaben, Ziffern, Punkt, Bindestrich
 static bool hostnameValid(const String &h)
 {
   if (h.length() < 1 || h.length() > 63) return false;
@@ -1422,6 +1482,7 @@ static void settingsJson(String &o)
   o += "]}";
 }
 
+// Antwort mit Meldung und allen aktuellen Einstellungen senden
 static void sendSettings(bool ok, const char *msg)
 {
   String o = "{\"ok\":";
@@ -1559,6 +1620,7 @@ static void handleNotFound()
   web.send(302, "text/plain", "");
 }
 
+// Webserver starten: alle Adressen (Seite, Schrift, /api/…) registrieren
 static void webStart()
 {
   web.on("/",                HTTP_GET,  [] { web.send_P(200, "text/html; charset=utf-8", INDEX_HTML); });
@@ -1577,6 +1639,7 @@ static void webStart()
   web.on("/api/wifi/delete", HTTP_POST, handleWifiDelete);
   web.on("/api/reconnect",   HTTP_POST, handleReconnect);
   web.on("/api/dial",        HTTP_POST, handleDial);
+  web.on("/api/time",        HTTP_POST, handleTimeSet);
   web.on("/api/settings",       HTTP_GET,  handleSettingsGet);
   web.on("/api/settings",       HTTP_POST, handleSettingsPost);
   web.on("/api/settings/reset", HTTP_POST, handleSettingsReset);
@@ -1866,6 +1929,7 @@ static bool oledProfileOverlay()
   return true;
 }
 
+// OLED neu zeichnen: Uhrzeit, KW/Datum, WLAN-Name, Signalstärke (1× pro Sekunde)
 static void oledUpdate()
 {
   if (oledProfileOverlay()) return;

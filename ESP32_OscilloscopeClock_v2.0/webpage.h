@@ -90,6 +90,7 @@ button.del{width:auto;min-height:36px;padding:0 12px;background:transparent;colo
 button:disabled{opacity:.5}
 label{display:block;color:var(--mute);font-size:14px;margin:10px 0 4px}
 .subhead{color:var(--fg);font-size:16px;margin:10px 0 2px}   /* Zwischenüberschrift wie die Einstellungen */
+.desc{color:var(--mute);font-size:13px;margin:0 0 6px}.desc.top{margin-top:10px}   /* kurze Funktionsbeschreibung */
 input{font:inherit;font-size:16px;width:100%;min-height:44px;padding:0 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--fg)}
 .pw{display:flex;gap:8px}.pw button{width:auto;margin:0;white-space:nowrap}
 ul{list-style:none;margin:0;padding:0}
@@ -99,7 +100,8 @@ li.tap{cursor:pointer}
 .bars{font-family:var(--mono);color:var(--mute);white-space:nowrap}
 .hint{color:var(--mute);font-size:14px;margin:6px 0 12px}
 #msg{font-size:14px;margin:4px 0}
-#msg:empty,#setMsg:empty{display:none}   /* kein Leerraum, solange keine Meldung da ist */
+#tMsg{font-size:14px;margin:2px 0 6px}
+#msg:empty,#setMsg:empty,#tMsg:empty{display:none}   /* kein Leerraum, solange keine Meldung da ist */
 /* Log-Feld: feste Höhe, eigener Scrollbereich. Wischen im Feld scrollt nur das Log
    (overscroll-behavior), die Scrollleiste bleibt sichtbar. "Alles anzeigen" hebt die
    Höhenbegrenzung auf. */
@@ -124,6 +126,7 @@ pre.full{height:auto;overflow-y:visible}
 .seg{display:flex;gap:6px;margin-top:6px}
 .seg button{margin:0;background:transparent;color:var(--fg);border:1px solid var(--line);font-weight:500}
 .seg button[aria-pressed="true"]{background:var(--acc);color:#fff;border-color:var(--acc);font-weight:600}
+.dt{display:flex;gap:8px;margin-top:6px}.dt input{flex:1 1 0;min-width:0}
 .sw{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:0;color:var(--fg);font-size:16px}
 .sw input{width:24px;height:24px;min-height:0;margin:0;flex:none;accent-color:var(--acc)}
 .set.off{opacity:.55}
@@ -132,7 +135,8 @@ pre.full{height:auto;overflow-y:visible}
    im dunklen Design schwarzer Schirm mit leuchtend grünen Linien (Farben --scope-*). */
 .scope{background:var(--scope-bg);border-radius:14px;margin:12px 0 4px;padding:10px;display:flex;justify-content:center;forced-color-adjust:none}
 .scope{position:relative}
-.scope canvas{width:100%;max-width:340px;aspect-ratio:1;display:block;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.scope canvas:focus:not(:focus-visible){outline:none}
+.scope canvas{width:100%;max-width:340px;aspect-ratio:1;display:block;cursor:grab;touch-action:pan-y;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
 .dialtag{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);background:rgba(0,0,0,.65);color:#b6ffc4;
  font-size:13px;padding:4px 10px;border-radius:999px;pointer-events:none;transition:opacity .4s;opacity:0;white-space:nowrap}
 .dialtag.show{opacity:1}
@@ -170,9 +174,9 @@ html{scroll-behavior:smooth}
 <main>
 <h1>ESP32 Oscilloscope Clock</h1>
 <header id="uhr">
-<div class="scope"><canvas id="scope" width="512" height="512" role="button" tabindex="0"
- aria-label="Vorschau des Oszilloskop-Bildes – antippen, um das Zifferblatt zu wechseln"></canvas><div class="dialtag" id="dialTag"></div></div>
-<p class="scopehint">Antippen, um das Zifferblatt zu wechseln</p>
+<div class="scope"><canvas id="scope" width="512" height="512" role="img" tabindex="0"
+ aria-label="Vorschau des Oszilloskop-Bildes – nach links oder rechts wischen (oder Pfeiltasten), um das Zifferblatt zu wechseln"></canvas><div class="dialtag" id="dialTag"></div></div>
+<p class="scopehint">‹ Nach links oder rechts wischen, um das Zifferblatt zu wechseln ›</p>
 <div id="clock">--:--:--</div><div id="date">&nbsp;</div></header>
 
 <div class="grp"><h2 id="status-h">Status</h2>
@@ -180,6 +184,14 @@ html{scroll-behavior:smooth}
 
 <div class="grp"><h2 id="set-h">Einstellungen</h2>
 <section id="settings">
+ <!-- Nur sichtbar, solange kein Zeitserver erreichbar war (kein Internet, Setup-WLAN) -->
+ <div class="set" id="timeRow" hidden><div class="head"><label>Uhrzeit stellen</label></div>
+  <div class="sub">Kein Zeitserver erreichbar (kein Internet). Die Uhrzeit lässt sich hier von Hand stellen.</div>
+  <button type="button" id="tPhone">Uhrzeit dieses Geräts übernehmen</button>
+  <div class="dt"><input type="date" id="tDate" aria-label="Datum"><input type="time" id="tTime" step="1" aria-label="Uhrzeit"></div>
+  <button type="button" class="sec" id="tSave">Datum und Uhrzeit setzen</button>
+  <div id="tMsg"></div>
+  <div class="sub">Sobald ein Zeitserver erreichbar ist, stellt sich die Uhr wieder selbst. Nach einem Neustart muss die Zeit erneut gestellt werden.</div></div>
  <div class="set"><div class="head"><label>Oszilloskop-Profil</label></div>
   <div class="seg" role="group" aria-label="Oszilloskop-Profil">
    <button type="button" data-profile="1" aria-pressed="false">DIGITAL</button>
@@ -187,7 +199,8 @@ html{scroll-behavior:smooth}
   <div class="sub">DIGITAL für digitale Oszilloskope, ANALOG für Röhren-Oszilloskope. Umschalten auch an der Uhr: BOOT-Taster 3 s halten.</div></div>
  <div class="set"><div class="head"><label for="sDial">Zifferblatt</label></div>
   <select id="sDial"><option value="0">Ziffern 1–12</option><option value="1">12 · 3 · 6 · 9</option>
-   <option value="2">Römisch I–XII</option><option value="3">Römisch XII · III · VI · IX</option></select></div>
+   <option value="2">Römisch I–XII</option><option value="3">Römisch XII · III · VI · IX</option></select>
+  <div class="sub">Ziffern auf dem Oszilloskop. Geht auch durch Wischen über die Vorschau oben.</div></div>
  <div class="set"><div class="head"><label for="sBeam">Verweilzeit des Strahls</label><span class="val" id="vBeam"></span></div>
   <input type="range" id="sBeam" min="1000" max="10000" step="250">
   <div class="sub">Länger = hellere Linien, aber weniger Bilder pro Sekunde (jetzt <span id="vFps">–</span>).</div></div>
@@ -197,12 +210,15 @@ html{scroll-behavior:smooth}
  <div class="set" id="jumpRow"><div class="head"><label for="sJump">Rücklauf-Tempo</label><span class="val" id="vJump"></span></div>
   <input type="range" id="sJump" min="0" max="48" step="1">
   <div class="sub" id="jumpHint"></div></div>
- <div class="set"><div class="head"><label for="sTz">Zeitzone</label></div><select id="sTz"></select></div>
+ <div class="set"><div class="head"><label for="sTz">Zeitzone</label></div><select id="sTz"></select>
+  <div class="sub">Bestimmt die Ortszeit samt automatischer Sommer-/Winterzeit.</div></div>
  <div class="set"><div class="head"><label for="sNtp">Zeitserver (NTP)</label></div>
   <div class="pw"><input id="sNtp" maxlength="63" autocapitalize="none" autocorrect="off" spellcheck="false">
-  <button type="button" class="sec" id="sNtpSave">Übernehmen</button></div></div>
+  <button type="button" class="sec" id="sNtpSave">Übernehmen</button></div>
+  <div class="sub">Server im Internet, von dem die Uhr die genaue Zeit holt (Standard: de.pool.ntp.org).</div></div>
  <div class="set"><div class="head"><label for="sOled">OLED-Helligkeit</label><span class="val" id="vOled"></span></div>
-  <input type="range" id="sOled" min="1" max="255" step="1"></div>
+  <input type="range" id="sOled" min="1" max="255" step="1">
+  <div class="sub">Helligkeit des kleinen Displays an der Uhr.</div></div>
  <div class="set"><label class="sw"><span>OLED um 180° drehen</span><input type="checkbox" id="sFlip"></label>
   <div class="sub">Für ein kopfüber eingebautes Display.</div></div>
  <div class="set"><label class="sw"><span>OLED-Pixelverschiebung</span><input type="checkbox" id="sShift"></label>
@@ -215,10 +231,14 @@ html{scroll-behavior:smooth}
 <div class="grp"><h2 id="wlan-h">WLAN</h2>
 <section>
  <div class="subhead">Gespeicherte Netze</div>
+ <div class="desc">Netze, mit denen sich die Uhr verbinden darf. Sie wählt automatisch das stärkste.</div>
  <ul id="saved"><li><span class="hint">wird geladen …</span></li></ul>
  <button class="sec" id="scanBtn">Netze in Reichweite suchen</button>
+ <div class="desc">Zeigt die Netze in der Nähe. Ein Netz antippen übernimmt seinen Namen ins Formular.</div>
  <ul id="scan"></ul>
  <form id="wf" autocomplete="off">
+  <div class="subhead">Netz hinzufügen</div>
+  <div class="desc">Für offene Netze das Passwort leer lassen.</div>
   <label for="ssid">Netzwerkname (SSID)</label>
   <input id="ssid" name="ssid" maxlength="32" autocapitalize="none" autocorrect="off" spellcheck="false" required>
   <label for="pw">Passwort</label>
@@ -228,16 +248,18 @@ html{scroll-behavior:smooth}
   <button type="submit">Netz speichern</button>
  </form>
  <button class="sec" id="recon">Neu verbinden (mit dem stärksten Netz)</button>
- <p class="hint">Gespeicherte Passwörter werden nie angezeigt. Netze aus secrets.h lassen sich hier nicht löschen.</p>
+ <p class="hint">Trennt kurz und verbindet sich neu – etwa nach dem Hinzufügen eines Netzes. Gespeicherte Passwörter werden nie angezeigt. Netze aus secrets.h lassen sich hier nicht löschen.</p>
 </section></div>
 
 <div class="grp"><h2 id="log-h">Protokoll</h2>
 <section>
+ <div class="desc top">Meldungen der Uhr zu WLAN, Zeitabgleich und Einstellungen – hilfreich bei der Fehlersuche.</div>
  <pre id="log" tabindex="0" aria-label="Protokoll, im Feld scrollbar">wird geladen …</pre>
  <div class="loginfo"><span id="logInfo"></span><span>neueste Einträge unten</span></div>
  <label class="sw logsw"><span>Automatisch aktualisieren (alle 5 s)</span><input type="checkbox" id="logAuto" checked></label>
  <div class="tools"><button class="sec" id="logBtn">Jetzt aktualisieren</button>
  <button class="sec" id="logFull">Alles anzeigen</button></div>
+ <p class="hint">„Alles anzeigen“ hebt die feste Höhe des Feldes auf. Die Uhr speichert die letzten 8 KB (ca. 120 Zeilen).</p>
 </section></div>
 </main>
 <script>
@@ -252,9 +274,11 @@ function row(k,v,c,note){const d=document.createElement('div');d.className='row'
  const a=document.createElement('span');a.textContent=k;
  if(note){const n=document.createElement('small');n.className='note';n.textContent=note;a.append(n)}
  const b=document.createElement('span');b.textContent=v;if(c)b.className=c;
- if(note)b.style.whiteSpace='nowrap';          // kurzer Wert neben der Erläuterung nicht umbrechen
+ if(note&&String(v).length<16)b.style.whiteSpace='nowrap';   // kurzer Wert neben der Erläuterung nicht umbrechen
  d.append(a,b);return d}
+// WLAN-Signal (dBm) als Balkenanzeige für die Netzsuche
 function bars(r){return r>-55?'▂▄▆█':r>-67?'▂▄▆ ':r>-75?'▂▄  ':'▂   '}
+// Sekunden als "x Tage y Std. z Min."
 function dur(s){const d=Math.floor(s/86400),h=Math.floor(s/3600)%24,m=Math.floor(s/60)%60;return (d?d+(d===1?' Tag ':' Tage '):'')+h+' Std. '+m+' Min.'}
 // ---- Oszilloskop-Vorschau ---------------------------------------------------
 // Zeichnet dasselbe Bild wie die Uhr (Vektordaten von /api/vectors) auf ein
@@ -268,6 +292,7 @@ function scopeColors(){const c=getComputedStyle(document.documentElement),v=n=>c
  return {bg:v('--scope-bg')||'transparent',trace:v('--scope-trace')||'#0b7a3e',glow:v('--scope-glow')||'rgba(11,122,62,.12)',
   halo:v('--scope-halo')||'rgba(11,122,62,.35)',grid:v('--scope-grid')||'rgba(0,0,0,.07)'}}
 const DIALS=['Ziffern 1–12','12 · 3 · 6 · 9','Römisch I–XII','Römisch XII · III · VI · IX'];
+// Oszilloskop-Vorschau zeichnen: Raster, Zifferblatt, Ziffern, drei Zeiger
 function drawScope(){
  const c=$('scope'),g=c.getContext('2d'),W=c.width,k=W/256;
  const SC=scopeColors();
@@ -286,16 +311,26 @@ function drawScope(){
   g.stroke()}
  g.shadowBlur=0;
 }
-// Tippen auf die Vorschau: nächstes Zifferblatt – sofort in der Vorschau,
+// Zifferblatt wechseln – sofort in der Vorschau,
 // per POST /api/dial auch am Oszilloskop (wird dort gespeichert).
 let tagTimer=0,dialBusy=false;
+// Namen des Zifferblatts kurz unten in der Vorschau einblenden
 function showTag(t){const e=$('dialTag');e.textContent=t;e.classList.add('show');clearTimeout(tagTimer);tagTimer=setTimeout(()=>e.classList.remove('show'),1600)}
-async function nextDial(){
- if(dialBusy)return;dialBusy=true;const prev=dial;dial=(dial+1)%DIALS.length;drawScope();showTag(DIALS[dial]);
+// step = +1 (nächstes) oder -1 (voriges Zifferblatt), reihum
+async function nextDial(step=1){
+ if(dialBusy)return;dialBusy=true;const prev=dial;dial=(dial+step+DIALS.length)%DIALS.length;drawScope();showTag(DIALS[dial]);
  try{const r=await post('/api/dial',{style:dial});if(!r.ok)throw 0;if(S){S.dial=dial;renderSettings()}}catch(e){dial=prev;drawScope();showTag('Wechsel fehlgeschlagen')}
  dialBusy=false}
-$('scope').addEventListener('click',nextDial);
-$('scope').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();nextDial()}});
+// Wischen über die Vorschau: nach links = nächstes, nach rechts = voriges Zifferblatt
+// (wie beim Blättern in Fotos). Pointer-Events decken Finger und Maus ab.
+// Senkrechtes Wischen bleibt Seiten-Scrollen (CSS touch-action:pan-y).
+// Tastatur: Pfeil links/rechts, wenn die Vorschau den Fokus hat.
+let swX=null,swY=0;
+$('scope').addEventListener('pointerdown',e=>{swX=e.clientX;swY=e.clientY});
+$('scope').addEventListener('pointerup',e=>{if(swX===null)return;const dx=e.clientX-swX,dy=e.clientY-swY;swX=null;
+ if(Math.abs(dx)>=40&&Math.abs(dx)>Math.abs(dy)*1.5)nextDial(dx<0?1:-1)});
+$('scope').addEventListener('pointercancel',()=>{swX=null});
+$('scope').addEventListener('keydown',e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();nextDial(e.key==='ArrowRight'?1:-1)}});
 // Seitenmenü
 function menu(open){$('nav').classList.toggle('open',open);$('shade').classList.toggle('open',open);
  $('menuBtn').setAttribute('aria-expanded',open);$('nav').setAttribute('aria-hidden',!open);$('menuBtn').textContent=open?'✕':'☰'}
@@ -303,6 +338,7 @@ $('menuBtn').onclick=()=>menu(!$('nav').classList.contains('open'));
 $('shade').onclick=()=>menu(false);
 document.addEventListener('keydown',e=>{if(e.key==='Escape')menu(false)});
 document.querySelectorAll('#nav a').forEach(a=>a.addEventListener('click',()=>menu(false)));
+// Uhrzeit der Uhr (hh:mm:ss) übernehmen; die Seite zählt danach selbst weiter
 function setTime(t){const a=t.split(':').map(Number);if(a.length===3&&!a.some(isNaN)){tBase=a[0]*3600+a[1]*60+a[2];tAt=performance.now()}}
 drawScope();                                           // Schirm/Raster sofort zeichnen, noch vor den Daten
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>drawScope());
@@ -318,6 +354,7 @@ let S=null,setBusy=false;
 const fmtBeam=v=>(v/1000).toFixed(2).replace('.',',')+' µs pro Schritt';
 const fmtJump=v=>+v===0?'sofortiger Sprung':v+'× Zeichentempo';
 const fmtOled=v=>Math.round(v/255*100)+' %';
+// Alle Einstellungs-Elemente aus S (Antwort von /api/settings) füllen
 function renderSettings(){
  if(!S)return;
  document.querySelectorAll('[data-profile]').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.profile===S.profile)));
@@ -338,8 +375,11 @@ function renderSettings(){
  $('sShift').checked=S.oledShift;
  $('sFlip').checked=S.oledFlip;
 }
+// Meldung unter den Einstellungen anzeigen (Erfolg verschwindet nach 2,5 s)
 function setMsg(r){const m=$('setMsg');m.textContent=r.msg||'';m.className=r.ok?'ok':'err';clearTimeout(setMsg.t);if(r.ok)setMsg.t=setTimeout(()=>m.textContent='',2500)}
+// Einstellungen von der Uhr laden
 async function loadSettings(){try{S=(await (await get('/api/settings')).json()).settings;renderSettings()}catch(e){}}
+// Eine oder mehrere Einstellungen an die Uhr senden und die Antwort übernehmen
 async function setSetting(d){
  setBusy=true;
  try{const r=await post('/api/settings',d);if(r.settings){S=r.settings;renderSettings()}setMsg(r);
@@ -360,24 +400,40 @@ $('sOled').oninput=e=>$('vOled').textContent=fmtOled(e.target.value);
 $('sOled').onchange=e=>setSetting({oledContrast:e.target.value});
 $('sShift').onchange=e=>setSetting({oledShift:e.target.checked?1:0});
 $('sFlip').onchange=e=>setSetting({oledFlip:e.target.checked?1:0});
+// ---- Uhrzeit von Hand stellen (nur ohne Zeitserver sichtbar)
+const pad=v=>String(v).padStart(2,'0');
+// Block "Uhrzeit stellen" ein-/ausblenden, beim Einblenden mit der Gerätezeit vorbelegen
+function showTimeRow(on){const r=$('timeRow');if(r.hidden===!on)return;r.hidden=!on;
+ if(on){const d=new Date();$('tDate').value=d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+  $('tTime').value=pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds())}}
+// Meldung im Block "Uhrzeit stellen" anzeigen
+function tMsg(r){const m=$('tMsg');m.textContent=r.msg||'';m.className=r.ok?'ok':'err'}
+// Uhrzeit an die Uhr senden (epoch oder local, siehe POST /api/time)
+async function setClockTime(d){try{const r=await post('/api/time',d);tMsg(r);if(r.ok)status()}catch(e){tMsg({ok:false,msg:'Keine Antwort von der Uhr'})}}
+$('tPhone').onclick=()=>setClockTime({epoch:Math.round(Date.now()/1000)});
+$('tSave').onclick=()=>{const d=$('tDate').value,t=$('tTime').value;
+ if(!d||!t){tMsg({ok:false,msg:'Bitte Datum und Uhrzeit eintragen'});return}
+ setClockTime({local:d+'T'+(t.length===5?t+':00':t)})};
 $('sReset').onclick=async()=>{if(!confirm('Alle Einstellungen auf die Standardwerte aus config.h zurücksetzen? (gespeicherte WLANs bleiben erhalten)'))return;
  setBusy=true;try{const r=await post('/api/settings/reset',{});if(r.settings){S=r.settings;renderSettings();dial=S.dial;drawScope()}setMsg(r)}catch(e){}setBusy=false};
 
 let online=true;
+// Status holen (alle 2 s): Uhrzeit, Datum, Statusliste, Vorschau, Einstellungen abgleichen
 async function status(){
  try{const s=await (await get('/api/status')).json();online=true;
   showClock(s.time);setTime(s.time);lastSec=-1;
   if(!dialBusy&&typeof s.dial==='number'&&s.dial!==dial){dial=s.dial;drawScope()}
   $('vFps').textContent=s.fps+' Bilder/s';
+  showTimeRow(!s.ntp.synced);
   if(S&&!setBusy){const p=s.profile==='DIGITAL'?1:0;if(p!==S.profile||s.dial!==S.dial){S.profile=p;S.dial=s.dial;renderSettings()}}$('date').textContent=s.date?('KW '+s.kw+' – '+s.date):'Datum unbekannt';
   const st=$('status');st.replaceChildren(
-   row('Zeitabgleich (NTP)',s.ntp.synced?('zuletzt '+s.ntp.last):(s.wifi.configured?'wartet auf ersten Abgleich …':'aus (kein WLAN)'),s.ntp.synced?(s.ntp.overdue?'warn':''):'warn'),
+   row('Zeitabgleich (NTP)',s.ntp.synced?('zuletzt '+s.ntp.last):s.ntp.manual?'aus – Uhrzeit von Hand gestellt':(s.wifi.configured?'wartet auf ersten Abgleich …':'aus (kein WLAN)'),s.ntp.synced?(s.ntp.overdue?'warn':''):(s.ntp.manual?'':'warn')),
    row('WLAN',s.wifi.connected?s.wifi.ssid:(s.wifi.configured?'sucht Netz …':'kein Netz eingetragen'),s.wifi.connected?'':'warn'),
-   ...(s.wifi.connected?[row('Signalstärke',s.wifi.rssi+' dBm'),row('Netzwerkadresse',s.wifi.ip+'  ·  '+s.wifi.host)]:[]),
+   ...(s.wifi.connected?[row('Signalstärke',s.wifi.rssi+' dBm',s.wifi.rssi<-80?'warn':'','über −67 dBm gut, unter −80 dBm schwach'),row('Netzwerkadresse',s.wifi.ip+'  ·  '+s.wifi.host,'','unter dieser Adresse ist die Uhr im Browser erreichbar')]:[]),
    ...(s.ap.active?[row('Setup-WLAN',s.ap.ssid+' ('+s.ap.ip+')','warn')]:[]),
    row('Oszilloskop-Profil',s.profile),
-   row('Bildrate',s.fps+' Bilder/s'),
-   row('Laufzeit',dur(s.uptime)),
+   row('Bildrate',s.fps+' Bilder/s','','so oft pro Sekunde wird das Bild am Oszilloskop gezeichnet'),
+   row('Laufzeit',dur(s.uptime),'','seit dem letzten Neustart'),
    row('Arbeitsspeicher',Math.round(s.heap/1024)+' von '+Math.round(s.heapTotal/1024)+' KB frei'),
    row('Arbeitsspeicher, Tiefstwert',Math.round(s.heapMin/1024)+' KB frei',s.heapMin<20480?'warn':'','seit dem Neustart'),
    row('Größter freier Speicherblock',Math.round(s.heapBlock/1024)+' KB',s.heapBlock<8192?'warn':''),
@@ -387,6 +443,7 @@ async function status(){
    row('Firmware-Version','v'+s.fw));
  }catch(e){if(online){$('status').replaceChildren(row('Verbindung','keine Antwort von der Uhr','err'))}online=false}
 }
+// Liste der gespeicherten WLANs laden (Netze aus dem Webinterface mit "Löschen")
 async function saved(){
  try{const l=await (await get('/api/networks')).json();const u=$('saved');u.replaceChildren();
   if(!l.length){const li=document.createElement('li');li.innerHTML='<span class="hint">noch keine gespeichert</span>';u.append(li)}
@@ -398,6 +455,7 @@ async function saved(){
  }catch(e){}
 }
 let scanTimer=0;
+// WLAN-Suche starten und das Ergebnis abfragen, bis sie fertig ist
 async function scan(){
  $('scanBtn').disabled=true;$('scanBtn').textContent='Suche läuft …';
  try{const r=await (await get('/api/scan')).json();
@@ -410,11 +468,13 @@ async function scan(){
  }catch(e){}
  $('scanBtn').disabled=false;$('scanBtn').textContent='Netze in Reichweite suchen';
 }
+// Meldung im WLAN-Formular anzeigen und die Netzliste neu laden
 function msg(r){const m=$('msg');m.textContent=r.msg||'';m.className=r.ok?'ok':'err';saved()}
 let logAuto=true;
 // Log neu laden. Stand das Feld unten, bleibt es unten (neue Zeilen folgen);
 // liest man weiter oben, bleibt die Position erhalten.
 let logFirst=true;
+// Protokoll laden; bleibt unten, wenn man unten war, sonst an der Leseposition
 async function log(){try{const t=await (await get('/api/log')).text();const p=$('log');
  const end=logFirst||p.scrollTop+p.clientHeight>=p.scrollHeight-20,top=p.scrollTop;
  p.textContent=t||'(leer)';p.scrollTop=end?p.scrollHeight:top;logFirst=false;
