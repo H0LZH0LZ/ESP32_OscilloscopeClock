@@ -2078,7 +2078,7 @@ static void fitText(char *buf, size_t maxChars)
 //   y 43…49   WLAN Gastzugang        Font 5x8, max. 25 Zeichen
 //   y 52…58   Signal -61 dBm         Font 5x8
 //
-// Ohne NTP-Sync steht statt des Datums "Datum unbekannt". Der NTP-Sync selbst
+// Ohne NTP-Sync steht statt des Datums "NTP unterbrochen". Der NTP-Sync selbst
 // wird nur auf der seriellen Konsole gemeldet (wifiLogChanges).
 //
 // Pixel-Shift gegen Einbrennen: alle OLED_SHIFT_EVERY_S Sekunden wird das
@@ -2210,7 +2210,7 @@ static void oledUpdate()
     else        snprintf(buf, sizeof(buf), "KW %02d - %02d.%02d.%04d", isoWeek(t), t.tm_mday,
                          t.tm_mon + 1, t.tm_year + 1900);   // 18 Zeichen = 108 px
   else
-    snprintf(buf, sizeof(buf), "%s", tr("Datum unbekannt", "Date unknown"));
+    snprintf(buf, sizeof(buf), "%s", tr("NTP unterbrochen", "NTP connection lost"));   // ohne gültige Zeit (max. 21 Zeichen)
   drawCentered(buf, Y_DATE + dy, dx);
 
   u8g2.setFont(u8g2_font_5x8_tf);
