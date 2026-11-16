@@ -154,9 +154,9 @@ und berechnet die Rundtour neu. Das dauert einige zehn Millisekunden, so lange s
 Darunter folgen drei Bereiche. **Status** und **Protokoll** sind einklappbar (Pfeil V): Status ist anfangs offen, Protokoll zu
 (Zustand im Browser gespeichert; ein Sprung aus dem Menü klappt sie auf). Jede Einstellung und jede Schaltfläche hat eine kurze Beschreibung:
 - **Status:** große Uhrzeit, KW und Datum, WLAN, Signalstärke, Netzwerkadresse, darunter
-  Zeitabgleich (NTP) mit letztem Abgleich, Laufzeit, Arbeitsspeicher (frei/gesamt, darunter Tiefstwert seit
+  Zeitabgleich (NTP) mit letztem Abgleich, Laufzeit, darunter Grund des letzten Neustarts, Arbeitsspeicher (frei/gesamt, darunter Tiefstwert seit
   dem Neustart und größter freier Block), Prozessorauslastung Kern 0 und Kern 1 (je eine Zeile mit
-  kurzer Erläuterung; Kern 1 zeichnet ständig und steht immer auf 100 %), Grund des letzten Neustarts,
+  kurzer Erläuterung; Kern 1 zeichnet ständig und steht immer auf 100 %),
   Firmware-Version. Wird alle 2 s aktualisiert. Oszilloskop-Profil und Bildrate stehen nicht doppelt
   im Status, sondern nur in den Einstellungen (Profil-Auswahl, Bildrate bei „Verweilzeit des Strahls“).
   Farbig hervorgehoben werden nur Probleme: Orange = Warnung (NTP wartet oder überfällig, WLAN
@@ -171,9 +171,9 @@ Darunter folgen drei Bereiche. **Status** und **Protokoll** sind einklappbar (Pf
   alle 5 s aktualisiert, solange „Automatisch aktualisieren“ an ist („Jetzt aktualisieren“ lädt sofort). Das Feld
   hat eine feste Höhe (max. 60 % des Bildschirms) mit eigener Scrollleiste. Wischen im Feld scrollt
   nur das Log, nicht die Seite. Steht man unten, folgen neue Zeilen automatisch. Liest man weiter
-  oben, bleibt die Position beim Aktualisieren erhalten. „Alles anzeigen“ klappt das Log auf volle
-  Länge auf, darunter steht die Zeilenzahl. „Kopieren“ legt die gefilterten Zeilen in die
-  Zwischenablage (über http per verstecktem Textfeld, weil die Clipboard-API nur mit https geht).
+  oben, bleibt die Position beim Aktualisieren erhalten. Darunter steht die Zeilenzahl.
+  „Herunterladen“ speichert das ganze Protokoll (ungefiltert) als Textdatei
+  `<gerätename>-protokoll-JJJJMMTT-HHMM.txt`.
   „Leeren“ löscht nach Rückfrage den Ringpuffer der Uhr (`POST /api/log/clear`); die erste neue Zeile
   ist „Protokoll geloescht“.
 - **System** (Gruppe in den Einstellungen): Gerätename (`host`, a–z, 0–9, Bindestrich, max. 32; gilt

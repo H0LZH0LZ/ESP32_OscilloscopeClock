@@ -156,9 +156,9 @@ value. All four digit sets are therefore kept in RAM (approx. 0.7 KB in total).
 
 Below follow three sections. Every setting and every button has a short description:
 - **Status:** large time, calendar week and date, Wi-Fi, signal
-  strength, network address, below it time sync (NTP) with last sync, uptime, memory (free/total, below it the minimum since restart and the
+  strength, network address, below it time sync (NTP) with last sync, uptime, below it the reason for the last restart, memory (free/total, below it the minimum since restart and the
   largest free block), CPU usage of core 0 and core 1 (one row each with a short note; core 1 draws
-  all the time and always shows 100 %), reason for the last restart, firmware version. Updated every 2 s. Oscilloscope
+  all the time and always shows 100 %), firmware version. Updated every 2 s. Oscilloscope
   profile and frame rate are not duplicated in the status but only shown in the settings (profile
   selection, frame rate under „Verweilzeit des Strahls“ – beam dwell time).
   Only problems are highlighted in colour: orange = warning (NTP waiting or overdue, Wi-Fi
@@ -175,9 +175,8 @@ Below follow three sections. Every setting and every button has a short descript
   loads immediately). The field has a fixed height (max. 60 % of the screen) with its own scroll
   bar. Swiping inside the field only scrolls the log, not the page. If you are at the bottom, new
   lines follow automatically. If you are reading further up, the position is kept on refresh.
-  „Alles anzeigen“ (show all) expands the log to full length; the line count is shown below.
-  „Kopieren“ (copy) puts the filtered lines on the clipboard (over http via a hidden text field, since
-  the Clipboard API needs https). „Leeren“ (clear) empties the clock's ring buffer after a confirmation
+  The line count is shown below. „Herunterladen“ (download) saves the whole log (unfiltered) as a text
+  file `<device-name>-log-YYYYMMDD-HHMM.txt`. „Leeren“ (clear) empties the clock's ring buffer after a confirmation
   (`POST /api/log/clear`); the first new line is “log cleared”.
 - **„System“ (group in the settings):** device name (`host`, a–z, 0–9, hyphen, max. 32; applies at once
   to mDNS `http://<name>.local` and to the router on the next connection), back up
