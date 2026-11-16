@@ -36,7 +36,7 @@ Hardware angepasst: **ESP32-WROOM-32U DevKitC V4**, **Waveshare 2.42" OLED (SPI)
 ### Schnellstart (Arduino IDE 2.x)
 1. Boardverwalter: **esp32 by Espressif** (2.0.x oder 3.x) installieren, Board **ESP32 Dev Module**.
    Unter **Werkzeuge → Partition Scheme** „**Huge APP (3MB No OTA/1MB SPIFFS)**“ wählen. Dann stehen
-   3 MB statt 1,25 MB für das Programm zur Verfügung (Belegung 37 % statt 90 %). Die Uhr nutzt weder
+   3 MB statt 1,25 MB für das Programm zur Verfügung (Belegung 39 % statt 92 %). Die Uhr nutzt weder
    OTA-Updates noch SPIFFS, und gespeicherte WLANs und Einstellungen bleiben beim Umstellen erhalten.
 2. Bibliotheksverwalter: **U8g2** (by oliver) installieren.
 3. WLAN eintragen, auf einem von zwei Wegen:
@@ -67,13 +67,13 @@ Einstellungen (Zeitzone, Pins, Zifferblatt, Strahlgeschwindigkeit, Oszilloskop-P
 
 | Board-Paket | Programmspeicher | Globale Variablen (RAM) |
 |---|---|---|
-| esp32 3.3.12 | 1.182.746 Byte (90 %) | 74.052 Byte (22 %) |
+| esp32 3.3.12 | 1.217.114 Byte (92 %) | 74.052 Byte (22 %) |
 | esp32 2.0.17 | 866.053 Byte (66 %) | 61.048 Byte (18 %) – Stand vor Menü und Zifferblatt-Umschaltung |
 
 Die Konfigurationsvarianten (Profil ANALOG/DIGITAL, Z-Dunkeltastung, Zifferblatt 0/1/2,
 `USE_FAST_DAC 0`, EXCEL-Modus) wurden vor dem Webinterface ebenfalls ohne Warnungen gebaut.
-Mit dem empfohlenen Partitionsschema **Huge APP** belegt dieselbe Firmware 1.182.762 von 3.145.728 Byte
-(**37 %**), mit „Minimal SPIFFS“ 60 %.
+Mit dem empfohlenen Partitionsschema **Huge APP** belegt dieselbe Firmware ca. 1.217.000 von 3.145.728 Byte
+(**39 %**), mit „Minimal SPIFFS“ 62 %.
 
 Zusätzlich auf dem PC simuliert: Strahlverlauf (Helligkeit, Rücklaufspuren, Bildrate),
 OLED-Inhalt, BOOT-Taster, Kalenderwoche, Speicherzugriffe (AddressSanitizer). Die Webseite
@@ -92,3 +92,7 @@ https://github.com/maurohh/ESP32_OscilloscopeClock – vielen Dank dafür!
 Diese Version ist eigenständig neu geschrieben: Firmware, Webinterface und alle Vektorgrafiken
 (Zifferblatt, Ziffern, Zeiger – erzeugt mit `tools/gen_vectors.py`). Dateien des Originals sind
 nicht mehr enthalten.
+
+Die Schrift des Webinterfaces ist eine verkleinerte Fassung von **Raleway** (Copyright 2010 The
+Raleway Project Authors, SIL Open Font License 1.1 – Lizenztext in [fonts/OFL.txt](fonts/OFL.txt)).
+Weil die OFL für veränderte Fassungen einen eigenen Namen verlangt, heißt sie hier „ScopeClock Sans“.

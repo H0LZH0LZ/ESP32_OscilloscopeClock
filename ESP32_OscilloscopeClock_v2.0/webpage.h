@@ -41,11 +41,16 @@ static const char INDEX_HTML[] PROGMEM = R"HTML(<!doctype html>
 <meta name="color-scheme" content="light dark">
 <title>Scope Clock</title>
 <style>
+/* Schrift aus der Firmware (Raleway, verkleinert – siehe tools/gen_font.py). swap: bis sie
+   geladen ist, wird die Systemschrift gezeigt. */
+@font-face{font-family:'ScopeClock Sans';src:url(/font.woff2) format('woff2');font-weight:400 700;font-display:swap}
 :root{--scope-bg:transparent;--scope-trace:#0b7a3e;--scope-glow:rgba(11,122,62,.12);--scope-halo:rgba(11,122,62,.35);--scope-grid:rgba(0,0,0,.07);
---bg:#f2f2f5;--card:#fff;--fg:#111;--mute:#6b6b70;--line:#e3e3e8;--acc:#0a7d44;--warn:#b45309;--err:#b91c1c;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+--bg:#f2f2f5;--card:#fff;--fg:#111;--mute:#6b6b70;--line:#e3e3e8;--acc:#0a7d44;--warn:#b45309;--err:#b91c1c;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+ --sans:'ScopeClock Sans',system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
 @media (prefers-color-scheme:dark){:root{--scope-bg:#050805;--scope-trace:#b6ffc4;--scope-glow:rgba(80,255,120,.18);--scope-halo:#3dff6a;--scope-grid:rgba(120,255,140,.08);--bg:#000;--card:#1c1c1e;--fg:#f2f2f7;--mute:#9a9aa0;--line:#2c2c2e;--acc:#30d158;--warn:#ffb340;--err:#ff6961}}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.4 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.4 var(--sans);
+ font-feature-settings:'lnum' 1;   /* Raleway: Ziffern in Versalhöhe statt Mediävalziffern (vererbt sich überallhin) */
  padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);-webkit-text-size-adjust:100%}
 main{max-width:640px;margin:0 auto;padding:0 16px 32px}
 /* Titelleiste: bleibt beim Scrollen immer oben stehen (64 px, auf Höhe der
@@ -55,7 +60,10 @@ h1{position:sticky;top:env(safe-area-inset-top);z-index:22;display:flex;align-it
  font-size:15px;font-weight:600;color:var(--mute);text-transform:uppercase;letter-spacing:.06em}
 /* Oberster Abschnitt (Uhr): alles zentriert, die Oszilloskop-Vorschau nutzt die volle Breite. */
 header{padding:0 0 4px;text-align:center;scroll-margin-top:calc(env(safe-area-inset-top) + 64px)}
-#clock{font:600 44px/1.1 var(--mono);margin:4px 0 0;font-variant-numeric:tabular-nums}
+#clock{font:600 44px/1.1 var(--sans);font-feature-settings:'lnum' 1;margin:4px 0 0}   /* 'font' setzt lnum zurück */
+/* Raleway hat unterschiedlich breite Ziffern – jede Ziffer bekommt ein festes Feld,
+   damit die Uhrzeit beim Weiterzählen nicht hin und her springt. */
+#clock i{display:inline-block;width:.62em;font-style:normal;text-align:center}
 #date{color:var(--mute)}
 .scope canvas{margin:0 auto}
 section{background:var(--card);border-radius:14px;margin:0 0 14px;padding:4px 16px}
@@ -112,8 +120,8 @@ pre.full{height:auto;overflow-y:visible}
 .seg{display:flex;gap:6px;margin-top:6px}
 .seg button{margin:0;background:transparent;color:var(--fg);border:1px solid var(--line);font-weight:500}
 .seg button[aria-pressed="true"]{background:var(--acc);color:#fff;border-color:var(--acc);font-weight:600}
-.sw{display:flex;justify-content:space-between;align-items:center;min-height:44px;gap:12px}
-.sw input{width:52px;height:30px;min-height:0;accent-color:var(--acc)}
+.sw{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:0;color:var(--fg);font-size:16px}
+.sw input{width:24px;height:24px;min-height:0;margin:0;flex:none;accent-color:var(--acc)}
 .set.off{opacity:.55}
 #setMsg{min-height:20px;font-size:14px;margin:6px 0}
 /* Oszilloskop-Schirm: im hellen Design durchsichtig mit dunkelgrünen Linien,
@@ -192,7 +200,8 @@ html{scroll-behavior:smooth}
   <input type="range" id="sOled" min="1" max="255" step="1"></div>
  <div class="set"><label class="sw"><span>OLED um 180° drehen</span><input type="checkbox" id="sFlip"></label>
   <div class="sub">Für ein kopfüber eingebautes Display.</div></div>
- <div class="set"><label class="sw"><span>OLED-Pixel-Shift gegen Einbrennen</span><input type="checkbox" id="sShift"></label></div>
+ <div class="set"><label class="sw"><span>OLED-Pixel-Shift</span><input type="checkbox" id="sShift"></label>
+  <div class="sub">Verschiebt das Bild jede Minute um wenige Pixel, gegen Einbrennen.</div></div>
  <div id="setMsg"></div>
  <button type="button" class="sec" id="sReset">Auf Standard zurücksetzen</button>
  <p class="hint">Änderungen wirken sofort und bleiben gespeichert. Standardwerte stammen aus config.h.</p>
@@ -227,6 +236,8 @@ html{scroll-behavior:smooth}
 </main>
 <script>
 const $=id=>document.getElementById(id);
+// Uhrzeit anzeigen: Ziffern in <i> mit fester Breite (siehe CSS #clock i)
+function showClock(t){$('clock').innerHTML=String(t).replace(/[0-9-]/g,'<i>$&</i>')}
 const get=(u)=>fetch(u,{cache:'no-store'}).then(r=>{if(!r.ok)throw r.status;return r});
 const post=(u,d)=>fetch(u,{method:'POST',body:new URLSearchParams(d)}).then(r=>r.json());
 // Statuszeile: Bezeichnung links, Wert rechts, optional Klasse (warn/err) und
@@ -292,7 +303,7 @@ matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>drawSco
 get('/api/vectors').then(r=>r.json()).then(v=>{V=v;drawScope()}).catch(()=>{});
 let lastSec=-1;
 setInterval(()=>{if(tBase===null)return;const n=Math.floor((performance.now()-tAt)/1000);
- if(n!==lastSec){lastSec=n;const x=(tBase+n)%86400;$('clock').textContent=[x/3600|0,(x/60|0)%60,x%60].map(v=>String(v).padStart(2,'0')).join(':');drawScope()}},200);
+ if(n!==lastSec){lastSec=n;const x=(tBase+n)%86400;showClock([x/3600|0,(x/60|0)%60,x%60].map(v=>String(v).padStart(2,'0')).join(':'));drawScope()}},200);
 
 // ---- Einstellungen ---------------------------------------------------------
 // Laden von /api/settings, jede Änderung sofort per POST übernehmen (Schieberegler
@@ -349,7 +360,7 @@ $('sReset').onclick=async()=>{if(!confirm('Alle Einstellungen auf die Standardwe
 let online=true;
 async function status(){
  try{const s=await (await get('/api/status')).json();online=true;
-  $('clock').textContent=s.time;setTime(s.time);lastSec=-1;
+  showClock(s.time);setTime(s.time);lastSec=-1;
   if(!dialBusy&&typeof s.dial==='number'&&s.dial!==dial){dial=s.dial;drawScope()}
   $('vFps').textContent=s.fps+' Bilder/s';
   if(S&&!setBusy){const p=s.profile==='DIGITAL'?1:0;if(p!==S.profile||s.dial!==S.dial){S.profile=p;S.dial=s.dial;renderSettings()}}$('date').textContent=s.date?('KW '+s.kw+' – '+s.date):'Datum unbekannt';

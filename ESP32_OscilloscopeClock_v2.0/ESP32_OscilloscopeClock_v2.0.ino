@@ -149,6 +149,7 @@ static const size_t WIFI_NETWORK_COUNT = sizeof(WIFI_NETWORKS) / sizeof(WIFI_NET
 
 #include "DataTable.h"
 #include "webpage.h"          // HTML/CSS/JS des Webinterfaces (PROGMEM)
+#include "font.h"             // Schrift des Webinterfaces (WOFF2, PROGMEM, ca. 32 KB)
 
 // Nur der klassische ESP32 hat DACs an GPIO25/26 (S2 hat andere Pins und nur
 // einen Kern; S3/C3/C6 haben gar keine DACs).
@@ -1561,6 +1562,12 @@ static void handleNotFound()
 static void webStart()
 {
   web.on("/",                HTTP_GET,  [] { web.send_P(200, "text/html; charset=utf-8", INDEX_HTML); });
+  // Schrift: liegt in der Firmware, damit die Seite auch ohne Internet (Setup-WLAN)
+  // gleich aussieht. Ändert sich nur mit einer neuen Firmware → ein Jahr cachen.
+  web.on("/font.woff2",      HTTP_GET,  [] {
+    web.sendHeader("Cache-Control", "max-age=31536000");
+    web.send_P(200, "font/woff2", (const char *)FONT_WOFF2, sizeof(FONT_WOFF2));
+  });
   web.on("/api/status",      HTTP_GET,  handleStatus);
   web.on("/api/log",         HTTP_GET,  [] { web.send(200, "text/plain; charset=utf-8", logRead()); });
   web.on("/api/networks",    HTTP_GET,  handleNetworks);
