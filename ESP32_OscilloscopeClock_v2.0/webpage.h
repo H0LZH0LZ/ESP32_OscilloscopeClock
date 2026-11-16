@@ -101,7 +101,8 @@ li.tap{cursor:pointer}
 /* Log-Feld: feste Höhe, eigener Scrollbereich. Wischen im Feld scrollt nur das Log
    (overscroll-behavior), die Scrollleiste bleibt sichtbar. "Alle Zeilen" hebt die
    Höhenbegrenzung auf. */
-pre{font:12px/1.45 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere;height:min(60vh,520px);overflow-y:auto;margin:8px 0 6px;
+/* margin-top 12px + 4px Abschnitts-Innenabstand = 16px, gleich wie links/rechts */
+pre{font:12px/1.45 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere;height:min(60vh,520px);overflow-y:auto;margin:12px 0 6px;
  background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px;-webkit-overflow-scrolling:touch;
  overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:var(--mute) transparent}
 pre::-webkit-scrollbar{width:6px}pre::-webkit-scrollbar-thumb{background:var(--mute);border-radius:3px}
