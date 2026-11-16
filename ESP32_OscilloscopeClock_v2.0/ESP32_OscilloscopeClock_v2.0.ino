@@ -173,7 +173,12 @@ static volatile uint8_t  g_jumpSpeed = JUMP_SPEED;         // Rücklauf-Tempo (P
 // Einstellungen, die nur Core 0 nutzt (Zeit, OLED)
 static char    s_tz[48]        = TZ_INFO;                  // POSIX-Zeitzone
 static char    s_ntpServer[64] = NTP_SERVER_1;             // erster NTP-Server (muss dauerhaft gültig bleiben)
-static uint8_t s_oledContrast  = OLED_CONTRAST;
+static uint8_t s_oledPct       = OLED_BRIGHT_PCT;          // OLED-Helligkeit 0–100 % (0 = aus)
+static bool    s_oledSec       = OLED_SECONDS;             // Uhrzeit mit Sekunden
+static bool    s_nightOn       = NIGHT_MODE;               // Nachtmodus an/aus
+static uint16_t s_nightFrom    = NIGHT_FROM_MIN;           // Beginn (Minuten nach Mitternacht)
+static uint16_t s_nightTo      = NIGHT_TO_MIN;             // Ende
+static uint8_t s_nightPct      = NIGHT_BRIGHT_PCT;         // Helligkeit nachts 0–100 % (0 = aus)
 static bool    s_oledShift     = OLED_SHIFT_EVERY_S > 0;
 static bool    s_oledFlip      = OLED_FLIP;                // Anzeige um 180° gedreht
 static bool    s_h12           = CLOCK_12H;                // Uhrzeit im 12-Stunden-Format (AM/PM)
@@ -757,9 +762,12 @@ static void IRAM_ATTR scopeTask(void *)
     const int hpos = (h % 12) * 5 + m / 12;
 
     // 1. Stunden- und Minutenzeiger
+    // Helligkeit 0–100 % der normalen Verweilzeit; 0 % = nicht zeichnen
     const int handPct = g_handPct;
-    PlotTable(HrPtrData,  sizeof(HrPtrData),  0xFF, 9 * hpos, handPct);
-    PlotTable(MinPtrData, sizeof(MinPtrData), 0xFF, 9 * m,    handPct);
+    if (handPct > 0) {
+      PlotTable(HrPtrData,  sizeof(HrPtrData),  0xFF, 9 * hpos, handPct);
+      PlotTable(MinPtrData, sizeof(MinPtrData), 0xFF, 9 * m,    handPct);
+    }
 
     // 2. Sekundenzeiger hin: Tabelle = [Spitze, Mitte] → Stroke Mitte→Spitze
     const Stroke secOut  = { SecPtrData, (int16_t)(5 * s + 2), (int16_t)(5 * s) };
@@ -773,12 +781,13 @@ static void IRAM_ATTR scopeTask(void *)
       if (dx * dx + dy * dy < bestD) { bestD = dx * dx + dy * dy; start = k; }
     }
     // Minutenstriche (Tabelle DialData) und Ziffern mit eigener Helligkeit:
-    // längere Verweilzeit pro Schritt = heller (Prozent wie bei den Zeigern)
+    // 0–100 % der normalen Verweilzeit pro Schritt, 0 % = ausgeblendet
     const uint32_t tickCycles  = (uint32_t)((uint64_t)s_stepCycles * g_tickPct  / 100);
     const uint32_t digitCycles = (uint32_t)((uint64_t)s_stepCycles * g_digitPct / 100);
     for (int k = 0; k < s_tourLen; k++) {
       const Stroke &st = s_tour[(start + k) % s_tourLen];
-      drawStroke(st, st.t == DialData ? tickCycles : digitCycles);
+      const uint32_t c = st.t == DialData ? tickCycles : digitCycles;
+      if (c) drawStroke(st, c);
     }
 
     // 4. Sekundenzeiger zurück zur Mitte (statt eines langen Rücksprungs)
@@ -905,7 +914,6 @@ static void wifiTask(void *)
 }
 
 static void webStart();                     // siehe Abschnitt "Webinterface"
-static void oledSetContrast(uint8_t v);     // siehe Abschnitt "OLED"
 static void oledSetFlip(bool flip);         // siehe Abschnitt "OLED"
 
 // Initialisiert WLAN, NTP und das Webinterface. Muss vom uiTask (Core 0) aus
@@ -1463,23 +1471,39 @@ static void loadSettings()
   const uint16_t beam = p.getUShort("beam", BEAM_NS_PER_UNIT);
   g_beamNs    = (beam >= 1000 && beam <= 10000) ? beam : BEAM_NS_PER_UNIT;
   const uint8_t hand = p.getUChar("hand", HAND_BRIGHT_PCT);
-  g_handPct   = (hand >= 30 && hand <= 100) ? hand : HAND_BRIGHT_PCT;
+  g_handPct   = hand <= 100 ? hand : HAND_BRIGHT_PCT;
   const uint8_t tick = p.getUChar("tick", TICK_BRIGHT_PCT);
-  g_tickPct   = (tick >= 30 && tick <= 150) ? tick : TICK_BRIGHT_PCT;
+  g_tickPct   = tick <= 100 ? tick : 100;                  // ältere Werte bis 150 % → 100 %
   const uint8_t digit = p.getUChar("digit", DIGIT_BRIGHT_PCT);
-  g_digitPct  = (digit >= 30 && digit <= 150) ? digit : DIGIT_BRIGHT_PCT;
+  g_digitPct  = digit <= 100 ? digit : 100;
   const uint8_t jump = p.getUChar("jump", JUMP_SPEED);
   g_jumpSpeed = jump <= 48 ? jump : JUMP_SPEED;
   char buf[64];
   if (p.getString("tz", buf, sizeof(buf)) && tzAllowed(buf)) strlcpy(s_tz, buf, sizeof(s_tz));
   if (p.getString("ntp", buf, sizeof(buf)) && hostnameValid(String(buf))) strlcpy(s_ntpServer, buf, sizeof(s_ntpServer));
-  const uint8_t oled = p.getUChar("oled", OLED_CONTRAST);
-  s_oledContrast = oled ? oled : OLED_CONTRAST;
+  // OLED-Helligkeit in Prozent; ältere Firmware speicherte den Kontrast 1–255 ("oled")
+  if (p.isKey("oledp")) s_oledPct = min((int)p.getUChar("oledp", OLED_BRIGHT_PCT), 100);
+  else if (p.isKey("oled")) s_oledPct = (p.getUChar("oled", 128) * 100 + 127) / 255;
+  s_oledSec      = p.getUChar("osec", OLED_SECONDS) != 0;
+  s_nightOn      = p.getUChar("night", NIGHT_MODE) != 0;
+  s_nightFrom    = min((int)p.getUShort("nfrom", NIGHT_FROM_MIN), 1439);
+  s_nightTo      = min((int)p.getUShort("nto", NIGHT_TO_MIN), 1439);
+  s_nightPct     = min((int)p.getUChar("npct", NIGHT_BRIGHT_PCT), 100);
   s_oledShift    = p.getUChar("shift", OLED_SHIFT_EVERY_S > 0) != 0;
   s_oledFlip     = p.getUChar("flip", OLED_FLIP) != 0;
   s_h12          = p.getUChar("h12", CLOCK_12H) != 0;
   s_lang         = p.getUChar("lang", UI_LANG) ? 1 : 0;
   p.end();
+}
+
+// Minuten nach Mitternacht als "HH:MM" (JSON-String) bzw. aus "HH:MM" lesen (-1 = ungültig)
+static void jsonHm(String &o, int min) { char b[16]; snprintf(b, sizeof(b), "\"%02d:%02d\"", min / 60, min % 60); o += b; }
+static int parseHm(const String &s)
+{
+  const int c = s.indexOf(':');
+  if (c < 1) return -1;
+  const int h = s.substring(0, c).toInt(), m = s.substring(c + 1).toInt();
+  return (h >= 0 && h < 24 && m >= 0 && m < 60) ? h * 60 + m : -1;
 }
 
 // Aktuelle Einstellungen, Standardwerte und Zeitzonen als JSON.
@@ -1494,7 +1518,12 @@ static void settingsJson(String &o)
   o += ",\"jumpSpeed\":";    o += (int)g_jumpSpeed;
   o += ",\"tz\":";           jsonStr(o, s_tz);
   o += ",\"ntp\":";          jsonStr(o, s_ntpServer);
-  o += ",\"oledContrast\":"; o += (int)s_oledContrast;
+  o += ",\"oledPct\":";      o += (int)s_oledPct;
+  o += ",\"oledSec\":";      o += s_oledSec ? "true" : "false";
+  o += ",\"oledNight\":";    o += s_nightOn ? "true" : "false";
+  o += ",\"nightFrom\":";    jsonHm(o, s_nightFrom);
+  o += ",\"nightTo\":";      jsonHm(o, s_nightTo);
+  o += ",\"nightPct\":";     o += (int)s_nightPct;
   o += ",\"oledShift\":";    o += s_oledShift ? "true" : "false";
   o += ",\"oledFlip\":";     o += s_oledFlip ? "true" : "false";
   o += ",\"h12\":";          o += s_h12 ? "true" : "false";
@@ -1508,7 +1537,12 @@ static void settingsJson(String &o)
   o += ",\"jumpSpeed\":";    o += JUMP_SPEED;
   o += ",\"tz\":";           jsonStr(o, TZ_INFO);
   o += ",\"ntp\":";          jsonStr(o, NTP_SERVER_1);
-  o += ",\"oledContrast\":"; o += OLED_CONTRAST;
+  o += ",\"oledPct\":";      o += OLED_BRIGHT_PCT;
+  o += ",\"oledSec\":";      o += OLED_SECONDS ? "true" : "false";
+  o += ",\"oledNight\":";    o += NIGHT_MODE ? "true" : "false";
+  o += ",\"nightFrom\":";    jsonHm(o, NIGHT_FROM_MIN);
+  o += ",\"nightTo\":";      jsonHm(o, NIGHT_TO_MIN);
+  o += ",\"nightPct\":";     o += NIGHT_BRIGHT_PCT;
   o += ",\"oledShift\":";    o += OLED_SHIFT_EVERY_S > 0 ? "true" : "false";
   o += ",\"oledFlip\":";     o += OLED_FLIP ? "true" : "false";
   o += ",\"h12\":";          o += CLOCK_12H ? "true" : "false";
@@ -1575,21 +1609,21 @@ static void handleSettingsPost()
   }
   if (web.hasArg("handPct")) {
     const int v = web.arg("handPct").toInt();
-    if (v >= 30 && v <= 100) { g_handPct = v; p.putUChar("hand", v); changed++;
+    if (v >= 0 && v <= 100) { g_handPct = v; p.putUChar("hand", v); changed++;
       logMsg(tr("[Web] Zeigerhelligkeit: %d %%", "[Web] hand brightness: %d %%"), v); }
-    else bad(tr("Zeigerhelligkeit: 30 bis 100 %", "Hand brightness: 30 to 100 %"));
+    else bad(tr("Zeigerhelligkeit: 0 bis 100 %", "Hand brightness: 0 to 100 %"));
   }
   if (web.hasArg("tickPct")) {
     const int v = web.arg("tickPct").toInt();
-    if (v >= 30 && v <= 150) { g_tickPct = v; p.putUChar("tick", v); changed++;
+    if (v >= 0 && v <= 100) { g_tickPct = v; p.putUChar("tick", v); changed++;
       logMsg(tr("[Web] Helligkeit Minutenstriche: %d %%", "[Web] tick mark brightness: %d %%"), v); }
-    else bad(tr("Helligkeit Minutenstriche: 30 bis 150 %", "Tick mark brightness: 30 to 150 %"));
+    else bad(tr("Helligkeit Minutenstriche: 0 bis 100 %", "Tick mark brightness: 0 to 100 %"));
   }
   if (web.hasArg("digitPct")) {
     const int v = web.arg("digitPct").toInt();
-    if (v >= 30 && v <= 150) { g_digitPct = v; p.putUChar("digit", v); changed++;
+    if (v >= 0 && v <= 100) { g_digitPct = v; p.putUChar("digit", v); changed++;
       logMsg(tr("[Web] Helligkeit Ziffern: %d %%", "[Web] numeral brightness: %d %%"), v); }
-    else bad(tr("Helligkeit Ziffern: 30 bis 150 %", "Numeral brightness: 30 to 150 %"));
+    else bad(tr("Helligkeit Ziffern: 0 bis 100 %", "Numeral brightness: 0 to 100 %"));
   }
   if (web.hasArg("jumpSpeed")) {
     const int v = web.arg("jumpSpeed").toInt();
@@ -1610,10 +1644,32 @@ static void handleSettingsPost()
       logMsg(tr("[Web] Zeitserver: %s", "[Web] time server: %s"), s_ntpServer); }
     else bad(tr("Zeitserver: nur Buchstaben, Ziffern, Punkt und Bindestrich (max. 63 Zeichen)", "Time server: only letters, digits, dot and hyphen (max. 63 characters)"));
   }
-  if (web.hasArg("oledContrast")) {
-    const int v = web.arg("oledContrast").toInt();
-    if (v >= 1 && v <= 255) { s_oledContrast = v; oledSetContrast(v); p.putUChar("oled", v); changed++; }
-    else bad(tr("OLED-Helligkeit: 1 bis 255", "OLED brightness: 1 to 255"));
+  // OLED: Helligkeit 0–100 % (0 = aus), Sekunden, Nachtmodus (wirkt beim nächsten Neuzeichnen)
+  if (web.hasArg("oledPct")) {
+    const int v = web.arg("oledPct").toInt();
+    if (v >= 0 && v <= 100) { s_oledPct = v; p.putUChar("oledp", v); changed++; }
+    else bad(tr("OLED-Helligkeit: 0 bis 100 %", "OLED brightness: 0 to 100 %"));
+  }
+  if (web.hasArg("oledSec")) {
+    s_oledSec = web.arg("oledSec") == "1" || web.arg("oledSec") == "true";
+    p.putUChar("osec", s_oledSec); changed++;
+  }
+  if (web.hasArg("oledNight")) {
+    s_nightOn = web.arg("oledNight") == "1" || web.arg("oledNight") == "true";
+    p.putUChar("night", s_nightOn); changed++;
+    logMsg(tr("[Web] OLED-Nachtmodus: %s", "[Web] OLED night mode: %s"), s_nightOn ? tr("an", "on") : tr("aus", "off"));
+  }
+  for (const char *k : { "nightFrom", "nightTo" }) {
+    if (!web.hasArg(k)) continue;
+    const int v = parseHm(web.arg(k));
+    if (v < 0) { bad(tr("Nachtmodus: Uhrzeit als HH:MM", "Night mode: time as HH:MM")); continue; }
+    if (k[5] == 'F') { s_nightFrom = v; p.putUShort("nfrom", v); } else { s_nightTo = v; p.putUShort("nto", v); }
+    changed++;
+  }
+  if (web.hasArg("nightPct")) {
+    const int v = web.arg("nightPct").toInt();
+    if (v >= 0 && v <= 100) { s_nightPct = v; p.putUChar("npct", v); changed++; }
+    else bad(tr("Helligkeit nachts: 0 bis 100 %", "Night brightness: 0 to 100 %"));
   }
   // Zeitformat für OLED und Webinterface: 12 Stunden (AM/PM) oder 24 Stunden
   if (web.hasArg("h12")) {
@@ -1662,7 +1718,7 @@ static void handleSettingsReset()
   if (p.begin("scopeclock", false)) {
     if (scope) for (const char *k : { "profile", "dial", "beam", "hand", "tick", "digit", "jump" }) p.remove(k);
     if (tim)   for (const char *k : { "tz", "ntp", "h12" }) p.remove(k);
-    if (disp)  for (const char *k : { "oled", "shift", "flip" }) p.remove(k);
+    if (disp)  for (const char *k : { "oled", "oledp", "osec", "night", "nfrom", "nto", "npct", "shift", "flip" }) p.remove(k);
     if (all)   p.remove("lang");
     p.end();
   }
@@ -1678,7 +1734,8 @@ static void handleSettingsReset()
     applyTime();
   }
   if (disp) {
-    s_oledContrast = OLED_CONTRAST;  oledSetContrast(s_oledContrast);
+    s_oledPct = OLED_BRIGHT_PCT;     s_oledSec = OLED_SECONDS;
+    s_nightOn = NIGHT_MODE;          s_nightFrom = NIGHT_FROM_MIN;  s_nightTo = NIGHT_TO_MIN;  s_nightPct = NIGHT_BRIGHT_PCT;
     s_oledShift = OLED_SHIFT_EVERY_S > 0;
     s_oledFlip  = OLED_FLIP;  oledSetFlip(s_oledFlip);
   }
@@ -1787,8 +1844,32 @@ static void webLoop()
 // Falls das Bild um 2 Pixel verschoben erscheint: NONAME0 durch NONAME2 ersetzen.
 static U8G2_SSD1309_128X64_NONAME0_F_4W_HW_SPI u8g2(U8G2_R0, OLED_CS_PIN, OLED_DC_PIN, OLED_RST_PIN);
 
-// OLED-Helligkeit setzen (Einstellungen im Webinterface; läuft im uiTask).
-static void oledSetContrast(uint8_t v) { u8g2.setContrast(v); }
+// ---- OLED-Helligkeit -----------------------------------------------------------
+// Wirksame Helligkeit in Prozent: tagsüber s_oledPct, im Nachtmodus-Zeitfenster
+// s_nightPct; während der BOOT-Taster gehalten wird mindestens 50 %, damit der
+// Countdown auch bei ausgeschaltetem Display zu sehen ist.
+// 0 % schaltet das Panel ab (Power-Save), sonst Kontrast 1…255.
+static bool nightActive()
+{
+  if (!s_nightOn || !timeValid()) return false;
+  struct tm t; currentTime(t);
+  const int now = t.tm_hour * 60 + t.tm_min;
+  return s_nightFrom <= s_nightTo ? (now >= s_nightFrom && now < s_nightTo)    // z.B. 01:00–06:00
+                                  : (now >= s_nightFrom || now < s_nightTo);   // über Mitternacht
+}
+
+// Helligkeit anwenden – nur bei Änderung (wird bei jedem Neuzeichnen aufgerufen)
+static void oledApplyBrightness(bool overlay)
+{
+  static int last = -1;
+  int pct = nightActive() ? s_nightPct : s_oledPct;
+  if (overlay && pct < 50) pct = 50;
+  if (pct == last) return;
+  last = pct;
+  if (pct <= 0) { u8g2.setPowerSave(1); return; }
+  u8g2.setPowerSave(0);
+  u8g2.setContrast((uint8_t)((pct * 255 + 50) / 100));
+}
 
 // Anzeige um 180° drehen (U8G2_R2) oder normal (U8G2_R0) – wirkt ab dem
 // nächsten Neuzeichnen (spätestens nach OLED_REFRESH_MS).
@@ -1800,7 +1881,7 @@ static void oledInit()
 {
   u8g2.setBusClock(OLED_SPI_HZ);
   u8g2.begin();
-  u8g2.setContrast(s_oledContrast);
+  oledApplyBrightness(true);              // Startbildschirm immer sichtbar
   oledSetFlip(s_oledFlip);
   u8g2.enableUTF8Print();
 
@@ -1859,18 +1940,19 @@ static void drawSegTime(int y, int hh, int mm, int ss, int dx)
   const int GAP = 2;                 // Abstand zwischen zwei Ziffern eines Paares
   const int COLON = 2, CGAP = 3;     // Doppelpunkt 2x2 px, 3 px Abstand je Seite
   const int AMPM = s_h12 ? 3 + 10 : 0; // Abstand + "AM"/"PM" (2 Zeichen à 5 px)
-  const int total = 6 * W + 3 * GAP + 2 * (CGAP + COLON + CGAP) + AMPM;
+  const int N = s_oledSec ? 3 : 2;     // ohne Sekunden nur HH:MM
+  const int total = 2 * N * W + N * GAP + (N - 1) * (CGAP + COLON + CGAP) + AMPM;
   int x = (128 - 3 - total) / 2 + dx; // 3 px Reserve für den Pixel-Shift
 
   const bool pm = hh >= 12;
   if (s_h12) { hh %= 12; if (hh == 0) hh = 12; }
   const int v[3] = { hh, mm, ss };
-  for (int i = 0; i < 3; i++) {
+  for (int i = 0; i < N; i++) {
     if (!(i == 0 && s_h12 && hh < 10))                       // 12h: keine führende Null
       drawSegDigit(x, y, v[i] / 10, W, H, T);
     x += W + GAP;                                            // Zehner
     drawSegDigit(x, y, v[i] % 10, W, H, T);  x += W;         // Einer
-    if (i < 2) {                                             // Doppelpunkt
+    if (i < N - 1) {                                         // Doppelpunkt
       x += CGAP;
       u8g2.drawBox(x, y + H / 3 - 1,     COLON, COLON);
       u8g2.drawBox(x, y + 2 * H / 3 - 1, COLON, COLON);
@@ -2039,7 +2121,10 @@ static bool oledProfileOverlay()
 // OLED neu zeichnen: Uhrzeit, KW/Datum, WLAN-Name, Signalstärke (1× pro Sekunde)
 static void oledUpdate()
 {
+  const bool overlay = s_btnDownSince && !s_btnHandled && millis() - s_btnDownSince >= 300;
+  oledApplyBrightness(overlay);
   if (oledProfileOverlay()) return;
+  if ((nightActive() ? s_nightPct : s_oledPct) == 0) return;   // Display aus: nichts zeichnen
 
   const size_t LINE_CHARS = 25;     // 5x8-Font: 125 px Breite + 3 px Shift-Reserve
   struct tm t;

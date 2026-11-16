@@ -180,7 +180,10 @@ the oscilloscope. The values in `config.h` are then only the start values.
 | `JUMP_LANDING`, `JUMP_RAMP` | Braking before the start of a line (default 8 and 4). Smaller `JUMP_LANDING` if lines start with small “hooks” |
 | `ZBLANK_PIN` | optional output for blanking (Z input), -1 = off |
 | `HAND_BRIGHT_PCT` | Brightness of hour and minute hand relative to the rest (default 67 %, then they look equally bright) |
-| `TICK_BRIGHT_PCT`, `DIGIT_BRIGHT_PCT` | Brightness of tick marks and numerals (default 100 %, 30–150 %). Above 100 % brighter but fewer frames/s. Adjustable in the web interface |
+| `TICK_BRIGHT_PCT`, `DIGIT_BRIGHT_PCT` | Brightness of tick marks and numerals, 0–100 % (default 100 %, 0 = hidden). Adjustable in the web interface |
+| `OLED_BRIGHT_PCT` | OLED brightness 0–100 % (default 50 %, 0 = off) |
+| `OLED_SECONDS` | 1 = OLED time with seconds, 0 = HH:MM only |
+| `NIGHT_MODE`, `NIGHT_FROM_MIN`, `NIGHT_TO_MIN`, `NIGHT_BRIGHT_PCT` | OLED night mode: time window (default 22:00–07:00) with its own brightness (default 0 % = off) |
 | `USE_FAST_DAC` | `1` = direct register access (default). `0` = `dacWrite()`, only as a fallback |
 | `DIAL_STYLE` | Start dial: 0 = 1–12, 1 = 12/3/6/9, 2 = Roman I–XII, 3 = Roman XII/III/VI/IX. Switchable in the web interface by swiping over the preview, the choice is saved |
 | `TZ_INFO` | Time zone incl. daylight saving rule (default: Central Europe) |

@@ -133,6 +133,9 @@ pre.full{height:auto;overflow-y:visible}
 .seg button{margin:0;background:transparent;color:var(--fg);border:1px solid var(--line);font-weight:400}
 .seg button[aria-pressed="true"]{background:var(--acc);color:#fff;border-color:var(--acc);font-weight:600}
 .dt{display:flex;gap:8px;margin-top:6px}
+.dt .nl{margin:0;align-self:center;color:var(--mute);font-size:14px}
+#nightSet .head{margin-top:8px}
+#nightSet.off .nightf{opacity:.45;pointer-events:none}
 #tDst{margin-bottom:2px}#tDst button{padding:0 4px;font-size:15px}.dt input{flex:1 1 0;min-width:0}
 .sw{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:0;color:var(--fg);font-size:16px}
 .sw input{width:24px;height:24px;min-height:0;margin:0;flex:none;accent-color:var(--acc)}
@@ -221,16 +224,16 @@ html{scroll-behavior:smooth}
   <div class="sub">Länger = hellere Linien, aber weniger Bilder pro Sekunde (jetzt <span id="vFps">–</span>). <span class="saved">Änderungen wirken sofort und bleiben gespeichert.</span></div></div>
  <!-- Helligkeit der Nadelzeiger -->
  <div class="set"><div class="head"><label for="sHand">Helligkeit Stunden-/Minutenzeiger</label><span class="val" id="vHand"></span></div>
-  <input type="range" id="sHand" min="30" max="100" step="1">
-  <div class="sub">Unter 100 %, weil die schmalen Zeiger sonst heller wirken als der Rest. <span class="saved">Änderungen wirken sofort und bleiben gespeichert.</span></div></div>
+  <input type="range" id="sHand" min="0" max="100" step="1">
+  <div class="sub">Unter 100 %, weil die schmalen Zeiger sonst heller wirken als der Rest. 0 % blendet die Zeiger aus. <span class="saved">Änderungen wirken sofort und bleiben gespeichert.</span></div></div>
  <!-- Helligkeit der Minutenstriche (Tabelle DialData) -->
  <div class="set"><div class="head"><label for="sTick">Helligkeit Minutenstriche</label><span class="val" id="vTick"></span></div>
-  <input type="range" id="sTick" min="30" max="150" step="1">
-  <div class="sub">Die 60 Striche am Rand. Über 100 % heller, aber weniger Bilder pro Sekunde. <span class="saved">Änderungen wirken sofort und bleiben gespeichert.</span></div></div>
+  <input type="range" id="sTick" min="0" max="100" step="1">
+  <div class="sub">Die 60 Striche am Rand. 0 % blendet sie aus. <span class="saved">Änderungen wirken sofort und bleiben gespeichert.</span></div></div>
  <!-- Helligkeit der Ziffern -->
  <div class="set"><div class="head"><label for="sDigit">Helligkeit Ziffern</label><span class="val" id="vDigit"></span></div>
-  <input type="range" id="sDigit" min="30" max="150" step="1">
-  <div class="sub">Die Zahlen auf dem Zifferblatt. Über 100 % heller, aber weniger Bilder pro Sekunde. <span class="saved">Änderungen wirken sofort und bleiben gespeichert.</span></div></div>
+  <input type="range" id="sDigit" min="0" max="100" step="1">
+  <div class="sub">Die Zahlen auf dem Zifferblatt. 0 % blendet sie aus. <span class="saved">Änderungen wirken sofort und bleiben gespeichert.</span></div></div>
  <!-- Rücklauf-Tempo, nur im Profil ANALOG wirksam -->
  <div class="set" id="jumpRow"><div class="head"><label for="sJump">Rücklauf-Tempo</label><span class="val" id="vJump"></span></div>
   <input type="range" id="sJump" min="0" max="48" step="1">
@@ -279,10 +282,20 @@ html{scroll-behavior:smooth}
   <div class="desc">Setzt nur die Einstellungen dieser Gruppe auf die Werte aus config.h zurück.</div>
  </div>
  <div class="sgroup"><div class="grouphead">Display</div>
- <!-- OLED-Kontrast -->
+ <!-- OLED-Helligkeit 0–100 % (0 = aus) -->
  <div class="set"><div class="head"><label for="sOled">OLED-Helligkeit</label><span class="val" id="vOled"></span></div>
-  <input type="range" id="sOled" min="1" max="255" step="1">
-  <div class="sub">Helligkeit des kleinen Displays an der Uhr. <span class="saved">Änderungen wirken sofort und bleiben gespeichert.</span></div></div>
+  <input type="range" id="sOled" min="0" max="100" step="1">
+  <div class="sub">Helligkeit des kleinen Displays an der Uhr. 0 % schaltet es aus; niedrige Werte schonen das OLED. <span class="saved">Änderungen wirken sofort und bleiben gespeichert.</span></div></div>
+ <!-- Sekunden auf dem OLED -->
+ <div class="set"><label class="sw"><span>Sekunden anzeigen</span><input type="checkbox" id="sSec"></label>
+  <div class="sub">Uhrzeit auf dem OLED als HH:MM:SS oder nur HH:MM. <span class="saved">Änderungen wirken sofort und bleiben gespeichert.</span></div></div>
+ <!-- Nachtmodus: Zeitfenster mit eigener Helligkeit -->
+ <div class="set" id="nightSet"><label class="sw"><span>Nachtmodus</span><input type="checkbox" id="sNight"></label>
+  <div class="dt nightf"><label class="nl" for="sNFrom">Von</label><input type="time" id="sNFrom" aria-label="Beginn Nachtmodus">
+   <label class="nl" for="sNTo">Bis</label><input type="time" id="sNTo" aria-label="Ende Nachtmodus"></div>
+  <div class="head nightf"><label for="sNPct">Helligkeit nachts</label><span class="val" id="vNPct"></span></div>
+  <input type="range" class="nightf" id="sNPct" min="0" max="100" step="1">
+  <div class="sub">Im gewählten Zeitraum gilt die Helligkeit nachts – 0 % schaltet das OLED dann ganz aus. Braucht eine gültige Uhrzeit. <span class="saved">Änderungen wirken sofort und bleiben gespeichert.</span></div></div>
  <!-- OLED kopfüber -->
  <div class="set"><label class="sw"><span>OLED um 180° drehen</span><input type="checkbox" id="sFlip"></label>
   <div class="sub">Für ein kopfüber eingebautes Display. <span class="saved">Änderungen wirken sofort und bleiben gespeichert.</span></div></div>
@@ -359,6 +372,7 @@ Object.assign(EN,{'Tiefstwert':'minimum','größter Block':'largest block','Proz
 Object.assign(EN,{'Oszilloskop':'Oscilloscope','Display':'Display'});
 Object.assign(EN,{"Setzt nur die Einstellungen dieser Gruppe auf die Werte aus config.h zurück.": "Resets only the settings of this group to the values from config.h.", "Änderungen wirken sofort und bleiben gespeichert.": "Changes take effect immediately and are saved.", "Übernimmt Datum und Uhrzeit dieses Handys oder PCs.": "Takes over date and time from this phone or PC.", "Stellt die Uhr auf das oben eingetragene Datum und die Uhrzeit.": "Sets the clock to the date and time entered above.", "Server im Internet, von dem die Uhr die genaue Zeit holt (Standard: de.pool.ntp.org). „Übernehmen“ speichert den Namen und gleicht sofort neu ab.": "Internet server from which the clock gets the exact time (default: de.pool.ntp.org). “Apply” saves the name and syncs again right away.", "Netze, mit denen sich die Uhr verbinden darf. Sie wählt automatisch das stärkste. „Löschen“ entfernt ein Netz – die Uhr startet danach neu.": "Networks the clock may connect to. It automatically picks the strongest one. “Delete” removes a network – the clock restarts afterwards.", "Name des WLANs genau wie am Router (Groß-/Kleinschreibung beachten).": "Name of the network exactly as on the router (case-sensitive).", "Für offene Netze leer lassen. „Anzeigen“ blendet das Passwort beim Tippen ein.": "Leave empty for open networks. “Show” reveals the password while typing.", "Speichert das Netz auf der Uhr (bis zu 5 Netze).": "Saves the network on the clock (up to 5 networks).", "Lädt das Protokoll alle 5 Sekunden neu, solange die Seite sichtbar ist.": "Reloads the log every 5 seconds while the page is visible.", "„Jetzt aktualisieren“ lädt sofort neu. „Alles anzeigen“ hebt die feste Höhe des Feldes auf. Die Uhr speichert die letzten 8 KB (ca. 120 Zeilen).": "“Refresh now” reloads immediately. “Show all” removes the fixed height of the field. The clock keeps the last 8 KB (approx. 120 lines).", "Uhrzeit aus dem Internet, stündlich abgeglichen": "time from the internet, synced every hour", "verbundenes Netz": "connected network", "mit dem Handy verbinden, um die Uhr einzurichten": "connect with your phone to set up the clock", "hilft bei der Fehlersuche nach unerwarteten Neustarts": "helps to diagnose unexpected restarts", "installierte Programmversion": "installed program version"});
 Object.assign(EN,{"Helligkeit Minutenstriche": "Tick mark brightness", "Helligkeit Ziffern": "Numeral brightness", "Die 60 Striche am Rand. Über 100 % heller, aber weniger Bilder pro Sekunde.": "The 60 marks around the edge. Above 100 % brighter, but fewer frames per second.", "Die Zahlen auf dem Zifferblatt. Über 100 % heller, aber weniger Bilder pro Sekunde.": "The numerals on the dial. Above 100 % brighter, but fewer frames per second."});
+Object.assign(EN,{"Unter 100 %, weil die schmalen Zeiger sonst heller wirken als der Rest. 0 % blendet die Zeiger aus.": "Below 100 % because the narrow hands would otherwise look brighter than the rest. 0 % hides the hands.", "Die 60 Striche am Rand. 0 % blendet sie aus.": "The 60 marks around the edge. 0 % hides them.", "Die Zahlen auf dem Zifferblatt. 0 % blendet sie aus.": "The numerals on the dial. 0 % hides them.", "Helligkeit des kleinen Displays an der Uhr. 0 % schaltet es aus; niedrige Werte schonen das OLED.": "Brightness of the small display on the clock. 0 % switches it off; low values protect the OLED.", "Sekunden anzeigen": "Show seconds", "Uhrzeit auf dem OLED als HH:MM:SS oder nur HH:MM.": "Time on the OLED as HH:MM:SS or just HH:MM.", "Nachtmodus": "Night mode", "Von": "From", "Bis": "To", "Helligkeit nachts": "Brightness at night", "Im gewählten Zeitraum gilt die Helligkeit nachts – 0 % schaltet das OLED dann ganz aus. Braucht eine gültige Uhrzeit.": "During the selected period the night brightness applies – 0 % switches the OLED off completely. Requires a valid time.", "Beginn Nachtmodus": "Night mode start", "Ende Nachtmodus": "Night mode end", "aus": "off"});
 const DE={};for(const k in EN)DE[EN[k]]=k;
 let lang='de';try{if(localStorage.getItem('lang')==='en')lang='en'}catch(e){}
 const t=s=>lang==='en'&&EN[s]||s;
@@ -414,9 +428,9 @@ function drawScope(){
  const h=Math.floor(sec/3600),m=Math.floor(sec/60)%60,s=sec%60;
  // Drei Gruppen mit eigener Helligkeit wie am Oszilloskop (Einstellungen, 100 % = normal):
  // Minutenstriche, Ziffern, Zeiger. Die Vorschau bildet das über die Deckkraft nach.
- const a=v=>Math.max(.25,Math.min(1,(v||100)/100*.8+.2));
+ const a=v=>v===undefined||v===null?1:(+v===0?0:Math.max(.25,Math.min(1,v/100*.8+.2)));
  const groups=[[V.dial,a(S&&S.tickPct)],[V.digits[dial]||[],a(S&&S.digitPct)],
-  [[V.hr[(h%12)*5+Math.floor(m/12)],V.min[m],V.sec[s]],1]];
+  [[V.hr[(h%12)*5+Math.floor(m/12)],V.min[m]],S&&S.handPct!==undefined?a(S.handPct/0.67>100?100:S.handPct/0.67):1],[[V.sec[s]],1]];
  g.lineCap='round';g.lineJoin='round';
  for(const [polys,alpha] of groups){g.globalAlpha=alpha;
   for(const [w,col,blur] of [[5,SC.glow,10],[1.8,SC.trace,3]]){   // Leuchten + Spur (SC: Farben s.o.)
@@ -468,7 +482,9 @@ setInterval(()=>{if(tBase===null)return;const n=Math.floor((performance.now()-tA
 let S=null,setBusy=false;
 const fmtBeam=v=>{const x=(v/1000).toFixed(2);return (lang==='en'?x:x.replace('.',','))+' '+t('µs pro Schritt')};
 const fmtJump=v=>+v===0?t('sofortiger Sprung'):v+t('× Zeichentempo');
-const fmtOled=v=>Math.round(v/255*100)+' %';
+// Prozentanzeige der Regler; 0 % = aus
+const fmtPct=v=>+v===0?'0 % ('+t('aus')+')':v+' %';
+const fmtOled=fmtPct;
 // Alle Einstellungs-Elemente aus S (Antwort von /api/settings) füllen
 function renderSettings(){
  if(!S)return;
@@ -476,9 +492,9 @@ function renderSettings(){
  $('sDial').value=S.dial;
  h12=!!S.h12; document.querySelectorAll('[data-h12]').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.h12===(S.h12?1:0))));
  $('sBeam').value=S.beamNs;$('vBeam').textContent=fmtBeam(S.beamNs);
- $('sHand').value=S.handPct;$('vHand').textContent=S.handPct+' %';
- $('sTick').value=S.tickPct;$('vTick').textContent=S.tickPct+' %';
- $('sDigit').value=S.digitPct;$('vDigit').textContent=S.digitPct+' %';
+ $('sHand').value=S.handPct;$('vHand').textContent=fmtPct(S.handPct);
+ $('sTick').value=S.tickPct;$('vTick').textContent=fmtPct(S.tickPct);
+ $('sDigit').value=S.digitPct;$('vDigit').textContent=fmtPct(S.digitPct);
  // Rücklauf-Tempo: im Profil DIGITAL wird immer hart gesprungen – der Regler zeigt dann
  // ausgegraut 0. Der gespeicherte ANALOG-Wert bleibt erhalten und erscheint wieder,
  // sobald auf ANALOG umgeschaltet wird.
@@ -490,7 +506,11 @@ function renderSettings(){
  for(const z of S.timezones){const o=document.createElement('option');o.value=z.tz;o.textContent=z.label;tz.append(o)}}
  tz.value=S.tz;
  if(document.activeElement!==$('sNtp'))$('sNtp').value=S.ntp;
- $('sOled').value=S.oledContrast;$('vOled').textContent=fmtOled(S.oledContrast);
+ $('sOled').value=S.oledPct;$('vOled').textContent=fmtPct(S.oledPct);
+ $('sSec').checked=S.oledSec;$('sNight').checked=S.oledNight;$('nightSet').classList.toggle('off',!S.oledNight);
+ if(document.activeElement!==$('sNFrom'))$('sNFrom').value=S.nightFrom;
+ if(document.activeElement!==$('sNTo'))$('sNTo').value=S.nightTo;
+ $('sNPct').value=S.nightPct;$('vNPct').textContent=fmtPct(S.nightPct);
  $('sShift').checked=S.oledShift;
  $('sFlip').checked=S.oledFlip;
 }
@@ -510,18 +530,24 @@ document.querySelectorAll('[data-h12]').forEach(b=>b.onclick=()=>{h12=b.dataset.
 $('sDial').onchange=e=>setSetting({dial:e.target.value});
 $('sBeam').oninput=e=>$('vBeam').textContent=fmtBeam(e.target.value);
 $('sBeam').onchange=e=>setSetting({beamNs:e.target.value});
-$('sHand').oninput=e=>$('vHand').textContent=e.target.value+' %';
+$('sHand').oninput=e=>{$('vHand').textContent=fmtPct(e.target.value);if(S){S.handPct=+e.target.value;drawScope()}};
 $('sHand').onchange=e=>setSetting({handPct:e.target.value});
-$('sTick').oninput=e=>{$('vTick').textContent=e.target.value+' %';if(S){S.tickPct=+e.target.value;drawScope()}};
+$('sTick').oninput=e=>{$('vTick').textContent=fmtPct(e.target.value);if(S){S.tickPct=+e.target.value;drawScope()}};
 $('sTick').onchange=e=>setSetting({tickPct:e.target.value});
-$('sDigit').oninput=e=>{$('vDigit').textContent=e.target.value+' %';if(S){S.digitPct=+e.target.value;drawScope()}};
+$('sDigit').oninput=e=>{$('vDigit').textContent=fmtPct(e.target.value);if(S){S.digitPct=+e.target.value;drawScope()}};
 $('sDigit').onchange=e=>setSetting({digitPct:e.target.value});
 $('sJump').oninput=e=>$('vJump').textContent=fmtJump(e.target.value);
 $('sJump').onchange=e=>setSetting({jumpSpeed:e.target.value});
 $('sTz').onchange=e=>setSetting({tz:e.target.value});
 $('sNtpSave').onclick=()=>setSetting({ntp:$('sNtp').value.trim()});
-$('sOled').oninput=e=>$('vOled').textContent=fmtOled(e.target.value);
-$('sOled').onchange=e=>setSetting({oledContrast:e.target.value});
+$('sOled').oninput=e=>$('vOled').textContent=fmtPct(e.target.value);
+$('sOled').onchange=e=>setSetting({oledPct:e.target.value});
+$('sSec').onchange=e=>setSetting({oledSec:e.target.checked?1:0});
+$('sNight').onchange=e=>{$('nightSet').classList.toggle('off',!e.target.checked);setSetting({oledNight:e.target.checked?1:0})};
+$('sNFrom').onchange=e=>{if(e.target.value)setSetting({nightFrom:e.target.value})};
+$('sNTo').onchange=e=>{if(e.target.value)setSetting({nightTo:e.target.value})};
+$('sNPct').oninput=e=>$('vNPct').textContent=fmtPct(e.target.value);
+$('sNPct').onchange=e=>setSetting({nightPct:e.target.value});
 $('sShift').onchange=e=>setSetting({oledShift:e.target.checked?1:0});
 $('sFlip').onchange=e=>setSetting({oledFlip:e.target.checked?1:0});
 // ---- Uhrzeit von Hand stellen (nur ohne Zeitserver sichtbar)

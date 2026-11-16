@@ -48,7 +48,7 @@ This documentation quotes the German labels and adds the English label in parent
   over the preview changes the dial**: 1–12, only 12/3/6/9, Roman I–XII or only XII/III/VI/IX. This
   also applies to the oscilloscope and is saved. Under „Einstellungen“ (settings) you can change
   the oscilloscope profile, dial, beam dwell time, brightness of hands, tick marks and numerals, retrace speed, time zone, time
-  server (NTP) and OLED (brightness, pixel shift, 180° rotation) online. Changes apply immediately
+  server (NTP) and OLED (brightness 0–100 %, seconds, night mode with its own brightness, pixel shift, 180° rotation) online. Changes apply immediately
   and are saved. The web interface is always reachable as soon as the clock is on Wi-Fi. Without
   a known network the clock opens the setup network **“ScopeClock-Setup”**, and the phone shows
   the setup page automatically.
@@ -59,7 +59,7 @@ This documentation quotes the German labels and adds the English label in parent
 ### Quick start (Arduino IDE 2.x)
 1. Boards manager: install **esp32 by Espressif** (2.0.x or 3.x), board **ESP32 Dev Module**.
    Under **Tools → Partition Scheme** choose “**Huge APP (3MB No OTA/1MB SPIFFS)**”. This gives the
-   program 3 MB instead of 1.25 MB (40 % used instead of 94 %). The clock uses neither OTA updates
+   program 3 MB instead of 1.25 MB (40 % used instead of 96 %). The clock uses neither OTA updates
    nor SPIFFS, and saved networks and settings survive the change.
 2. Library manager: install **U8g2** (by oliver).
 3. Open `ESP32_OscilloscopeClock_v2.0.ino` and upload. Set the serial monitor to 115200 baud.
@@ -100,7 +100,7 @@ interface.
 
 | Board package | Program memory | Global variables (RAM) |
 |---|---|---|
-| esp32 3.3.12 | 1,244,590 bytes (94 %) | 74,148 bytes (22 %) |
+| esp32 3.3.12 | 1,259,902 bytes (96 %) | 74,148 bytes (22 %) |
 | esp32 2.0.17 | 866,053 bytes (66 %) | 61,048 bytes (18 %) – state before the menu and dial switching |
 
 The configuration variants (profile ANALOG/DIGITAL, Z blanking, dial 0/1/2, `USE_FAST_DAC 0`,

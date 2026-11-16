@@ -120,8 +120,8 @@
 // 100 = Zeiger heller hervorheben.
 #define HAND_BRIGHT_PCT 67
 
-// Helligkeit der Minutenstriche und der Ziffern (Prozent der normalen Verweilzeit,
-// 30–150). Über 100 % = heller, aber weniger Bilder pro Sekunde. Im Webinterface regelbar.
+// Helligkeit der Minutenstriche und der Ziffern: 0–100 % der normalen Verweilzeit
+// (0 = ausgeblendet). Im Webinterface regelbar.
 #define TICK_BRIGHT_PCT  100
 #define DIGIT_BRIGHT_PCT 100
 
@@ -144,7 +144,14 @@
 
 #define OLED_REFRESH_MS   200        // Displayaktualisierung in ms (Sekunden laufen flüssig)
 #define OLED_SHIFT_EVERY_S 60        // Pixel-Shift gegen Einbrennen: alle n Sekunden (0 = aus)
-#define OLED_CONTRAST     0x80       // Helligkeit 0x00…0xFF (niedriger = langlebiger)
+#define OLED_BRIGHT_PCT   50         // Helligkeit 0–100 % (0 = aus; niedriger = langlebiger)
+#define OLED_SECONDS      1          // 1 = Uhrzeit mit Sekunden, 0 = nur HH:MM
+// Nachtmodus: im Zeitfenster eigene Helligkeit (z.B. 0 % = Display nachts aus).
+// Braucht eine gültige Uhrzeit (Zeitserver oder von Hand gestellt).
+#define NIGHT_MODE        0          // 1 = an
+#define NIGHT_FROM_MIN    (22 * 60)  // Beginn 22:00 (Minuten nach Mitternacht)
+#define NIGHT_TO_MIN      (7 * 60)   // Ende 07:00
+#define NIGHT_BRIGHT_PCT  0          // Helligkeit nachts 0–100 % (0 = aus)
 #define OLED_FLIP         0          // 1 = Anzeige um 180° drehen (Display kopfüber eingebaut)
 
 // Sprache für Webinterface, OLED und Protokoll: 0 = Deutsch, 1 = English.

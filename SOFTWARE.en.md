@@ -116,7 +116,7 @@ affect the beam output on core 1.
 scrolling): „Uhr“ (clock), Status, „Einstellungen“ (settings), „WLAN“ (Wi-Fi), „Protokoll“ (log), below them
 the language selection. The settings are split into three groups: **„Oszilloskop“** (Oscilloscope: profile first, dial,
 dwell time, hand brightness, retrace speed), **„Uhrzeit“** (Time: “Set time” if shown, time format,
-time zone, time server) and **„Display“** (OLED brightness, rotation, pixel shift).
+time zone, time server) and **„Display“** (OLED brightness, seconds, night mode, rotation, pixel shift).
 The top section (title, preview, time, date) is centred. The title bar “ESP32 Oscilloscope Clock”
 always stays at the top next to the menu button, the section headings directly below it
 (`position: sticky`). Each section heading is only pinned within its section (`.grp`), so the
@@ -194,7 +194,7 @@ inserted as text (`textContent`), never as HTML.
 | `POST /api/wifi/delete` | delete `ssid`, then restart (WiFiMulti cannot forget networks) |
 | `POST /api/reconnect` | disconnect, `wifiTask` connects to the strongest network |
 | `GET /api/settings` | current settings, default values (`defaults`) and time zone list |
-| `POST /api/settings` | any of the fields `profile`, `dial`, `beamNs`, `handPct`, `tickPct`, `digitPct`, `jumpSpeed`, `tz`, `ntp`, `oledContrast`, `oledShift`, `oledFlip`, `lang` (`de`/`en`), `h12` (0/1): validate, apply immediately, save. Answer `{ok, msg, settings}` |
+| `POST /api/settings` | any of the fields `profile`, `dial`, `beamNs`, `handPct`, `tickPct`, `digitPct`, `jumpSpeed`, `tz`, `ntp`, `oledPct`, `oledSec`, `oledNight`, `nightFrom`/`nightTo` (`HH:MM`), `nightPct`, `oledShift`, `oledFlip`, `lang` (`de`/`en`), `h12` (0/1): validate, apply immediately, save. Answer `{ok, msg, settings}` |
 | `POST /api/settings/reset` | `group` = `scope` (oscilloscope), `time` or `display`: reset only this group to the values from `config.h`; without `group` everything incl. language. Wi-Fi networks are always kept |
 | `POST /api/dial` | `style` 0 = 1–12, 1 = 12/3/6/9, 2 = Roman I–XII, 3 = Roman XII/III/VI/IX: change the dial (oscilloscope and preview), saved |
 | `POST /api/time` | `epoch` (Unix seconds, UTC) **or** `local` (`YYYY-MM-DDTHH:MM[:SS]`, local time), optional `dst` (-1 automatic, 1 summer time, 0 winter time): set the time by hand, 2024–2099 |
@@ -241,13 +241,15 @@ that group; Wi-Fi networks are kept.
 | Oscilloscope profile („Oszilloskop-Profil“) | `profile` | DIGITAL / ANALOG | `g_scopeProfile`, also via BOOT button |
 | Dial („Zifferblatt“) | `dial` | 4 styles | `g_dialStyle`, in sync with swiping over the preview |
 | Beam dwell time („Verweilzeit des Strahls“) | `beam` | 1,000–10,000 ns per step | `g_beamNs`, `scopeTask` recalculates the timing between two frames (`beamTiming()`) |
-| Hour/minute hand brightness („Helligkeit Stunden-/Minutenzeiger“) | `hand` | 30–100 % | `g_handPct` |
-| Tick mark brightness („Helligkeit Minutenstriche“) | `tick` | 30–150 % | `g_tickPct`: dwell time of the marks (table `DialData`) in the round trip; above 100 % brighter but fewer frames/s |
-| Numeral brightness („Helligkeit Ziffern“) | `digit` | 30–150 % | `g_digitPct`: dwell time of the numerals in the round trip |
+| Hour/minute hand brightness („Helligkeit Stunden-/Minutenzeiger“) | `hand` | 0–100 % (0 = off) | `g_handPct` |
+| Tick mark brightness („Helligkeit Minutenstriche“) | `tick` | 0–100 % (0 = off) | `g_tickPct`: dwell time of the marks (table `DialData`) in the round trip, in percent of the normal dwell time |
+| Numeral brightness („Helligkeit Ziffern“) | `digit` | 0–100 % (0 = off) | `g_digitPct`: dwell time of the numerals in the round trip |
 | Retrace speed („Rücklauf-Tempo“) | `jump` | 0 (instant jump) – 48 (× drawing speed) | `g_jumpSpeed`, only effective in profile ANALOG. With DIGITAL the slider shows a greyed-out 0 (instant jump); the ANALOG value stays saved and reappears when switching back |
 | Time zone („Zeitzone“) | `tz` | list `TIMEZONES[]` (or `TZ_INFO`) | `configTzTime()` again |
 | Time server („Zeitserver (NTP)“) | `ntp` | host name, max. 63 characters | first server, `configTzTime()` again |
-| OLED brightness („OLED-Helligkeit“) | `oled` | 1–255 | `u8g2.setContrast()` |
+| OLED brightness („OLED-Helligkeit“) | `oledp` | 0–100 % (0 = off) | `oledApplyBrightness()`: 0 % = `setPowerSave(1)`, otherwise contrast 1–255. An old value `oled` (contrast) is converted on first start |
+| Show seconds („Sekunden anzeigen“) | `osec` | on/off | OLED time HH:MM:SS or HH:MM |
+| Night mode („Nachtmodus“) | `night`, `nfrom`, `nto`, `npct` | on/off, from/to (HH:MM), 0–100 % | Within the time window `npct` replaces the normal brightness (also across midnight). Requires a valid time. While the BOOT button is held, the OLED is switched on with at least 50 % |
 | OLED pixel shift („OLED-Pixelverschiebung“) | `shift` | on/off | offset against burn-in |
 | Rotate OLED by 180° („OLED um 180° drehen“) | `flip` | on/off | `u8g2.setDisplayRotation(U8G2_R2)`, for a display mounted upside down |
 | Language („Sprache“) | `lang` | Deutsch / English | `s_lang`: web interface, OLED, log |

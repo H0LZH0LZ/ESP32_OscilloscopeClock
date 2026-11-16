@@ -111,7 +111,7 @@ die Strahlausgabe auf Core 1 nicht.
 Scrollen sichtbar): Uhr, Status, Einstellungen, WLAN, Protokoll, darunter die Sprachauswahl.
 Die Einstellungen sind in drei Gruppen geteilt: **Oszilloskop** (Profil zuerst, Zifferblatt,
 Verweilzeit, Zeigerhelligkeit, Rücklauf-Tempo), **Uhrzeit** (ggf. „Uhrzeit stellen“, Zeitformat,
-Zeitzone, Zeitserver) und **Display** (OLED-Helligkeit, Drehung, Pixelverschiebung). Der oberste Abschnitt (Überschrift, Vorschau, Uhrzeit,
+Zeitzone, Zeitserver) und **Display** (OLED-Helligkeit, Sekunden, Nachtmodus, Drehung, Pixelverschiebung). Der oberste Abschnitt (Überschrift, Vorschau, Uhrzeit,
 Datum) ist zentriert. Die Titelleiste „ESP32 Oscilloscope Clock“ bleibt immer oben neben der
 Menütaste stehen, die Abschnittsüberschriften direkt darunter (`position: sticky`). Jede
 Abschnittsüberschrift ist nur innerhalb ihres Abschnitts (`.grp`) angeheftet, so schiebt die
@@ -188,7 +188,7 @@ eingesetzt (`textContent`), nie als HTML.
 | `POST /api/wifi/delete` | `ssid` löschen, danach Neustart (WiFiMulti kann Netze nicht vergessen) |
 | `POST /api/reconnect` | Verbindung trennen, `wifiTask` verbindet mit dem stärksten Netz |
 | `GET /api/settings` | aktuelle Einstellungen, Standardwerte (`defaults`) und Zeitzonen-Liste |
-| `POST /api/settings` | beliebige Felder `profile`, `dial`, `beamNs`, `handPct`, `tickPct`, `digitPct`, `jumpSpeed`, `tz`, `ntp`, `oledContrast`, `oledShift`, `oledFlip`, `lang` (`de`/`en`), `h12` (0/1): prüfen, sofort anwenden, speichern. Antwort `{ok, msg, settings}` |
+| `POST /api/settings` | beliebige Felder `profile`, `dial`, `beamNs`, `handPct`, `tickPct`, `digitPct`, `jumpSpeed`, `tz`, `ntp`, `oledPct`, `oledSec`, `oledNight`, `nightFrom`/`nightTo` (`HH:MM`), `nightPct`, `oledShift`, `oledFlip`, `lang` (`de`/`en`), `h12` (0/1): prüfen, sofort anwenden, speichern. Antwort `{ok, msg, settings}` |
 | `POST /api/settings/reset` | `group` = `scope` (Oszilloskop), `time` (Uhrzeit) oder `display`: nur diese Gruppe auf die Werte aus `config.h`; ohne `group` alles inkl. Sprache. WLANs bleiben immer erhalten |
 | `POST /api/dial` | `style` 0 = 1–12, 1 = 12/3/6/9, 2 = römisch I–XII, 3 = römisch XII/III/VI/IX: Zifferblatt umschalten (Oszilloskop und Vorschau), wird gespeichert |
 | `POST /api/time` | `epoch` (Unix-Sekunden, UTC) **oder** `local` (`JJJJ-MM-TTTHH:MM[:SS]`, Ortszeit), optional `dst` (-1 automatisch, 1 Sommerzeit, 0 Winterzeit): Uhrzeit von Hand stellen, 2024–2099 |
@@ -233,13 +233,15 @@ Knopf „Auf Standardwerte zurücksetzen“: Er löscht nur die gespeicherten We
 | Oszilloskop-Profil | `profile` | DIGITAL / ANALOG | `g_scopeProfile`, auch per BOOT-Taster |
 | Zifferblatt | `dial` | 4 Stile | `g_dialStyle`, synchron mit dem Wischen über die Vorschau |
 | Verweilzeit des Strahls | `beam` | 1.000–10.000 ns pro Schritt | `g_beamNs`, `scopeTask` berechnet das Timing zwischen zwei Bildern neu (`beamTiming()`) |
-| Helligkeit Stunden-/Minutenzeiger | `hand` | 30–100 % | `g_handPct` |
-| Helligkeit Minutenstriche | `tick` | 30–150 % | `g_tickPct`: Verweilzeit der Striche (Tabelle `DialData`) in der Rundtour; über 100 % heller, aber weniger Bilder/s |
-| Helligkeit Ziffern | `digit` | 30–150 % | `g_digitPct`: Verweilzeit der Ziffern in der Rundtour |
+| Helligkeit Stunden-/Minutenzeiger | `hand` | 0–100 % (0 = aus) | `g_handPct` |
+| Helligkeit Minutenstriche | `tick` | 0–100 % (0 = aus) | `g_tickPct`: Verweilzeit der Striche (Tabelle `DialData`) in der Rundtour, in Prozent der normalen Verweilzeit |
+| Helligkeit Ziffern | `digit` | 0–100 % (0 = aus) | `g_digitPct`: Verweilzeit der Ziffern in der Rundtour |
 | Rücklauf-Tempo | `jump` | 0 (sofortiger Sprung) – 48 (× Zeichentempo) | `g_jumpSpeed`, nur im Profil ANALOG wirksam. Bei DIGITAL zeigt der Regler ausgegraut 0 (sofortiger Sprung); der ANALOG-Wert bleibt gespeichert und erscheint beim Zurückschalten wieder |
 | Zeitzone | `tz` | Liste `TIMEZONES[]` (bzw. `TZ_INFO`) | `configTzTime()` neu |
 | Zeitserver (NTP) | `ntp` | Hostname, max. 63 Zeichen | erster Server, `configTzTime()` neu |
-| OLED-Helligkeit | `oled` | 1–255 | `u8g2.setContrast()` |
+| OLED-Helligkeit | `oledp` | 0–100 % (0 = aus) | `oledApplyBrightness()`: 0 % = `setPowerSave(1)`, sonst Kontrast 1–255. Ein alter Wert `oled` (Kontrast) wird beim ersten Start umgerechnet |
+| Sekunden anzeigen | `osec` | an/aus | OLED-Uhrzeit HH:MM:SS oder HH:MM |
+| Nachtmodus | `night`, `nfrom`, `nto`, `npct` | an/aus, Von/Bis (HH:MM), 0–100 % | Im Zeitfenster gilt `npct` statt der normalen Helligkeit (auch über Mitternacht). Braucht eine gültige Uhrzeit. Beim Halten des BOOT-Tasters wird das OLED mit mindestens 50 % eingeschaltet |
 | OLED-Pixelverschiebung | `shift` | an/aus | Versatz gegen Einbrennen |
 | OLED um 180° drehen | `flip` | an/aus | `u8g2.setDisplayRotation(U8G2_R2)`, für ein kopfüber eingebautes Display |
 | Sprache | `lang` | Deutsch / English | `s_lang`: Webinterface, OLED, Protokoll |
