@@ -75,10 +75,14 @@ Diese Datei beschreibt, wie die Firmware aufgebaut ist. Für Verdrahtung und Geh
 ## Webinterface
 
 Erreichbar unter `http://scope-clock.local` bzw. der IP-Adresse der Uhr (steht im Log), ohne
-Passwort. Der `WebServer` läuft im `uiTask` auf Core 0 (`webLoop()` alle 10 ms) und beeinflusst
+Passwort. Das gilt immer, wenn die Uhr mit einem WLAN verbunden ist, nicht nur im Setup-WLAN. Der `WebServer` läuft im `uiTask` auf Core 0 (`webLoop()` alle 10 ms) und beeinflusst
 die Strahlausgabe auf Core 1 nicht.
 
-**Seite (`webpage.h`):** eine Seite mit drei Bereichen.
+**Seite (`webpage.h`):** eine Seite. Ganz oben steht eine **Live-Vorschau des Oszilloskop-Bildes**
+(Canvas im Look eines grünen Leuchtschirms mit 8×8-Raster). Die Seite lädt dafür einmal die
+Vektordaten von `/api/vectors`, also dieselben Tabellen, die der `scopeTask` zeichnet, und stellt
+die Zeiger selbst nach der Uhrzeit (Stunde = `(h%12)*5 + m/12`, wie in der Firmware). Zwischen den
+Statusabfragen läuft die Zeit im Browser sekundengenau weiter. Darunter folgen drei Bereiche:
 - **Status:** große Uhrzeit, KW und Datum, NTP mit letztem Sync, WLAN, Signal, Adresse, Profil,
   Bildrate, Laufzeit, freier Speicher. Wird alle 2 s aktualisiert.
 - **WLAN:** gespeicherte Netze (Netze aus dem Webinterface lassen sich löschen), Netzsuche
@@ -99,6 +103,7 @@ eingesetzt (`textContent`), nie als HTML.
 | `GET /api/status` | JSON: `time`, `date`, `kw`, `ntp{synced,overdue,last,server}`, `wifi{configured,connected,ssid,rssi,ip,host}`, `ap{active,ssid,ip}`, `profile`, `fps`, `uptime`, `heap`, `fw` |
 | `GET /api/log` | Log als Text, älteste Zeile zuerst |
 | `GET /api/networks` | gespeicherte Netze `[{ssid, source:"secrets"/"web"}]`, nie Passwörter |
+| `GET /api/vectors` | Vektordaten für die Vorschau (ca. 7 KB): `dial`, `digits` (je nach `DIAL_STYLE`), `hr`, `min`, `sec` (je 60 Stellungen). Linienzüge als `[x0,y0,x1,y1,…]`, 0–255, y nach oben |
 | `GET /api/scan` | Netzsuche im Hintergrund: erst `{"running":true}`, dann `{"networks":[{ssid,rssi,open}]}` |
 | `POST /api/wifi` | `ssid`, `pw` speichern bzw. Passwort ändern (SSID 1–32, Passwort leer oder 8–63 Zeichen) |
 | `POST /api/wifi/delete` | `ssid` löschen, danach Neustart (WiFiMulti kann Netze nicht vergessen) |
@@ -161,7 +166,7 @@ Beide zeigen dieselben Zeilen, mit Zeitstempel (`+<s>s` bis zum ersten NTP-Sync)
 +0s [Web] Webserver gestartet (Port 80)
 +3s [WiFi] verbunden mit "Gastzugang", IP 192.168.1.23, RSSI -61 dBm
 +3s [Web] erreichbar unter http://scope-clock.local und http://192.168.1.23
-21:15:06 [NTP] Sync 15.11.2026 21:15:06, naechster in ca. 60 min
+21:15:06 [NTP] Sync 15.11.2026 21:15:06
 21:40:12 [WiFi] Verbindung verloren – versuche erneut
 21:41:12 [Web] Setup-WLAN "ScopeClock-Setup" aktiv – Einrichtung unter http://192.168.4.1
 22:02:30 [Web] WLAN "Werkstatt" gespeichert

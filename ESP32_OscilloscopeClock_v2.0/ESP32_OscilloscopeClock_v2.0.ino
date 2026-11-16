@@ -906,9 +906,8 @@ static void wifiLogChanges()
   if (g_ntpSynced && syncEpoch != lastLoggedSync) {
     struct tm st;
     localtime_r(&syncEpoch, &st);
-    logMsg("[NTP] Sync %02d.%02d.%04d %02d:%02d:%02d, naechster in ca. %lu min",
-           st.tm_mday, st.tm_mon + 1, st.tm_year + 1900, st.tm_hour, st.tm_min, st.tm_sec,
-           (unsigned long)(NTP_SYNC_INTERVAL_MS / 60000UL));
+    logMsg("[NTP] Sync %02d.%02d.%04d %02d:%02d:%02d",
+           st.tm_mday, st.tm_mon + 1, st.tm_year + 1900, st.tm_hour, st.tm_min, st.tm_sec);
     lastLoggedSync = syncEpoch;
     overdueLogged  = false;
   }
@@ -1005,6 +1004,69 @@ static void handleStatus()
   o += ",\"heap\":";                 o += (uint32_t)ESP.getFreeHeap();
   o += ",\"fw\":";                   jsonStr(o, FW_VERSION);
   o += '}';
+  web.send(200, "application/json", o);
+}
+
+// Hängt die Linienzüge einer Tabelle als JSON an: [[x0,y0,x1,y1,…],[…],…]
+// (bei onlyOne nur den ersten Linienzug ab offset – für eine Zeigerstellung).
+static void appendStrokes(String &o, const uint8_t *t, int size, uint8_t sep, int offset, bool onlyOne)
+{
+  int i = offset;
+  Stroke st;
+  bool first = true;
+  o += '[';
+  while (nextStroke(t, size, sep, i, st)) {
+    if (!first) o += ',';
+    first = false;
+    o += '[';
+    const int dir = (st.b >= st.a) ? 2 : -2;
+    for (int k = st.a; ; k += dir) {
+      o += t[k]; o += ','; o += t[k + 1];
+      if (k == st.b) break;
+      o += ',';
+    }
+    o += ']';
+    if (onlyOne) break;
+  }
+  o += ']';
+}
+
+// Hängt alle 60 Stellungen einer Zeigertabelle an: [[Stellung 0],[1],…,[59]]
+static void appendHand(String &o, const uint8_t *t, int size, int stride)
+{
+  o += '[';
+  for (int pos = 0; pos < 60; pos++) {
+    if (pos) o += ',';
+    String one;
+    appendStrokes(one, t, size, 0xFF, pos * stride, true);
+    o += one.substring(1, one.length() - 1);              // äußere Klammern weg
+  }
+  o += ']';
+}
+
+// GET /api/vectors – Vektordaten für die Oszilloskop-Vorschau der Webseite:
+// dieselben Tabellen, die auch der scopeTask zeichnet (Zifferblatt, Ziffern je
+// nach DIAL_STYLE, alle 60 Stellungen der drei Zeiger). Die Seite lädt sie
+// einmal und stellt die Zeiger dann selbst nach der Uhrzeit (wie scopeTask).
+// Koordinaten 0…255, y nach oben. Ca. 8 KB.
+static void handleVectors()
+{
+  String o;
+  o.reserve(9000);
+  o += "{\"dial\":";   appendStrokes(o, DialData, sizeof(DialData), 0x00, 0, false);
+  o += ",\"digits\":";
+#if DIAL_STYLE == 1
+  appendStrokes(o, DialDigits24, sizeof(DialDigits24), 0x00, 0, false);
+#elif DIAL_STYLE == 2
+  appendStrokes(o, DialDigitsRoman, sizeof(DialDigitsRoman), 0x00, 0, false);
+#else
+  appendStrokes(o, DialDigits12, sizeof(DialDigits12), 0x00, 0, false);
+#endif
+  o += ",\"hr\":";  appendHand(o, HrPtrData,  sizeof(HrPtrData),  9);
+  o += ",\"min\":"; appendHand(o, MinPtrData, sizeof(MinPtrData), 9);
+  o += ",\"sec\":"; appendHand(o, SecPtrData, sizeof(SecPtrData), 5);
+  o += '}';
+  web.sendHeader("Cache-Control", "max-age=3600");
   web.send(200, "application/json", o);
 }
 
@@ -1134,6 +1196,7 @@ static void webStart()
   web.on("/api/status",      HTTP_GET,  handleStatus);
   web.on("/api/log",         HTTP_GET,  [] { web.send(200, "text/plain; charset=utf-8", logRead()); });
   web.on("/api/networks",    HTTP_GET,  handleNetworks);
+  web.on("/api/vectors",     HTTP_GET,  handleVectors);
   web.on("/api/scan",        HTTP_GET,  handleScan);
   web.on("/api/wifi",        HTTP_POST, handleWifiSave);
   web.on("/api/wifi/delete", HTTP_POST, handleWifiDelete);

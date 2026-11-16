@@ -8,6 +8,7 @@
     GET  /api/status        Uhrzeit, NTP, WLAN, Setup-WLAN, Profil, Bildrate …
     GET  /api/log           Log (Text, älteste Zeile zuerst)
     GET  /api/networks      gespeicherte WLANs (nur Namen)
+    GET  /api/vectors       Vektordaten für die Oszilloskop-Vorschau (einmal)
     GET  /api/scan          WLANs in Reichweite (Suche läuft im Hintergrund)
     POST /api/wifi          WLAN speichern        (ssid, pw)
     POST /api/wifi/delete   WLAN löschen          (ssid) – Uhr startet neu
@@ -65,9 +66,13 @@ li.tap{cursor:pointer}
 pre{font:12px/1.45 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere;max-height:50vh;overflow:auto;margin:8px 0 12px;
  background:var(--bg);border-radius:10px;padding:10px;-webkit-overflow-scrolling:touch}
 .tools{display:flex;gap:8px}.tools button{margin:0 0 12px}
+.scope{background:#050805;border-radius:14px;margin:12px 0 4px;padding:10px;display:flex;justify-content:center}
+.scope canvas{width:100%;max-width:340px;aspect-ratio:1;display:block}
 </style></head>
 <body><main>
-<header><h1>ESP32 Oscilloscope Clock</h1><div id="clock">--:--:--</div><div id="date">&nbsp;</div></header>
+<header><h1>ESP32 Oscilloscope Clock</h1>
+<div class="scope"><canvas id="scope" width="512" height="512" aria-label="Vorschau des Oszilloskop-Bildes"></canvas></div>
+<div id="clock">--:--:--</div><div id="date">&nbsp;</div></header>
 
 <h2>Status</h2>
 <section id="status"></section>
@@ -105,10 +110,39 @@ function row(k,v,c){const d=document.createElement('div');d.className='row';
  const a=document.createElement('span');a.textContent=k;const b=document.createElement('span');b.textContent=v;if(c)b.className=c;d.append(a,b);return d}
 function bars(r){return r>-55?'▂▄▆█':r>-67?'▂▄▆ ':r>-75?'▂▄  ':'▂   '}
 function dur(s){const d=Math.floor(s/86400),h=Math.floor(s/3600)%24,m=Math.floor(s/60)%60;return (d?d+' d ':'')+h+' h '+m+' min'}
+// ---- Oszilloskop-Vorschau ---------------------------------------------------
+// Zeichnet dasselbe Bild wie die Uhr (Vektordaten von /api/vectors) auf ein
+// Canvas im Look eines Oszilloskop-Schirms. Die Zeigerstellung wird wie im
+// scopeTask berechnet: Stunde = (h%12)*5 + m/12, Minute = m, Sekunde = s.
+// Zwischen den Status-Abfragen läuft die Zeit lokal weiter (jede Sekunde).
+let V=null,tBase=null,tAt=0;
+function drawScope(){
+ const c=$('scope'),g=c.getContext('2d'),W=c.width,k=W/256;
+ g.fillStyle='#050805';g.fillRect(0,0,W,W);
+ g.strokeStyle='rgba(120,255,140,.08)';g.lineWidth=1;            // Raster 8x8 wie am Oszilloskop
+ for(let i=1;i<8;i++){const p=Math.round(i*W/8)+.5;g.beginPath();g.moveTo(p,0);g.lineTo(p,W);g.moveTo(0,p);g.lineTo(W,p);g.stroke()}
+ if(!V||tBase===null)return;
+ const sec=(tBase+Math.floor((performance.now()-tAt)/1000))%86400;
+ const h=Math.floor(sec/3600),m=Math.floor(sec/60)%60,s=sec%60;
+ const polys=[...V.dial,...V.digits,V.hr[(h%12)*5+Math.floor(m/12)],V.min[m],V.sec[s]];
+ g.lineCap='round';g.lineJoin='round';
+ for(const [w,col,blur] of [[5,'rgba(80,255,120,.18)',10],[1.8,'#b6ffc4',3]]){   // Leuchten + Spur
+  g.lineWidth=w*k/2;g.strokeStyle=col;g.shadowColor='#3dff6a';g.shadowBlur=blur;
+  g.beginPath();
+  for(const p of polys){if(!p||p.length<4)continue;g.moveTo(p[0]*k,(255-p[1])*k);for(let i=2;i<p.length;i+=2)g.lineTo(p[i]*k,(255-p[i+1])*k)}
+  g.stroke()}
+ g.shadowBlur=0;
+}
+function setTime(t){const a=t.split(':').map(Number);if(a.length===3&&!a.some(isNaN)){tBase=a[0]*3600+a[1]*60+a[2];tAt=performance.now()}}
+get('/api/vectors').then(r=>r.json()).then(v=>{V=v;drawScope()}).catch(()=>{});
+let lastSec=-1;
+setInterval(()=>{if(tBase===null)return;const n=Math.floor((performance.now()-tAt)/1000);
+ if(n!==lastSec){lastSec=n;const x=(tBase+n)%86400;$('clock').textContent=[x/3600|0,(x/60|0)%60,x%60].map(v=>String(v).padStart(2,'0')).join(':');drawScope()}},200);
+
 let online=true;
 async function status(){
  try{const s=await (await get('/api/status')).json();online=true;
-  $('clock').textContent=s.time;$('date').textContent=s.date?('KW '+s.kw+' – '+s.date):'Datum unbekannt';
+  $('clock').textContent=s.time;setTime(s.time);lastSec=-1;$('date').textContent=s.date?('KW '+s.kw+' – '+s.date):'Datum unbekannt';
   const st=$('status');st.replaceChildren(
    row('NTP',s.ntp.synced?('synchronisiert, '+s.ntp.last):(s.wifi.configured?'warte auf Sync …':'aus (kein WLAN)'),s.ntp.synced?(s.ntp.overdue?'warn':'ok'):'warn'),
    row('WLAN',s.wifi.connected?s.wifi.ssid:(s.wifi.configured?'sucht …':'kein Netz eingetragen'),s.wifi.connected?'ok':'warn'),

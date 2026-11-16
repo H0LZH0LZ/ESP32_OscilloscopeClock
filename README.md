@@ -19,8 +19,9 @@ Hardware angepasst: **ESP32-WROOM-32U DevKitC V4**, **Waveshare 2.42" OLED (I2C)
 - Ohne WLAN-Zugangsdaten läuft die Uhr offline ab einer festen Startzeit, wie im Original.
 - Mehrere WLANs: Die Uhr verbindet sich automatisch mit dem stärksten bekannten Netz.
 - **Webinterface** unter `http://scope-clock.local`, für Handys optimiert und ohne Passwort.
-  Es zeigt den Status (NTP, WLAN, Signal, Profil, Bildrate, Laufzeit, Speicher) und das Log und
-  dient zum Eintragen von WLANs. Ohne bekanntes WLAN öffnet die Uhr das Setup-WLAN
+  Oben zeigt es eine Live-Vorschau des Oszilloskop-Bildes, darunter den Status (NTP, WLAN,
+  Signal, Profil, Bildrate, Laufzeit, Speicher) und das Log. Außerdem dient es zum Eintragen von
+  WLANs. Es ist immer erreichbar, sobald die Uhr im WLAN ist. Ohne bekanntes WLAN öffnet die Uhr das Setup-WLAN
   **„ScopeClock-Setup“**, das Handy zeigt dann automatisch die Einrichtungsseite.
 - Eine Firmware für alle Oszilloskope: Das Profil DIGITAL (ab Werk) bzw. ANALOG wird im Betrieb
   per BOOT-Taster umgeschaltet und bleibt gespeichert. Getestet werden soll an Tektronix TDS3012,
@@ -57,8 +58,8 @@ Einstellungen (Zeitzone, Pins, Zifferblatt, Strahlgeschwindigkeit, Oszilloskop-P
 
 | Board-Paket | Programmspeicher | Globale Variablen (RAM) |
 |---|---|---|
-| esp32 3.3.12 | 1.150.354 Byte (87 %) | 65.060 Byte (19 %) |
-| esp32 2.0.17 | 862.713 Byte (65 %) | 61.048 Byte (18 %) |
+| esp32 3.3.12 | 1.153.738 Byte (88 %) | 65.060 Byte (19 %) |
+| esp32 2.0.17 | 866.053 Byte (66 %) | 61.048 Byte (18 %) |
 
 Die Konfigurationsvarianten (Profil ANALOG/DIGITAL, Z-Dunkeltastung, Zifferblatt 0/1/2,
 `USE_FAST_DAC 0`, EXCEL-Modus) wurden vor dem Webinterface ebenfalls ohne Warnungen gebaut.
