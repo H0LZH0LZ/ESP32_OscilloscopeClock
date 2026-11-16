@@ -2218,7 +2218,7 @@ static void oledUpdate()
 
   // 3) Netzwerkname: verbundenes Netz / Setup-WLAN / Suche läuft
   if (connected)          snprintf(buf, sizeof(buf), "%s %s", tr("WLAN", "WiFi"), WiFi.SSID().c_str());
-  else if (s_apActive)    snprintf(buf, sizeof(buf), "Setup %s", WEB_SETUP_AP_SSID);
+  else if (s_apActive)    snprintf(buf, sizeof(buf), "%s %s", tr("WLAN", "WiFi"), WEB_SETUP_AP_SSID);   // mit diesem WLAN verbinden
   else if (!wifiConfigured()) snprintf(buf, sizeof(buf), "%s", tr("WLAN aus", "WiFi off"));
   else                    snprintf(buf, sizeof(buf), "%s", tr("WLAN suche ...", "WiFi searching ..."));
   fitText(buf, LINE_CHARS);

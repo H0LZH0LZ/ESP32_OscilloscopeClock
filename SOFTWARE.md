@@ -235,7 +235,7 @@ Firmware-Update erhalten.
 („ScopeClock-Setup“) im Modus AP+STA. Ein `DNSServer` beantwortet jeden Namen mit 192.168.4.1,
 unbekannte Adressen werden auf die Startseite umgeleitet. So öffnen Handys die
 Einrichtungsseite automatisch. Steht die Verbindung zu einem bekannten WLAN 30 s lang, schließt
-das Setup-WLAN wieder. Das OLED zeigt in dieser Zeit „Setup ScopeClock-Setup“ und
+das Setup-WLAN wieder. Das OLED zeigt in dieser Zeit „WLAN ScopeClock-Setup“ und
 „http://192.168.4.1“.
 
 **Log:** `logMsg()` ersetzt die direkten `Serial`-Ausgaben. Jede Zeile bekommt einen Zeitstempel
@@ -347,7 +347,7 @@ WLAN Gastzugang           Font 5x8, max. 25 Zeichen (sonst mit ".." gekürzt)
    Signal -61 dBm         Font 5x8
 ```
 
-Im Setup-WLAN stehen in den beiden unteren Zeilen „Setup ScopeClock-Setup“ und „http://192.168.4.1“.
+Im Setup-WLAN stehen in den beiden unteren Zeilen „WLAN ScopeClock-Setup“ und „http://192.168.4.1“.
 
 - **7-Segment-Ziffern:** Die fertigen 7-Segment-Fonts von U8g2 sind für `HH:MM:SS` auf 128 px zu
   breit. `drawSegDigit()` setzt jede Ziffer deshalb aus bis zu 7 Rechtecken zusammen. Welche

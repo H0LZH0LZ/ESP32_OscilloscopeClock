@@ -242,7 +242,7 @@ for `WEB_SETUP_AP_AFTER_S` (60 s), `webApManage()` opens the open network `WEB_S
 (“ScopeClock-Setup”) in AP+STA mode. A `DNSServer` answers every name with 192.168.4.1, unknown
 addresses are redirected to the start page. This makes phones open the setup page automatically.
 Once the connection to a known network has been stable for 30 s, the setup network closes again.
-During this time the OLED shows “Setup ScopeClock-Setup” and “http://192.168.4.1”.
+During this time the OLED shows “WiFi ScopeClock-Setup” and “http://192.168.4.1”.
 
 **Log:** `logMsg()` replaces direct `Serial` output. Every line gets a timestamp (`hh:mm:ss` once
 the time is valid – via NTP or set by hand –, before that `+<s>s` since start) and goes to the
@@ -356,7 +356,7 @@ WLAN Gastzugang           font 5x8, max. 25 characters (otherwise shortened with
    Signal -61 dBm         font 5x8
 ```
 
-In the setup network the two lower lines show “Setup ScopeClock-Setup” and “http://192.168.4.1”.
+In the setup network the two lower lines show “WiFi ScopeClock-Setup” and “http://192.168.4.1”.
 
 - **7-segment digits:** the ready-made 7-segment fonts of U8g2 are too wide for `HH:MM:SS` on
   128 px. `drawSegDigit()` therefore assembles each digit from up to 7 rectangles. Which segments

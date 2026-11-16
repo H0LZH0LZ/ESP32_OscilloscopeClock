@@ -99,7 +99,10 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .row{display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:44px;border-top:1px solid var(--line);padding:6px 0}
 .row:first-of-type{border-top:0}
 .row span:first-child{color:var(--fg)}
-.row span:last-child{text-align:right;overflow-wrap:anywhere}
+.row span:last-child{text-align:right;overflow-wrap:anywhere;white-space:pre-line}   /* \n im Wert = neue Zeile (z. B. IP und Name) */
+.row span.addr{white-space:pre;flex:none}   /* IP und Gerätename nie mitten im Wort umbrechen … */
+.row:has(.addr){flex-wrap:wrap}.row:has(.addr)>span:first-child{flex:1 1 150px}   /* … bei Platzmangel unter die Bezeichnung */
+.row:has(.addr)>span.addr{margin-left:auto}
 .row .note{display:block;font-size:12px;line-height:1.3;color:var(--mute);opacity:.85;margin-top:2px}
 /* Farbig hervorgehoben werden nur Probleme: Orange = Warnung, Rot = Fehler.
    Normale Zustände und Bestätigungen (.ok) stehen in normaler Schriftfarbe. */
@@ -776,7 +779,7 @@ async function status(){
   if(S&&!setBusy){const p=s.profile==='DIGITAL'?1:0;if(p!==S.profile||s.dial!==S.dial){S.profile=p;S.dial=s.dial;renderSettings()}}$('date').textContent=s.date?(t('KW')+' '+s.kw+' – '+(lang==='en'?s.date.split('.').reverse().join('-'):s.date)):t('NTP-Verbindung unterbrochen');
   const st=$('status');st.replaceChildren(
    row(t('WLAN'),s.wifi.connected?s.wifi.ssid:(s.wifi.configured?t('Sucht Netz …'):t('Kein Netz eingetragen')),s.wifi.connected?'':'warn',t('Verbundenes Netz')),
-   ...(s.wifi.connected?[row(t('Signalstärke'),bars(s.wifi.rssi).trim()+'  '+s.wifi.rssi+' dBm',s.wifi.rssi<-80?'warn':'',t('Über −67 dBm gut, unter −80 dBm schwach')),row(t('Netzwerkadresse'),s.wifi.ip+'  ·  '+s.wifi.host,'',t('Unter dieser Adresse ist die Uhr im Browser erreichbar'))]:[]),
+   ...(s.wifi.connected?[row(t('Signalstärke'),bars(s.wifi.rssi).trim()+'  '+s.wifi.rssi+' dBm',s.wifi.rssi<-80?'warn':'',t('Über −67 dBm gut, unter −80 dBm schwach')),row(t('Netzwerkadresse'),s.wifi.ip+'\n'+s.wifi.host,'addr',t('Unter dieser Adresse ist die Uhr im Browser erreichbar'))]:[]),
    row(t('Zeitabgleich (NTP)'),s.ntp.synced?(t('Zuletzt')+' '+s.ntp.last):s.ntp.manual?t('Aus – Uhrzeit von Hand gestellt'):(s.wifi.configured?t('Wartet auf ersten Abgleich …'):t('Aus (kein WLAN)')),s.ntp.synced?(s.ntp.overdue?'warn':''):(s.ntp.manual?'':'warn'),t('Uhrzeit aus dem Internet, stündlich abgeglichen')),
    ...(s.ap.active?[row(t('Setup-WLAN'),s.ap.ssid+' ('+s.ap.ip+')','warn',t('Mit dem Handy verbinden, um die Uhr einzurichten'))]:[]),
    row(t('Laufzeit'),dur(s.uptime),'',t('Seit dem letzten Neustart')),
