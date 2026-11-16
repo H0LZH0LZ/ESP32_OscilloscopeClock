@@ -184,7 +184,7 @@ html{scroll-behavior:smooth}
  <!-- Sprache: Deutsch/English für Seite, OLED und Protokoll (wird auf der Uhr gespeichert) -->
  <div class="navlang"><label for="sLang">Sprache</label>
   <select id="sLang"><option value="de" lang="de">Deutsch</option><option value="en" lang="en">English</option></select>
-  <div class="desc">Gilt für Webinterface, OLED-Anzeige und Protokoll.</div></div>
+  <div class="desc">Gilt für Webinterface, OLED-Anzeige und Protokoll. <span class="saved">Änderungen wirken sofort und bleiben gespeichert.</span></div></div>
 </nav>
 <div id="shade"></div>
 <main>
@@ -209,24 +209,24 @@ html{scroll-behavior:smooth}
   <div class="seg" role="group" aria-label="Oszilloskop-Profil">
    <button type="button" data-profile="1" aria-pressed="false">DIGITAL</button>
    <button type="button" data-profile="0" aria-pressed="false">ANALOG</button></div>
-  <div class="sub">DIGITAL für digitale Oszilloskope, ANALOG für Röhren-Oszilloskope. Umschalten auch an der Uhr: BOOT-Taster 3 s halten.</div></div>
+  <div class="sub">DIGITAL für digitale Oszilloskope, ANALOG für Röhren-Oszilloskope. Umschalten auch an der Uhr: BOOT-Taster 3 s halten. <span class="saved">Änderungen wirken sofort und bleiben gespeichert.</span></div></div>
  <!-- Zifferblatt (auch per Wischen über die Vorschau) -->
  <div class="set"><div class="head"><label for="sDial">Zifferblatt</label></div>
   <select id="sDial"><option value="0">Ziffern 1–12</option><option value="1">Ziffern 12 · 3 · 6 · 9</option>
    <option value="3">Römisch XII · III · VI · IX</option><option value="2">Römisch I–XII</option></select>
-  <div class="sub">Ziffern auf dem Oszilloskop. Geht auch durch Wischen über die Vorschau oben.</div></div>
+  <div class="sub">Ziffern auf dem Oszilloskop. Geht auch durch Wischen über die Vorschau oben. <span class="saved">Änderungen wirken sofort und bleiben gespeichert.</span></div></div>
  <!-- Verweilzeit pro Schritt = Helligkeit/Bildrate -->
  <div class="set"><div class="head"><label for="sBeam">Verweilzeit des Strahls</label><span class="val" id="vBeam"></span></div>
   <input type="range" id="sBeam" min="1000" max="10000" step="250">
-  <div class="sub">Länger = hellere Linien, aber weniger Bilder pro Sekunde (jetzt <span id="vFps">–</span>).</div></div>
+  <div class="sub">Länger = hellere Linien, aber weniger Bilder pro Sekunde (jetzt <span id="vFps">–</span>). <span class="saved">Änderungen wirken sofort und bleiben gespeichert.</span></div></div>
  <!-- Helligkeit der Nadelzeiger -->
  <div class="set"><div class="head"><label for="sHand">Helligkeit Stunden-/Minutenzeiger</label><span class="val" id="vHand"></span></div>
   <input type="range" id="sHand" min="30" max="100" step="1">
-  <div class="sub">Unter 100 %, weil die schmalen Zeiger sonst heller wirken als der Rest.</div></div>
+  <div class="sub">Unter 100 %, weil die schmalen Zeiger sonst heller wirken als der Rest. <span class="saved">Änderungen wirken sofort und bleiben gespeichert.</span></div></div>
  <!-- Rücklauf-Tempo, nur im Profil ANALOG wirksam -->
  <div class="set" id="jumpRow"><div class="head"><label for="sJump">Rücklauf-Tempo</label><span class="val" id="vJump"></span></div>
   <input type="range" id="sJump" min="0" max="48" step="1">
-  <div class="sub" id="jumpHint"></div></div>
+  <div class="sub"><span id="jumpHint"></span> <span class="saved">Änderungen wirken sofort und bleiben gespeichert.</span></div></div>
   <div class="gmsg" data-gmsg="scope"></div>
   <!-- Nur diese Gruppe auf die Werte aus config.h zurücksetzen -->
   <button type="button" class="sec greset" data-reset="scope">Auf Standardwerte zurücksetzen</button>
@@ -256,15 +256,15 @@ html{scroll-behavior:smooth}
   <div class="seg" role="group" aria-label="Zeitformat">
    <button type="button" data-h12="0" aria-pressed="true">24 Stunden</button>
    <button type="button" data-h12="1" aria-pressed="false">12 Stunden (AM/PM)</button></div>
-  <div class="sub">Für die Uhrzeit auf der OLED-Anzeige und auf dieser Seite.</div></div>
+  <div class="sub">Für die Uhrzeit auf der OLED-Anzeige und auf dieser Seite. <span class="saved">Änderungen wirken sofort und bleiben gespeichert.</span></div></div>
  <!-- Zeitzone (Liste kommt von der Uhr, in der gewählten Sprache) -->
  <div class="set"><div class="head"><label for="sTz">Zeitzone</label></div><select id="sTz"></select>
-  <div class="sub">Bestimmt die Ortszeit samt automatischer Sommer-/Winterzeit.</div></div>
+  <div class="sub">Bestimmt die Ortszeit samt automatischer Sommer-/Winterzeit. <span class="saved">Änderungen wirken sofort und bleiben gespeichert.</span></div></div>
  <!-- Erster Zeitserver; „Übernehmen“ speichert und startet den Abgleich neu -->
  <div class="set"><div class="head"><label for="sNtp">Zeitserver (NTP)</label></div>
   <div class="pw"><input id="sNtp" maxlength="63" autocapitalize="none" autocorrect="off" spellcheck="false">
   <button type="button" class="sec" id="sNtpSave">Übernehmen</button></div>
-  <div class="sub">Server im Internet, von dem die Uhr die genaue Zeit holt (Standard: de.pool.ntp.org). „Übernehmen“ speichert den Namen und gleicht sofort neu ab.</div></div>
+  <div class="sub">Server im Internet, von dem die Uhr die genaue Zeit holt (Standard: de.pool.ntp.org). „Übernehmen“ speichert den Namen und gleicht sofort neu ab. <span class="saved">Änderungen wirken sofort und bleiben gespeichert.</span></div></div>
   <div class="gmsg" data-gmsg="time"></div>
   <!-- Nur diese Gruppe auf die Werte aus config.h zurücksetzen -->
   <button type="button" class="sec greset" data-reset="time">Auf Standardwerte zurücksetzen</button>
@@ -274,20 +274,19 @@ html{scroll-behavior:smooth}
  <!-- OLED-Kontrast -->
  <div class="set"><div class="head"><label for="sOled">OLED-Helligkeit</label><span class="val" id="vOled"></span></div>
   <input type="range" id="sOled" min="1" max="255" step="1">
-  <div class="sub">Helligkeit des kleinen Displays an der Uhr.</div></div>
+  <div class="sub">Helligkeit des kleinen Displays an der Uhr. <span class="saved">Änderungen wirken sofort und bleiben gespeichert.</span></div></div>
  <!-- OLED kopfüber -->
  <div class="set"><label class="sw"><span>OLED um 180° drehen</span><input type="checkbox" id="sFlip"></label>
-  <div class="sub">Für ein kopfüber eingebautes Display.</div></div>
+  <div class="sub">Für ein kopfüber eingebautes Display. <span class="saved">Änderungen wirken sofort und bleiben gespeichert.</span></div></div>
  <!-- Pixelverschiebung gegen Einbrennen -->
  <div class="set"><label class="sw"><span>OLED-Pixelverschiebung</span><input type="checkbox" id="sShift"></label>
-  <div class="sub">Verschiebt das Bild jede Minute um wenige Pixel, gegen Einbrennen.</div></div>
+  <div class="sub">Verschiebt das Bild jede Minute um wenige Pixel, gegen Einbrennen. <span class="saved">Änderungen wirken sofort und bleiben gespeichert.</span></div></div>
   <div class="gmsg" data-gmsg="display"></div>
   <!-- Nur diese Gruppe auf die Werte aus config.h zurücksetzen -->
   <button type="button" class="sec greset" data-reset="display">Auf Standardwerte zurücksetzen</button>
   <div class="desc">Setzt nur die Einstellungen dieser Gruppe auf die Werte aus config.h zurück.</div>
  </div>
  <div id="setMsg"></div>
- <p class="hint">Änderungen wirken sofort und bleiben gespeichert.</p>
 </section></div>
 
 <div class="grp"><h2 id="wlan-h">WLAN</h2>
