@@ -48,6 +48,7 @@ Diese Datei beschreibt, wie die Firmware aufgebaut ist. Für Verdrahtung und Geh
 |---|---|---|---|
 | `g_timePacked` (Std/Min/Sek) | uiTask | scopeTask | 32-Bit-Zugriff ist atomar |
 | `g_scopeProfile` (ANALOG/DIGITAL) | uiTask (BOOT-Taster), `setup()` | scopeTask (`beamJump`) | 1 Byte, atomar |
+| `g_dialStyle` (Zifferblatt 0–2) | uiTask (Webinterface), `setup()` | scopeTask (baut Rundtour neu) | 1 Byte, atomar |
 | `g_frameCount` (Bildzähler) | scopeTask | uiTask (Bildrate) | 32-Bit-Zugriff ist atomar |
 | Log-Ringpuffer | `logMsg()` auf beiden Kernen | Webinterface | Spinlock |
 | `g_ntpSynced` | SNTP-Callback | uiTask | `bool`, atomar |
@@ -78,11 +79,22 @@ Erreichbar unter `http://scope-clock.local` bzw. der IP-Adresse der Uhr (steht i
 Passwort. Das gilt immer, wenn die Uhr mit einem WLAN verbunden ist, nicht nur im Setup-WLAN. Der `WebServer` läuft im `uiTask` auf Core 0 (`webLoop()` alle 10 ms) und beeinflusst
 die Strahlausgabe auf Core 1 nicht.
 
-**Seite (`webpage.h`):** eine Seite. Ganz oben steht eine **Live-Vorschau des Oszilloskop-Bildes**
+**Seite (`webpage.h`):** eine Seite mit **einklappbarem Seitenmenü** (☰ oben links, bleibt beim
+Scrollen sichtbar): Uhr, Status, WLAN, Log. Tippen auf einen Eintrag springt weich dorthin und
+schließt das Menü wieder, ebenso Tippen daneben oder Esc. Ganz oben steht eine **Live-Vorschau des Oszilloskop-Bildes**
 (Canvas im Look eines grünen Leuchtschirms mit 8×8-Raster). Die Seite lädt dafür einmal die
 Vektordaten von `/api/vectors`, also dieselben Tabellen, die der `scopeTask` zeichnet, und stellt
 die Zeiger selbst nach der Uhrzeit (Stunde = `(h%12)*5 + m/12`, wie in der Firmware). Zwischen den
-Statusabfragen läuft die Zeit im Browser sekundengenau weiter. Darunter folgen drei Bereiche:
+Statusabfragen läuft die Zeit im Browser sekundengenau weiter.
+
+**Zifferblatt umschalten:** Tippen auf die Vorschau wechselt reihum zwischen 1–12, 13–24 und
+römisch. Die Vorschau zeigt den neuen Stil sofort, kurz blendet sie seinen Namen ein.
+`POST /api/dial` setzt `g_dialStyle`. Der `scopeTask` erkennt den Wechsel vor dem nächsten Bild
+und berechnet die Rundtour neu. Das dauert einige zehn Millisekunden, so lange steht der Strahl
+(kurzer Lichtpunkt). Die Auswahl wird im NVS gespeichert (Schlüssel `dial`), `DIAL_STYLE` in
+`config.h` ist nur der Startwert. Alle drei Ziffernsätze liegen deshalb im RAM (+0,65 KB).
+
+Darunter folgen drei Bereiche:
 - **Status:** große Uhrzeit, KW und Datum, NTP mit letztem Sync, WLAN, Signal, Adresse, Profil,
   Bildrate, Laufzeit, freier Speicher. Wird alle 2 s aktualisiert.
 - **WLAN:** gespeicherte Netze (Netze aus dem Webinterface lassen sich löschen), Netzsuche
@@ -100,14 +112,15 @@ eingesetzt (`textContent`), nie als HTML.
 | Methode und Pfad | Funktion |
 |---|---|
 | `GET /` | die Seite |
-| `GET /api/status` | JSON: `time`, `date`, `kw`, `ntp{synced,overdue,last,server}`, `wifi{configured,connected,ssid,rssi,ip,host}`, `ap{active,ssid,ip}`, `profile`, `fps`, `uptime`, `heap`, `fw` |
+| `GET /api/status` | JSON: `time`, `date`, `kw`, `ntp{synced,overdue,last,server}`, `wifi{configured,connected,ssid,rssi,ip,host}`, `ap{active,ssid,ip}`, `profile`, `dial`, `fps`, `uptime`, `heap`, `fw` |
 | `GET /api/log` | Log als Text, älteste Zeile zuerst |
 | `GET /api/networks` | gespeicherte Netze `[{ssid, source:"secrets"/"web"}]`, nie Passwörter |
-| `GET /api/vectors` | Vektordaten für die Vorschau (ca. 7 KB): `dial`, `digits` (je nach `DIAL_STYLE`), `hr`, `min`, `sec` (je 60 Stellungen). Linienzüge als `[x0,y0,x1,y1,…]`, 0–255, y nach oben |
+| `GET /api/vectors` | Vektordaten für die Vorschau (ca. 9 KB): `dial`, `digits` (alle drei Zifferblätter, Index = Stil), `hr`, `min`, `sec` (je 60 Stellungen). Linienzüge als `[x0,y0,x1,y1,…]`, 0–255, y nach oben |
 | `GET /api/scan` | Netzsuche im Hintergrund: erst `{"running":true}`, dann `{"networks":[{ssid,rssi,open}]}` |
 | `POST /api/wifi` | `ssid`, `pw` speichern bzw. Passwort ändern (SSID 1–32, Passwort leer oder 8–63 Zeichen) |
 | `POST /api/wifi/delete` | `ssid` löschen, danach Neustart (WiFiMulti kann Netze nicht vergessen) |
 | `POST /api/reconnect` | Verbindung trennen, `wifiTask` verbindet mit dem stärksten Netz |
+| `POST /api/dial` | `style` 0 = 1–12, 1 = 13–24, 2 = römisch: Zifferblatt umschalten (Oszilloskop und Vorschau), wird gespeichert |
 
 **Gespeicherte WLANs:** bis zu `WEB_MAX_NETWORKS` (5) Netze im NVS (Namensraum `scopeclock`,
 Schlüssel `netn`, `net_s0…`, `net_p0…`), zusätzlich zu `secrets.h`. Sie bleiben bei einem

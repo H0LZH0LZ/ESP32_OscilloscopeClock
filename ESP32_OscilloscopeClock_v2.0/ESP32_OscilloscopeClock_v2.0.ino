@@ -37,9 +37,10 @@
            │ wifiTask   │ WLAN-Verbindung aufbauen/halten (WiFiMulti)
            │ (System)   │ WLAN-Stack, SNTP (NTP-Client des ESP-IDF)
 
-  Von Core 0 nach Core 1 gehen nur zwei Werte, beide atomar lesbar:
-  g_timePacked (32 Bit: Stunde/Minute/Sekunde, einmal pro Bild gelesen) und
-  g_scopeProfile (1 Byte: ANALOG/DIGITAL). Der Zeichenpfad muss nie warten.
+  Von Core 0 nach Core 1 gehen nur drei Werte, alle atomar lesbar:
+  g_timePacked (32 Bit: Stunde/Minute/Sekunde, einmal pro Bild gelesen),
+  g_scopeProfile (1 Byte: ANALOG/DIGITAL) und g_dialStyle (1 Byte:
+  Zifferblatt). Der Zeichenpfad muss nie warten.
 
   ---------------------------------------------------------------------------
   Bedienung
@@ -49,8 +50,10 @@
   "DIGITAL > ANALOG" und einen Countdown 3, 2, 1; das Profil wird im Flash
   gespeichert. Nicht beim Einschalten drücken (Download-Modus).
 
-  Webinterface: http://scope-clock.local (oder IP-Adresse der Uhr) – Status,
-  Log, WLAN-Einrichtung; für Handys optimiert, ohne Passwort. Ohne bekanntes
+  Webinterface: http://scope-clock.local (oder IP-Adresse der Uhr) – Live-
+  Vorschau, Status, Log, WLAN-Einrichtung, Seitenmenü; für Handys optimiert,
+  ohne Passwort. Tippen auf die Vorschau schaltet das Zifferblatt um
+  (1–12 / 13–24 / römisch) – auch am Oszilloskop, wird gespeichert. Ohne bekanntes
   WLAN öffnet die Uhr das offene Setup-WLAN "ScopeClock-Setup"
   (Einrichtung unter http://192.168.4.1).
 
@@ -171,6 +174,11 @@ static inline uint32_t packTime(int h, int m, int s) {
 // Startwert aus dem Flash (NVS), im Betrieb per BOOT-Taster umschaltbar.
 // Schreiber: uiTask (Core 0), Leser: beamJump (Core 1). 1 Byte = atomar.
 static volatile uint8_t g_scopeProfile = SCOPE_PROFILE;
+
+// Zifferblatt: 0 = Ziffern 1–12, 1 = 13–24, 2 = römisch. Startwert aus dem
+// Flash (NVS), im Betrieb über das Webinterface umschaltbar (Tippen auf die
+// Vorschau). Schreiber: uiTask, Leser: scopeTask (baut dann die Rundtour neu).
+static volatile uint8_t g_dialStyle = DIAL_STYLE;
 
 static volatile bool g_ntpSynced     = false;  // true nach dem ersten erfolgreichen Sync
 static time_t        g_lastSyncEpoch = 0;      // Unix-Zeit der letzten Synchronisierung
@@ -559,7 +567,27 @@ static void IRAM_ATTR PlotTable(const byte *table, int size, byte sep, int offse
 }
 
 //*****************************************************************************
-// Rundtour für Zifferblatt + Ziffern (einmal beim Start berechnet)
+// Zifferblätter
+//*****************************************************************************
+// Liefert die Ziffern-Tabelle zum Zifferblatt-Stil (0 = 1–12, 1 = 13–24,
+// 2 = römisch) und ihre Größe in Bytes.
+static const uint8_t *dialDigits(int style, int &size)
+{
+  switch (style) {
+    case 1:  size = sizeof(DialDigits24);    return DialDigits24;
+    case 2:  size = sizeof(DialDigitsRoman); return DialDigitsRoman;
+    default: size = sizeof(DialDigits12);    return DialDigits12;
+  }
+}
+
+static const char *dialName(int style)
+{
+  return style == 1 ? "13-24" : style == 2 ? "roemisch" : "1-12";
+}
+
+//*****************************************************************************
+// Rundtour für Zifferblatt + Ziffern (beim Start und bei jedem Zifferblatt-
+// Wechsel berechnet)
 //*****************************************************************************
 // Zifferblatt-Striche und Ziffern ändern sich nie. Ihre Reihenfolge und
 // Zeichenrichtung werden deshalb einmal so optimiert, dass die Summe aller
@@ -587,7 +615,7 @@ static void tourAdd(const byte *table, int size)
 
 static void reverseStroke(Stroke &st) { const int16_t tmp = st.a; st.a = st.b; st.b = tmp; }
 
-static void buildTour(const byte *digits, int digitsSize)
+static void buildTour(const uint8_t *digits, int digitsSize)
 {
   s_tourLen = 0;
   tourAdd(DialData, sizeof(DialData));
@@ -664,17 +692,20 @@ static void IRAM_ATTR scopeTask(void *)
   dacInit();
   logMsg("[Scope] laeuft auf Core %d", xPortGetCoreID());
 
-#if DIAL_STYLE == 1
-  buildTour(DialDigits24, sizeof(DialDigits24));          // Ziffern 13-24
-#elif DIAL_STYLE == 2
-  buildTour(DialDigitsRoman, sizeof(DialDigitsRoman));    // römische Ziffern
-#else
-  buildTour(DialDigits12, sizeof(DialDigits12));          // Ziffern 1-12
-#endif
-
   const uint32_t secCycles = s_stepCycles / 2;            // Sekundenzeiger: 2 × halbe Helligkeit
+  int builtDial = -1;                                     // Zifferblatt der aktuellen Rundtour
 
   for (;;) {
+    // Zifferblatt gewechselt (Webinterface)? Rundtour zwischen zwei Bildern neu
+    // berechnen. Dauert einige ms – der Strahl steht so lange (einmaliger Punkt).
+    const int dial = g_dialStyle;
+    if (dial != builtDial) {
+      int size;
+      const uint8_t *digits = dialDigits(dial, size);
+      buildTour(digits, size);
+      builtDial = dial;
+    }
+
     // Uhrzeit einmal pro Bild atomar lesen, damit alle drei Zeiger
     // garantiert zur selben Sekunde gehören.
     const uint32_t t = g_timePacked;
@@ -999,6 +1030,7 @@ static void handleStatus()
   o += ",\"ssid\":";                 jsonStr(o, WEB_SETUP_AP_SSID);
   o += ",\"ip\":";                   jsonStr(o, WiFi.softAPIP().toString().c_str());
   o += "},\"profile\":";             jsonStr(o, profileName(g_scopeProfile));
+  o += ",\"dial\":";                 o += (int)g_dialStyle;
   o += ",\"fps\":";                  o += s_fps;
   o += ",\"uptime\":";               o += (uint32_t)(millis() / 1000UL);
   o += ",\"heap\":";                 o += (uint32_t)ESP.getFreeHeap();
@@ -1045,23 +1077,23 @@ static void appendHand(String &o, const uint8_t *t, int size, int stride)
 }
 
 // GET /api/vectors – Vektordaten für die Oszilloskop-Vorschau der Webseite:
-// dieselben Tabellen, die auch der scopeTask zeichnet (Zifferblatt, Ziffern je
-// nach DIAL_STYLE, alle 60 Stellungen der drei Zeiger). Die Seite lädt sie
+// dieselben Tabellen, die auch der scopeTask zeichnet (Zifferblatt, alle drei
+// Ziffernsätze, alle 60 Stellungen der drei Zeiger). Die Seite lädt sie
 // einmal und stellt die Zeiger dann selbst nach der Uhrzeit (wie scopeTask).
-// Koordinaten 0…255, y nach oben. Ca. 8 KB.
+// Koordinaten 0…255, y nach oben. Ca. 9 KB.
 static void handleVectors()
 {
   String o;
   o.reserve(9000);
   o += "{\"dial\":";   appendStrokes(o, DialData, sizeof(DialData), 0x00, 0, false);
-  o += ",\"digits\":";
-#if DIAL_STYLE == 1
-  appendStrokes(o, DialDigits24, sizeof(DialDigits24), 0x00, 0, false);
-#elif DIAL_STYLE == 2
-  appendStrokes(o, DialDigitsRoman, sizeof(DialDigitsRoman), 0x00, 0, false);
-#else
-  appendStrokes(o, DialDigits12, sizeof(DialDigits12), 0x00, 0, false);
-#endif
+  o += ",\"digits\":[";                                 // alle drei Zifferblätter (Index = Stil)
+  for (int st = 0; st < 3; st++) {
+    int size;
+    const uint8_t *d = dialDigits(st, size);
+    if (st) o += ',';
+    appendStrokes(o, d, size, 0x00, 0, false);
+  }
+  o += ']';
   o += ",\"hr\":";  appendHand(o, HrPtrData,  sizeof(HrPtrData),  9);
   o += ",\"min\":"; appendHand(o, MinPtrData, sizeof(MinPtrData), 9);
   o += ",\"sec\":"; appendHand(o, SecPtrData, sizeof(SecPtrData), 5);
@@ -1167,6 +1199,23 @@ static void handleWifiDelete()
   s_restartAtMs = millis() + 1500;
 }
 
+// POST /api/dial (style = 0, 1 oder 2) – Zifferblatt umschalten: gilt sofort
+// für das Oszilloskop (scopeTask baut die Rundtour neu) und wird gespeichert.
+static void handleDial()
+{
+  const int st = web.arg("style").toInt();
+  if (!web.hasArg("style") || st < 0 || st > 2) { sendJsonResult(false, "style muss 0, 1 oder 2 sein"); return; }
+  if (st != g_dialStyle) {
+    g_dialStyle = (uint8_t)st;
+    saveSetting("dial", (uint8_t)st);
+    logMsg("[Scope] Zifferblatt: %s, gespeichert", dialName(st));
+  }
+  String o = "{\"ok\":true,\"dial\":";
+  o += st;
+  o += '}';
+  web.send(200, "application/json", o);
+}
+
 // POST /api/reconnect – Verbindung trennen; wifiTask verbindet sich dann mit
 // dem stärksten bekannten Netz (z.B. nach dem Eintragen eines neuen Netzes)
 static void handleReconnect()
@@ -1201,6 +1250,7 @@ static void webStart()
   web.on("/api/wifi",        HTTP_POST, handleWifiSave);
   web.on("/api/wifi/delete", HTTP_POST, handleWifiDelete);
   web.on("/api/reconnect",   HTTP_POST, handleReconnect);
+  web.on("/api/dial",        HTTP_POST, handleDial);
   web.onNotFound(handleNotFound);
   web.begin();
   logMsg("[Web] Webserver gestartet (Port 80)");
@@ -1404,26 +1454,28 @@ static bool     s_btnHandled   = false;  // Umschaltung für diesen Tastendruck 
 
 static const char *profileName(uint8_t p)  { return p == 1 ? "DIGITAL" : "ANALOG"; }
 
-static void saveProfile(uint8_t p)
+// Einstellungen im Flash (NVS, Namensraum "scopeclock"): "profile", "dial".
+// Schreiben hält Core 1 für wenige ms an (einmaliger kurzer Lichtpunkt auf
+// dem Oszilloskop) – passiert nur beim Umschalten.
+static void saveSetting(const char *key, uint8_t v)
 {
-  // Schreiben ins Flash hält Core 1 für wenige ms an (einmaliger kurzer
-  // Lichtpunkt auf dem Oszilloskop) – passiert nur bei der Umschaltung.
   Preferences prefs;
   if (prefs.begin("scopeclock", false)) {
-    prefs.putUChar("profile", p);
+    prefs.putUChar(key, v);
     prefs.end();
   }
 }
 
-static uint8_t loadProfile()
+// Liest eine Einstellung; ungültige Werte (> maxValid) ergeben den Standard.
+static uint8_t loadSetting(const char *key, uint8_t def, uint8_t maxValid)
 {
   Preferences prefs;
-  uint8_t p = SCOPE_PROFILE;                  // Startwert aus config.h
+  uint8_t v = def;
   if (prefs.begin("scopeclock", true)) {      // nur lesen
-    p = prefs.getUChar("profile", SCOPE_PROFILE);
+    v = prefs.getUChar(key, def);
     prefs.end();
   }
-  return p > 1 ? SCOPE_PROFILE : p;
+  return v > maxValid ? def : v;
 }
 
 // Wird alle 10 ms aus dem uiTask aufgerufen.
@@ -1437,7 +1489,7 @@ static void buttonPoll()
     s_btnHandled = true;
     const uint8_t p = g_scopeProfile ? 0 : 1;
     g_scopeProfile = p;                       // gilt ab dem nächsten Sprung
-    saveProfile(p);
+    saveSetting("profile", p);
     logMsg("[Scope] Profil umgeschaltet: %s, gespeichert", profileName(p));
   }
 }
@@ -1600,8 +1652,9 @@ void setup()
   // Bis zum ersten publishTime() die Startzeit anzeigen
   g_timePacked = packTime(FALLBACK_H, FALLBACK_M, FALLBACK_S);
 
-  // Gespeichertes Oszilloskop-Profil laden (vor dem Start des scopeTask)
-  g_scopeProfile = loadProfile();
+  // Gespeichertes Oszilloskop-Profil und Zifferblatt laden (vor dem Start des scopeTask)
+  g_scopeProfile = loadSetting("profile", SCOPE_PROFILE, 1);
+  g_dialStyle    = loadSetting("dial", DIAL_STYLE, 2);
   logMsg("[Scope] Profil: %s – BOOT-Taster %u s halten zum Umschalten",
                 profileName(g_scopeProfile), (unsigned)(BUTTON_LONG_MS / 1000));
 

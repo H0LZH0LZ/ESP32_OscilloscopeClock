@@ -13,9 +13,12 @@
     POST /api/wifi          WLAN speichern        (ssid, pw)
     POST /api/wifi/delete   WLAN löschen          (ssid) – Uhr startet neu
     POST /api/reconnect     WLAN neu verbinden
+    POST /api/dial          Zifferblatt umschalten (style 0/1/2) – auch am Oszilloskop
 
   Für die Mobilbedienung optimiert:
    - eine Spalte, max. 640 px breit, Abstände für Daumenbedienung
+   - einklappbares Seitenmenü (☰ oben links) zum Springen in die Abschnitte
+   - Tippen auf die Vorschau schaltet das Zifferblatt um (Webseite + Oszilloskop)
    - Schaltflächen und Listeneinträge mindestens 44 px hoch
    - Eingabefelder mit 16 px Schrift (iOS zoomt sonst beim Antippen)
    - helles/dunkles Design nach Systemeinstellung, Rand für Notch/Home-Balken
@@ -67,17 +70,48 @@ pre{font:12px/1.45 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere;max-h
  background:var(--bg);border-radius:10px;padding:10px;-webkit-overflow-scrolling:touch}
 .tools{display:flex;gap:8px}.tools button{margin:0 0 12px}
 .scope{background:#050805;border-radius:14px;margin:12px 0 4px;padding:10px;display:flex;justify-content:center}
-.scope canvas{width:100%;max-width:340px;aspect-ratio:1;display:block}
+.scope{position:relative}
+.scope canvas{width:100%;max-width:340px;aspect-ratio:1;display:block;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.dialtag{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);background:rgba(0,0,0,.65);color:#b6ffc4;
+ font-size:13px;padding:4px 10px;border-radius:999px;pointer-events:none;transition:opacity .4s;opacity:0;white-space:nowrap}
+.dialtag.show{opacity:1}
+.scopehint{text-align:center;color:var(--mute);font-size:13px;margin:0 0 6px}
+html{scroll-behavior:smooth;scroll-padding-top:64px}
+#menuBtn{position:fixed;top:calc(env(safe-area-inset-top) + 10px);left:calc(env(safe-area-inset-left) + 10px);z-index:30;
+ width:44px;height:44px;min-height:44px;padding:0;margin:0;border-radius:12px;background:var(--card);color:var(--fg);
+ border:1px solid var(--line);font-size:22px;line-height:1;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+#nav{position:fixed;top:0;bottom:0;left:0;z-index:40;width:min(78vw,280px);background:var(--card);
+ padding:calc(env(safe-area-inset-top) + 16px) 12px 16px calc(env(safe-area-inset-left) + 12px);
+ transform:translateX(-105%);transition:transform .25s ease;box-shadow:2px 0 16px rgba(0,0,0,.25);overflow-y:auto}
+#nav.open{transform:none}
+#nav h3{font-size:13px;color:var(--mute);text-transform:uppercase;letter-spacing:.06em;margin:4px 8px 12px}
+#nav a{display:flex;align-items:center;min-height:48px;padding:0 12px;border-radius:10px;color:var(--fg);text-decoration:none;font-weight:500}
+#nav a:active,#nav a:hover{background:var(--bg)}
+#shade{position:fixed;inset:0;z-index:35;background:rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .25s}
+#shade.open{opacity:1;pointer-events:auto}
+header{padding-left:56px}
 </style></head>
-<body><main>
-<header><h1>ESP32 Oscilloscope Clock</h1>
-<div class="scope"><canvas id="scope" width="512" height="512" aria-label="Vorschau des Oszilloskop-Bildes"></canvas></div>
+<body>
+<button id="menuBtn" aria-label="Menü" aria-controls="nav" aria-expanded="false">☰</button>
+<nav id="nav" aria-label="Abschnitte" aria-hidden="true">
+ <h3>Scope Clock</h3>
+ <a href="#uhr">Uhr</a>
+ <a href="#status-h">Status</a>
+ <a href="#wlan-h">WLAN</a>
+ <a href="#log-h">Log</a>
+</nav>
+<div id="shade"></div>
+<main>
+<header id="uhr"><h1>ESP32 Oscilloscope Clock</h1>
+<div class="scope"><canvas id="scope" width="512" height="512" role="button" tabindex="0"
+ aria-label="Vorschau des Oszilloskop-Bildes – tippen, um das Zifferblatt umzuschalten"></canvas><div class="dialtag" id="dialTag"></div></div>
+<p class="scopehint">Tippen, um das Zifferblatt umzuschalten</p>
 <div id="clock">--:--:--</div><div id="date">&nbsp;</div></header>
 
-<h2>Status</h2>
+<h2 id="status-h">Status</h2>
 <section id="status"></section>
 
-<h2>WLAN</h2>
+<h2 id="wlan-h">WLAN</h2>
 <section>
  <label>Gespeicherte Netze</label>
  <ul id="saved"><li><span class="hint">wird geladen …</span></li></ul>
@@ -96,7 +130,7 @@ pre{font:12px/1.45 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere;max-h
  <p class="hint">Gespeicherte Passwörter werden nie angezeigt. Netze aus secrets.h lassen sich hier nicht löschen.</p>
 </section>
 
-<h2>Log</h2>
+<h2 id="log-h">Log</h2>
 <section>
  <pre id="log">wird geladen …</pre>
  <div class="tools"><button class="sec" id="logBtn">Aktualisieren</button><button class="sec" id="logAuto">Auto: an</button></div>
@@ -115,7 +149,8 @@ function dur(s){const d=Math.floor(s/86400),h=Math.floor(s/3600)%24,m=Math.floor
 // Canvas im Look eines Oszilloskop-Schirms. Die Zeigerstellung wird wie im
 // scopeTask berechnet: Stunde = (h%12)*5 + m/12, Minute = m, Sekunde = s.
 // Zwischen den Status-Abfragen läuft die Zeit lokal weiter (jede Sekunde).
-let V=null,tBase=null,tAt=0;
+let V=null,tBase=null,tAt=0,dial=0;
+const DIALS=['Ziffern 1–12','Ziffern 13–24','Römische Ziffern'];
 function drawScope(){
  const c=$('scope'),g=c.getContext('2d'),W=c.width,k=W/256;
  g.fillStyle='#050805';g.fillRect(0,0,W,W);
@@ -124,7 +159,7 @@ function drawScope(){
  if(!V||tBase===null)return;
  const sec=(tBase+Math.floor((performance.now()-tAt)/1000))%86400;
  const h=Math.floor(sec/3600),m=Math.floor(sec/60)%60,s=sec%60;
- const polys=[...V.dial,...V.digits,V.hr[(h%12)*5+Math.floor(m/12)],V.min[m],V.sec[s]];
+ const polys=[...V.dial,...(V.digits[dial]||[]),V.hr[(h%12)*5+Math.floor(m/12)],V.min[m],V.sec[s]];
  g.lineCap='round';g.lineJoin='round';
  for(const [w,col,blur] of [[5,'rgba(80,255,120,.18)',10],[1.8,'#b6ffc4',3]]){   // Leuchten + Spur
   g.lineWidth=w*k/2;g.strokeStyle=col;g.shadowColor='#3dff6a';g.shadowBlur=blur;
@@ -133,6 +168,23 @@ function drawScope(){
   g.stroke()}
  g.shadowBlur=0;
 }
+// Tippen auf die Vorschau: nächstes Zifferblatt – sofort in der Vorschau,
+// per POST /api/dial auch am Oszilloskop (wird dort gespeichert).
+let tagTimer=0,dialBusy=false;
+function showTag(t){const e=$('dialTag');e.textContent=t;e.classList.add('show');clearTimeout(tagTimer);tagTimer=setTimeout(()=>e.classList.remove('show'),1600)}
+async function nextDial(){
+ if(dialBusy)return;dialBusy=true;const prev=dial;dial=(dial+1)%3;drawScope();showTag(DIALS[dial]);
+ try{const r=await post('/api/dial',{style:dial});if(!r.ok)throw 0}catch(e){dial=prev;drawScope();showTag('Umschalten fehlgeschlagen')}
+ dialBusy=false}
+$('scope').addEventListener('click',nextDial);
+$('scope').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();nextDial()}});
+// Seitenmenü
+function menu(open){$('nav').classList.toggle('open',open);$('shade').classList.toggle('open',open);
+ $('menuBtn').setAttribute('aria-expanded',open);$('nav').setAttribute('aria-hidden',!open);$('menuBtn').textContent=open?'✕':'☰'}
+$('menuBtn').onclick=()=>menu(!$('nav').classList.contains('open'));
+$('shade').onclick=()=>menu(false);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')menu(false)});
+document.querySelectorAll('#nav a').forEach(a=>a.addEventListener('click',()=>menu(false)));
 function setTime(t){const a=t.split(':').map(Number);if(a.length===3&&!a.some(isNaN)){tBase=a[0]*3600+a[1]*60+a[2];tAt=performance.now()}}
 get('/api/vectors').then(r=>r.json()).then(v=>{V=v;drawScope()}).catch(()=>{});
 let lastSec=-1;
@@ -142,7 +194,8 @@ setInterval(()=>{if(tBase===null)return;const n=Math.floor((performance.now()-tA
 let online=true;
 async function status(){
  try{const s=await (await get('/api/status')).json();online=true;
-  $('clock').textContent=s.time;setTime(s.time);lastSec=-1;$('date').textContent=s.date?('KW '+s.kw+' – '+s.date):'Datum unbekannt';
+  $('clock').textContent=s.time;setTime(s.time);lastSec=-1;
+  if(!dialBusy&&typeof s.dial==='number'&&s.dial!==dial){dial=s.dial;drawScope()}$('date').textContent=s.date?('KW '+s.kw+' – '+s.date):'Datum unbekannt';
   const st=$('status');st.replaceChildren(
    row('NTP',s.ntp.synced?('synchronisiert, '+s.ntp.last):(s.wifi.configured?'warte auf Sync …':'aus (kein WLAN)'),s.ntp.synced?(s.ntp.overdue?'warn':'ok'):'warn'),
    row('WLAN',s.wifi.connected?s.wifi.ssid:(s.wifi.configured?'sucht …':'kein Netz eingetragen'),s.wifi.connected?'ok':'warn'),

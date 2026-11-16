@@ -158,7 +158,8 @@
 #define WIFI_HOSTNAME "scope-clock"   // Gerätename im Router, Webinterface: http://scope-clock.local
 #define SERIAL_BAUD   115200          // serielle Konsole (Arduino: Serieller Monitor)
 
-// Zifferblatt-Variante auf dem Oszilloskop:
+// Zifferblatt-Variante auf dem Oszilloskop (Startwert – im Betrieb im
+// Webinterface umschaltbar: auf die Vorschau oben tippen; wird gespeichert):
 //   0 = Ziffern 1–12
 //   1 = Ziffern 13–24 (an den Positionen 1–12; die Zeiger laufen weiter im 12h-Takt)
 //   2 = römische Ziffern I–XII
