@@ -113,12 +113,12 @@
 #define ZBLANK_ACTIVE_HIGH  1
 #define ZBLANK_SETTLE_NS 5000
 
-// Stunden- und Minutenzeiger sind schmale Rauten: Ihre beiden Kanten liegen
-// nur 0–4 DAC-Einheiten auseinander und verschmelzen auf dem Schirm zu einer
-// Linie, die bei voller Helligkeit deutlich heller wäre als der Rest.
-// Mit 67 % wirken sie in der Simulation so hell wie Zifferblatt und
-// Sekundenzeiger (Abweichung < 15 %). 100 = Zeiger heller hervorheben.
-#define HAND_BRIGHT_PCT 67
+// Stunden- und Minutenzeiger sind schlanke Dreiecke: Ihre beiden Kanten liegen
+// nur 0–8 DAC-Einheiten auseinander und verschmelzen zur Spitze hin zu einer
+// Linie, die bei voller Helligkeit heller wäre als der Rest. 80 % ist ein
+// Schätzwert – im Webinterface (Einstellungen) am echten Bild nachstellen.
+// 100 = Zeiger heller hervorheben.
+#define HAND_BRIGHT_PCT 80
 
 // Kernzuordnung. Nicht ändern: Der WLAN-Stack des ESP32 läuft auf Core 0,
 // die Strahlausgabe braucht Core 1 exklusiv.
@@ -175,7 +175,7 @@
 //   3 = nur die vier römischen Hauptziffern XII, III, VI, IX
 #define DIAL_STYLE 0
 
-// EXCEL-Modus aus dem Original (Diagnose ohne Oszilloskop): zeichnet genau ein
+// EXCEL-Modus (Diagnose ohne Oszilloskop): zeichnet genau ein
 // Bild, gibt dabei jeden Punkt als "0xXX,0xYY," seriell aus und hält dann an.
 // Die Liste lässt sich in Excel/LibreOffice als XY-Diagramm darstellen.
 // Zum Aktivieren die // entfernen.

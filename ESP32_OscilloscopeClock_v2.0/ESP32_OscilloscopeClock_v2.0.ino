@@ -3,12 +3,10 @@
   ESP32 Oscilloscope Clock v2.0
   X/Y-Vektoruhr über die internen DACs, NTP-Zeit, Status-OLED
 
-  Basiert auf: ESP32 Oscilloscope Clock v1.0
-               Mauro Pintus, Milano 2018/05/25
+  Idee nach:   ESP32 Oscilloscope Clock von Mauro Pintus (Milano 2018)
                https://github.com/maurohh/ESP32_OscilloscopeClock
-               (Vektordaten DataTable.h aus v1.0 übernommen; die Zeichen-
-               routine ist neu: konstante Strahlgeschwindigkeit, damit alle
-               Linien gleich hell sind – siehe "Vektor-Engine")
+               Programm und Vektorgrafiken (DataTable.h, erzeugt mit
+               tools/gen_vectors.py) sind eigenständig neu geschrieben.
 
   ---------------------------------------------------------------------------
   Funktionsprinzip
@@ -322,8 +320,8 @@ static WiFiMulti    wifiMulti;
 //         Ziel an (ein harter Sprung würde dort über- oder nachschwingen).
 //      b) Zifferblatt und Ziffern werden beim Start einmal zu einer
 //         Rundtour mit möglichst kurzen Sprüngen sortiert (buildTour).
-//      c) Der Sekundenzeiger wird hin (Mitte → Spitze) und zurück je mit
-//         halber Helligkeit gezeichnet. Der lange Sprung vom Rand zurück
+//      c) Der Sekundenzeiger wird hin (Gegengewicht → Spitze) und zurück je
+//         mit halber Helligkeit gezeichnet. Der lange Sprung vom Rand zurück
 //         zur Mitte entfällt damit ganz – der Strahl "läuft" auf dem Zeiger.
 //      d) Jeder Linienzug wird von dem Ende aus gezeichnet, das näher am
 //         Strahl liegt.
@@ -566,7 +564,7 @@ static bool IRAM_ATTR nextStroke(const byte *table, int size, byte sep, int &i, 
 //*****************************************************************************
 // PlotTable – zeichnet Linienzüge aus einer Tabelle in DataTable.h
 //*****************************************************************************
-// Tabellenformat (unverändert aus v1.0, Details in DataTable.h):
+// Tabellenformat (Details in DataTable.h):
 //   Punkte (x, y) je 1 Byte; aufeinanderfolgende Punkte = Linie.
 //   'sep' (0x00) trennt Linienzüge, 0xFF beendet die Tabelle bzw. bei den
 //   Zeigern eine Zeigerstellung.
@@ -638,7 +636,7 @@ static const char *dialName(int style)
 //   1. Nächster-Nachbar: immer den Linienzug (und dessen Ende) nehmen, der
 //      dem aktuellen Endpunkt am nächsten liegt.
 //   2. 2-opt: Teilstücke der Runde umdrehen, solange das Sprünge spart.
-static const int TOUR_MAX = 128;
+static const int TOUR_MAX = 160;                 // 7-Segment 1–12: 60 Striche + 62 Segmente
 static Stroke s_tour[TOUR_MAX];
 static int    s_tourLen = 0;
 
@@ -712,16 +710,16 @@ static void buildTour(const uint8_t *digits, int digitsSize)
 // scopeTask – Core 1: zeichnet endlos Zifferblatt + Zeiger
 //*****************************************************************************
 // Ablauf eines Bildes (Strahl startet in der Mitte):
-//   1. Stundenzeiger, Minutenzeiger      (Rauten um die Mitte)
-//   2. Sekundenzeiger Mitte → Spitze     (halbe Helligkeit)
+//   1. Stundenzeiger, Minutenzeiger      (Dreiecke, Basis kurz hinter der Mitte)
+//   2. Sekundenzeiger Gegengewicht → Spitze (halbe Helligkeit)
 //   3. Rundtour Zifferblatt + Ziffern    (Einstieg nahe der Sekundenzeiger-Spitze,
 //                                          endet wieder dort)
-//   4. Sekundenzeiger Spitze → Mitte     (halbe Helligkeit, ersetzt den Rücksprung)
+//   4. Sekundenzeiger Spitze → Gegengewicht (halbe Helligkeit, ersetzt den Rücksprung)
 // Danach beginnt sofort das nächste Bild.
 //
 // Zeigertabellen (DataTable.h) enthalten je 60 vorberechnete Stellungen:
-//   HrPtrData, MinPtrData: 60 × 9 Byte  (4 Punkte = schmale Raute + 0xFF)
-//   SecPtrData:            60 × 5 Byte  (2 Punkte Spitze, Mitte + 0xFF)
+//   HrPtrData, MinPtrData: 60 × 9 Byte  (4 Punkte = schlankes Dreieck + 0xFF)
+//   SecPtrData:            60 × 5 Byte  (2 Punkte Spitze, Gegengewicht + 0xFF)
 // Der Offset "Stellung × Eintragslänge" wählt die passende Stellung aus.
 // IRAM_ATTR: Der Compiler setzt PlotTable()/nextStroke() hier inline ein –
 // damit auch diese Bildschleife ohne Flash-Cache-Zugriffe gleichmäßig läuft.
@@ -773,7 +771,7 @@ static void IRAM_ATTR scopeTask(void *)
     PlotTable(HrPtrData,  sizeof(HrPtrData),  0xFF, 9 * hpos, handPct);
     PlotTable(MinPtrData, sizeof(MinPtrData), 0xFF, 9 * m,    handPct);
 
-    // 2. Sekundenzeiger hin: Tabelle = [Spitze, Mitte] → Stroke Mitte→Spitze
+    // 2. Sekundenzeiger hin: Tabelle = [Spitze, Gegengewicht] → Stroke Gegengewicht→Spitze
     const Stroke secOut  = { SecPtrData, (int16_t)(5 * s + 2), (int16_t)(5 * s) };
     const Stroke secBack = { SecPtrData, (int16_t)(5 * s),     (int16_t)(5 * s + 2) };
     drawStroke(secOut, secCycles);
@@ -787,7 +785,7 @@ static void IRAM_ATTR scopeTask(void *)
     for (int k = 0; k < s_tourLen; k++)
       drawStroke(s_tour[(start + k) % s_tourLen], s_stepCycles);
 
-    // 4. Sekundenzeiger zurück zur Mitte (statt eines langen Rücksprungs)
+    // 4. Sekundenzeiger zurück zum Gegengewicht (statt eines langen Rücksprungs)
     drawStroke(secBack, secCycles);
     g_frameCount = g_frameCount + 1;                     // für die Bildrate im Webinterface
 
@@ -1984,7 +1982,7 @@ void setup()
   Serial.begin(SERIAL_BAUD);
   delay(200);                             // USB-Seriell kurz Zeit geben
   Serial.println();
-  logMsg("ESP32 Oscilloscope Clock v" FW_VERSION " (basierend auf v1.0 von Mauro Pintus 2018)");
+  logMsg("ESP32 Oscilloscope Clock v" FW_VERSION " (Idee nach Mauro Pintus 2018)");
   logMsg("CPU: %lu MHz", (unsigned long)getCpuFrequencyMhz());
 
   // Bis zum ersten publishTime() die Startzeit anzeigen

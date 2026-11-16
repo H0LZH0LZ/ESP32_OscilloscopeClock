@@ -3,7 +3,7 @@
 gen_vectors.py – erzeugt alle Vektortabellen für DataTable.h in eigener Gestaltung
 
   DialData          Minutenstriche (60), Stunden länger, Viertelstunden am längsten
-  DialDigits12      Ziffern 1–12        (eigene Strichschrift, abgeschrägte Ecken)
+  DialDigits12      Ziffern 1–12        (7-Segment-Stil; Alternativen: --font)
   DialDigitsMin     nur 12, 3, 6, 9
   DialDigitsRoman   römisch I–XII       (serifenlos, 4 als "IIII")
   DialDigitsRoman4  nur XII, III, VI, IX
@@ -15,7 +15,7 @@ Format wie in DataTable.h: Punkte (x, y) je 1 Byte, (128,128) = Mitte, y nach
 oben; 0x00 trennt Linienzüge, 0xFF beendet Tabelle bzw. Zeigerstellung.
 Koordinaten liegen immer in 2…253, damit 0x00/0xFF nie als Wert vorkommen.
 
-Aufruf:  python3 tools/gen_vectors.py            → C-Block für DataTable.h auf stdout
+Aufruf:  python3 tools/gen_vectors.py > ESP32_OscilloscopeClock_v2.0/DataTable.h
          python3 tools/gen_vectors.py --json     → dieselben Daten als JSON (Vorschau)
          --font kante|raleway|segment            → Schrift der Ziffern 1–12 wählen
 """
@@ -123,7 +123,7 @@ SEGMENT_W = {c: (0 if c == '1' else 8) for c in SEGMENT}
 
 FONTS = {'kante': (KANTE, KANTE_W, 3), 'raleway': (RALEWAY, RALEWAY_W, 2),
          'segment': (SEGMENT, SEGMENT_W, 5)}
-FONT = 'kante'
+FONT = 'segment'                          # gewählt: 7-Segment-Stil
 for i, a in enumerate(sys.argv):
     if a == '--font':
         FONT = sys.argv[i + 1]
@@ -211,13 +211,59 @@ TABLES = {
     'SecPtrData':       hand_table(hand_line(108, 20)),
 }
 
+HEADER = """/*********************************************************************************
+  DataTable.h – Vektordaten für das Oszilloskop-Bild
+
+  ERZEUGT mit tools/gen_vectors.py – nicht von Hand ändern, sondern das Skript
+  anpassen und neu ausführen:
+      python3 tools/gen_vectors.py > ESP32_OscilloscopeClock_v2.0/DataTable.h
+
+  Gezeichnet werden die Tabellen mit PlotTable() bzw. der Rundtour in der .ino.
+
+  Koordinaten
+  -----------
+  Jeder Punkt besteht aus 2 Bytes (x, y), 0…255 = DAC-Ausgangswert.
+  (128, 128) ist die Bildmitte, y wächst nach oben (12 Uhr oben).
+  Aufeinanderfolgende Punkte werden durch Linien verbunden. Alle Werte liegen
+  in 2…253, damit 0x00 und 0xFF nie als Koordinate vorkommen.
+
+  Trenner
+  -------
+  0x00  beendet bei Zifferblatt/Ziffern einen Linienzug, danach beginnt der
+        nächste (der Strahl springt dorthin).
+  0xFF  beendet bei den Zeigern eine Zeigerstellung bzw. die Tabelle.
+
+  Tabellen
+  --------
+  DialData         60 Minutenstriche, Stunden länger, Viertelstunden am längsten.
+                   Wird immer gezeichnet.
+  DialDigits12     Ziffern 1–12, 7-Segment-Stil              (DIAL_STYLE 0, Standard)
+  DialDigitsMin    nur 12, 3, 6, 9, 7-Segment-Stil           (DIAL_STYLE 1)
+  DialDigitsRoman  römisch I–XII, serifenlos, 4 als "IIII"   (DIAL_STYLE 2)
+  DialDigitsRoman4 nur XII, III, VI, IX                      (DIAL_STYLE 3)
+  HrPtrData        Stundenzeiger: 60 Stellungen × 9 Byte
+                   = schlankes Dreieck, 4 Punkte (Basis links hinter der Mitte,
+                   Spitze, Basis rechts, Basis links) + 0xFF
+  MinPtrData       Minutenzeiger: wie HrPtrData, länger und schlanker
+  SecPtrData       Sekundenzeiger: 60 Stellungen × 5 Byte
+                   = 2 Punkte (Spitze, Ende des Gegengewichts) + 0xFF
+
+  Stellung n (0 = 12 Uhr, im Uhrzeigersinn) beginnt bei Byte-Offset n × 9
+  (Stunden/Minuten) bzw. n × 5 (Sekunden).
+
+  Die Tabellen sind bewusst NICHT const/PROGMEM und liegen damit im internen
+  RAM (DRAM). Lesezugriffe dauern so immer gleich lang (keine Flash-Cache-
+  Fehlzugriffe) – wichtig für das exakte Timing der Strahlausgabe.
+*********************************************************************************/
+"""
+
 if __name__ == '__main__':
     if '--json' in sys.argv:
         print(json.dumps(TABLES))
         sys.exit()
-    print('// ---- Erzeugt mit tools/gen_vectors.py – nicht von Hand ändern ----')
+    print(HEADER)
     for name, data in TABLES.items():
         print(f'byte {name}[] = {{')
         for i in range(0, len(data), 20):
-            print('                ' + ','.join(f'0x{v:02x}' for v in data[i:i + 20]) + ',')
+            print('  ' + ','.join(f'0x{v:02x}' for v in data[i:i + 20]) + ',')
         print('};\n')

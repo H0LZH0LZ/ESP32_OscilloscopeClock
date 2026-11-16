@@ -11,7 +11,8 @@ Diese Datei beschreibt, wie die Firmware aufgebaut ist. Für Verdrahtung und Geh
 | `ESP32_OscilloscopeClock_v2.0/config.h` | Alle Einstellungen: Zeitzone, NTP, Pins, OLED, Strahlgeschwindigkeit, Oszilloskop-Profil, Zifferblatt |
 | `ESP32_OscilloscopeClock_v2.0/secrets.h` | WLAN-Liste, **nur lokal** (steht in `.gitignore`) |
 | `ESP32_OscilloscopeClock_v2.0/secrets_example.h` | Vorlage für `secrets.h`. Wird verwendet, wenn `secrets.h` fehlt (dann Offline-Betrieb) |
-| `ESP32_OscilloscopeClock_v2.0/DataTable.h` | Vektordaten für Zifferblatt, Ziffern und Zeiger (aus v1.0) |
+| `ESP32_OscilloscopeClock_v2.0/DataTable.h` | Vektordaten für Zifferblatt, Ziffern und Zeiger – erzeugt mit `tools/gen_vectors.py` |
+| `tools/gen_vectors.py` | Erzeugt `DataTable.h` (Python 3, keine Zusatzpakete) |
 | `ESP32_OscilloscopeClock_v2.0/webpage.h` | Webinterface: eine Seite (HTML, CSS, JavaScript) im Flash |
 | `platformio.ini` | Alternative zur Arduino IDE |
 
@@ -97,10 +98,10 @@ Statusabfragen läuft die Zeit im Browser sekundengenau weiter.
 
 | Stil | Ziffern | Tabelle |
 |---|---|---|
-| 0 | 1–12 | `DialDigits12` |
-| 1 | nur 12, 3, 6, 9 | `DialDigitsMin` (aus v1.0) |
-| 2 | römisch I–XII | `DialDigitsRoman` |
-| 3 | nur XII, III, VI, IX | `DialDigitsRoman4`, erzeugt mit `tools/gen_dial_quarters.py`: übernimmt die Linienzüge dieser vier Zahlen unverändert aus `DialDigitsRoman` |
+| 0 | 1–12, 7-Segment-Stil | `DialDigits12` |
+| 1 | nur 12, 3, 6, 9, 7-Segment-Stil | `DialDigitsMin` |
+| 2 | römisch I–XII, serifenlos, 4 als IIII | `DialDigitsRoman` |
+| 3 | nur XII, III, VI, IX | `DialDigitsRoman4` |
  Die Vorschau zeigt den neuen Stil sofort, kurz blendet sie seinen Namen ein.
 `POST /api/dial` setzt `g_dialStyle`. Der `scopeTask` erkennt den Wechsel vor dem nächsten Bild
 und berechnet die Rundtour neu. Das dauert einige zehn Millisekunden, so lange steht der Strahl
@@ -226,7 +227,7 @@ gerückt. Nach der Umschaltung erscheint sofort wieder die normale Anzeige.
 Beide zeigen dieselben Zeilen, mit Zeitstempel (`+<s>s` bis zum ersten NTP-Sync):
 
 ```
-+0s ESP32 Oscilloscope Clock v2.0 (basierend auf v1.0 von Mauro Pintus 2018)
++0s ESP32 Oscilloscope Clock v2.0 (Idee nach Mauro Pintus 2018)
 +0s CPU: 240 MHz
 +0s Letzter Neustart: Einschalten
 +0s [Scope] Profil: DIGITAL – BOOT-Taster 3 s halten zum Umschalten
@@ -285,14 +286,15 @@ Strahlgeschwindigkeit:
 | Oszilloskop-Profil | DIGITAL: harte Sprünge, sonst zeigt ein abtastendes Oszilloskop Zwischenpunkte. ANALOG: gebremste Sprünge (siehe nächste Zeile). Umschalten im Betrieb per BOOT-Taster (3 s), gespeichert im NVS (`Preferences`, Namensraum `scopeclock`) | – |
 | Sprünge (ANALOG) | in 1-Einheit-Schritten mit 24-facher Geschwindigkeit (`JUMP_SPEED`), auf den letzten 4 Einheiten bremsend (`JUMP_LANDING`, `JUMP_RAMP`). Die Rücklaufspur hat ca. 1/24 der Linienhelligkeit, alte Verstärker landen trotzdem genau | harter Sprung |
 | Reihenfolge | Zifferblatt und Ziffern werden beim Start einmal zu einer Rundtour mit minimalen Sprüngen sortiert (Nächster-Nachbar + 2-opt), Einstieg dort, wo der Sekundenzeiger endet | Tabellenreihenfolge |
-| Sekundenzeiger | hin und zurück mit je halber Helligkeit gezeichnet, dadurch entfällt der lange Sprung vom Rand zur Mitte | – |
+| Sekundenzeiger | hin und zurück (Gegengewicht ↔ Spitze) mit je halber Helligkeit gezeichnet, dadurch entfällt der lange Sprung vom Rand zur Mitte | – |
 | Richtung | jeder Linienzug wird vom näheren Ende aus gezeichnet | immer vom Tabellenanfang |
 | Dunkeltastung | optional über den Z-Eingang des Oszilloskops (`ZBLANK_PIN`), dann gibt es gar keine Rücklaufspur mehr | – |
-| Zeiger-Rauten | Stunden- und Minutenzeiger mit `HAND_BRIGHT_PCT` (67 %), weil ihre zwei dicht liegenden Kanten verschmelzen | doppelt so hell |
+| Zeiger-Dreiecke | Stunden- und Minutenzeiger mit `HAND_BRIGHT_PCT` (80 %, Schätzwert), weil ihre zwei Kanten zur Spitze hin verschmelzen | doppelt so hell |
 | Tabellengrenzen | immer geprüft | Lesezugriff hinter das Tabellenende, wenn ein Endzeichen fehlt |
 
 Ergebnis der Simulation (Leuchtspur mit ca. 2,4 Einheiten Strahldurchmesser, Helligkeit relativ
-zu den Zifferblatt-Strichen, mehrere Uhrzeiten):
+zu den Zifferblatt-Strichen, mehrere Uhrzeiten; gemessen mit den früheren Vektordaten und
+67 % Zeigerhelligkeit – für die neuen Grafiken noch nicht wiederholt):
 
 | | Original v1.0 | v2.0 |
 |---|---|---|
@@ -319,9 +321,13 @@ bei Bedarf `BEAM_NS_PER_UNIT` erhöhen (hellere Spur, weniger Bilder/s).
 - `0x00` trennt bei Zifferblatt und Ziffern zwei Linienzüge. `x = 0` kommt dort daher nicht als
   Koordinate vor. `0xFF` beendet eine Zeigerstellung.
 - Zeiger: je 60 vorberechnete Stellungen, beginnend bei 12 Uhr im Uhrzeigersinn.
-  Sekundenzeiger 5 Byte pro Stellung, Minuten- und Stundenzeiger 9 Byte (Raute aus 4 Punkten).
+  Sekundenzeiger 5 Byte pro Stellung (Spitze, Gegengewicht), Minuten- und Stundenzeiger 9 Byte
+  (Dreieck aus 4 Punkten).
   Der Offset `Stellung × Länge` wählt die Stellung aus. Der Stundenzeiger rückt alle 12 Minuten
   einen Schritt weiter: `hpos = (h % 12) * 5 + m / 12`.
+- Alle Tabellen erzeugt `tools/gen_vectors.py`: Zifferblatt, Ziffern (Schrift wählbar mit
+  `--font segment|kante|raleway`, Standard 7-Segment) und Zeiger. Formen ändern = Skript anpassen
+  und `python3 tools/gen_vectors.py > ESP32_OscilloscopeClock_v2.0/DataTable.h` ausführen.
 - Eigene Motive lassen sich als weitere Tabelle im selben Format ergänzen und im `scopeTask`
   mit `PlotTable(Tabelle, sizeof(Tabelle), 0x00, 0)` zeichnen. Zum Prüfen ohne Oszilloskop
   dient der `EXCEL`-Modus in `config.h`: Er gibt alle Punkte seriell aus, die Liste lässt sich
