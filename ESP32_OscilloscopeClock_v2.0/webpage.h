@@ -115,14 +115,14 @@ pre::-webkit-scrollbar{width:6px}pre::-webkit-scrollbar-thumb{background:var(--m
 pre.full{height:auto;overflow-y:visible}
 .loginfo{color:var(--mute);font-size:13px;margin:0 0 8px;display:flex;justify-content:space-between;gap:8px}
 .tools{display:flex;flex-wrap:wrap;gap:8px}.tools button{margin:0 0 10px;flex:1 1 40%}
-.logsw{min-height:44px;border-top:1px solid var(--line);margin-bottom:8px}
+.logsw{min-height:44px;border-top:1px solid var(--line);margin-bottom:0}
 /* Einstellungen */
 .set{border-top:1px solid var(--line);padding:10px 0}
 .grouphead+.set,.grouphead+.set[hidden]+.set{border-top:0}   /* keine Linie direkt unter einer Gruppenüberschrift */
 /* Gruppen der Einstellungen: Oszilloskop, Uhrzeit, Display */
 .grouphead{font-size:13px;font-weight:600;color:var(--acc);text-transform:uppercase;letter-spacing:.06em;padding:14px 0 2px}
 .sgroup+.sgroup{border-top:2px solid var(--line);margin-top:6px}
-.greset{margin:4px 0 12px}.gmsg{font-size:14px;margin:6px 0 0}.gmsg:empty{display:none}
+.greset{margin:4px 0 4px}.gmsg{font-size:14px;margin:6px 0 0}.gmsg:empty{display:none}
 .set .head{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
 .set .head label{margin:0;color:var(--fg);font-size:16px}
 .set .val{color:var(--mute);font-variant-numeric:tabular-nums;white-space:nowrap}
@@ -171,7 +171,9 @@ html{scroll-behavior:smooth}
 
 </style></head>
 <body>
+<!-- Menütaste: öffnet/schließt das Seitenmenü -->
 <button id="menuBtn" aria-label="Menü" aria-controls="nav" aria-expanded="false">☰</button>
+<!-- Seitenmenü: Sprungziele zu den Abschnitten, darunter die Sprachauswahl -->
 <nav id="nav" aria-label="Abschnitte" aria-hidden="true">
  <h3>Abschnitte</h3>
  <a href="#uhr">Uhr</a>
@@ -179,6 +181,7 @@ html{scroll-behavior:smooth}
  <a href="#set-h">Einstellungen</a>
  <a href="#wlan-h">WLAN</a>
  <a href="#log-h">Protokoll</a>
+ <!-- Sprache: Deutsch/English für Seite, OLED und Protokoll (wird auf der Uhr gespeichert) -->
  <div class="navlang"><label for="sLang">Sprache</label>
   <select id="sLang"><option value="de" lang="de">Deutsch</option><option value="en" lang="en">English</option></select>
   <div class="desc">Gilt für Webinterface, OLED-Anzeige und Protokoll.</div></div>
@@ -187,100 +190,131 @@ html{scroll-behavior:smooth}
 <main>
 <h1>ESP32 Oscilloscope Clock</h1>
 <header id="uhr">
+<!-- Vorschau des Oszilloskop-Bildes: Wischen wechselt das Zifferblatt -->
 <div class="scope"><canvas id="scope" width="512" height="512" role="img" tabindex="0"
  aria-label="Vorschau des Oszilloskop-Bildes – nach links oder rechts wischen (oder Pfeiltasten), um das Zifferblatt zu wechseln"></canvas><div class="dialtag" id="dialTag"></div></div>
 <p class="scopehint">‹ Nach links oder rechts wischen, um das Zifferblatt zu wechseln ›</p>
+<!-- Uhrzeit und Datum der Uhr (läuft zwischen den Statusabfragen im Browser weiter) -->
 <div id="clock">--:--:--</div><div id="date">&nbsp;</div></header>
 
 <div class="grp"><h2 id="status-h">Status</h2>
+<!-- Statuszeilen: werden alle 2 s von status() neu aufgebaut -->
 <section id="status"></section></div>
 
 <div class="grp"><h2 id="set-h">Einstellungen</h2>
 <section id="settings">
  <div class="sgroup"><div class="grouphead">Oszilloskop</div>
+ <!-- Profil DIGITAL/ANALOG (auch per BOOT-Taster) -->
  <div class="set"><div class="head"><label>Oszilloskop-Profil</label></div>
   <div class="seg" role="group" aria-label="Oszilloskop-Profil">
    <button type="button" data-profile="1" aria-pressed="false">DIGITAL</button>
    <button type="button" data-profile="0" aria-pressed="false">ANALOG</button></div>
   <div class="sub">DIGITAL für digitale Oszilloskope, ANALOG für Röhren-Oszilloskope. Umschalten auch an der Uhr: BOOT-Taster 3 s halten.</div></div>
+ <!-- Zifferblatt (auch per Wischen über die Vorschau) -->
  <div class="set"><div class="head"><label for="sDial">Zifferblatt</label></div>
   <select id="sDial"><option value="0">Ziffern 1–12</option><option value="1">Ziffern 12 · 3 · 6 · 9</option>
    <option value="3">Römisch XII · III · VI · IX</option><option value="2">Römisch I–XII</option></select>
   <div class="sub">Ziffern auf dem Oszilloskop. Geht auch durch Wischen über die Vorschau oben.</div></div>
+ <!-- Verweilzeit pro Schritt = Helligkeit/Bildrate -->
  <div class="set"><div class="head"><label for="sBeam">Verweilzeit des Strahls</label><span class="val" id="vBeam"></span></div>
   <input type="range" id="sBeam" min="1000" max="10000" step="250">
   <div class="sub">Länger = hellere Linien, aber weniger Bilder pro Sekunde (jetzt <span id="vFps">–</span>).</div></div>
+ <!-- Helligkeit der Nadelzeiger -->
  <div class="set"><div class="head"><label for="sHand">Helligkeit Stunden-/Minutenzeiger</label><span class="val" id="vHand"></span></div>
   <input type="range" id="sHand" min="30" max="100" step="1">
   <div class="sub">Unter 100 %, weil die schmalen Zeiger sonst heller wirken als der Rest.</div></div>
+ <!-- Rücklauf-Tempo, nur im Profil ANALOG wirksam -->
  <div class="set" id="jumpRow"><div class="head"><label for="sJump">Rücklauf-Tempo</label><span class="val" id="vJump"></span></div>
   <input type="range" id="sJump" min="0" max="48" step="1">
   <div class="sub" id="jumpHint"></div></div>
   <div class="gmsg" data-gmsg="scope"></div>
+  <!-- Nur diese Gruppe auf die Werte aus config.h zurücksetzen -->
   <button type="button" class="sec greset" data-reset="scope">Auf Standardwerte zurücksetzen</button>
+  <div class="desc">Setzt nur die Einstellungen dieser Gruppe auf die Werte aus config.h zurück.</div>
  </div>
  <div class="sgroup"><div class="grouphead">Uhrzeit</div>
  <!-- Nur sichtbar, solange kein Zeitserver erreichbar war (kein Internet, Setup-WLAN) -->
  <div class="set" id="timeRow" hidden><div class="head"><label>Uhrzeit stellen</label></div>
   <div class="sub">Kein Zeitserver erreichbar (kein Internet). Die Uhrzeit lässt sich hier von Hand stellen.</div>
+  <!-- Schnellweg: Zeit dieses Handys/PCs als Unix-Zeit senden -->
   <button type="button" id="tPhone">Uhrzeit dieses Geräts übernehmen</button>
+  <div class="sub">Übernimmt Datum und Uhrzeit dieses Handys oder PCs.</div>
+  <!-- Alternativ: Datum und Uhrzeit von Hand eintragen -->
   <div class="dt"><input type="date" id="tDate" aria-label="Datum"><input type="time" id="tTime" step="1" aria-label="Uhrzeit"></div>
+  <!-- Sommer-/Winterzeit: automatisch oder fest (nur bei Zeitzonen mit Sommerzeit) -->
   <div id="tDstBox"><div class="seg" id="tDst" role="group" aria-label="Sommer-/Winterzeit">
    <button type="button" data-dst="-1" aria-pressed="true">Automatisch</button>
    <button type="button" data-dst="1" aria-pressed="false">Sommerzeit</button>
    <button type="button" data-dst="0" aria-pressed="false">Winterzeit</button></div>
   <div class="sub">Automatisch = nach den Regeln der Zeitzone. Sommer- oder Winterzeit fest wählen, falls die Uhr sonst eine Stunde falsch geht.</div></div>
   <button type="button" class="sec" id="tSave">Datum und Uhrzeit setzen</button>
+  <div class="sub">Stellt die Uhr auf das oben eingetragene Datum und die Uhrzeit.</div>
   <div id="tMsg"></div>
   <div class="sub">Sobald ein Zeitserver erreichbar ist, stellt sich die Uhr wieder selbst. Nach einem Neustart muss die Zeit erneut gestellt werden.</div></div>
+ <!-- Zeitformat 12/24 h für OLED und Seite -->
  <div class="set"><div class="head"><label>Zeitformat</label></div>
   <div class="seg" role="group" aria-label="Zeitformat">
    <button type="button" data-h12="0" aria-pressed="true">24 Stunden</button>
    <button type="button" data-h12="1" aria-pressed="false">12 Stunden (AM/PM)</button></div>
   <div class="sub">Für die Uhrzeit auf der OLED-Anzeige und auf dieser Seite.</div></div>
+ <!-- Zeitzone (Liste kommt von der Uhr, in der gewählten Sprache) -->
  <div class="set"><div class="head"><label for="sTz">Zeitzone</label></div><select id="sTz"></select>
   <div class="sub">Bestimmt die Ortszeit samt automatischer Sommer-/Winterzeit.</div></div>
+ <!-- Erster Zeitserver; „Übernehmen“ speichert und startet den Abgleich neu -->
  <div class="set"><div class="head"><label for="sNtp">Zeitserver (NTP)</label></div>
   <div class="pw"><input id="sNtp" maxlength="63" autocapitalize="none" autocorrect="off" spellcheck="false">
   <button type="button" class="sec" id="sNtpSave">Übernehmen</button></div>
-  <div class="sub">Server im Internet, von dem die Uhr die genaue Zeit holt (Standard: de.pool.ntp.org).</div></div>
+  <div class="sub">Server im Internet, von dem die Uhr die genaue Zeit holt (Standard: de.pool.ntp.org). „Übernehmen“ speichert den Namen und gleicht sofort neu ab.</div></div>
   <div class="gmsg" data-gmsg="time"></div>
+  <!-- Nur diese Gruppe auf die Werte aus config.h zurücksetzen -->
   <button type="button" class="sec greset" data-reset="time">Auf Standardwerte zurücksetzen</button>
+  <div class="desc">Setzt nur die Einstellungen dieser Gruppe auf die Werte aus config.h zurück.</div>
  </div>
  <div class="sgroup"><div class="grouphead">Display</div>
+ <!-- OLED-Kontrast -->
  <div class="set"><div class="head"><label for="sOled">OLED-Helligkeit</label><span class="val" id="vOled"></span></div>
   <input type="range" id="sOled" min="1" max="255" step="1">
   <div class="sub">Helligkeit des kleinen Displays an der Uhr.</div></div>
+ <!-- OLED kopfüber -->
  <div class="set"><label class="sw"><span>OLED um 180° drehen</span><input type="checkbox" id="sFlip"></label>
   <div class="sub">Für ein kopfüber eingebautes Display.</div></div>
+ <!-- Pixelverschiebung gegen Einbrennen -->
  <div class="set"><label class="sw"><span>OLED-Pixelverschiebung</span><input type="checkbox" id="sShift"></label>
   <div class="sub">Verschiebt das Bild jede Minute um wenige Pixel, gegen Einbrennen.</div></div>
   <div class="gmsg" data-gmsg="display"></div>
+  <!-- Nur diese Gruppe auf die Werte aus config.h zurücksetzen -->
   <button type="button" class="sec greset" data-reset="display">Auf Standardwerte zurücksetzen</button>
+  <div class="desc">Setzt nur die Einstellungen dieser Gruppe auf die Werte aus config.h zurück.</div>
  </div>
  <div id="setMsg"></div>
- <p class="hint">Änderungen wirken sofort und bleiben gespeichert. Standardwerte stammen aus config.h; „Auf Standardwerte zurücksetzen“ gilt nur für die jeweilige Gruppe.</p>
+ <p class="hint">Änderungen wirken sofort und bleiben gespeichert.</p>
 </section></div>
 
 <div class="grp"><h2 id="wlan-h">WLAN</h2>
 <section>
  <div class="subhead">Gespeicherte Netze</div>
- <div class="desc">Netze, mit denen sich die Uhr verbinden darf. Sie wählt automatisch das stärkste.</div>
+ <!-- Gespeicherte Netze, je mit „Löschen“ (Neustart danach) -->
+ <div class="desc">Netze, mit denen sich die Uhr verbinden darf. Sie wählt automatisch das stärkste. „Löschen“ entfernt ein Netz – die Uhr startet danach neu.</div>
  <ul id="saved"><li><span class="hint">wird geladen …</span></li></ul>
+ <!-- Netzsuche; Treffer antippen übernimmt den Namen -->
  <button class="sec" id="scanBtn">Netze in Reichweite suchen</button>
  <div class="desc">Zeigt die Netze in der Nähe. Ein Netz antippen übernimmt seinen Namen ins Formular.</div>
  <ul id="scan"></ul>
  <form id="wf" autocomplete="off">
+  <!-- Neues Netz eintragen (Name, Passwort, speichern) -->
   <div class="subhead">Netz hinzufügen</div>
-  <div class="desc">Für offene Netze das Passwort leer lassen.</div>
   <label for="ssid">Netzwerkname (SSID)</label>
   <input id="ssid" name="ssid" maxlength="32" autocapitalize="none" autocorrect="off" spellcheck="false" required>
+  <div class="desc">Name des WLANs genau wie am Router (Groß-/Kleinschreibung beachten).</div>
   <label for="pw">Passwort</label>
   <div class="pw"><input id="pw" name="pw" type="password" maxlength="63" autocapitalize="none" autocorrect="off" spellcheck="false">
   <button type="button" class="sec" id="eye">Anzeigen</button></div>
+  <div class="desc">Für offene Netze leer lassen. „Anzeigen“ blendet das Passwort beim Tippen ein.</div>
   <div id="msg"></div>
   <button type="submit">Netz speichern</button>
+  <div class="desc">Speichert das Netz auf der Uhr (bis zu 5 Netze).</div>
  </form>
+ <!-- Verbindung trennen und mit dem stärksten Netz neu verbinden -->
  <button class="sec" id="recon">Neu verbinden (mit dem stärksten Netz)</button>
  <p class="hint">Trennt kurz und verbindet sich neu – etwa nach dem Hinzufügen eines Netzes. Gespeicherte Passwörter werden nie angezeigt.</p>
 </section></div>
@@ -288,12 +322,16 @@ html{scroll-behavior:smooth}
 <div class="grp"><h2 id="log-h">Protokoll</h2>
 <section>
  <div class="desc top">Meldungen der Uhr zu WLAN, Zeitabgleich und Einstellungen – hilfreich bei der Fehlersuche.</div>
+ <!-- Protokoll-Feld mit eigener Scrollleiste -->
  <pre id="log" tabindex="0" aria-label="Protokoll, im Feld scrollbar">wird geladen …</pre>
  <div class="loginfo"><span id="logInfo"></span><span>neueste Einträge unten</span></div>
+ <!-- Automatisch neu laden (alle 5 s) -->
  <label class="sw logsw"><span>Automatisch aktualisieren (alle 5 s)</span><input type="checkbox" id="logAuto" checked></label>
+ <div class="desc">Lädt das Protokoll alle 5 Sekunden neu, solange die Seite sichtbar ist.</div>
+ <!-- Sofort neu laden / feste Höhe aufheben -->
  <div class="tools"><button class="sec" id="logBtn">Jetzt aktualisieren</button>
  <button class="sec" id="logFull">Alles anzeigen</button></div>
- <p class="hint">„Alles anzeigen“ hebt die feste Höhe des Feldes auf. Die Uhr speichert die letzten 8 KB (ca. 120 Zeilen).</p>
+ <p class="hint">„Jetzt aktualisieren“ lädt sofort neu. „Alles anzeigen“ hebt die feste Höhe des Feldes auf. Die Uhr speichert die letzten 8 KB (ca. 120 Zeilen).</p>
 </section></div>
 </main>
 <script>
@@ -312,6 +350,7 @@ Object.assign(EN,{'Zeitformat':'Time format','24 Stunden':'24 hours','12 Stunden
 Object.assign(EN,{'Tiefstwert':'minimum','größter Block':'largest block','Prozessorauslastung Kern 0':'CPU usage core 0','Prozessorauslastung Kern 1':'CPU usage core 1',
  'zeichnet ständig das Oszilloskop-Bild – absichtlich ohne Pause':'draws the oscilloscope picture all the time – without pause on purpose'});
 Object.assign(EN,{'Oszilloskop':'Oscilloscope','Display':'Display'});
+Object.assign(EN,{"Setzt nur die Einstellungen dieser Gruppe auf die Werte aus config.h zurück.": "Resets only the settings of this group to the values from config.h.", "Änderungen wirken sofort und bleiben gespeichert.": "Changes take effect immediately and are saved.", "Übernimmt Datum und Uhrzeit dieses Handys oder PCs.": "Takes over date and time from this phone or PC.", "Stellt die Uhr auf das oben eingetragene Datum und die Uhrzeit.": "Sets the clock to the date and time entered above.", "Server im Internet, von dem die Uhr die genaue Zeit holt (Standard: de.pool.ntp.org). „Übernehmen“ speichert den Namen und gleicht sofort neu ab.": "Internet server from which the clock gets the exact time (default: de.pool.ntp.org). “Apply” saves the name and syncs again right away.", "Netze, mit denen sich die Uhr verbinden darf. Sie wählt automatisch das stärkste. „Löschen“ entfernt ein Netz – die Uhr startet danach neu.": "Networks the clock may connect to. It automatically picks the strongest one. “Delete” removes a network – the clock restarts afterwards.", "Name des WLANs genau wie am Router (Groß-/Kleinschreibung beachten).": "Name of the network exactly as on the router (case-sensitive).", "Für offene Netze leer lassen. „Anzeigen“ blendet das Passwort beim Tippen ein.": "Leave empty for open networks. “Show” reveals the password while typing.", "Speichert das Netz auf der Uhr (bis zu 5 Netze).": "Saves the network on the clock (up to 5 networks).", "Lädt das Protokoll alle 5 Sekunden neu, solange die Seite sichtbar ist.": "Reloads the log every 5 seconds while the page is visible.", "„Jetzt aktualisieren“ lädt sofort neu. „Alles anzeigen“ hebt die feste Höhe des Feldes auf. Die Uhr speichert die letzten 8 KB (ca. 120 Zeilen).": "“Refresh now” reloads immediately. “Show all” removes the fixed height of the field. The clock keeps the last 8 KB (approx. 120 lines).", "Uhrzeit aus dem Internet, stündlich abgeglichen": "time from the internet, synced every hour", "verbundenes Netz": "connected network", "mit dem Handy verbinden, um die Uhr einzurichten": "connect with your phone to set up the clock", "hilft bei der Fehlersuche nach unerwarteten Neustarts": "helps to diagnose unexpected restarts", "installierte Programmversion": "installed program version"});
 const DE={};for(const k in EN)DE[EN[k]]=k;
 let lang='de';try{if(localStorage.getItem('lang')==='en')lang='en'}catch(e){}
 const t=s=>lang==='en'&&EN[s]||s;
@@ -516,18 +555,18 @@ async function status(){
   showTimeRow(!s.ntp.synced,s.ntp.dst);
   if(S&&!setBusy){const p=s.profile==='DIGITAL'?1:0;if(p!==S.profile||s.dial!==S.dial){S.profile=p;S.dial=s.dial;renderSettings()}}$('date').textContent=s.date?(t('KW')+' '+s.kw+' – '+(lang==='en'?s.date.split('.').reverse().join('-'):s.date)):t('Datum unbekannt');
   const st=$('status');st.replaceChildren(
-   row(t('Zeitabgleich (NTP)'),s.ntp.synced?(t('zuletzt')+' '+s.ntp.last):s.ntp.manual?t('aus – Uhrzeit von Hand gestellt'):(s.wifi.configured?t('wartet auf ersten Abgleich …'):t('aus (kein WLAN)')),s.ntp.synced?(s.ntp.overdue?'warn':''):(s.ntp.manual?'':'warn')),
-   row(t('WLAN'),s.wifi.connected?s.wifi.ssid:(s.wifi.configured?t('sucht Netz …'):t('kein Netz eingetragen')),s.wifi.connected?'':'warn'),
+   row(t('Zeitabgleich (NTP)'),s.ntp.synced?(t('zuletzt')+' '+s.ntp.last):s.ntp.manual?t('aus – Uhrzeit von Hand gestellt'):(s.wifi.configured?t('wartet auf ersten Abgleich …'):t('aus (kein WLAN)')),s.ntp.synced?(s.ntp.overdue?'warn':''):(s.ntp.manual?'':'warn'),t('Uhrzeit aus dem Internet, stündlich abgeglichen')),
+   row(t('WLAN'),s.wifi.connected?s.wifi.ssid:(s.wifi.configured?t('sucht Netz …'):t('kein Netz eingetragen')),s.wifi.connected?'':'warn',t('verbundenes Netz')),
    ...(s.wifi.connected?[row(t('Signalstärke'),s.wifi.rssi+' dBm',s.wifi.rssi<-80?'warn':'',t('über −67 dBm gut, unter −80 dBm schwach')),row(t('Netzwerkadresse'),s.wifi.ip+'  ·  '+s.wifi.host,'',t('unter dieser Adresse ist die Uhr im Browser erreichbar'))]:[]),
-   ...(s.ap.active?[row(t('Setup-WLAN'),s.ap.ssid+' ('+s.ap.ip+')','warn')]:[]),
+   ...(s.ap.active?[row(t('Setup-WLAN'),s.ap.ssid+' ('+s.ap.ip+')','warn',t('mit dem Handy verbinden, um die Uhr einzurichten'))]:[]),
    row(t('Laufzeit'),dur(s.uptime),'',t('seit dem letzten Neustart')),
    // Arbeitsspeicher in einer Zeile: frei/gesamt, darunter Tiefstwert und größter Block
    row(t('Arbeitsspeicher'),Math.round(s.heap/1024)+' '+t('von')+' '+Math.round(s.heapTotal/1024)+' '+t('KB frei'),
     (s.heapMin<20480||s.heapBlock<8192)?'warn':'',t('Tiefstwert')+' '+Math.round(s.heapMin/1024)+' KB · '+t('größter Block')+' '+Math.round(s.heapBlock/1024)+' KB'),
    row(t('Prozessorauslastung Kern 0'),s.cpu0+' %',s.cpu0>85?'warn':'',t('WLAN, NTP, Webinterface, OLED, Uhrzeit, BOOT\u2011Taster')),
    row(t('Prozessorauslastung Kern 1'),'100 %','',t('zeichnet ständig das Oszilloskop-Bild – absichtlich ohne Pause')),
-   row(t('Grund des letzten Neustarts'),s.reset,/Absturz|Watchdog|Unterspannung|Crash|Brown-out/.test(s.reset)?'warn':''),
-   row(t('Firmware-Version'),'v'+s.fw));
+   row(t('Grund des letzten Neustarts'),s.reset,/Absturz|Watchdog|Unterspannung|Crash|Brown-out/.test(s.reset)?'warn':'',t('hilft bei der Fehlersuche nach unerwarteten Neustarts')),
+   row(t('Firmware-Version'),'v'+s.fw,'',t('installierte Programmversion')));
  }catch(e){if(online){$('status').replaceChildren(row(t('Verbindung'),t('keine Antwort von der Uhr'),'err'))}online=false}
 }
 // Liste der gespeicherten WLANs laden (Netze aus dem Webinterface mit "Löschen")
