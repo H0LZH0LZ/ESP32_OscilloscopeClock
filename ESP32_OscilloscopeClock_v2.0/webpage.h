@@ -47,22 +47,25 @@ static const char INDEX_HTML[] PROGMEM = R"HTML(<!doctype html>
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.4 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
  padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);-webkit-text-size-adjust:100%}
-main{max-width:640px;margin:0 auto;padding:12px 16px 32px}
-/* Oberster Abschnitt (Uhr): alles zentriert. Die Überschrift steht auf Höhe der
-   Menütaste und hält links und rechts gleich viel Abstand, damit die Mitte stimmt;
-   die Oszilloskop-Vorschau nutzt die volle Breite. */
-header{padding:21px 0 4px;text-align:center}
-header h1{padding:0 46px}
-h1{font-size:15px;font-weight:600;color:var(--mute);margin:0;text-transform:uppercase;letter-spacing:.06em}
+main{max-width:640px;margin:0 auto;padding:0 16px 32px}
+/* Titelleiste: bleibt beim Scrollen immer oben stehen (64 px, auf Höhe der
+   Menütaste). Links und rechts gleich viel Abstand, damit die Mitte stimmt. */
+h1{position:sticky;top:env(safe-area-inset-top);z-index:22;display:flex;align-items:center;justify-content:center;
+ min-height:64px;margin:0;padding:0 46px;background:var(--bg);text-align:center;
+ font-size:15px;font-weight:600;color:var(--mute);text-transform:uppercase;letter-spacing:.06em}
+/* Oberster Abschnitt (Uhr): alles zentriert, die Oszilloskop-Vorschau nutzt die volle Breite. */
+header{padding:0 0 4px;text-align:center;scroll-margin-top:calc(env(safe-area-inset-top) + 64px)}
 #clock{font:600 44px/1.1 var(--mono);margin:4px 0 0;font-variant-numeric:tabular-nums}
 #date{color:var(--mute)}
 .scope canvas{margin:0 auto}
 section{background:var(--card);border-radius:14px;margin:0 0 14px;padding:4px 16px}
-/* Abschnittsüberschriften bleiben beim Scrollen oben stehen – auf Höhe der
-   Menütaste (64 px Leiste, Text rechts neben der Taste). Die nächste Überschrift
-   schiebt die vorige weg; so ist immer zu sehen, in welchem Abschnitt man ist. */
-h2{position:sticky;top:env(safe-area-inset-top);z-index:20;display:flex;align-items:center;min-height:64px;margin:0;
- padding:0 0 0 46px;background:var(--bg);font-size:13px;font-weight:600;color:var(--mute);text-transform:uppercase;letter-spacing:.06em}
+/* Abschnittsüberschriften bleiben beim Scrollen direkt unter der Titelleiste
+   stehen. Die nächste Überschrift schiebt die vorige weg; so ist immer zu sehen,
+   in welchem Abschnitt man ist. scroll-margin: Sprungziele aus dem Menü landen
+   unter der Titelleiste statt dahinter. */
+h2{position:sticky;top:calc(env(safe-area-inset-top) + 64px);scroll-margin-top:calc(env(safe-area-inset-top) + 64px);
+ z-index:20;display:flex;align-items:center;min-height:44px;margin:0;
+ padding:0 4px;background:var(--bg);font-size:13px;font-weight:600;color:var(--mute);text-transform:uppercase;letter-spacing:.06em}
 /* Streifen unter Notch/Statusleiste deckt durchscrollenden Inhalt ab */
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top);background:var(--bg);z-index:25}
 .row{display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:44px;border-top:1px solid var(--line);padding:6px 0}
@@ -153,7 +156,8 @@ html{scroll-behavior:smooth}
 </nav>
 <div id="shade"></div>
 <main>
-<header id="uhr"><h1>ESP32 Oscilloscope Clock</h1>
+<h1>ESP32 Oscilloscope Clock</h1>
+<header id="uhr">
 <div class="scope"><canvas id="scope" width="512" height="512" role="button" tabindex="0"
  aria-label="Vorschau des Oszilloskop-Bildes – tippen, um das Zifferblatt umzuschalten"></canvas><div class="dialtag" id="dialTag"></div></div>
 <p class="scopehint">Tippen, um das Zifferblatt umzuschalten</p>

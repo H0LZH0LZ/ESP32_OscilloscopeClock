@@ -82,9 +82,11 @@ die Strahlausgabe auf Core 1 nicht.
 
 **Seite (`webpage.h`):** eine Seite mit **einklappbarem Seitenmenü** (☰ oben links, bleibt beim
 Scrollen sichtbar): Uhr, Status, WLAN, Log. Der oberste Abschnitt (Überschrift, Vorschau, Uhrzeit,
-Datum) ist zentriert. Die Abschnittsüberschriften bleiben beim Scrollen oben neben der Menütaste
-stehen (`position: sticky`). Jede ist nur innerhalb ihres Abschnitts (`.grp`) angeheftet, so
-schiebt die nächste die vorige hinaus. Tippen auf einen Eintrag springt weich dorthin und
+Datum) ist zentriert. Die Titelleiste „ESP32 Oscilloscope Clock“ bleibt immer oben neben der
+Menütaste stehen, die Abschnittsüberschriften direkt darunter (`position: sticky`). Jede
+Abschnittsüberschrift ist nur innerhalb ihres Abschnitts (`.grp`) angeheftet, so schiebt die
+nächste die vorige hinaus. `scroll-margin-top` sorgt dafür, dass Sprungziele aus dem Menü unter
+der Titelleiste landen. Tippen auf einen Eintrag springt weich dorthin und
 schließt das Menü wieder, ebenso Tippen daneben oder Esc. Ganz oben steht eine **Live-Vorschau des Oszilloskop-Bildes**
 (Canvas mit 8×8-Raster wie am Oszilloskop). Im **dunklen Design** ist das ein schwarzer Schirm mit
 leuchtend grünen Linien, im **hellen Design** ist der Hintergrund durchsichtig, mit dunkelgrünen Linien
