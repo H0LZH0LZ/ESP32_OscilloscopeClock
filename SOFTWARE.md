@@ -109,7 +109,11 @@ Darunter folgen drei Bereiche:
   Bildrate, Laufzeit, freier Speicher. Wird alle 2 s aktualisiert.
 - **WLAN:** gespeicherte Netze (Netze aus dem Webinterface lassen sich löschen), Netzsuche
   (Netz antippen übernimmt den Namen), Formular, „Neu verbinden“.
-- **Log:** die letzten `LOG_BUFFER_SIZE` Byte, alle 5 s aktualisiert, scrollt automatisch mit.
+- **Log:** die letzten `LOG_BUFFER_SIZE` Byte (8 KB, ca. 120 Zeilen), alle 5 s aktualisiert. Das Feld
+  hat eine feste Höhe (max. 60 % des Bildschirms) mit eigener Scrollleiste. Wischen im Feld scrollt
+  nur das Log, nicht die Seite. Steht man unten, folgen neue Zeilen automatisch. Liest man weiter
+  oben, bleibt die Position beim Aktualisieren erhalten. „Alle Zeilen“ klappt das Log auf volle
+  Länge auf, darunter steht die Zeilenzahl.
 
 Für Handys optimiert: eine Spalte, Schaltflächen mindestens 44 px hoch, Eingabefelder mit 16 px
 Schrift (iOS zoomt sonst), helles/dunkles Design nach Systemeinstellung, Rand für Notch und
@@ -149,7 +153,7 @@ das Setup-WLAN wieder. Das OLED zeigt in dieser Zeit „Setup ScopeClock-Setup�
 
 **Log:** `logMsg()` ersetzt die direkten `Serial`-Ausgaben. Jede Zeile bekommt einen Zeitstempel
 (`hh:mm:ss` nach dem ersten NTP-Sync, davor `+<s>s` seit dem Start) und geht an die Konsole und in
-einen Ringpuffer (`LOG_BUFFER_SIZE`, 4 KB). Ein Spinlock schützt den Puffer, weil beide Kerne
+einen Ringpuffer (`LOG_BUFFER_SIZE`, 8 KB). Ein Spinlock schützt den Puffer, weil beide Kerne
 schreiben können.
 
 **Bildrate:** `scopeTask` zählt die Bilder (`g_frameCount`), der `uiTask` rechnet daraus jede

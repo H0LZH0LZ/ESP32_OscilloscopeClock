@@ -83,9 +83,16 @@ li.tap{cursor:pointer}
 .bars{font-family:var(--mono);color:var(--mute);white-space:nowrap}
 .hint{color:var(--mute);font-size:14px;margin:6px 0 12px}
 #msg{min-height:20px;font-size:14px;margin:4px 0}
-pre{font:12px/1.45 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere;max-height:50vh;overflow:auto;margin:8px 0 12px;
- background:var(--bg);border-radius:10px;padding:10px;-webkit-overflow-scrolling:touch}
-.tools{display:flex;gap:8px}.tools button{margin:0 0 12px}
+/* Log-Feld: feste Höhe, eigener Scrollbereich. Wischen im Feld scrollt nur das Log
+   (overscroll-behavior), die Scrollleiste bleibt sichtbar. "Alle Zeilen" hebt die
+   Höhenbegrenzung auf. */
+pre{font:12px/1.45 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere;height:min(60vh,520px);overflow-y:auto;margin:8px 0 6px;
+ background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px;-webkit-overflow-scrolling:touch;
+ overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:var(--mute) transparent}
+pre::-webkit-scrollbar{width:6px}pre::-webkit-scrollbar-thumb{background:var(--mute);border-radius:3px}
+pre.full{height:auto;overflow-y:visible}
+.loginfo{color:var(--mute);font-size:13px;margin:0 0 8px;display:flex;justify-content:space-between;gap:8px}
+.tools{display:flex;flex-wrap:wrap;gap:8px}.tools button{margin:0 0 12px;flex:1 1 30%}
 /* Einstellungen */
 .set{border-top:1px solid var(--line);padding:10px 0}
 .set:first-of-type{border-top:0}
@@ -200,8 +207,10 @@ html{scroll-behavior:smooth}
 
 <div class="grp"><h2 id="log-h">Log</h2>
 <section>
- <pre id="log">wird geladen …</pre>
- <div class="tools"><button class="sec" id="logBtn">Aktualisieren</button><button class="sec" id="logAuto">Auto: an</button></div>
+ <pre id="log" tabindex="0" aria-label="Log, im Feld scrollbar">wird geladen …</pre>
+ <div class="loginfo"><span id="logInfo"></span><span>neueste Zeile unten</span></div>
+ <div class="tools"><button class="sec" id="logBtn">Aktualisieren</button><button class="sec" id="logAuto">Auto: an</button>
+ <button class="sec" id="logFull">Alle Zeilen</button></div>
 </section></div>
 </main>
 <script>
@@ -349,13 +358,21 @@ async function scan(){
 }
 function msg(r){const m=$('msg');m.textContent=r.msg||'';m.className=r.ok?'ok':'err';saved()}
 let logAuto=true;
-async function log(){try{const t=await (await get('/api/log')).text();const p=$('log');const end=p.scrollTop+p.clientHeight>=p.scrollHeight-20;p.textContent=t||'(leer)';if(end)p.scrollTop=p.scrollHeight}catch(e){}}
+// Log neu laden. Stand das Feld unten, bleibt es unten (neue Zeilen folgen);
+// liest man weiter oben, bleibt die Position erhalten.
+let logFirst=true;
+async function log(){try{const t=await (await get('/api/log')).text();const p=$('log');
+ const end=logFirst||p.scrollTop+p.clientHeight>=p.scrollHeight-20,top=p.scrollTop;
+ p.textContent=t||'(leer)';p.scrollTop=end?p.scrollHeight:top;logFirst=false;
+ const n=t?t.replace(/\n$/,'').split('\n').length:0;$('logInfo').textContent=n+' Zeilen'}catch(e){}}
 $('wf').onsubmit=async e=>{e.preventDefault();const r=await post('/api/wifi',{ssid:$('ssid').value.trim(),pw:$('pw').value});msg(r);if(r.ok)$('pw').value=''};
 $('eye').onclick=()=>{const p=$('pw');p.type=p.type==='password'?'text':'password';$('eye').textContent=p.type==='password'?'Zeigen':'Verbergen'};
 $('scanBtn').onclick=scan;
 $('recon').onclick=async()=>msg(await post('/api/reconnect',{}));
 $('logBtn').onclick=log;
 $('logAuto').onclick=()=>{logAuto=!logAuto;$('logAuto').textContent='Auto: '+(logAuto?'an':'aus')};
+$('logFull').onclick=()=>{const p=$('log'),f=p.classList.toggle('full');$('logFull').textContent=f?'Weniger':'Alle Zeilen';
+ if(!f){p.scrollTop=p.scrollHeight;$('log-h').scrollIntoView()}};
 status();saved();log();loadSettings();
 setInterval(()=>{if(document.visibilityState==='visible')status()},2000);
 setInterval(()=>{if(logAuto&&document.visibilityState==='visible')log()},5000);

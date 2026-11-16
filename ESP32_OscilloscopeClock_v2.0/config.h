@@ -150,11 +150,12 @@
 //   WEB_SETUP_AP_AFTER_S  so lange ohne Verbindung, bis das Setup-WLAN startet
 //   WEB_MAX_NETWORKS      max. Anzahl im Webinterface gespeicherter WLANs
 //                         (zusätzlich zu secrets.h)
-//   LOG_BUFFER_SIZE       Größe des Log-Puffers für die Log-Anzeige (Byte, RAM)
+//   LOG_BUFFER_SIZE       Größe des Log-Puffers für die Log-Anzeige (Byte, RAM;
+//                         8 KB ≈ 120 Zeilen, belegt 2 × diesen Wert im RAM)
 #define WEB_SETUP_AP_SSID    "ScopeClock-Setup"
 #define WEB_SETUP_AP_AFTER_S 60
 #define WEB_MAX_NETWORKS     5
-#define LOG_BUFFER_SIZE      4096
+#define LOG_BUFFER_SIZE      8192
 
 // ---------------------------------------------------------------------------
 // Diverses
