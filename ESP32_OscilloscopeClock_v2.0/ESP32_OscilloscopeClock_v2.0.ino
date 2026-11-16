@@ -120,7 +120,7 @@ struct StoredNet {
 };
 
 #include "DataTable.h"
-#include "webpage.h"          // HTML/CSS/JS des Webinterfaces (PROGMEM)
+#include "webpage.h"          // Webinterface, gzip-komprimiert (aus web/index.html, tools/gen_webpage.py)
 #include "font.h"             // Schrift des Webinterfaces (2 Schnitte WOFF2, PROGMEM, ca. 30 KB)
 #include "icon.h"             // App-Symbol (SVG/PNG) und Manifest für den Startbildschirm
 
@@ -263,9 +263,10 @@ static void logClear()
   portEXIT_CRITICAL(&s_logMux);
 }
 
-// Liefert den Log-Inhalt in zeitlicher Reihenfolge (älteste Zeile zuerst).
+// Momentaufnahme des Logs in zeitlicher Reihenfolge (älteste Zeile zuerst), als zwei
+// Teilstücke im statischen Puffer – ohne String und ohne zusätzlichen Heap.
 // Nach einem Überlauf wird die angeschnittene erste Zeile weggelassen.
-static String logRead()
+static void logSnapshot(const char *&a, size_t &alen, const char *&b, size_t &blen)
 {
   static char copy[LOG_BUFFER_SIZE];
   size_t head; bool wrapped;
@@ -273,16 +274,13 @@ static String logRead()
   memcpy(copy, s_logBuf, sizeof(copy));
   head = s_logHead; wrapped = s_logWrapped;
   portEXIT_CRITICAL(&s_logMux);
-
-  String out;
-  out.reserve(sizeof(copy) + 1);
+  a = copy; alen = 0;
   if (wrapped) {
     size_t start = head;
     while (start < sizeof(copy) && copy[start] != '\n') start++;   // angeschnittene Zeile überspringen
-    for (size_t i = start + 1; i < sizeof(copy); i++) out += copy[i];
+    if (start + 1 < sizeof(copy)) { a = copy + start + 1; alen = sizeof(copy) - start - 1; }
   }
-  for (size_t i = 0; i < head; i++) out += copy[i];
-  return out;
+  b = copy; blen = head;
 }
 
 static TaskHandle_t scopeTaskHandle = nullptr;
@@ -710,7 +708,7 @@ static void buildTour(const uint8_t *digits, int digitsSize)
 
   float total = 0;
   for (int k = 0; k < n; k++) total += tourGap(s_tour[k], s_tour[(k + 1) % n]);
-  logMsg(tr("[Scope] Rundtour: %d Linienzuege, Spruenge gesamt %.0f DAC-Einheiten", "[Scope] round trip: %d polylines, jumps total %.0f DAC units"), n, total);
+  logMsg(tr("[Scope] Rundtour: %d Linienzuege, Spruenge gesamt %d DAC-Einheiten", "[Scope] round trip: %d polylines, jumps total %d DAC units"), n, (int)(total + 0.5f));
 }
 
 //*****************************************************************************
@@ -1805,7 +1803,11 @@ static void handleNotFound()
 // Webserver starten: alle Adressen (Seite, Schrift, /api/…) registrieren
 static void webStart()
 {
-  web.on("/",                HTTP_GET,  [] { web.send_P(200, "text/html; charset=utf-8", INDEX_HTML); });
+  web.on("/",                HTTP_GET,  [] {               // Seite gzip-komprimiert (siehe tools/gen_webpage.py)
+    web.sendHeader("Content-Encoding", "gzip");
+    web.sendHeader("Cache-Control", "no-cache");             // nach einem Update immer die neue Seite
+    web.send_P(200, "text/html; charset=utf-8", (const char *)INDEX_HTML_GZ, sizeof(INDEX_HTML_GZ));
+  });
   // Schrift: liegt in der Firmware, damit die Seite auch ohne Internet (Setup-WLAN)
   // gleich aussieht. Ändert sich nur mit einer neuen Firmware → ein Jahr cachen.
   web.on("/font.woff2",      HTTP_GET,  [] {
@@ -1830,7 +1832,14 @@ static void webStart()
     web.send_P(200, "image/png", (const char *)ICON_PNG, sizeof(ICON_PNG));
   });
   web.on("/api/status",      HTTP_GET,  handleStatus);
-  web.on("/api/log",         HTTP_GET,  [] { web.send(200, "text/plain; charset=utf-8", logRead()); });
+  web.on("/api/log",         HTTP_GET,  [] {               // Log direkt aus dem Puffer senden
+    const char *a, *b; size_t alen, blen;
+    logSnapshot(a, alen, b, blen);
+    web.setContentLength(alen + blen);
+    web.send(200, "text/plain; charset=utf-8", "");
+    if (alen) web.sendContent(a, alen);
+    if (blen) web.sendContent(b, blen);
+  });
   web.on("/api/networks",    HTTP_GET,  handleNetworks);
   web.on("/api/vectors",     HTTP_GET,  handleVectors);
   web.on("/api/scan",        HTTP_GET,  handleScan);

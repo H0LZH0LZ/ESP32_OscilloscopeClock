@@ -11,7 +11,7 @@ Seite auch ohne Internet (Setup-WLAN) richtig aussieht:
     für Überschriften und Knöpfe – der schlanke Light-Schnitt ist typisch für Raleway. Keine variable Schrift –
     manche Android-Browser zeigen fette Texte einer variablen Schrift sonst in
     der Systemschrift an.
-  - nur die Zeichen, die in webpage.h und der Firmware vorkommen, plus
+  - nur die Zeichen, die in web/index.html und der Firmware vorkommen, plus
     ASCII, Umlaute und gängige Satzzeichen
   - WOFF2-komprimiert
 Weil das eine veränderte Fassung ist, verlangt die OFL einen anderen Namen als
@@ -34,8 +34,8 @@ NAME = 'ScopeClock Sans'
 
 def chars():
     c = set()
-    for f in ('webpage.h', 'ESP32_OscilloscopeClock_v2.0.ino'):
-        c |= set((ROOT / 'ESP32_OscilloscopeClock_v2.0' / f).read_text(encoding='utf-8'))
+    for f in (ROOT / 'web' / 'index.html', ROOT / 'ESP32_OscilloscopeClock_v2.0' / 'ESP32_OscilloscopeClock_v2.0.ino'):
+        c |= set(f.read_text(encoding='utf-8'))
     c |= {chr(i) for i in range(32, 127)} | set('äöüÄÖÜßéèàçñ€°–—„“”‚‘’…·×')
     return ''.join(sorted(ch for ch in c if ord(ch) >= 32))
 
