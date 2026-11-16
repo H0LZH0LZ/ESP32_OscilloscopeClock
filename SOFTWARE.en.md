@@ -16,7 +16,7 @@ German with the English label in parentheses. Code comments are in German.
 | `ESP32_OscilloscopeClock_v2.0/DataTable.h` | Vector data for dial, digits and hands – generated with `tools/gen_vectors.py` |
 | `tools/gen_vectors.py` | Generates `DataTable.h` (Python 3, no extra packages) |
 | `ESP32_OscilloscopeClock_v2.0/webpage.h` | Web interface: one page (HTML, CSS, JavaScript) in flash |
-| `ESP32_OscilloscopeClock_v2.0/font.h` | Web interface font (“ScopeClock Sans” = reduced Raleway, two static styles regular/semibold, WOFF2, approx. 30 KB in total), served at `/font.woff2` and `/font-600.woff2` – generated with `tools/gen_font.py` |
+| `ESP32_OscilloscopeClock_v2.0/font.h` | Web interface font (“ScopeClock Sans” = reduced Raleway, two static styles Light (300) for text and SemiBold (600) for headings/buttons, WOFF2, approx. 30 KB in total), served at `/font.woff2` and `/font-600.woff2` – generated with `tools/gen_font.py` |
 | `tools/gen_font.py` | Generates `font.h` from `Raleway[wght].ttf` (needs `pip install fonttools brotli`) |
 | `fonts/OFL.txt` | Font licence (SIL Open Font License 1.1) |
 | `platformio.ini` | Alternative to the Arduino IDE |
@@ -186,7 +186,7 @@ inserted as text (`textContent`), never as HTML.
 | Method and path | Function |
 |---|---|
 | `GET /` | the page |
-| `GET /font.woff2`, `GET /font-600.woff2` | font of the page, regular and semibold (from `font.h`), cached by the browser for one year. Two static styles instead of a variable font, because some Android browsers otherwise show bold text of a variable font in the system font |
+| `GET /font.woff2`, `GET /font-600.woff2` | font of the page, Light and SemiBold (from `font.h`), cached by the browser for one year. Two static styles instead of a variable font, because some Android browsers otherwise show bold text of a variable font in the system font |
 | `GET /api/status` | JSON: `time`, `date`, `kw`, `ntp{synced,overdue,manual,dst,last,server}`, `wifi{configured,connected,ssid,rssi,ip,host}`, `ap{active,ssid,ip}`, `profile`, `dial`, `fps`, `heap`, `heapTotal`, `heapMin`, `heapBlock`, `cpu0`, `reset`, `uptime`, `fw`, `lang`, `h12` |
 | `GET /api/log` | log as text, oldest line first |
 | `GET /api/networks` | saved networks `[{ssid, source:"web"}]`, never passwords |

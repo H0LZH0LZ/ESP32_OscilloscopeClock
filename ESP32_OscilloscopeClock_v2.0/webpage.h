@@ -42,15 +42,18 @@ static const char INDEX_HTML[] PROGMEM = R"HTML(<!doctype html>
 <title>Scope Clock</title>
 <style>
 /* Schrift aus der Firmware (Raleway, verkleinert – siehe tools/gen_font.py): zwei feste Schnitte,
-   normal (400) und halbfett (600). swap: bis sie geladen ist, wird die Systemschrift gezeigt. */
-@font-face{font-family:'ScopeClock Sans';src:url(/font.woff2) format('woff2');font-weight:400;font-display:swap}
+   Light (300) für Text und SemiBold (600) für Überschriften/Knöpfe. Der schlanke Light-Schnitt ist
+   das typische Raleway-Bild. swap: bis sie geladen ist, wird die Systemschrift gezeigt. */
+@font-face{font-family:'ScopeClock Sans';src:url(/font.woff2) format('woff2');font-weight:300 500;font-display:swap}
 @font-face{font-family:'ScopeClock Sans';src:url(/font-600.woff2) format('woff2');font-weight:600;font-display:swap}
 :root{--scope-bg:transparent;--scope-trace:#0b7a3e;--scope-glow:rgba(11,122,62,.12);--scope-halo:rgba(11,122,62,.35);--scope-grid:rgba(0,0,0,.07);
---bg:#f2f2f5;--card:#fff;--fg:#111;--mute:#6b6b70;--line:#e3e3e8;--acc:#0a7d44;--warn:#b45309;--err:#b91c1c;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+--bg:#f2f2f5;--card:#fff;--fg:#111;--mute:#5c5c63;--line:#e3e3e8;--acc:#0a7d44;--warn:#b45309;--err:#b91c1c;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
  --sans:'ScopeClock Sans',system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
 @media (prefers-color-scheme:dark){:root{--scope-bg:#050805;--scope-trace:#b6ffc4;--scope-glow:rgba(80,255,120,.18);--scope-halo:#3dff6a;--scope-grid:rgba(120,255,140,.08);--bg:#000;--card:#1c1c1e;--fg:#f2f2f7;--mute:#9a9aa0;--line:#2c2c2e;--acc:#30d158;--warn:#ffb340;--err:#ff6961}}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.4 var(--sans);
+b,strong{font-weight:600}   /* Fettdruck im SemiBold-Schnitt */
+body{margin:0;background:var(--bg);color:var(--fg);font:300 16px/1.45 var(--sans);letter-spacing:.01em;
+ -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;
  font-feature-settings:'lnum' 1;   /* Raleway: Ziffern in Versalhöhe statt Mediävalziffern (vererbt sich überallhin) */
  padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);-webkit-text-size-adjust:100%}
 main{max-width:640px;margin:0 auto;padding:0 16px 32px}
@@ -61,7 +64,7 @@ h1{position:sticky;top:env(safe-area-inset-top);z-index:22;display:flex;align-it
  font-size:15px;font-weight:600;color:var(--mute);text-transform:uppercase;letter-spacing:.06em}
 /* Oberster Abschnitt (Uhr): alles zentriert, die Oszilloskop-Vorschau nutzt die volle Breite. */
 header{padding:0 0 4px;text-align:center;scroll-margin-top:calc(env(safe-area-inset-top) + 64px)}
-#clock{font:600 44px/1.1 var(--sans);font-feature-settings:'lnum' 1;margin:4px 0 0}   /* 'font' setzt lnum zurück */
+#clock{font:300 50px/1.1 var(--sans);font-feature-settings:'lnum' 1;letter-spacing:.02em;margin:4px 0 0}   /* große Uhrzeit im feinen Light-Schnitt */   /* 'font' setzt lnum zurück */
 /* Raleway hat unterschiedlich breite Ziffern – jede Ziffer bekommt ein festes Feld,
    damit die Uhrzeit beim Weiterzählen nicht hin und her springt. */
 #clock i{display:inline-block;width:.62em;font-style:normal;text-align:center}
@@ -165,7 +168,7 @@ html{scroll-behavior:smooth}
  transform:translateX(-105%);transition:transform .25s ease;box-shadow:2px 0 16px rgba(0,0,0,.25);overflow-y:auto}
 #nav.open{transform:none}
 #nav h3{font-size:13px;color:var(--mute);text-transform:uppercase;letter-spacing:.06em;margin:4px 8px 12px}
-#nav a{display:flex;align-items:center;min-height:48px;padding:0 12px;border-radius:10px;color:var(--fg);text-decoration:none;font-weight:500}
+#nav a{display:flex;align-items:center;min-height:48px;padding:0 12px;border-radius:10px;color:var(--fg);text-decoration:none;font-weight:600}
 #nav a:active,#nav a:hover{background:var(--bg)}
 #nav a.subnav{min-height:40px;padding-left:28px;font-size:15px;font-weight:400;color:var(--mute)}   /* Gruppen der Einstellungen */
 #nav .navlang{margin:16px 12px 0;padding-top:12px;border-top:1px solid var(--line)}

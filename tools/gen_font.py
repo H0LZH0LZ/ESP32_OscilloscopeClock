@@ -7,7 +7,8 @@ Grundlage ist Raleway (SIL Open Font License 1.1, siehe fonts/OFL.txt):
 
 Die Schrift wird für die Uhr verkleinert, damit sie in den Flash passt und die
 Seite auch ohne Internet (Setup-WLAN) richtig aussieht:
-  - zwei feste Schnitte: normal (400) und halbfett (600). Keine variable Schrift –
+  - zwei feste Schnitte: Light (300) für Text und große Uhrzeit, SemiBold (600)
+    für Überschriften und Knöpfe – der schlanke Light-Schnitt ist typisch für Raleway. Keine variable Schrift –
     manche Android-Browser zeigen fette Texte einer variablen Schrift sonst in
     der Systemschrift an.
   - nur die Zeichen, die in webpage.h und der Firmware vorkommen, plus
@@ -48,7 +49,7 @@ def build(src, weight):
     sub = subset.Subsetter(opt)
     sub.populate(text=chars())
     sub.subset(font)
-    style = 'Regular' if weight == 400 else 'SemiBold'
+    style = 'Light' if weight == 300 else 'SemiBold'
     for rec in font['name'].names:                 # neuer Name (OFL: Reserved Font Name)
         if rec.nameID in (1, 16):
             rec.string = NAME
@@ -68,9 +69,9 @@ if __name__ == '__main__':
     out = ['// ---- Erzeugt mit tools/gen_font.py – nicht von Hand ändern ----',
            f'// "{NAME}": verkleinerte Fassung von Raleway, Copyright 2010 The Raleway',
            '// Project Authors, SIL Open Font License 1.1 (Text: fonts/OFL.txt).',
-           '// Zwei Schnitte als WOFF2: /font.woff2 (400, normal) und /font-600.woff2 (halbfett).',
+           '// Zwei Schnitte als WOFF2: /font.woff2 (300, Light) und /font-600.woff2 (600, SemiBold).',
            '#pragma once']
-    for name, w in (('FONT_WOFF2', 400), ('FONT_WOFF2_600', 600)):
+    for name, w in (('FONT_WOFF2', 300), ('FONT_WOFF2_600', 600)):
         data = build(sys.argv[1], w)
         out.append(f'// Gewicht {w}: {len(data)} Byte')
         out.append(f'static const uint8_t {name}[{len(data)}] PROGMEM = {{')
