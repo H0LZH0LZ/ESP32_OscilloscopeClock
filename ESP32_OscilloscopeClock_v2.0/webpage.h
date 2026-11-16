@@ -18,6 +18,7 @@
   Für die Mobilbedienung optimiert:
    - eine Spalte, max. 640 px breit, Abstände für Daumenbedienung
    - einklappbares Seitenmenü (☰ oben links) zum Springen in die Abschnitte
+   - Uhr-Abschnitt zentriert; Abschnittsüberschriften bleiben beim Scrollen stehen
    - Tippen auf die Vorschau schaltet das Zifferblatt um (Webseite + Oszilloskop):
      1–12 → 12·3·6·9 → römisch I–XII → römisch XII·III·VI·IX
    - Schaltflächen und Listeneinträge mindestens 44 px hoch
@@ -42,12 +43,23 @@ static const char INDEX_HTML[] PROGMEM = R"HTML(<!doctype html>
 body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.4 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
  padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);-webkit-text-size-adjust:100%}
 main{max-width:640px;margin:0 auto;padding:12px 16px 32px}
-header{padding:8px 4px 4px}
+/* Oberster Abschnitt (Uhr): alles zentriert. Die Überschrift steht auf Höhe der
+   Menütaste und hält links und rechts gleich viel Abstand, damit die Mitte stimmt;
+   die Oszilloskop-Vorschau nutzt die volle Breite. */
+header{padding:21px 0 4px;text-align:center}
+header h1{padding:0 46px}
 h1{font-size:15px;font-weight:600;color:var(--mute);margin:0;text-transform:uppercase;letter-spacing:.06em}
 #clock{font:600 44px/1.1 var(--mono);margin:4px 0 0;font-variant-numeric:tabular-nums}
 #date{color:var(--mute)}
-section{background:var(--card);border-radius:14px;margin:14px 0;padding:4px 16px}
-h2{font-size:13px;font-weight:600;color:var(--mute);text-transform:uppercase;letter-spacing:.06em;margin:14px 0 4px}
+.scope canvas{margin:0 auto}
+section{background:var(--card);border-radius:14px;margin:0 0 14px;padding:4px 16px}
+/* Abschnittsüberschriften bleiben beim Scrollen oben stehen – auf Höhe der
+   Menütaste (64 px Leiste, Text rechts neben der Taste). Die nächste Überschrift
+   schiebt die vorige weg; so ist immer zu sehen, in welchem Abschnitt man ist. */
+h2{position:sticky;top:env(safe-area-inset-top);z-index:20;display:flex;align-items:center;min-height:64px;margin:0;
+ padding:0 0 0 46px;background:var(--bg);font-size:13px;font-weight:600;color:var(--mute);text-transform:uppercase;letter-spacing:.06em}
+/* Streifen unter Notch/Statusleiste deckt durchscrollenden Inhalt ab */
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top);background:var(--bg);z-index:25}
 .row{display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:44px;border-top:1px solid var(--line);padding:6px 0}
 .row:first-of-type{border-top:0}
 .row span:first-child{color:var(--mute)}
@@ -76,7 +88,7 @@ pre{font:12px/1.45 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere;max-h
 .dialtag{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);background:rgba(0,0,0,.65);color:#b6ffc4;
  font-size:13px;padding:4px 10px;border-radius:999px;pointer-events:none;transition:opacity .4s;opacity:0;white-space:nowrap}
 .dialtag.show{opacity:1}
-.scopehint{text-align:center;color:var(--mute);font-size:13px;margin:0 0 6px}
+.scopehint{color:var(--mute);font-size:13px;margin:0 0 6px}
 html{scroll-behavior:smooth;scroll-padding-top:64px}
 #menuBtn{position:fixed;top:calc(env(safe-area-inset-top) + 10px);left:calc(env(safe-area-inset-left) + 10px);z-index:30;
  width:44px;height:44px;min-height:44px;padding:0;margin:0;border-radius:12px;background:var(--card);color:var(--fg);
@@ -90,7 +102,7 @@ html{scroll-behavior:smooth;scroll-padding-top:64px}
 #nav a:active,#nav a:hover{background:var(--bg)}
 #shade{position:fixed;inset:0;z-index:35;background:rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .25s}
 #shade.open{opacity:1;pointer-events:auto}
-header{padding-left:56px}
+
 </style></head>
 <body>
 <button id="menuBtn" aria-label="Menü" aria-controls="nav" aria-expanded="false">☰</button>

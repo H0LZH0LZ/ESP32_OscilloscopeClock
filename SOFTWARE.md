@@ -80,7 +80,9 @@ Passwort. Das gilt immer, wenn die Uhr mit einem WLAN verbunden ist, nicht nur i
 die Strahlausgabe auf Core 1 nicht.
 
 **Seite (`webpage.h`):** eine Seite mit **einklappbarem Seitenmenü** (☰ oben links, bleibt beim
-Scrollen sichtbar): Uhr, Status, WLAN, Log. Tippen auf einen Eintrag springt weich dorthin und
+Scrollen sichtbar): Uhr, Status, WLAN, Log. Der oberste Abschnitt (Überschrift, Vorschau, Uhrzeit,
+Datum) ist zentriert. Die Abschnittsüberschriften bleiben beim Scrollen oben neben der Menütaste
+stehen (`position: sticky`), die nächste schiebt die vorige weg. Tippen auf einen Eintrag springt weich dorthin und
 schließt das Menü wieder, ebenso Tippen daneben oder Esc. Ganz oben steht eine **Live-Vorschau des Oszilloskop-Bildes**
 (Canvas im Look eines grünen Leuchtschirms mit 8×8-Raster). Die Seite lädt dafür einmal die
 Vektordaten von `/api/vectors`, also dieselben Tabellen, die der `scopeTask` zeichnet, und stellt
