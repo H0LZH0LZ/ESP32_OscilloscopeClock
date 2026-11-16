@@ -126,27 +126,16 @@
 #define UI_CORE    0
 
 // ---------------------------------------------------------------------------
-// OLED: Waveshare 2.42" (SSD1309, 128x64)
+// OLED: Waveshare 2.42" (SSD1309, 128x64) über 4-Wire-SPI
 // ---------------------------------------------------------------------------
-// 1 = 4-Wire-SPI (Standard, Auslieferungszustand des Moduls – nichts umlöten)
-// 0 = I2C (erfordert Umlöten der 0-Ω-Brücken auf dem Modul, siehe HARDWARE.md)
-#define OLED_BUS_SPI 1
-
-// SPI: Hardware-SPI (VSPI) des ESP32, CLK und DIN liegen fest auf GPIO18/23
+// Auslieferungszustand des Moduls – nichts umlöten.
+// Hardware-SPI (VSPI) des ESP32: CLK und DIN liegen fest auf GPIO18/23.
 #define OLED_CLK_PIN 18      // Display CLK  (nur zur Dokumentation – VSPI SCK)
 #define OLED_DIN_PIN 23      // Display DIN  (nur zur Dokumentation – VSPI MOSI)
 #define OLED_CS_PIN   5      // Display CS
 #define OLED_DC_PIN  17      // Display DC
+#define OLED_RST_PIN  4      // Display RST; auf U8X8_PIN_NONE setzen, falls fest auf 3V3
 #define OLED_SPI_HZ  8000000 // 8 MHz (SSD1309: max. 10 MHz)
-
-// I2C (nur bei OLED_BUS_SPI 0)
-#define OLED_SDA_PIN 21
-#define OLED_SCL_PIN 22
-#define OLED_I2C_HZ  400000  // 400 kHz Fast-Mode
-#define OLED_I2C_ADDR 0x3C   // DC-Pin auf GND = 0x3C, DC auf 3V3 = 0x3D
-
-// beide Varianten
-#define OLED_RST_PIN  4      // RST des Moduls; auf U8X8_PIN_NONE setzen, falls fest auf 3V3
 
 #define OLED_REFRESH_MS   200        // Displayaktualisierung in ms (Sekunden laufen flüssig)
 #define OLED_SHIFT_EVERY_S 60        // Pixel-Shift gegen Einbrennen: alle n Sekunden (0 = aus)

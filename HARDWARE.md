@@ -81,16 +81,6 @@ Das Modul wird im **Auslieferungszustand (4-Wire-SPI)** betrieben, es muss nicht
 Der 7-polige Stecker wird wie oben verdrahtet (VCC an 3V3, nicht an 5V0). Ist das Bild um 2 Pixel
 horizontal verschoben, in der `.ino` `NONAME0` durch `NONAME2` ersetzen.
 
-**Alternative I2C** (nur nötig, wenn Pins knapp werden; `OLED_BUS_SPI 0` in `config.h`):
-1. Auf der Rückseite die 0-Ω-Brücken entsprechend dem Platinenaufdruck von **SPI** auf **I2C**
-   umlöten. Die genaue Brückenbelegung steht im Waveshare-Wiki („2.42inch OLED Module“); bitte
-   die Platinenrevision dort vergleichen.
-2. Im I2C-Modus: DIN = SDA (GPIO21), CLK = SCL (GPIO22), **CS auf GND**, **DC wählt die Adresse** (GND = 0x3C).
-3. RST an GPIO4. Alternativ RES fest an 3V3 legen und in `config.h` `OLED_RST_PIN` auf
-   `U8X8_PIN_NONE` setzen. Mit GPIO-Reset startet das Display aber zuverlässiger.
-4. Bleibt das Display dunkel: prüfen, ob das Modul I2C-Pull-ups hat. Falls nicht,
-   **4,7 kΩ von SDA und SCL nach 3V3** nachrüsten.
-
 ### Antenne
 - Den ESP32-**WROOM-32U** nie ohne angeschlossene Antenne im WLAN-Betrieb laufen lassen.
 - Die SMA-Buchse des Pigtails in die Gehäusewand schrauben. Die Antenne zeigt nach oben und sitzt

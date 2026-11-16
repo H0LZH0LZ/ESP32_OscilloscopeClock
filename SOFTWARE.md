@@ -339,4 +339,4 @@ bei Bedarf `BEAM_NS_PER_UNIT` erhöhen (hellere Spur, weniger Bilder/s).
 | Zeiger heller/dunkler als das Zifferblatt | `HAND_BRIGHT_PCT` anpassen |
 | Zeit falsch um ganze Stunden | `TZ_INFO` prüfen |
 | OLED-Bild 2 px versetzt | in der `.ino` `NONAME0` → `NONAME2` |
-| OLED bleibt dunkel | Verdrahtung CS/DC/RST prüfen (GPIO5/17/4), VCC an 3V3; bei I2C-Variante Adresse, Pull-ups, Brücken (siehe HARDWARE.md) |
+| OLED bleibt dunkel | Verdrahtung prüfen: CLK GPIO18, DIN GPIO23, CS GPIO5, DC GPIO17, RST GPIO4, VCC an 3V3 (siehe HARDWARE.md) |
