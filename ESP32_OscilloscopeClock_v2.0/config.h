@@ -161,8 +161,9 @@
 // Zifferblatt-Variante auf dem Oszilloskop (Startwert – im Betrieb im
 // Webinterface umschaltbar: auf die Vorschau oben tippen; wird gespeichert):
 //   0 = Ziffern 1–12
-//   1 = Ziffern 13–24 (an den Positionen 1–12; die Zeiger laufen weiter im 12h-Takt)
+//   1 = nur die vier Hauptziffern 12, 3, 6, 9
 //   2 = römische Ziffern I–XII
+//   3 = nur die vier römischen Hauptziffern XII, III, VI, IX
 #define DIAL_STYLE 0
 
 // EXCEL-Modus aus dem Original (Diagnose ohne Oszilloskop): zeichnet genau ein

@@ -161,6 +161,6 @@ Ein Bild dauert ca. 4,3 ms, mit römischen Ziffern ca. 6,2 ms.
 | `ZBLANK_PIN` | optionaler Ausgang zur Dunkeltastung (Z-Eingang), -1 = aus |
 | `HAND_BRIGHT_PCT` | Helligkeit von Stunden- und Minutenzeiger im Verhältnis zum Rest (Standard 67 %, wirkt dann gleich hell) |
 | `USE_FAST_DAC` | `1` = direkte Registerzugriffe (Standard). `0` = `dacWrite()`, nur als Notlösung |
-| `DIAL_STYLE` | Start-Zifferblatt: 0 = 1–12, 1 = 13–24, 2 = römisch. Im Webinterface durch Tippen auf die Vorschau umschaltbar, die Auswahl wird gespeichert |
+| `DIAL_STYLE` | Start-Zifferblatt: 0 = 1–12, 1 = 12/3/6/9, 2 = römisch I–XII, 3 = römisch XII/III/VI/IX. Im Webinterface durch Tippen auf die Vorschau umschaltbar, die Auswahl wird gespeichert |
 | `TZ_INFO` | Zeitzone inkl. Sommerzeitregel (Standard: Mitteleuropa) |
 | `OLED_SHIFT_EVERY_S` | Pixel-Shift gegen OLED-Einbrennen |

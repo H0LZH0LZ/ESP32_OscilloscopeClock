@@ -53,7 +53,8 @@
   Webinterface: http://scope-clock.local (oder IP-Adresse der Uhr) – Live-
   Vorschau, Status, Log, WLAN-Einrichtung, Seitenmenü; für Handys optimiert,
   ohne Passwort. Tippen auf die Vorschau schaltet das Zifferblatt um
-  (1–12 / 13–24 / römisch) – auch am Oszilloskop, wird gespeichert. Ohne bekanntes
+  (1–12 / 12-3-6-9 / römisch / XII-III-VI-IX) – auch am Oszilloskop,
+  wird gespeichert. Ohne bekanntes
   WLAN öffnet die Uhr das offene Setup-WLAN "ScopeClock-Setup"
   (Einrichtung unter http://192.168.4.1).
 
@@ -175,7 +176,8 @@ static inline uint32_t packTime(int h, int m, int s) {
 // Schreiber: uiTask (Core 0), Leser: beamJump (Core 1). 1 Byte = atomar.
 static volatile uint8_t g_scopeProfile = SCOPE_PROFILE;
 
-// Zifferblatt: 0 = Ziffern 1–12, 1 = 13–24, 2 = römisch. Startwert aus dem
+// Zifferblatt: 0 = Ziffern 1–12, 1 = nur 12/3/6/9, 2 = römisch I–XII,
+// 3 = nur XII/III/VI/IX. Startwert aus dem
 // Flash (NVS), im Betrieb über das Webinterface umschaltbar (Tippen auf die
 // Vorschau). Schreiber: uiTask, Leser: scopeTask (baut dann die Rundtour neu).
 static volatile uint8_t g_dialStyle = DIAL_STYLE;
@@ -569,20 +571,29 @@ static void IRAM_ATTR PlotTable(const byte *table, int size, byte sep, int offse
 //*****************************************************************************
 // Zifferblätter
 //*****************************************************************************
-// Liefert die Ziffern-Tabelle zum Zifferblatt-Stil (0 = 1–12, 1 = 13–24,
-// 2 = römisch) und ihre Größe in Bytes.
+// Liefert die Ziffern-Tabelle zum Zifferblatt-Stil und ihre Größe in Bytes:
+//   0 = Ziffern 1–12          1 = nur 12, 3, 6, 9
+//   2 = römisch I–XII         3 = nur XII, III, VI, IX
+static const int DIAL_STYLES = 4;                         // Anzahl der Zifferblätter
+
 static const uint8_t *dialDigits(int style, int &size)
 {
   switch (style) {
-    case 1:  size = sizeof(DialDigits24);    return DialDigits24;
-    case 2:  size = sizeof(DialDigitsRoman); return DialDigitsRoman;
+    case 1:  size = sizeof(DialDigitsMin);    return DialDigitsMin;
+    case 2:  size = sizeof(DialDigitsRoman);  return DialDigitsRoman;
+    case 3:  size = sizeof(DialDigitsRoman4); return DialDigitsRoman4;
     default: size = sizeof(DialDigits12);    return DialDigits12;
   }
 }
 
 static const char *dialName(int style)
 {
-  return style == 1 ? "13-24" : style == 2 ? "roemisch" : "1-12";
+  switch (style) {
+    case 1:  return "12/3/6/9";
+    case 2:  return "roemisch I-XII";
+    case 3:  return "roemisch XII/III/VI/IX";
+    default: return "1-12";
+  }
 }
 
 //*****************************************************************************
@@ -1078,7 +1089,7 @@ static void appendHand(String &o, const uint8_t *t, int size, int stride)
 
 // GET /api/vectors – Vektordaten für die Oszilloskop-Vorschau der Webseite:
 // dieselben Tabellen, die auch der scopeTask zeichnet (Zifferblatt, alle drei
-// Ziffernsätze, alle 60 Stellungen der drei Zeiger). Die Seite lädt sie
+// Ziffernsätze (Index = Stil 0–3), alle 60 Stellungen der drei Zeiger). Die Seite lädt sie
 // einmal und stellt die Zeiger dann selbst nach der Uhrzeit (wie scopeTask).
 // Koordinaten 0…255, y nach oben. Ca. 9 KB.
 static void handleVectors()
@@ -1086,8 +1097,8 @@ static void handleVectors()
   String o;
   o.reserve(9000);
   o += "{\"dial\":";   appendStrokes(o, DialData, sizeof(DialData), 0x00, 0, false);
-  o += ",\"digits\":[";                                 // alle drei Zifferblätter (Index = Stil)
-  for (int st = 0; st < 3; st++) {
+  o += ",\"digits\":[";                                 // alle Zifferblätter (Index = Stil)
+  for (int st = 0; st < DIAL_STYLES; st++) {
     int size;
     const uint8_t *d = dialDigits(st, size);
     if (st) o += ',';
@@ -1199,12 +1210,12 @@ static void handleWifiDelete()
   s_restartAtMs = millis() + 1500;
 }
 
-// POST /api/dial (style = 0, 1 oder 2) – Zifferblatt umschalten: gilt sofort
+// POST /api/dial (style = 0 … DIAL_STYLES-1, siehe dialDigits) – Zifferblatt umschalten: gilt sofort
 // für das Oszilloskop (scopeTask baut die Rundtour neu) und wird gespeichert.
 static void handleDial()
 {
   const int st = web.arg("style").toInt();
-  if (!web.hasArg("style") || st < 0 || st > 2) { sendJsonResult(false, "style muss 0, 1 oder 2 sein"); return; }
+  if (!web.hasArg("style") || st < 0 || st >= DIAL_STYLES) { sendJsonResult(false, "style muss 0 bis 3 sein"); return; }
   if (st != g_dialStyle) {
     g_dialStyle = (uint8_t)st;
     saveSetting("dial", (uint8_t)st);
@@ -1654,7 +1665,7 @@ void setup()
 
   // Gespeichertes Oszilloskop-Profil und Zifferblatt laden (vor dem Start des scopeTask)
   g_scopeProfile = loadSetting("profile", SCOPE_PROFILE, 1);
-  g_dialStyle    = loadSetting("dial", DIAL_STYLE, 2);
+  g_dialStyle    = loadSetting("dial", DIAL_STYLE, DIAL_STYLES - 1);
   logMsg("[Scope] Profil: %s – BOOT-Taster %u s halten zum Umschalten",
                 profileName(g_scopeProfile), (unsigned)(BUTTON_LONG_MS / 1000));
 

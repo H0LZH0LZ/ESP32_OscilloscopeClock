@@ -13,12 +13,13 @@
     POST /api/wifi          WLAN speichern        (ssid, pw)
     POST /api/wifi/delete   WLAN löschen          (ssid) – Uhr startet neu
     POST /api/reconnect     WLAN neu verbinden
-    POST /api/dial          Zifferblatt umschalten (style 0/1/2) – auch am Oszilloskop
+    POST /api/dial          Zifferblatt umschalten (style 0–3) – auch am Oszilloskop
 
   Für die Mobilbedienung optimiert:
    - eine Spalte, max. 640 px breit, Abstände für Daumenbedienung
    - einklappbares Seitenmenü (☰ oben links) zum Springen in die Abschnitte
-   - Tippen auf die Vorschau schaltet das Zifferblatt um (Webseite + Oszilloskop)
+   - Tippen auf die Vorschau schaltet das Zifferblatt um (Webseite + Oszilloskop):
+     1–12 → 12·3·6·9 → römisch I–XII → römisch XII·III·VI·IX
    - Schaltflächen und Listeneinträge mindestens 44 px hoch
    - Eingabefelder mit 16 px Schrift (iOS zoomt sonst beim Antippen)
    - helles/dunkles Design nach Systemeinstellung, Rand für Notch/Home-Balken
@@ -150,7 +151,7 @@ function dur(s){const d=Math.floor(s/86400),h=Math.floor(s/3600)%24,m=Math.floor
 // scopeTask berechnet: Stunde = (h%12)*5 + m/12, Minute = m, Sekunde = s.
 // Zwischen den Status-Abfragen läuft die Zeit lokal weiter (jede Sekunde).
 let V=null,tBase=null,tAt=0,dial=0;
-const DIALS=['Ziffern 1–12','Ziffern 13–24','Römische Ziffern'];
+const DIALS=['Ziffern 1–12','12 · 3 · 6 · 9','Römisch I–XII','Römisch XII · III · VI · IX'];
 function drawScope(){
  const c=$('scope'),g=c.getContext('2d'),W=c.width,k=W/256;
  g.fillStyle='#050805';g.fillRect(0,0,W,W);
@@ -173,7 +174,7 @@ function drawScope(){
 let tagTimer=0,dialBusy=false;
 function showTag(t){const e=$('dialTag');e.textContent=t;e.classList.add('show');clearTimeout(tagTimer);tagTimer=setTimeout(()=>e.classList.remove('show'),1600)}
 async function nextDial(){
- if(dialBusy)return;dialBusy=true;const prev=dial;dial=(dial+1)%3;drawScope();showTag(DIALS[dial]);
+ if(dialBusy)return;dialBusy=true;const prev=dial;dial=(dial+1)%DIALS.length;drawScope();showTag(DIALS[dial]);
  try{const r=await post('/api/dial',{style:dial});if(!r.ok)throw 0}catch(e){dial=prev;drawScope();showTag('Umschalten fehlgeschlagen')}
  dialBusy=false}
 $('scope').addEventListener('click',nextDial);
