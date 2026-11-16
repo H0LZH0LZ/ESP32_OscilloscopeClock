@@ -186,6 +186,7 @@ eingesetzt (`textContent`), nie als HTML.
 | `GET /api/scan` | Netzsuche im Hintergrund: erst `{"running":true}`, dann `{"networks":[{ssid,rssi,open}]}` |
 | `POST /api/wifi` | `ssid`, `pw` speichern bzw. Passwort ändern (SSID 1–32, Passwort leer oder 8–63 Zeichen) |
 | `POST /api/wifi/delete` | `ssid` löschen, danach Neustart (WiFiMulti kann Netze nicht vergessen) |
+| `POST /api/wifi/reset` | alle gespeicherten Netze löschen, danach Neustart (Setup-WLAN öffnet sich) |
 | `POST /api/reconnect` | Verbindung trennen, `wifiTask` verbindet mit dem stärksten Netz |
 | `GET /api/settings` | aktuelle Einstellungen, Standardwerte (`defaults`) und Zeitzonen-Liste |
 | `POST /api/settings` | beliebige Felder `profile`, `dial`, `beamNs`, `handPct`, `tickPct`, `digitPct`, `jumpSpeed`, `tz`, `ntp`, `oledPct`, `oledSec`, `oledNight`, `nightFrom`/`nightTo` (`HH:MM`), `nightPct`, `oledShift`, `oledFlip`, `lang` (`de`/`en`), `h12` (0/1): prüfen, sofort anwenden, speichern. Antwort `{ok, msg, settings}` |
@@ -193,7 +194,7 @@ eingesetzt (`textContent`), nie als HTML.
 | `POST /api/dial` | `style` 0 = 1–12, 1 = 12/3/6/9, 2 = römisch I–XII, 3 = römisch XII/III/VI/IX: Zifferblatt umschalten (Oszilloskop und Vorschau), wird gespeichert |
 | `POST /api/time` | `epoch` (Unix-Sekunden, UTC) **oder** `local` (`JJJJ-MM-TTTHH:MM[:SS]`, Ortszeit), optional `dst` (-1 automatisch, 1 Sommerzeit, 0 Winterzeit): Uhrzeit von Hand stellen, 2024–2099 |
 
-**Gespeicherte WLANs:** bis zu `WEB_MAX_NETWORKS` (5) Netze im NVS (Namensraum `scopeclock`,
+**Gespeicherte WLANs:** bis zu `WEB_MAX_NETWORKS` (10) Netze im NVS (Namensraum `scopeclock`,
 Schlüssel `netn`, `net_s0…`, `net_p0…`). Sie bleiben bei einem
 Firmware-Update erhalten.
 

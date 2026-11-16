@@ -192,6 +192,7 @@ inserted as text (`textContent`), never as HTML.
 | `GET /api/scan` | network scan in the background: first `{"running":true}`, then `{"networks":[{ssid,rssi,open}]}` |
 | `POST /api/wifi` | save `ssid`, `pw` or change the password (SSID 1–32, password empty or 8–63 characters) |
 | `POST /api/wifi/delete` | delete `ssid`, then restart (WiFiMulti cannot forget networks) |
+| `POST /api/wifi/reset` | delete all saved networks, then restart (the setup network opens) |
 | `POST /api/reconnect` | disconnect, `wifiTask` connects to the strongest network |
 | `GET /api/settings` | current settings, default values (`defaults`) and time zone list |
 | `POST /api/settings` | any of the fields `profile`, `dial`, `beamNs`, `handPct`, `tickPct`, `digitPct`, `jumpSpeed`, `tz`, `ntp`, `oledPct`, `oledSec`, `oledNight`, `nightFrom`/`nightTo` (`HH:MM`), `nightPct`, `oledShift`, `oledFlip`, `lang` (`de`/`en`), `h12` (0/1): validate, apply immediately, save. Answer `{ok, msg, settings}` |
@@ -201,7 +202,7 @@ inserted as text (`textContent`), never as HTML.
 
 Messages returned by the interfaces (`msg`) are in the selected language.
 
-**Saved networks:** up to `WEB_MAX_NETWORKS` (5) networks in NVS (namespace `scopeclock`, keys
+**Saved networks:** up to `WEB_MAX_NETWORKS` (10) networks in NVS (namespace `scopeclock`, keys
 `netn`, `net_s0…`, `net_p0…`). They survive a firmware update.
 
 **Setup network (captive portal):** if no network is configured or no connection has been possible

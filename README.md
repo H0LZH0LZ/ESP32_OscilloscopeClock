@@ -56,7 +56,7 @@ Hardware angepasst: **ESP32-WROOM-32U DevKitC V4**, **Waveshare 2.42" OLED (SPI)
 3. `ESP32_OscilloscopeClock_v2.0.ino` öffnen und hochladen. Seriellen Monitor auf 115200 Baud stellen.
 4. WLAN eintragen: Mit dem Handy das WLAN **„ScopeClock-Setup“** wählen. Die Einrichtungsseite
    öffnet sich automatisch, sonst `http://192.168.4.1` aufrufen. Dort im Abschnitt WLAN das Netz
-   eintragen (bis zu 5 Netze). Zugangsdaten stehen nie im Quelltext.
+   eintragen (bis zu 10 Netze). Zugangsdaten stehen nie im Quelltext.
    Die Uhr verbindet sich automatisch mit dem stärksten bekannten Netz in Reichweite.
 5. Oszilloskop in den X/Y-Modus schalten, 0,5 V/Div, DC-Kopplung. Bei digitalen Oszilloskopen die Zeitbasis
    auf ca. 1 ms/Div und den Trigger auf Auto stellen (Details in HARDWARE.md).

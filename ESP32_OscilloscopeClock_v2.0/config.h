@@ -177,7 +177,7 @@
 //                         8 KB ≈ 120 Zeilen, belegt 2 × diesen Wert im RAM)
 #define WEB_SETUP_AP_SSID    "ScopeClock-Setup"
 #define WEB_SETUP_AP_AFTER_S 60
-#define WEB_MAX_NETWORKS     5
+#define WEB_MAX_NETWORKS     10
 #define LOG_BUFFER_SIZE      8192
 
 // ---------------------------------------------------------------------------

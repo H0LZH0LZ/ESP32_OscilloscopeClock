@@ -1288,6 +1288,18 @@ static void handleWifiDelete()
   s_restartAtMs = millis() + 1500;
 }
 
+// POST /api/wifi/reset – alle gespeicherten WLANs löschen, danach Neustart.
+// Ohne bekanntes Netz öffnet die Uhr anschließend das Setup-WLAN.
+static void handleWifiReset()
+{
+  s_webNetCount = 0;
+  webNetsSave();
+  logMsg(tr("[Web] alle WLANs geloescht – Neustart", "[Web] all networks deleted – restarting"));
+  sendJsonResult(true, tr("Alle Netze gelöscht. Die Uhr startet neu und öffnet das Setup-WLAN „ScopeClock-Setup“.",
+                          "All networks deleted. The clock restarts and opens the setup network “ScopeClock-Setup”."));
+  s_restartAtMs = millis() + 1500;
+}
+
 // ---- Sommer-/Winterzeit von Hand (nur für die manuell gestellte Uhrzeit) ----
 // Liest aus einer POSIX-Zeitzone wie "CET-1CEST,M3.5.0,M10.5.0/3" Name und
 // Versatz (in Sekunden, POSIX-Vorzeichen: "-1" = UTC+1) ab Position p.
@@ -1790,6 +1802,7 @@ static void webStart()
   web.on("/api/scan",        HTTP_GET,  handleScan);
   web.on("/api/wifi",        HTTP_POST, handleWifiSave);
   web.on("/api/wifi/delete", HTTP_POST, handleWifiDelete);
+  web.on("/api/wifi/reset",  HTTP_POST, handleWifiReset);
   web.on("/api/reconnect",   HTTP_POST, handleReconnect);
   web.on("/api/dial",        HTTP_POST, handleDial);
   web.on("/api/time",        HTTP_POST, handleTimeSet);
