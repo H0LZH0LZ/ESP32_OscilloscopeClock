@@ -14,11 +14,15 @@
     POST /api/wifi/delete   WLAN löschen          (ssid) – Uhr startet neu
     POST /api/reconnect     WLAN neu verbinden
     POST /api/dial          Zifferblatt umschalten (style 0–3) – auch am Oszilloskop
+    GET  /api/settings      Einstellungen, Standardwerte, Zeitzonen
+    POST /api/settings      Einstellungen ändern (beliebige Felder, sofort wirksam)
+    POST /api/settings/reset  alle Einstellungen auf die Werte aus config.h
 
   Für die Mobilbedienung optimiert:
    - eine Spalte, max. 640 px breit, Abstände für Daumenbedienung
    - einklappbares Seitenmenü (☰ oben links) zum Springen in die Abschnitte
    - Uhr-Abschnitt zentriert; Abschnittsüberschriften bleiben beim Scrollen stehen
+   - Einstellungen (Profil, Zifferblatt, Strahl, Zeitzone, NTP, OLED) wirken sofort
    - Tippen auf die Vorschau schaltet das Zifferblatt um (Webseite + Oszilloskop):
      1–12 → 12·3·6·9 → römisch I–XII → römisch XII·III·VI·IX
    - Schaltflächen und Listeneinträge mindestens 44 px hoch
@@ -82,6 +86,22 @@ li.tap{cursor:pointer}
 pre{font:12px/1.45 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere;max-height:50vh;overflow:auto;margin:8px 0 12px;
  background:var(--bg);border-radius:10px;padding:10px;-webkit-overflow-scrolling:touch}
 .tools{display:flex;gap:8px}.tools button{margin:0 0 12px}
+/* Einstellungen */
+.set{border-top:1px solid var(--line);padding:10px 0}
+.set:first-of-type{border-top:0}
+.set .head{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.set .head label{margin:0;color:var(--fg);font-size:16px}
+.set .val{color:var(--mute);font-variant-numeric:tabular-nums;white-space:nowrap}
+.set .sub{color:var(--mute);font-size:13px;margin-top:2px}
+.set input[type=range]{width:100%;min-height:44px;padding:0;border:0;background:transparent;accent-color:var(--acc)}
+.set select{font:inherit;font-size:16px;width:100%;min-height:44px;padding:0 10px;margin-top:6px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--fg)}
+.seg{display:flex;gap:6px;margin-top:6px}
+.seg button{margin:0;background:transparent;color:var(--fg);border:1px solid var(--line);font-weight:500}
+.seg button[aria-pressed="true"]{background:var(--acc);color:#fff;border-color:var(--acc);font-weight:600}
+.sw{display:flex;justify-content:space-between;align-items:center;min-height:44px;gap:12px}
+.sw input{width:52px;height:30px;min-height:0;accent-color:var(--acc)}
+.set.off{opacity:.55}
+#setMsg{min-height:20px;font-size:14px;margin:6px 0}
 .scope{background:#050805;border-radius:14px;margin:12px 0 4px;padding:10px;display:flex;justify-content:center}
 .scope{position:relative}
 .scope canvas{width:100%;max-width:340px;aspect-ratio:1;display:block;cursor:pointer;-webkit-tap-highlight-color:transparent}
@@ -89,7 +109,11 @@ pre{font:12px/1.45 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere;max-h
  font-size:13px;padding:4px 10px;border-radius:999px;pointer-events:none;transition:opacity .4s;opacity:0;white-space:nowrap}
 .dialtag.show{opacity:1}
 .scopehint{color:var(--mute);font-size:13px;margin:0 0 6px}
-html{scroll-behavior:smooth;scroll-padding-top:64px}
+html{scroll-behavior:smooth}
+/* Jede Überschrift ist nur innerhalb ihres Abschnitts (.grp) angeheftet:
+   endet der Abschnitt, schiebt die nächste Überschrift die vorige hinaus. */
+.grp{position:relative}
+.grp:last-child{min-height:100vh}   /* auch der letzte Abschnitt (Log) lässt sich ganz nach oben scrollen */
 #menuBtn{position:fixed;top:calc(env(safe-area-inset-top) + 10px);left:calc(env(safe-area-inset-left) + 10px);z-index:30;
  width:44px;height:44px;min-height:44px;padding:0;margin:0;border-radius:12px;background:var(--card);color:var(--fg);
  border:1px solid var(--line);font-size:22px;line-height:1;box-shadow:0 2px 8px rgba(0,0,0,.15)}
@@ -110,6 +134,7 @@ html{scroll-behavior:smooth;scroll-padding-top:64px}
  <h3>Scope Clock</h3>
  <a href="#uhr">Uhr</a>
  <a href="#status-h">Status</a>
+ <a href="#set-h">Einstellungen</a>
  <a href="#wlan-h">WLAN</a>
  <a href="#log-h">Log</a>
 </nav>
@@ -121,10 +146,40 @@ html{scroll-behavior:smooth;scroll-padding-top:64px}
 <p class="scopehint">Tippen, um das Zifferblatt umzuschalten</p>
 <div id="clock">--:--:--</div><div id="date">&nbsp;</div></header>
 
-<h2 id="status-h">Status</h2>
-<section id="status"></section>
+<div class="grp"><h2 id="status-h">Status</h2>
+<section id="status"></section></div>
 
-<h2 id="wlan-h">WLAN</h2>
+<div class="grp"><h2 id="set-h">Einstellungen</h2>
+<section id="settings">
+ <div class="set"><div class="head"><label>Oszilloskop-Profil</label></div>
+  <div class="seg" role="group" aria-label="Oszilloskop-Profil">
+   <button type="button" data-profile="1" aria-pressed="false">DIGITAL</button>
+   <button type="button" data-profile="0" aria-pressed="false">ANALOG</button></div>
+  <div class="sub">DIGITAL für digitale Oszilloskope, ANALOG für Röhren-Oszilloskope (auch per BOOT-Taster).</div></div>
+ <div class="set"><div class="head"><label for="sDial">Zifferblatt</label></div>
+  <select id="sDial"><option value="0">Ziffern 1–12</option><option value="1">12 · 3 · 6 · 9</option>
+   <option value="2">Römisch I–XII</option><option value="3">Römisch XII · III · VI · IX</option></select></div>
+ <div class="set"><div class="head"><label for="sBeam">Strahlgeschwindigkeit</label><span class="val" id="vBeam"></span></div>
+  <input type="range" id="sBeam" min="1000" max="10000" step="250">
+  <div class="sub">Länger = hellere Linien, weniger Bilder pro Sekunde. Bildrate jetzt: <span id="vFps">–</span></div></div>
+ <div class="set"><div class="head"><label for="sHand">Helligkeit Stunden-/Minutenzeiger</label><span class="val" id="vHand"></span></div>
+  <input type="range" id="sHand" min="30" max="100" step="1"></div>
+ <div class="set" id="jumpRow"><div class="head"><label for="sJump">Rücklauf-Tempo</label><span class="val" id="vJump"></span></div>
+  <input type="range" id="sJump" min="0" max="48" step="1">
+  <div class="sub" id="jumpHint">Schneller = schwächere Rücklaufspur. 0 = harter Sprung.</div></div>
+ <div class="set"><div class="head"><label for="sTz">Zeitzone</label></div><select id="sTz"></select></div>
+ <div class="set"><div class="head"><label for="sNtp">NTP-Server</label></div>
+  <div class="pw"><input id="sNtp" maxlength="63" autocapitalize="none" autocorrect="off" spellcheck="false">
+  <button type="button" class="sec" id="sNtpSave">Übernehmen</button></div></div>
+ <div class="set"><div class="head"><label for="sOled">OLED-Helligkeit</label><span class="val" id="vOled"></span></div>
+  <input type="range" id="sOled" min="1" max="255" step="1"></div>
+ <div class="set"><label class="sw"><span>OLED-Pixel-Shift gegen Einbrennen</span><input type="checkbox" id="sShift"></label></div>
+ <div id="setMsg"></div>
+ <button type="button" class="sec" id="sReset">Auf Standard zurücksetzen</button>
+ <p class="hint">Änderungen wirken sofort und bleiben gespeichert. Standardwerte stammen aus config.h.</p>
+</section></div>
+
+<div class="grp"><h2 id="wlan-h">WLAN</h2>
 <section>
  <label>Gespeicherte Netze</label>
  <ul id="saved"><li><span class="hint">wird geladen …</span></li></ul>
@@ -141,13 +196,13 @@ html{scroll-behavior:smooth;scroll-padding-top:64px}
  </form>
  <button class="sec" id="recon">Neu verbinden (stärkstes Netz)</button>
  <p class="hint">Gespeicherte Passwörter werden nie angezeigt. Netze aus secrets.h lassen sich hier nicht löschen.</p>
-</section>
+</section></div>
 
-<h2 id="log-h">Log</h2>
+<div class="grp"><h2 id="log-h">Log</h2>
 <section>
  <pre id="log">wird geladen …</pre>
  <div class="tools"><button class="sec" id="logBtn">Aktualisieren</button><button class="sec" id="logAuto">Auto: an</button></div>
-</section>
+</section></div>
 </main>
 <script>
 const $=id=>document.getElementById(id);
@@ -187,7 +242,7 @@ let tagTimer=0,dialBusy=false;
 function showTag(t){const e=$('dialTag');e.textContent=t;e.classList.add('show');clearTimeout(tagTimer);tagTimer=setTimeout(()=>e.classList.remove('show'),1600)}
 async function nextDial(){
  if(dialBusy)return;dialBusy=true;const prev=dial;dial=(dial+1)%DIALS.length;drawScope();showTag(DIALS[dial]);
- try{const r=await post('/api/dial',{style:dial});if(!r.ok)throw 0}catch(e){dial=prev;drawScope();showTag('Umschalten fehlgeschlagen')}
+ try{const r=await post('/api/dial',{style:dial});if(!r.ok)throw 0;if(S){S.dial=dial;renderSettings()}}catch(e){dial=prev;drawScope();showTag('Umschalten fehlgeschlagen')}
  dialBusy=false}
 $('scope').addEventListener('click',nextDial);
 $('scope').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();nextDial()}});
@@ -204,11 +259,59 @@ let lastSec=-1;
 setInterval(()=>{if(tBase===null)return;const n=Math.floor((performance.now()-tAt)/1000);
  if(n!==lastSec){lastSec=n;const x=(tBase+n)%86400;$('clock').textContent=[x/3600|0,(x/60|0)%60,x%60].map(v=>String(v).padStart(2,'0')).join(':');drawScope()}},200);
 
+// ---- Einstellungen ---------------------------------------------------------
+// Laden von /api/settings, jede Änderung sofort per POST übernehmen (Schieberegler
+// beim Loslassen, damit nicht bei jeder Bewegung in den Flash geschrieben wird).
+let S=null,setBusy=false;
+const fmtBeam=v=>(v/1000).toFixed(2).replace('.',',')+' µs pro Schritt';
+const fmtJump=v=>+v===0?'hart (wie Original)':v+'× schneller';
+const fmtOled=v=>Math.round(v/255*100)+' %';
+function renderSettings(){
+ if(!S)return;
+ document.querySelectorAll('[data-profile]').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.profile===S.profile)));
+ $('sDial').value=S.dial;
+ $('sBeam').value=S.beamNs;$('vBeam').textContent=fmtBeam(S.beamNs);
+ $('sHand').value=S.handPct;$('vHand').textContent=S.handPct+' %';
+ $('sJump').value=S.jumpSpeed;$('vJump').textContent=fmtJump(S.jumpSpeed);
+ const ana=S.profile===0;$('jumpRow').classList.toggle('off',!ana);$('sJump').disabled=!ana;
+ $('jumpHint').textContent=ana?'Schneller = schwächere Rücklaufspur. 0 = harter Sprung.':'Nur im Profil ANALOG wirksam – DIGITAL springt immer hart.';
+ const tz=$('sTz');if(!tz.options.length){for(const z of S.timezones){const o=document.createElement('option');o.value=z.tz;o.textContent=z.label;tz.append(o)}}
+ tz.value=S.tz;
+ if(document.activeElement!==$('sNtp'))$('sNtp').value=S.ntp;
+ $('sOled').value=S.oledContrast;$('vOled').textContent=fmtOled(S.oledContrast);
+ $('sShift').checked=S.oledShift;
+}
+function setMsg(r){const m=$('setMsg');m.textContent=r.msg||'';m.className=r.ok?'ok':'err';clearTimeout(setMsg.t);if(r.ok)setMsg.t=setTimeout(()=>m.textContent='',2500)}
+async function loadSettings(){try{S=(await (await get('/api/settings')).json()).settings;renderSettings()}catch(e){}}
+async function setSetting(d){
+ setBusy=true;
+ try{const r=await post('/api/settings',d);if(r.settings){S=r.settings;renderSettings()}setMsg(r);
+  if('dial' in d&&r.ok){dial=S.dial;drawScope()}}
+ catch(e){setMsg({ok:false,msg:'Keine Antwort von der Uhr'});loadSettings()}
+ setBusy=false}
+document.querySelectorAll('[data-profile]').forEach(b=>b.onclick=()=>setSetting({profile:b.dataset.profile}));
+$('sDial').onchange=e=>setSetting({dial:e.target.value});
+$('sBeam').oninput=e=>$('vBeam').textContent=fmtBeam(e.target.value);
+$('sBeam').onchange=e=>setSetting({beamNs:e.target.value});
+$('sHand').oninput=e=>$('vHand').textContent=e.target.value+' %';
+$('sHand').onchange=e=>setSetting({handPct:e.target.value});
+$('sJump').oninput=e=>$('vJump').textContent=fmtJump(e.target.value);
+$('sJump').onchange=e=>setSetting({jumpSpeed:e.target.value});
+$('sTz').onchange=e=>setSetting({tz:e.target.value});
+$('sNtpSave').onclick=()=>setSetting({ntp:$('sNtp').value.trim()});
+$('sOled').oninput=e=>$('vOled').textContent=fmtOled(e.target.value);
+$('sOled').onchange=e=>setSetting({oledContrast:e.target.value});
+$('sShift').onchange=e=>setSetting({oledShift:e.target.checked?1:0});
+$('sReset').onclick=async()=>{if(!confirm('Alle Einstellungen auf die Standardwerte aus config.h zurücksetzen? (WLANs bleiben erhalten)'))return;
+ setBusy=true;try{const r=await post('/api/settings/reset',{});if(r.settings){S=r.settings;renderSettings();dial=S.dial;drawScope()}setMsg(r)}catch(e){}setBusy=false};
+
 let online=true;
 async function status(){
  try{const s=await (await get('/api/status')).json();online=true;
   $('clock').textContent=s.time;setTime(s.time);lastSec=-1;
-  if(!dialBusy&&typeof s.dial==='number'&&s.dial!==dial){dial=s.dial;drawScope()}$('date').textContent=s.date?('KW '+s.kw+' – '+s.date):'Datum unbekannt';
+  if(!dialBusy&&typeof s.dial==='number'&&s.dial!==dial){dial=s.dial;drawScope()}
+  $('vFps').textContent=s.fps+' Bilder/s';
+  if(S&&!setBusy){const p=s.profile==='DIGITAL'?1:0;if(p!==S.profile||s.dial!==S.dial){S.profile=p;S.dial=s.dial;renderSettings()}}$('date').textContent=s.date?('KW '+s.kw+' – '+s.date):'Datum unbekannt';
   const st=$('status');st.replaceChildren(
    row('NTP',s.ntp.synced?('synchronisiert, '+s.ntp.last):(s.wifi.configured?'warte auf Sync …':'aus (kein WLAN)'),s.ntp.synced?(s.ntp.overdue?'warn':'ok'):'warn'),
    row('WLAN',s.wifi.connected?s.wifi.ssid:(s.wifi.configured?'sucht …':'kein Netz eingetragen'),s.wifi.connected?'ok':'warn'),
@@ -253,7 +356,7 @@ $('scanBtn').onclick=scan;
 $('recon').onclick=async()=>msg(await post('/api/reconnect',{}));
 $('logBtn').onclick=log;
 $('logAuto').onclick=()=>{logAuto=!logAuto;$('logAuto').textContent='Auto: '+(logAuto?'an':'aus')};
-status();saved();log();
+status();saved();log();loadSettings();
 setInterval(()=>{if(document.visibilityState==='visible')status()},2000);
 setInterval(()=>{if(logAuto&&document.visibilityState==='visible')log()},5000);
 </script>

@@ -182,6 +182,19 @@ static volatile uint8_t g_scopeProfile = SCOPE_PROFILE;
 // Vorschau). Schreiber: uiTask, Leser: scopeTask (baut dann die Rundtour neu).
 static volatile uint8_t g_dialStyle = DIAL_STYLE;
 
+// Weitere Laufzeit-Einstellungen für die Strahlausgabe (Webinterface →
+// "Einstellungen", gespeichert im Flash; config.h liefert nur die Startwerte).
+// Schreiber: uiTask, Leser: scopeTask – je ≤ 16 Bit, atomar.
+static volatile uint16_t g_beamNs    = BEAM_NS_PER_UNIT;   // Strahlgeschwindigkeit (ns pro Schritt)
+static volatile uint8_t  g_handPct   = HAND_BRIGHT_PCT;    // Helligkeit Stunden-/Minutenzeiger (%)
+static volatile uint8_t  g_jumpSpeed = JUMP_SPEED;         // Rücklauf-Tempo (Profil ANALOG), 0 = hart
+
+// Einstellungen, die nur Core 0 nutzt (Zeit, OLED)
+static char    s_tz[48]        = TZ_INFO;                  // POSIX-Zeitzone
+static char    s_ntpServer[64] = NTP_SERVER_1;             // erster NTP-Server (muss dauerhaft gültig bleiben)
+static uint8_t s_oledContrast  = OLED_CONTRAST;
+static bool    s_oledShift     = OLED_SHIFT_EVERY_S > 0;
+
 static volatile bool g_ntpSynced     = false;  // true nach dem ersten erfolgreichen Sync
 static time_t        g_lastSyncEpoch = 0;      // Unix-Zeit der letzten Synchronisierung
 static portMUX_TYPE  g_syncMux       = portMUX_INITIALIZER_UNLOCKED;
@@ -349,6 +362,25 @@ static inline void IRAM_ATTR dacOutY(uint8_t v) {
 #endif
 }
 
+// Berechnet die Schrittdauern aus Strahlgeschwindigkeit (ns pro Schritt) und
+// Rücklauf-Tempo. Läuft auf Core 1: beim Start und zwischen zwei Bildern, wenn
+// die Werte im Webinterface geändert wurden.
+static void beamTiming(uint16_t beamNs, uint8_t jumpSpeed)
+{
+  s_stepCycles = (uint32_t)((uint64_t)beamNs * getCpuFrequencyMhz() / 1000ULL);
+  if (s_stepCycles < 1) s_stepCycles = 1;
+  // Sprung-Bremsrampe vorberechnen (spart Divisionen im Zeichenpfad).
+  // Ist das Tempo kleiner als JUMP_LANDING, wird gleichmäßig mit diesem Tempo gefahren.
+  static_assert(JUMP_LANDING >= 1 && JUMP_RAMP >= 1, "config.h: JUMP_LANDING >= 1 und JUMP_RAMP >= 1");
+  if (jumpSpeed == 0) return;                          // harter Sprung: keine Rampe nötig
+  const uint32_t land = jumpSpeed < JUMP_LANDING ? jumpSpeed : JUMP_LANDING;
+  for (int r = 0; r <= JUMP_RAMP; r++) {
+    const uint32_t v16 = 16 * land + 16 * (jumpSpeed - land) * r / JUMP_RAMP;
+    s_jumpCycles[r] = v16 ? (s_stepCycles * 16) / v16 : s_stepCycles;
+    if (s_jumpCycles[r] < 1) s_jumpCycles[r] = 1;
+  }
+}
+
 // Schaltet beide DACs ein und berechnet die Schrittdauern. dacWrite()
 // übernimmt die komplette Pad-Konfiguration (Power-up, Kosinusgenerator aus)
 // für ESP-IDF 4 und 5; danach schreiben dacOutX/Y nur noch ins Register.
@@ -356,16 +388,7 @@ static void dacInit() {
   dacWrite(DAC_X_PIN, 0x80);
   dacWrite(DAC_Y_PIN, 0x80);
   lastx = lasty = 0x80;
-  s_stepCycles = (uint32_t)((uint64_t)BEAM_NS_PER_UNIT * getCpuFrequencyMhz() / 1000ULL);
-  if (s_stepCycles < 1) s_stepCycles = 1;
-  // Sprung-Bremsrampe vorberechnen (spart Divisionen im Zeichenpfad)
-  static_assert(JUMP_SPEED == 0 || (JUMP_SPEED >= JUMP_LANDING && JUMP_LANDING >= 1 && JUMP_RAMP >= 1),
-                "config.h: JUMP_SPEED >= JUMP_LANDING >= 1 und JUMP_RAMP >= 1 (oder JUMP_SPEED 0)");
-  for (int r = 0; r <= JUMP_RAMP && JUMP_SPEED > 0; r++) {
-    const uint32_t v16 = 16 * JUMP_LANDING + 16 * (JUMP_SPEED - JUMP_LANDING) * r / JUMP_RAMP;
-    s_jumpCycles[r] = v16 ? (s_stepCycles * 16) / v16 : s_stepCycles;
-    if (s_jumpCycles[r] < 1) s_jumpCycles[r] = 1;
-  }
+  beamTiming(g_beamNs, g_jumpSpeed);
 #if ZBLANK_PIN >= 0
   pinMode(ZBLANK_PIN, OUTPUT);
   digitalWrite(ZBLANK_PIN, ZBLANK_ACTIVE_HIGH ? LOW : HIGH);   // Strahl an
@@ -470,7 +493,7 @@ static void IRAM_ATTR beamJump(int x2, int y2)
   beamPoint(x2, y2, s_settleCycles);
   zBlank(false);
 #else
-  if (g_scopeProfile == 1 || JUMP_SPEED == 0) {
+  if (g_scopeProfile == 1 || g_jumpSpeed == 0) {
     // Harter Sprung wie im Original (ohne Verweilzeit)
     if (x2 != lastx) { lastx = x2; dacOutX((uint8_t)x2); }
     if (y2 != lasty) { lasty = y2; dacOutY((uint8_t)y2); }
@@ -703,12 +726,21 @@ static void IRAM_ATTR scopeTask(void *)
   dacInit();
   logMsg("[Scope] laeuft auf Core %d", xPortGetCoreID());
 
-  const uint32_t secCycles = s_stepCycles / 2;            // Sekundenzeiger: 2 × halbe Helligkeit
+  uint32_t secCycles = s_stepCycles / 2;                  // Sekundenzeiger: 2 × halbe Helligkeit
   int builtDial = -1;                                     // Zifferblatt der aktuellen Rundtour
+  uint16_t builtNs = g_beamNs;                            // Timing, mit dem gerade gezeichnet wird
+  uint8_t  builtJump = g_jumpSpeed;
 
   for (;;) {
     // Zifferblatt gewechselt (Webinterface)? Rundtour zwischen zwei Bildern neu
     // berechnen. Dauert einige ms – der Strahl steht so lange (einmaliger Punkt).
+    // Strahlgeschwindigkeit oder Rücklauf-Tempo geändert? Zwischen zwei Bildern übernehmen.
+    if (g_beamNs != builtNs || g_jumpSpeed != builtJump) {
+      builtNs = g_beamNs; builtJump = g_jumpSpeed;
+      beamTiming(builtNs, builtJump);
+      secCycles = s_stepCycles / 2;
+    }
+
     const int dial = g_dialStyle;
     if (dial != builtDial) {
       int size;
@@ -729,8 +761,9 @@ static void IRAM_ATTR scopeTask(void *)
     const int hpos = (h % 12) * 5 + m / 12;
 
     // 1. Stunden- und Minutenzeiger
-    PlotTable(HrPtrData,  sizeof(HrPtrData),  0xFF, 9 * hpos, HAND_BRIGHT_PCT);
-    PlotTable(MinPtrData, sizeof(MinPtrData), 0xFF, 9 * m,    HAND_BRIGHT_PCT);
+    const int handPct = g_handPct;
+    PlotTable(HrPtrData,  sizeof(HrPtrData),  0xFF, 9 * hpos, handPct);
+    PlotTable(MinPtrData, sizeof(MinPtrData), 0xFF, 9 * m,    handPct);
 
     // 2. Sekundenzeiger hin: Tabelle = [Spitze, Mitte] → Stroke Mitte→Spitze
     const Stroke secOut  = { SecPtrData, (int16_t)(5 * s + 2), (int16_t)(5 * s) };
@@ -873,7 +906,8 @@ static void wifiTask(void *)
   }
 }
 
-static void webStart();   // siehe Abschnitt "Webinterface"
+static void webStart();                     // siehe Abschnitt "Webinterface"
+static void oledSetContrast(uint8_t v);     // siehe Abschnitt "OLED"
 
 // Initialisiert WLAN, NTP und das Webinterface. Muss vom uiTask (Core 0) aus
 // aufgerufen werden: Der WLAN-Treiber legt seine Interrupts auf dem
@@ -903,7 +937,7 @@ static void wifiStart()
   // und synchronisiert danach alle NTP_SYNC_INTERVAL_MS erneut.
   sntp_set_time_sync_notification_cb(onNtpSync);
   sntp_set_sync_interval(NTP_SYNC_INTERVAL_MS);
-  configTzTime(TZ_INFO, NTP_SERVER_1, NTP_SERVER_2, NTP_SERVER_3);
+  configTzTime(s_tz, s_ntpServer, NTP_SERVER_2, NTP_SERVER_3);
 
   xTaskCreatePinnedToCore(wifiTask, "wifi", 4096, nullptr, 1, &wifiTaskHandle, UI_CORE);
   webStart();
@@ -1227,6 +1261,220 @@ static void handleDial()
   web.send(200, "application/json", o);
 }
 
+//*****************************************************************************
+// Einstellungen (Webinterface → "Einstellungen")
+//*****************************************************************************
+// Alle Werte wirken sofort und liegen im Flash (NVS, Namensraum "scopeclock").
+// config.h liefert nur die Startwerte; "Auf Standard zurücksetzen" löscht die
+// gespeicherten Werte wieder. WLANs sind davon nicht betroffen.
+//
+//   Schlüssel  Wert                    Bereich
+//   profile    Oszilloskop-Profil      0 = ANALOG, 1 = DIGITAL
+//   dial       Zifferblatt             0…3
+//   beam       Strahlgeschwindigkeit   1000…10000 ns pro Schritt
+//   hand       Zeiger-Helligkeit       30…100 %
+//   jump       Rücklauf-Tempo          0 (hart) … 48 (nur Profil ANALOG)
+//   tz         Zeitzone                eine aus TIMEZONES[] bzw. TZ_INFO
+//   ntp        erster NTP-Server       Hostname, max. 63 Zeichen
+//   oled       OLED-Helligkeit         1…255
+//   shift      OLED-Pixel-Shift        0/1
+
+struct TzOption { const char *label; const char *tz; };
+static const TzOption TIMEZONES[] = {
+  { "Mitteleuropa (Berlin, Wien, Zürich)", "CET-1CEST,M3.5.0,M10.5.0/3" },
+  { "Westeuropa (London, Lissabon)",       "GMT0BST,M3.5.0/1,M10.5.0" },
+  { "Osteuropa (Helsinki, Athen)",         "EET-2EEST,M3.5.0/3,M10.5.0/4" },
+  { "Moskau",                              "MSK-3" },
+  { "UTC",                                 "UTC0" },
+  { "USA Ost (New York)",                  "EST5EDT,M3.2.0,M11.1.0" },
+  { "USA Zentral (Chicago)",               "CST6CDT,M3.2.0,M11.1.0" },
+  { "USA Mountain (Denver)",               "MST7MDT,M3.2.0,M11.1.0" },
+  { "USA West (Los Angeles)",              "PST8PDT,M3.2.0,M11.1.0" },
+  { "Indien (Delhi)",                      "IST-5:30" },
+  { "China (Peking)",                      "CST-8" },
+  { "Japan (Tokio)",                       "JST-9" },
+  { "Australien Ost (Sydney)",             "AEST-10AEDT,M10.1.0,M4.1.0/3" },
+};
+static const int TIMEZONE_COUNT = sizeof(TIMEZONES) / sizeof(TIMEZONES[0]);
+
+static bool tzAllowed(const char *tz)
+{
+  if (!strcmp(tz, TZ_INFO)) return true;
+  for (int i = 0; i < TIMEZONE_COUNT; i++) if (!strcmp(tz, TIMEZONES[i].tz)) return true;
+  return false;
+}
+
+static bool hostnameValid(const String &h)
+{
+  if (h.length() < 1 || h.length() > 63) return false;
+  for (size_t i = 0; i < h.length(); i++) {
+    const char c = h[i];
+    if (!isalnum((unsigned char)c) && c != '.' && c != '-') return false;
+  }
+  return true;
+}
+
+// Liest alle Einstellungen aus dem Flash (in setup(), vor dem Start der Tasks).
+static void loadSettings()
+{
+  g_scopeProfile = loadSetting("profile", SCOPE_PROFILE, 1);
+  g_dialStyle    = loadSetting("dial", DIAL_STYLE, DIAL_STYLES - 1);
+  Preferences p;
+  if (!p.begin("scopeclock", true)) return;
+  const uint16_t beam = p.getUShort("beam", BEAM_NS_PER_UNIT);
+  g_beamNs    = (beam >= 1000 && beam <= 10000) ? beam : BEAM_NS_PER_UNIT;
+  const uint8_t hand = p.getUChar("hand", HAND_BRIGHT_PCT);
+  g_handPct   = (hand >= 30 && hand <= 100) ? hand : HAND_BRIGHT_PCT;
+  const uint8_t jump = p.getUChar("jump", JUMP_SPEED);
+  g_jumpSpeed = jump <= 48 ? jump : JUMP_SPEED;
+  char buf[64];
+  if (p.getString("tz", buf, sizeof(buf)) && tzAllowed(buf)) strlcpy(s_tz, buf, sizeof(s_tz));
+  if (p.getString("ntp", buf, sizeof(buf)) && hostnameValid(String(buf))) strlcpy(s_ntpServer, buf, sizeof(s_ntpServer));
+  const uint8_t oled = p.getUChar("oled", OLED_CONTRAST);
+  s_oledContrast = oled ? oled : OLED_CONTRAST;
+  s_oledShift    = p.getUChar("shift", OLED_SHIFT_EVERY_S > 0) != 0;
+  p.end();
+}
+
+// Aktuelle Einstellungen, Standardwerte und Zeitzonen als JSON.
+static void settingsJson(String &o)
+{
+  o += "{\"profile\":";      o += (int)g_scopeProfile;
+  o += ",\"dial\":";         o += (int)g_dialStyle;
+  o += ",\"beamNs\":";       o += (int)g_beamNs;
+  o += ",\"handPct\":";      o += (int)g_handPct;
+  o += ",\"jumpSpeed\":";    o += (int)g_jumpSpeed;
+  o += ",\"tz\":";           jsonStr(o, s_tz);
+  o += ",\"ntp\":";          jsonStr(o, s_ntpServer);
+  o += ",\"oledContrast\":"; o += (int)s_oledContrast;
+  o += ",\"oledShift\":";    o += s_oledShift ? "true" : "false";
+  o += ",\"defaults\":{\"profile\":"; o += SCOPE_PROFILE;
+  o += ",\"dial\":";         o += DIAL_STYLE;
+  o += ",\"beamNs\":";       o += BEAM_NS_PER_UNIT;
+  o += ",\"handPct\":";      o += HAND_BRIGHT_PCT;
+  o += ",\"jumpSpeed\":";    o += JUMP_SPEED;
+  o += ",\"tz\":";           jsonStr(o, TZ_INFO);
+  o += ",\"ntp\":";          jsonStr(o, NTP_SERVER_1);
+  o += ",\"oledContrast\":"; o += OLED_CONTRAST;
+  o += ",\"oledShift\":";    o += OLED_SHIFT_EVERY_S > 0 ? "true" : "false";
+  o += "},\"timezones\":[";
+  bool cfgListed = false;
+  for (int i = 0; i < TIMEZONE_COUNT; i++) {
+    if (i) o += ',';
+    o += "{\"label\":"; jsonStr(o, TIMEZONES[i].label); o += ",\"tz\":"; jsonStr(o, TIMEZONES[i].tz); o += '}';
+    if (!strcmp(TIMEZONES[i].tz, TZ_INFO)) cfgListed = true;
+  }
+  if (!cfgListed) { o += ",{\"label\":\"aus config.h\",\"tz\":"; jsonStr(o, TZ_INFO); o += '}'; }
+  o += "]}";
+}
+
+static void sendSettings(bool ok, const char *msg)
+{
+  String o = "{\"ok\":";
+  o += ok ? "true" : "false";
+  o += ",\"msg\":"; jsonStr(o, msg);
+  o += ",\"settings\":"; settingsJson(o);
+  o += '}';
+  web.send(200, "application/json", o);
+}
+
+// Zeitzone und NTP-Server übernehmen (startet den SNTP-Client neu)
+static void applyTime()
+{
+  configTzTime(s_tz, s_ntpServer, NTP_SERVER_2, NTP_SERVER_3);
+}
+
+// GET /api/settings
+static void handleSettingsGet() { sendSettings(true, ""); }
+
+// POST /api/settings – beliebige Teilmenge der Felder; jedes Feld wird geprüft,
+// sofort angewendet und gespeichert.
+static void handleSettingsPost()
+{
+  Preferences p;
+  if (!p.begin("scopeclock", false)) { sendSettings(false, "Flash-Speicher nicht verfügbar"); return; }
+  String err;
+  int changed = 0;
+  auto bad = [&](const char *m) { if (err.length()) err += "; "; err += m; };
+
+  if (web.hasArg("profile")) {
+    const int v = web.arg("profile").toInt();
+    if (v == 0 || v == 1) { g_scopeProfile = v; p.putUChar("profile", v); changed++;
+      logMsg("[Web] Oszilloskop-Profil: %s", profileName(v)); }
+    else bad("Profil ungültig");
+  }
+  if (web.hasArg("dial")) {
+    const int v = web.arg("dial").toInt();
+    if (v >= 0 && v < DIAL_STYLES) { g_dialStyle = v; p.putUChar("dial", v); changed++;
+      logMsg("[Web] Zifferblatt: %s", dialName(v)); }
+    else bad("Zifferblatt ungültig");
+  }
+  if (web.hasArg("beamNs")) {
+    const int v = web.arg("beamNs").toInt();
+    if (v >= 1000 && v <= 10000) { g_beamNs = v; p.putUShort("beam", v); changed++;
+      logMsg("[Web] Strahlgeschwindigkeit: %d ns pro Schritt", v); }
+    else bad("Strahlgeschwindigkeit: 1000 bis 10000 ns");
+  }
+  if (web.hasArg("handPct")) {
+    const int v = web.arg("handPct").toInt();
+    if (v >= 30 && v <= 100) { g_handPct = v; p.putUChar("hand", v); changed++;
+      logMsg("[Web] Zeiger-Helligkeit: %d %%", v); }
+    else bad("Zeiger-Helligkeit: 30 bis 100 %");
+  }
+  if (web.hasArg("jumpSpeed")) {
+    const int v = web.arg("jumpSpeed").toInt();
+    if (v >= 0 && v <= 48) { g_jumpSpeed = v; p.putUChar("jump", v); changed++;
+      logMsg("[Web] Ruecklauf-Tempo: %d%s", v, v ? "x" : " (hart)"); }
+    else bad("Rücklauf-Tempo: 0 bis 48");
+  }
+  bool timeChanged = false;
+  if (web.hasArg("tz")) {
+    const String v = web.arg("tz");
+    if (tzAllowed(v.c_str())) { strlcpy(s_tz, v.c_str(), sizeof(s_tz)); p.putString("tz", s_tz); changed++; timeChanged = true;
+      logMsg("[Web] Zeitzone: %s", s_tz); }
+    else bad("Zeitzone unbekannt");
+  }
+  if (web.hasArg("ntp")) {
+    const String v = web.arg("ntp");
+    if (hostnameValid(v)) { strlcpy(s_ntpServer, v.c_str(), sizeof(s_ntpServer)); p.putString("ntp", s_ntpServer); changed++; timeChanged = true;
+      logMsg("[Web] NTP-Server: %s", s_ntpServer); }
+    else bad("NTP-Server: nur Buchstaben, Ziffern, Punkt und Bindestrich (max. 63)");
+  }
+  if (web.hasArg("oledContrast")) {
+    const int v = web.arg("oledContrast").toInt();
+    if (v >= 1 && v <= 255) { s_oledContrast = v; oledSetContrast(v); p.putUChar("oled", v); changed++; }
+    else bad("OLED-Helligkeit: 1 bis 255");
+  }
+  if (web.hasArg("oledShift")) {
+    s_oledShift = web.arg("oledShift") == "1" || web.arg("oledShift") == "true";
+    p.putUChar("shift", s_oledShift); changed++;
+  }
+  p.end();
+  if (timeChanged) applyTime();
+
+  if (err.length()) sendSettings(false, err.c_str());
+  else sendSettings(true, changed ? "Gespeichert" : "Keine Änderung");
+}
+
+// POST /api/settings/reset – alle Einstellungen auf die Werte aus config.h
+static void handleSettingsReset()
+{
+  Preferences p;
+  if (p.begin("scopeclock", false)) {
+    for (const char *k : { "profile", "dial", "beam", "hand", "jump", "tz", "ntp", "oled", "shift" }) p.remove(k);
+    p.end();
+  }
+  g_scopeProfile = SCOPE_PROFILE;  g_dialStyle = DIAL_STYLE;
+  g_beamNs = BEAM_NS_PER_UNIT;     g_handPct = HAND_BRIGHT_PCT;   g_jumpSpeed = JUMP_SPEED;
+  strlcpy(s_tz, TZ_INFO, sizeof(s_tz));
+  strlcpy(s_ntpServer, NTP_SERVER_1, sizeof(s_ntpServer));
+  s_oledContrast = OLED_CONTRAST;  oledSetContrast(s_oledContrast);
+  s_oledShift = OLED_SHIFT_EVERY_S > 0;
+  applyTime();
+  logMsg("[Web] Einstellungen auf Standard zurueckgesetzt");
+  sendSettings(true, "Auf Standard zurückgesetzt");
+}
+
 // POST /api/reconnect – Verbindung trennen; wifiTask verbindet sich dann mit
 // dem stärksten bekannten Netz (z.B. nach dem Eintragen eines neuen Netzes)
 static void handleReconnect()
@@ -1262,6 +1510,9 @@ static void webStart()
   web.on("/api/wifi/delete", HTTP_POST, handleWifiDelete);
   web.on("/api/reconnect",   HTTP_POST, handleReconnect);
   web.on("/api/dial",        HTTP_POST, handleDial);
+  web.on("/api/settings",       HTTP_GET,  handleSettingsGet);
+  web.on("/api/settings",       HTTP_POST, handleSettingsPost);
+  web.on("/api/settings/reset", HTTP_POST, handleSettingsReset);
   web.onNotFound(handleNotFound);
   web.begin();
   logMsg("[Web] Webserver gestartet (Port 80)");
@@ -1309,6 +1560,9 @@ static void webLoop()
 // Falls das Bild um 2 Pixel verschoben erscheint: NONAME0 durch NONAME2 ersetzen.
 static U8G2_SSD1309_128X64_NONAME0_F_HW_I2C u8g2(U8G2_R0, OLED_RST_PIN, OLED_SCL_PIN, OLED_SDA_PIN);
 
+// OLED-Helligkeit setzen (Einstellungen im Webinterface; läuft im uiTask).
+static void oledSetContrast(uint8_t v) { u8g2.setContrast(v); }
+
 // Display initialisieren und kurz einen Startbildschirm zeigen.
 // Wird im uiTask aufgerufen, damit der I2C-Interrupt auf Core 0 liegt.
 static void oledInit()
@@ -1316,7 +1570,7 @@ static void oledInit()
   u8g2.setI2CAddress(OLED_I2C_ADDR << 1);   // U8g2 erwartet die 8-Bit-Adresse
   u8g2.setBusClock(OLED_I2C_HZ);
   u8g2.begin();
-  u8g2.setContrast(OLED_CONTRAST);
+  u8g2.setContrast(s_oledContrast);
   u8g2.enableUTF8Print();
 
   u8g2.clearBuffer();
@@ -1549,11 +1803,12 @@ static void oledUpdate()
   const bool valid = currentTime(t);
 
   int dx = 0, dy = 0;
-#if OLED_SHIFT_EVERY_S > 0
-  const uint32_t step = (millis() / 1000UL / OLED_SHIFT_EVERY_S) % 4;
-  dx = step;            // 0,1,2,3,0,…
-  dy = (step + 1) % 2;  // 1,0,1,0,…
-#endif
+  if (s_oledShift) {
+    const uint32_t every = OLED_SHIFT_EVERY_S > 0 ? OLED_SHIFT_EVERY_S : 60;
+    const uint32_t step = (millis() / 1000UL / every) % 4;
+    dx = step;            // 0,1,2,3,0,…
+    dy = (step + 1) % 2;  // 1,0,1,0,…
+  }
 
   char buf[48];
   u8g2.clearBuffer();
@@ -1663,9 +1918,9 @@ void setup()
   // Bis zum ersten publishTime() die Startzeit anzeigen
   g_timePacked = packTime(FALLBACK_H, FALLBACK_M, FALLBACK_S);
 
-  // Gespeichertes Oszilloskop-Profil und Zifferblatt laden (vor dem Start des scopeTask)
-  g_scopeProfile = loadSetting("profile", SCOPE_PROFILE, 1);
-  g_dialStyle    = loadSetting("dial", DIAL_STYLE, DIAL_STYLES - 1);
+  // Gespeicherte Einstellungen laden (Profil, Zifferblatt, Strahl, Zeit, OLED) –
+  // vor dem Start der Tasks
+  loadSettings();
   logMsg("[Scope] Profil: %s – BOOT-Taster %u s halten zum Umschalten",
                 profileName(g_scopeProfile), (unsigned)(BUTTON_LONG_MS / 1000));
 
