@@ -120,7 +120,7 @@ pre.full{height:auto;overflow-y:visible}
 .set{border-top:1px solid var(--line);padding:10px 0}
 .grouphead+.set,.grouphead+.set[hidden]+.set{border-top:0}   /* keine Linie direkt unter einer Gruppenüberschrift */
 /* Gruppen der Einstellungen: Oszilloskop, Uhrzeit, Display */
-#wlan-h{scroll-margin-top:calc(env(safe-area-inset-top) + 112px)}   /* Menü-Sprung: unter Titel und „Einstellungen“ */
+.grouphead{scroll-margin-top:calc(env(safe-area-inset-top) + 112px)}   /* Menü-Sprung: unter Titel und „Einstellungen“ */
 .grouphead{font-size:13px;font-weight:600;color:var(--acc);text-transform:uppercase;letter-spacing:.06em;padding:14px 0 2px}
 .sgroup~.sgroup{border-top:2px solid var(--line);margin-top:6px}
 .greset{margin:4px 0 4px}.gmsg{font-size:14px;margin:6px 0 0}.gmsg:empty{display:none}
@@ -167,6 +167,7 @@ html{scroll-behavior:smooth}
 #nav h3{font-size:13px;color:var(--mute);text-transform:uppercase;letter-spacing:.06em;margin:4px 8px 12px}
 #nav a{display:flex;align-items:center;min-height:48px;padding:0 12px;border-radius:10px;color:var(--fg);text-decoration:none;font-weight:500}
 #nav a:active,#nav a:hover{background:var(--bg)}
+#nav a.subnav{min-height:40px;padding-left:28px;font-size:15px;font-weight:400;color:var(--mute)}   /* Gruppen der Einstellungen */
 #nav .navlang{margin:16px 12px 0;padding-top:12px;border-top:1px solid var(--line)}
 #nav .navlang label{margin:0 0 6px}
 #nav select{font:inherit;font-size:16px;width:100%;min-height:44px;padding:0 10px;margin-bottom:6px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--fg)}
@@ -183,7 +184,11 @@ html{scroll-behavior:smooth}
  <a href="#uhr">Uhr</a>
  <a href="#status-h">Status</a>
  <a href="#set-h">Einstellungen</a>
- <a href="#wlan-h">WLAN</a>
+ <!-- Unterpunkte: springen direkt in die Gruppen der Einstellungen -->
+ <a class="subnav" href="#scope-h">Oszilloskop</a>
+ <a class="subnav" href="#time-h">Uhrzeit</a>
+ <a class="subnav" href="#disp-h">Display</a>
+ <a class="subnav" href="#wlan-h">WLAN</a>
  <a href="#log-h">Protokoll</a>
  <!-- Sprache: Deutsch/English für Seite, OLED und Protokoll (wird auf der Uhr gespeichert) -->
  <div class="navlang"><label for="sLang">Sprache</label>
@@ -207,7 +212,7 @@ html{scroll-behavior:smooth}
 
 <div class="grp"><h2 id="set-h">Einstellungen</h2>
 <section id="settings">
- <div class="sgroup"><div class="grouphead">Oszilloskop</div>
+ <div class="sgroup"><div class="grouphead" id="scope-h">Oszilloskop</div>
  <!-- Profil DIGITAL/ANALOG (auch per BOOT-Taster) -->
  <div class="set"><div class="head"><label>Oszilloskop-Profil</label></div>
   <div class="seg" role="group" aria-label="Oszilloskop-Profil">
@@ -244,7 +249,7 @@ html{scroll-behavior:smooth}
   <button type="button" class="sec greset" data-reset="scope">Auf Standardwerte zurücksetzen</button>
   <div class="desc">Setzt nur die Einstellungen dieser Gruppe auf die Werte aus config.h zurück. <span class="saved">Änderungen wirken sofort und bleiben gespeichert.</span></div>
  </div>
- <div class="sgroup"><div class="grouphead">Uhrzeit</div>
+ <div class="sgroup"><div class="grouphead" id="time-h">Uhrzeit</div>
  <!-- Nur sichtbar, solange kein Zeitserver erreichbar war (kein Internet, Setup-WLAN) -->
  <div class="set" id="timeRow" hidden><div class="head"><label>Uhrzeit stellen</label></div>
   <div class="sub">Kein Zeitserver erreichbar (kein Internet). Die Uhrzeit lässt sich hier von Hand stellen.</div>
@@ -282,7 +287,7 @@ html{scroll-behavior:smooth}
   <button type="button" class="sec greset" data-reset="time">Auf Standardwerte zurücksetzen</button>
   <div class="desc">Setzt nur die Einstellungen dieser Gruppe auf die Werte aus config.h zurück. <span class="saved">Änderungen wirken sofort und bleiben gespeichert.</span></div>
  </div>
- <div class="sgroup"><div class="grouphead">Display</div>
+ <div class="sgroup"><div class="grouphead" id="disp-h">Display</div>
  <!-- OLED-Helligkeit 0–100 % (0 = aus) -->
  <div class="set"><div class="head"><label for="sOled">OLED-Helligkeit</label><span class="val" id="vOled"></span></div>
   <input type="range" id="sOled" min="0" max="100" step="1">

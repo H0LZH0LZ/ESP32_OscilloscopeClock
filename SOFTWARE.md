@@ -108,8 +108,8 @@ Passwort. Das gilt immer, wenn die Uhr mit einem WLAN verbunden ist, nicht nur i
 die Strahlausgabe auf Core 1 nicht.
 
 **Seite (`webpage.h`):** eine Seite mit **einklappbarem Seitenmenü** (☰ oben links, bleibt beim
-Scrollen sichtbar): Uhr, Status, Einstellungen, WLAN (springt in die WLAN-Gruppe der Einstellungen),
-Protokoll, darunter die Sprachauswahl.
+Scrollen sichtbar): Uhr, Status, Einstellungen mit den Unterpunkten Oszilloskop, Uhrzeit, Display
+und WLAN (springen direkt in die jeweilige Gruppe), Protokoll, darunter die Sprachauswahl.
 Die Einstellungen sind in vier Gruppen geteilt: **Oszilloskop** (Profil zuerst, Zifferblatt,
 Verweilzeit, Zeigerhelligkeit, Rücklauf-Tempo), **Uhrzeit** (ggf. „Uhrzeit stellen“, Zeitformat,
 Zeitzone, Zeitserver), **Display** (OLED-Helligkeit, Sekunden, Nachtmodus, Drehung, Pixelverschiebung)

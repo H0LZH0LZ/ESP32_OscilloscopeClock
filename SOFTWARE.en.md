@@ -113,7 +113,8 @@ network. The `WebServer` runs in the `uiTask` on core 0 (`webLoop()` every 10 ms
 affect the beam output on core 1.
 
 **Page (`webpage.h`):** one page with a **collapsible side menu** (☰ top left, stays visible while
-scrolling): „Uhr“ (clock), Status, „Einstellungen“ (settings), „WLAN“ (Wi-Fi, jumps to the Wi-Fi group of the settings), „Protokoll“ (log), below them
+scrolling): „Uhr“ (clock), Status, „Einstellungen“ (settings), with the sub-entries „Oszilloskop“, „Uhrzeit“, „Display“ and „WLAN“ (jump directly to that group of
+the settings), „Protokoll“ (log), below them
 the language selection. The settings are split into four groups: **„Oszilloskop“** (Oscilloscope: profile first, dial,
 dwell time, hand brightness, retrace speed), **„Uhrzeit“** (Time: “Set time” if shown, time format,
 time zone, time server), **„Display“** (OLED brightness, seconds, night mode, rotation, pixel shift)
