@@ -7,9 +7,9 @@ gen_vectors.py – erzeugt alle Vektortabellen für DataTable.h in eigener Gesta
   DialDigitsMin     nur 12, 3, 6, 9
   DialDigitsRoman   römisch I–XII       (serifenlos, 4 als "IIII")
   DialDigitsRoman4  nur XII, III, VI, IX
-  HrPtrData         Stundenzeiger, 60 Stellungen × 9 Byte (Dreieck, 4 Punkte + 0xFF)
+  HrPtrData         Stundenzeiger, 60 Stellungen × 9 Byte (Nadel, 4 Punkte + 0xFF)
   MinPtrData        Minutenzeiger, 60 Stellungen × 9 Byte
-  SecPtrData        Sekundenzeiger mit Gegengewicht, 60 Stellungen × 5 Byte
+  SecPtrData        Sekundenzeiger, 60 Stellungen × 5 Byte
 
 Format wie in DataTable.h: Punkte (x, y) je 1 Byte, (128,128) = Mitte, y nach
 oben; 0x00 trennt Linienzüge, 0xFF beendet Tabelle bzw. Zeigerstellung.
@@ -110,19 +110,20 @@ RALEWAY = {
 RALEWAY_W = {c: (6 if c == '1' else 11) for c in RALEWAY}
 
 # Schrift "segment": 7-Segment-Anzeige mit kleinen Lücken, Breite 8
-_SEG = {
-    'a': [(1, 16), (7, 16)], 'b': [(8, 15), (8, 9)], 'c': [(8, 7), (8, 1)],
-    'd': [(7, 0), (1, 0)],   'e': [(0, 1), (0, 7)],  'f': [(0, 9), (0, 15)],
-    'g': [(1, 8), (7, 8)],
+_SEG = {                                  # Höhe 20, Breite 10 (größer als die anderen Schriften)
+    'a': [(1, 20), (9, 20)], 'b': [(10, 19), (10, 11)], 'c': [(10, 9), (10, 1)],
+    'd': [(9, 0), (1, 0)],   'e': [(0, 1), (0, 9)],     'f': [(0, 11), (0, 19)],
+    'g': [(1, 10), (9, 10)],
 }
 _SEGS = {'0': 'abcdef', '1': 'bc', '2': 'abged', '3': 'abgcd', '4': 'fgbc',
          '5': 'afgcd', '6': 'afgedc', '7': 'abc', '8': 'abcdefg', '9': 'gfabcd'}
 SEGMENT = {c: [_SEG[s] for s in segs] for c, segs in _SEGS.items()}
-SEGMENT['1'] = [[(0, 15), (0, 9)], [(0, 7), (0, 1)]]          # schmale 1, ohne Leerraum
-SEGMENT_W = {c: (0 if c == '1' else 8) for c in SEGMENT}
+SEGMENT['1'] = [[(0, 19), (0, 11)], [(0, 9), (0, 1)]]          # schmale 1, ohne Leerraum
+SEGMENT_W = {c: (0 if c == '1' else 10) for c in SEGMENT}
 
-FONTS = {'kante': (KANTE, KANTE_W, 3), 'raleway': (RALEWAY, RALEWAY_W, 2),
-         'segment': (SEGMENT, SEGMENT_W, 5)}
+# Schrift: (Glyphen, Breiten, Abstand, Höhe, Radius der Ziffernmitte)
+FONTS = {'kante': (KANTE, KANTE_W, 3, 16, 94), 'raleway': (RALEWAY, RALEWAY_W, 2, 16, 94),
+         'segment': (SEGMENT, SEGMENT_W, 5, 20, 91)}
 FONT = 'segment'                          # gewählt: 7-Segment-Stil
 for i, a in enumerate(sys.argv):
     if a == '--font':
@@ -153,13 +154,13 @@ def place(glyphs, text, cx, cy, height, gap):
     return polys
 
 
-def arabic(hours, radius=94):
-    glyphs, widths, gap = FONTS[FONT]
+def arabic(hours):
+    glyphs, widths, gap, height, radius = FONTS[FONT]
     g = {c: (widths[c], glyphs[c]) for c in glyphs}
     polys = []
     for h in hours:
         cx, cy = pt(radius, h * 30)
-        polys += place(g, str(h), cx, cy, H, gap)
+        polys += place(g, str(h), cx, cy, height, gap)
     return polys
 
 
@@ -172,22 +173,17 @@ def roman(hours, radius=95):
 
 
 # ---------------------------------------------------------------- Zeiger
-def hand_triangle(length, half_width, tail):
-    """Schlankes Dreieck: Basis hinter der Mitte (tail), Spitze bei length.
-    4 Punkte (Basis links, Spitze, Basis rechts, Basis links) = 8 Byte + 0xFF."""
-    out = []
-    for pos in range(60):
-        deg = pos * 6
-        bl = pt(math.hypot(tail, half_width), deg + 180 - math.degrees(math.atan2(half_width, tail)))
-        br = pt(math.hypot(tail, half_width), deg + 180 + math.degrees(math.atan2(half_width, tail)))
-        tip = pt(length, deg)
-        out.append([bl, tip, br, bl])
-    return out
+def hand_needle(length, half_width):
+    """Schmale Nadel: Basis quer durch die Mitte (±half_width), Spitze bei length.
+    4 Punkte (Basis links, Spitze, Basis rechts, Basis links) = 8 Byte + 0xFF.
+    Beginnt und endet an der Mitte – kein Überstand, keine Sprünge zwischen den Zeigern."""
+    return [[pt(half_width, pos * 6 - 90), pt(length, pos * 6), pt(half_width, pos * 6 + 90),
+             pt(half_width, pos * 6 - 90)] for pos in range(60)]
 
 
-def hand_line(length, tail):
-    """Sekundenzeiger: Spitze → Gegengewicht (2 Punkte = 4 Byte + 0xFF)."""
-    return [[pt(length, pos * 6), pt(tail, pos * 6 + 180)] for pos in range(60)]
+def hand_line(length):
+    """Sekundenzeiger: Spitze → Mitte (2 Punkte = 4 Byte + 0xFF)."""
+    return [[pt(length, pos * 6), (C, C)] for pos in range(60)]
 
 
 def hand_table(polys_per_pos):
@@ -206,9 +202,9 @@ TABLES = {
     'DialDigitsMin':    table(arabic([12, 3, 6, 9])),
     'DialDigitsRoman':  table(roman(range(1, 13))),
     'DialDigitsRoman4': table(roman([12, 3, 6, 9])),
-    'HrPtrData':        hand_table(hand_triangle(62, 4, 8)),
-    'MinPtrData':       hand_table(hand_triangle(98, 3, 10)),
-    'SecPtrData':       hand_table(hand_line(108, 20)),
+    'HrPtrData':        hand_table(hand_needle(60, 2)),
+    'MinPtrData':       hand_table(hand_needle(100, 2)),
+    'SecPtrData':       hand_table(hand_line(108)),
 }
 
 HEADER = """/*********************************************************************************
@@ -242,11 +238,11 @@ HEADER = """/*******************************************************************
   DialDigitsRoman  römisch I–XII, serifenlos, 4 als "IIII"   (DIAL_STYLE 2)
   DialDigitsRoman4 nur XII, III, VI, IX                      (DIAL_STYLE 3)
   HrPtrData        Stundenzeiger: 60 Stellungen × 9 Byte
-                   = schlankes Dreieck, 4 Punkte (Basis links hinter der Mitte,
-                   Spitze, Basis rechts, Basis links) + 0xFF
-  MinPtrData       Minutenzeiger: wie HrPtrData, länger und schlanker
+                   = schmale Nadel, 4 Punkte (Basis links an der Mitte, Spitze,
+                   Basis rechts, Basis links) + 0xFF
+  MinPtrData       Minutenzeiger: wie HrPtrData, länger
   SecPtrData       Sekundenzeiger: 60 Stellungen × 5 Byte
-                   = 2 Punkte (Spitze, Ende des Gegengewichts) + 0xFF
+                   = 2 Punkte (Spitze, Mitte) + 0xFF
 
   Stellung n (0 = 12 Uhr, im Uhrzeigersinn) beginnt bei Byte-Offset n × 9
   (Stunden/Minuten) bzw. n × 5 (Sekunden).

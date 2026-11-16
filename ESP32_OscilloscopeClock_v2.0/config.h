@@ -113,12 +113,12 @@
 #define ZBLANK_ACTIVE_HIGH  1
 #define ZBLANK_SETTLE_NS 5000
 
-// Stunden- und Minutenzeiger sind schlanke Dreiecke: Ihre beiden Kanten liegen
-// nur 0–8 DAC-Einheiten auseinander und verschmelzen zur Spitze hin zu einer
-// Linie, die bei voller Helligkeit heller wäre als der Rest. 80 % ist ein
-// Schätzwert – im Webinterface (Einstellungen) am echten Bild nachstellen.
+// Stunden- und Minutenzeiger sind schmale Nadeln: Ihre beiden Kanten liegen
+// nur 0–4 DAC-Einheiten auseinander und verschmelzen auf dem Schirm zu einer
+// Linie, die bei voller Helligkeit deutlich heller wäre als der Rest.
+// 67 % gleicht das aus (im Webinterface unter Einstellungen nachstellbar).
 // 100 = Zeiger heller hervorheben.
-#define HAND_BRIGHT_PCT 80
+#define HAND_BRIGHT_PCT 67
 
 // Kernzuordnung. Nicht ändern: Der WLAN-Stack des ESP32 läuft auf Core 0,
 // die Strahlausgabe braucht Core 1 exklusiv.

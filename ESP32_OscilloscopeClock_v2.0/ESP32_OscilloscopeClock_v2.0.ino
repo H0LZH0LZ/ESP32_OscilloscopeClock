@@ -320,7 +320,7 @@ static WiFiMulti    wifiMulti;
 //         Ziel an (ein harter Sprung würde dort über- oder nachschwingen).
 //      b) Zifferblatt und Ziffern werden beim Start einmal zu einer
 //         Rundtour mit möglichst kurzen Sprüngen sortiert (buildTour).
-//      c) Der Sekundenzeiger wird hin (Gegengewicht → Spitze) und zurück je
+//      c) Der Sekundenzeiger wird hin (Mitte → Spitze) und zurück je
 //         mit halber Helligkeit gezeichnet. Der lange Sprung vom Rand zurück
 //         zur Mitte entfällt damit ganz – der Strahl "läuft" auf dem Zeiger.
 //      d) Jeder Linienzug wird von dem Ende aus gezeichnet, das näher am
@@ -710,16 +710,16 @@ static void buildTour(const uint8_t *digits, int digitsSize)
 // scopeTask – Core 1: zeichnet endlos Zifferblatt + Zeiger
 //*****************************************************************************
 // Ablauf eines Bildes (Strahl startet in der Mitte):
-//   1. Stundenzeiger, Minutenzeiger      (Dreiecke, Basis kurz hinter der Mitte)
-//   2. Sekundenzeiger Gegengewicht → Spitze (halbe Helligkeit)
+//   1. Stundenzeiger, Minutenzeiger      (schmale Nadeln ab der Mitte)
+//   2. Sekundenzeiger Mitte → Spitze     (halbe Helligkeit)
 //   3. Rundtour Zifferblatt + Ziffern    (Einstieg nahe der Sekundenzeiger-Spitze,
 //                                          endet wieder dort)
-//   4. Sekundenzeiger Spitze → Gegengewicht (halbe Helligkeit, ersetzt den Rücksprung)
+//   4. Sekundenzeiger Spitze → Mitte     (halbe Helligkeit, ersetzt den Rücksprung)
 // Danach beginnt sofort das nächste Bild.
 //
 // Zeigertabellen (DataTable.h) enthalten je 60 vorberechnete Stellungen:
-//   HrPtrData, MinPtrData: 60 × 9 Byte  (4 Punkte = schlankes Dreieck + 0xFF)
-//   SecPtrData:            60 × 5 Byte  (2 Punkte Spitze, Gegengewicht + 0xFF)
+//   HrPtrData, MinPtrData: 60 × 9 Byte  (4 Punkte = schmale Nadel + 0xFF)
+//   SecPtrData:            60 × 5 Byte  (2 Punkte Spitze, Mitte + 0xFF)
 // Der Offset "Stellung × Eintragslänge" wählt die passende Stellung aus.
 // IRAM_ATTR: Der Compiler setzt PlotTable()/nextStroke() hier inline ein –
 // damit auch diese Bildschleife ohne Flash-Cache-Zugriffe gleichmäßig läuft.
@@ -771,7 +771,7 @@ static void IRAM_ATTR scopeTask(void *)
     PlotTable(HrPtrData,  sizeof(HrPtrData),  0xFF, 9 * hpos, handPct);
     PlotTable(MinPtrData, sizeof(MinPtrData), 0xFF, 9 * m,    handPct);
 
-    // 2. Sekundenzeiger hin: Tabelle = [Spitze, Gegengewicht] → Stroke Gegengewicht→Spitze
+    // 2. Sekundenzeiger hin: Tabelle = [Spitze, Mitte] → Stroke Mitte→Spitze
     const Stroke secOut  = { SecPtrData, (int16_t)(5 * s + 2), (int16_t)(5 * s) };
     const Stroke secBack = { SecPtrData, (int16_t)(5 * s),     (int16_t)(5 * s + 2) };
     drawStroke(secOut, secCycles);
@@ -785,7 +785,7 @@ static void IRAM_ATTR scopeTask(void *)
     for (int k = 0; k < s_tourLen; k++)
       drawStroke(s_tour[(start + k) % s_tourLen], s_stepCycles);
 
-    // 4. Sekundenzeiger zurück zum Gegengewicht (statt eines langen Rücksprungs)
+    // 4. Sekundenzeiger zurück zur Mitte (statt eines langen Rücksprungs)
     drawStroke(secBack, secCycles);
     g_frameCount = g_frameCount + 1;                     // für die Bildrate im Webinterface
 

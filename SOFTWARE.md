@@ -286,10 +286,10 @@ Strahlgeschwindigkeit:
 | Oszilloskop-Profil | DIGITAL: harte Sprünge, sonst zeigt ein abtastendes Oszilloskop Zwischenpunkte. ANALOG: gebremste Sprünge (siehe nächste Zeile). Umschalten im Betrieb per BOOT-Taster (3 s), gespeichert im NVS (`Preferences`, Namensraum `scopeclock`) | – |
 | Sprünge (ANALOG) | in 1-Einheit-Schritten mit 24-facher Geschwindigkeit (`JUMP_SPEED`), auf den letzten 4 Einheiten bremsend (`JUMP_LANDING`, `JUMP_RAMP`). Die Rücklaufspur hat ca. 1/24 der Linienhelligkeit, alte Verstärker landen trotzdem genau | harter Sprung |
 | Reihenfolge | Zifferblatt und Ziffern werden beim Start einmal zu einer Rundtour mit minimalen Sprüngen sortiert (Nächster-Nachbar + 2-opt), Einstieg dort, wo der Sekundenzeiger endet | Tabellenreihenfolge |
-| Sekundenzeiger | hin und zurück (Gegengewicht ↔ Spitze) mit je halber Helligkeit gezeichnet, dadurch entfällt der lange Sprung vom Rand zur Mitte | – |
+| Sekundenzeiger | hin und zurück (Mitte ↔ Spitze) mit je halber Helligkeit gezeichnet, dadurch entfällt der lange Sprung vom Rand zur Mitte | – |
 | Richtung | jeder Linienzug wird vom näheren Ende aus gezeichnet | immer vom Tabellenanfang |
 | Dunkeltastung | optional über den Z-Eingang des Oszilloskops (`ZBLANK_PIN`), dann gibt es gar keine Rücklaufspur mehr | – |
-| Zeiger-Dreiecke | Stunden- und Minutenzeiger mit `HAND_BRIGHT_PCT` (80 %, Schätzwert), weil ihre zwei Kanten zur Spitze hin verschmelzen | doppelt so hell |
+| Zeiger-Nadeln | Stunden- und Minutenzeiger mit `HAND_BRIGHT_PCT` (67 %), weil ihre zwei dicht liegenden Kanten verschmelzen | doppelt so hell |
 | Tabellengrenzen | immer geprüft | Lesezugriff hinter das Tabellenende, wenn ein Endzeichen fehlt |
 
 Ergebnis der Simulation (Leuchtspur mit ca. 2,4 Einheiten Strahldurchmesser, Helligkeit relativ
@@ -321,8 +321,8 @@ bei Bedarf `BEAM_NS_PER_UNIT` erhöhen (hellere Spur, weniger Bilder/s).
 - `0x00` trennt bei Zifferblatt und Ziffern zwei Linienzüge. `x = 0` kommt dort daher nicht als
   Koordinate vor. `0xFF` beendet eine Zeigerstellung.
 - Zeiger: je 60 vorberechnete Stellungen, beginnend bei 12 Uhr im Uhrzeigersinn.
-  Sekundenzeiger 5 Byte pro Stellung (Spitze, Gegengewicht), Minuten- und Stundenzeiger 9 Byte
-  (Dreieck aus 4 Punkten).
+  Sekundenzeiger 5 Byte pro Stellung (Spitze, Mitte), Minuten- und Stundenzeiger 9 Byte
+  (schmale Nadel aus 4 Punkten).
   Der Offset `Stellung × Länge` wählt die Stellung aus. Der Stundenzeiger rückt alle 12 Minuten
   einen Schritt weiter: `hpos = (h % 12) * 5 + m / 12`.
 - Alle Tabellen erzeugt `tools/gen_vectors.py`: Zifferblatt, Ziffern (Schrift wählbar mit
