@@ -17,6 +17,7 @@ Koordinaten liegen immer in 2…253, damit 0x00/0xFF nie als Wert vorkommen.
 
 Aufruf:  python3 tools/gen_vectors.py            → C-Block für DataTable.h auf stdout
          python3 tools/gen_vectors.py --json     → dieselben Daten als JSON (Vorschau)
+         --font kante|raleway|segment            → Schrift der Ziffern 1–12 wählen
 """
 import json
 import math
@@ -61,9 +62,21 @@ def dial():
     return polys
 
 
-# ---------------------------------------------------------------- Strichschrift 1–12
-H = 16                                    # Ziffernhöhe
-DIGIT = {                                 # Breite 8, y nach oben, Ecken abgeschrägt
+# ---------------------------------------------------------------- Ziffern 1–12
+# Drei Schriften zur Auswahl (Aufruf mit --font kante|raleway|segment).
+# Alle Glyphen: Höhe 16, y nach oben; Koordinaten dürfen Kommazahlen sein,
+# gerundet wird erst beim Platzieren auf dem Zifferblatt.
+H = 16
+
+
+def arc(cx, cy, rx, ry, a0, a1, n):
+    """Ellipsenbogen von a0 nach a1 (Grad, 0° = rechts, gegen den Uhrzeigersinn)."""
+    return [(cx + rx * math.cos(math.radians(a0 + (a1 - a0) * i / n)),
+             cy + ry * math.sin(math.radians(a0 + (a1 - a0) * i / n))) for i in range(n + 1)]
+
+
+# Schrift "kante": eckig, abgeschrägte Ecken, Breite 8
+KANTE = {
     '0': [[(2, 0), (6, 0), (8, 2), (8, 14), (6, 16), (2, 16), (0, 14), (0, 2), (2, 0)]],
     '1': [[(1, 13), (4, 16), (4, 0)]],
     '2': [[(0, 14), (2, 16), (6, 16), (8, 14), (8, 10), (0, 2), (0, 0), (8, 0)]],
@@ -77,7 +90,43 @@ DIGIT = {                                 # Breite 8, y nach oben, Ecken abgesch
            (0, 6), (0, 2), (2, 0), (6, 0), (8, 2), (8, 6), (6, 8)]],
     '9': [[(8, 7), (2, 7), (0, 9), (0, 14), (2, 16), (6, 16), (8, 14), (8, 4), (5, 0), (1, 0)]],
 }
-DIGIT_W = {c: (5 if c == '1' else 8) for c in DIGIT}
+KANTE_W = {c: (5 if c == '1' else 8) for c in KANTE}
+
+# Schrift "raleway": geometrische Einstrich-Nachbildung im Stil von Raleway
+# (runde Bögen, Fähnchen an der 1), Breite 11
+_six = [(8.5, 16), (5.2, 13.2), (2.4, 9.6), (0.8, 6.2)] + arc(5.5, 5, 5, 5, 200, 200 - 360, 16)
+RALEWAY = {
+    '0': [arc(5.5, 8, 5.5, 8, 90, 450, 20)],
+    '1': [[(1.5, 13), (5, 16), (5, 0)]],
+    '2': [arc(5.5, 11.3, 5, 4.7, 155, -40, 8) + [(0.5, 0), (11, 0)]],
+    '3': [arc(5.3, 12.2, 4.6, 3.8, 155, -90, 8) + arc(5.5, 4.4, 5.5, 4.4, 90, -200, 10)],
+    '4': [[(8, 0), (8, 16), (0.3, 4.5), (11, 4.5)]],
+    '5': [[(10, 16), (1.6, 16), (0.9, 8.4)] + arc(5.6, 5, 5.2, 5, 140, -150, 10)],
+    '6': [_six],
+    '7': [[(0.5, 16), (11, 16), (3.5, 0)]],
+    '8': [arc(5.5, 12.1, 4.4, 3.9, 270, -90, 14) + arc(5.5, 4.2, 5.3, 4.2, 90, 450, 16)],
+    '9': [[(11 - x, 16 - y) for x, y in _six]],
+}
+RALEWAY_W = {c: (6 if c == '1' else 11) for c in RALEWAY}
+
+# Schrift "segment": 7-Segment-Anzeige mit kleinen Lücken, Breite 8
+_SEG = {
+    'a': [(1, 16), (7, 16)], 'b': [(8, 15), (8, 9)], 'c': [(8, 7), (8, 1)],
+    'd': [(7, 0), (1, 0)],   'e': [(0, 1), (0, 7)],  'f': [(0, 9), (0, 15)],
+    'g': [(1, 8), (7, 8)],
+}
+_SEGS = {'0': 'abcdef', '1': 'bc', '2': 'abged', '3': 'abgcd', '4': 'fgbc',
+         '5': 'afgcd', '6': 'afgedc', '7': 'abc', '8': 'abcdefg', '9': 'gfabcd'}
+SEGMENT = {c: [_SEG[s] for s in segs] for c, segs in _SEGS.items()}
+SEGMENT['1'] = [[(0, 15), (0, 9)], [(0, 7), (0, 1)]]          # schmale 1, ohne Leerraum
+SEGMENT_W = {c: (0 if c == '1' else 8) for c in SEGMENT}
+
+FONTS = {'kante': (KANTE, KANTE_W, 3), 'raleway': (RALEWAY, RALEWAY_W, 2),
+         'segment': (SEGMENT, SEGMENT_W, 5)}
+FONT = 'kante'
+for i, a in enumerate(sys.argv):
+    if a == '--font':
+        FONT = sys.argv[i + 1]
 
 # ---------------------------------------------------------------- römisch, serifenlos
 RH = 14
@@ -99,17 +148,18 @@ def place(glyphs, text, cx, cy, height, gap):
     for c in text:
         w, ps = glyphs[c]
         for p in ps:
-            polys.append([(x0 + x, y0 + y) for x, y in p])
+            polys.append([(round(x0 + x), round(y0 + y)) for x, y in p])
         x0 += w + gap
     return polys
 
 
 def arabic(hours, radius=94):
-    g = {c: (DIGIT_W[c], DIGIT[c]) for c in DIGIT}
+    glyphs, widths, gap = FONTS[FONT]
+    g = {c: (widths[c], glyphs[c]) for c in glyphs}
     polys = []
     for h in hours:
         cx, cy = pt(radius, h * 30)
-        polys += place(g, str(h), cx, cy, H, 3)
+        polys += place(g, str(h), cx, cy, H, gap)
     return polys
 
 
