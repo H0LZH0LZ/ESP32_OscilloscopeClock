@@ -1,5 +1,7 @@
 # Hardware & Aufbau – ESP32 Oscilloscope Clock v2.0
 
+**Deutsch** · [English](HARDWARE.en.md) · zurück zur [README](README.md)
+
 ## Komponenten
 
 | Teil | Zweck |
@@ -79,7 +81,8 @@ Viele Röhrenoszilloskope haben auf der Rückseite eine BNC-Buchse **„Z“, �
 ### OLED-Anschluss (Waveshare 2.42")
 Das Modul wird im **Auslieferungszustand (4-Wire-SPI)** betrieben, es muss nichts umgelötet werden.
 Der 7-polige Stecker wird wie oben verdrahtet (VCC an 3V3, nicht an 5V0). Ist das Bild um 2 Pixel
-horizontal verschoben, in der `.ino` `NONAME0` durch `NONAME2` ersetzen.
+horizontal verschoben, in der `.ino` `NONAME0` durch `NONAME2` ersetzen. Ist das Display kopfüber
+eingebaut, im Webinterface „OLED um 180° drehen“ einschalten.
 
 ### Antenne
 - Den ESP32-**WROOM-32U** nie ohne angeschlossene Antenne im WLAN-Betrieb laufen lassen.
@@ -109,6 +112,7 @@ Wer vorher loslässt, bricht ab. Die Einstellung wird im Flash gespeichert und g
 Ein neues Hochladen ist nicht nötig. Den Taster **nicht beim Einschalten** drücken, sonst
 startet der ESP32 im Download-Modus. Beim Umschalten kann einmal kurz ein Lichtpunkt auf dem Oszilloskop
 aufblitzen (Schreibzugriff auf den Flash).
+Das Profil lässt sich auch im Webinterface umschalten („Einstellungen“ → „Oszilloskop-Profil“).
 
 | Profil | für | Sprünge zwischen Linien |
 |---|---|---|
@@ -168,7 +172,7 @@ am Oszilloskop. Die Werte in `config.h` sind dann nur die Startwerte.
 
 | Parameter | Wirkung |
 |---|---|
-| `BEAM_NS_PER_UNIT` | Strahlgeschwindigkeit. Größer = hellere Linien, weniger Bilder/s (Standard 3000 ≈ 230 Bilder/s) |
+| `BEAM_NS_PER_UNIT` | Verweilzeit des Strahls pro Schritt in ns. Größer = hellere Linien, weniger Bilder/s (Standard 3000 ≈ 230 Bilder/s) |
 | `SCOPE_PROFILE` | Start-Profil, solange keins gespeichert ist: 0 = ANALOG, 1 = DIGITAL (Standard). Im Betrieb per BOOT-Taster umschaltbar |
 | `BUTTON_LONG_MS` | Haltedauer des BOOT-Tasters zum Umschalten (Standard 3000 ms) |
 | `JUMP_SPEED` | Geschwindigkeit der Sprünge zwischen Linien im Profil ANALOG (Standard 24; DIGITAL springt immer hart). Größer = schwächere Rücklaufspur, kleiner (12) für sehr alte Oszilloskope, 0 = harter Sprung |
@@ -176,7 +180,9 @@ am Oszilloskop. Die Werte in `config.h` sind dann nur die Startwerte.
 | `ZBLANK_PIN` | optionaler Ausgang zur Dunkeltastung (Z-Eingang), -1 = aus |
 | `HAND_BRIGHT_PCT` | Helligkeit von Stunden- und Minutenzeiger im Verhältnis zum Rest (Standard 67 %, wirkt dann gleich hell) |
 | `USE_FAST_DAC` | `1` = direkte Registerzugriffe (Standard). `0` = `dacWrite()`, nur als Notlösung |
-| `DIAL_STYLE` | Start-Zifferblatt: 0 = 1–12, 1 = 12/3/6/9, 2 = römisch I–XII, 3 = römisch XII/III/VI/IX. Im Webinterface durch Tippen auf die Vorschau umschaltbar, die Auswahl wird gespeichert |
+| `DIAL_STYLE` | Start-Zifferblatt: 0 = 1–12, 1 = 12/3/6/9, 2 = römisch I–XII, 3 = römisch XII/III/VI/IX. Im Webinterface durch Wischen über die Vorschau umschaltbar, die Auswahl wird gespeichert |
 | `TZ_INFO` | Zeitzone inkl. Sommerzeitregel (Standard: Mitteleuropa) |
-| `OLED_SHIFT_EVERY_S` | Pixel-Shift gegen OLED-Einbrennen |
+| `NTP_SERVER_1` … `_3` | Zeitserver (der erste ist im Webinterface änderbar) |
+| `FALLBACK_H`, `FALLBACK_M`, `FALLBACK_S` | Startzeit, ab der die Uhr zählt, solange weder Zeitserver noch Handeingabe eine Uhrzeit geliefert haben |
+| `OLED_SHIFT_EVERY_S` | Pixelverschiebung gegen OLED-Einbrennen: alle n Sekunden (0 = aus) |
 | `OLED_FLIP` | 1 = OLED-Anzeige um 180° drehen (Display kopfüber eingebaut), auch im Webinterface umschaltbar |

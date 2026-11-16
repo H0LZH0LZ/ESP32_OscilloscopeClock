@@ -1,10 +1,19 @@
 # ESP32 Oscilloscope Clock – v2.0 (Dual-Core, NTP, OLED)
 
+**Deutsch** · [English](README.en.md)
+
 Vektoruhr für das Oszilloskop im X/Y-Modus, nach einer Idee von Mauro Pintus (siehe [Herkunft](#herkunft)), für folgende
 Hardware angepasst: **ESP32-WROOM-32U DevKitC V4**, **Waveshare 2.42" OLED (SPI)**, externe
 2,4-GHz-Antenne, BNC-Ausgänge und ein ABS-Gehäuse.
 
 **Aufbau und Verdrahtung: [HARDWARE.md](HARDWARE.md)** · **Aufbau der Software: [SOFTWARE.md](SOFTWARE.md)**
+
+### Inhalt
+- [Was ist neu](#was-ist-neu)
+- [Schnellstart (Arduino IDE 2.x)](#schnellstart-arduino-ide-2x)
+- [Bedienung](#bedienung)
+- [Stand und Tests](#stand-und-tests)
+- [Herkunft](#herkunft)
 
 ### Was ist neu
 - **Core 1** erzeugt ausschließlich die X/Y-Signale (GPIO25/26) – ohne Pausen, ohne Locks.
@@ -16,14 +25,15 @@ Hardware angepasst: **ESP32-WROOM-32U DevKitC V4**, **Waveshare 2.42" OLED (SPI)
 - Kaum sichtbare Rücklaufspuren: optimierte Zeichenreihenfolge, schnelle gebremste Sprünge, Sekundenzeiger als Hin- und Rückweg. Optional verschwinden die Spuren mit einem dritten Kabel zum Z-Eingang ganz.
 - OLED als reine Textanzeige: Uhrzeit (24h) im 7-Segment-Stil, Kalenderwoche, Datum, Netzwerkname und Signalstärke (dBm), alles horizontal und vertikal zentriert, mit Pixel-Shift gegen Einbrennen.
 - Jede NTP-Synchronisierung wird mit Datum und Uhrzeit auf der seriellen Konsole (115200 Baud) gemeldet, ebenso eine Warnung, falls sie ausbleibt.
-- Ohne WLAN-Zugangsdaten läuft die Uhr offline ab einer festen Startzeit, wie im Original.
+- Ohne Internet läuft die Uhr trotzdem: Die Uhrzeit lässt sich im Webinterface von Hand stellen
+  (oder mit einem Fingertipp vom Handy übernehmen). Ohne Zeitquelle zählt sie ab einer festen Startzeit hoch.
 - Mehrere WLANs: Die Uhr verbindet sich automatisch mit dem stärksten bekannten Netz.
 - **Webinterface** unter `http://scope-clock.local`, für Handys optimiert und ohne Passwort.
   Oben zeigt es eine Live-Vorschau des Oszilloskop-Bildes (im hellen Design ohne Hintergrund),
   darunter den Status (Zeitabgleich, WLAN, Signalstärke, Profil, Bildrate, Laufzeit, Arbeitsspeicher,
   Prozessorlast, Grund des letzten Neustarts) und das Protokoll. Außerdem dient es zum Eintragen von
-  WLANs. Ein einklappbares Seitenmenü (☰) springt in die Abschnitte. **Antippen der Vorschau
-  wechselt das Zifferblatt**: 1–12, nur 12/3/6/9, römisch I–XII oder nur XII/III/VI/IX. Das gilt auch am Oszilloskop und bleibt
+  WLANs. Ein einklappbares Seitenmenü (☰) springt in die Abschnitte. **Wischen über die Vorschau
+  (nach links oder rechts) wechselt das Zifferblatt**: 1–12, nur 12/3/6/9, römisch I–XII oder nur XII/III/VI/IX. Das gilt auch am Oszilloskop und bleibt
   gespeichert. Unter **Einstellungen** lassen sich Oszilloskop-Profil, Zifferblatt,
   Verweilzeit des Strahls, Zeigerhelligkeit, Rücklauf-Tempo, Zeitzone, Zeitserver (NTP) und OLED
   (Helligkeit, Pixelverschiebung, Drehung um 180°) online ändern. Die Änderungen wirken sofort und bleiben gespeichert. Das Webinterface ist immer
@@ -36,7 +46,7 @@ Hardware angepasst: **ESP32-WROOM-32U DevKitC V4**, **Waveshare 2.42" OLED (SPI)
 ### Schnellstart (Arduino IDE 2.x)
 1. Boardverwalter: **esp32 by Espressif** (2.0.x oder 3.x) installieren, Board **ESP32 Dev Module**.
    Unter **Werkzeuge → Partition Scheme** „**Huge APP (3MB No OTA/1MB SPIFFS)**“ wählen. Dann stehen
-   3 MB statt 1,25 MB für das Programm zur Verfügung (Belegung 39 % statt 92 %). Die Uhr nutzt weder
+   3 MB statt 1,25 MB für das Programm zur Verfügung (Belegung 39 % statt 93 %). Die Uhr nutzt weder
    OTA-Updates noch SPIFFS, und gespeicherte WLANs und Einstellungen bleiben beim Umstellen erhalten.
 2. Bibliotheksverwalter: **U8g2** (by oliver) installieren.
 3. WLAN eintragen, auf einem von zwei Wegen:
@@ -58,8 +68,19 @@ Hardware angepasst: **ESP32-WROOM-32U DevKitC V4**, **Waveshare 2.42" OLED (SPI)
 
 Alternativ mit PlatformIO: `pio run -t upload` (siehe `platformio.ini`, Huge APP ist dort schon eingestellt).
 
-Einstellungen (Zeitzone, Pins, Zifferblatt, Strahlgeschwindigkeit, Oszilloskop-Profil) stehen in
-`ESP32_OscilloscopeClock_v2.0/config.h`.
+Die Startwerte aller Einstellungen (Zeitzone, Pins, Zifferblatt, Verweilzeit des Strahls, Oszilloskop-Profil)
+stehen in `ESP32_OscilloscopeClock_v2.0/config.h`. Im Betrieb ändert man sie bequemer im Webinterface.
+
+### Bedienung
+
+| Was | Wie |
+|---|---|
+| Webinterface öffnen | `http://scope-clock.local` oder die IP-Adresse vom OLED/Log; ohne bekanntes WLAN über das Setup-WLAN „ScopeClock-Setup“ (`http://192.168.4.1`) |
+| Zifferblatt wechseln | im Webinterface über die Vorschau nach links/rechts wischen (am PC: Pfeiltasten), oder Einstellungen → Zifferblatt |
+| Oszilloskop-Profil DIGITAL/ANALOG | BOOT-Taster 3 s halten, oder Einstellungen → Oszilloskop-Profil |
+| Uhrzeit ohne Internet stellen | Einstellungen → „Uhrzeit stellen“ (erscheint nur, solange kein Zeitserver erreichbar ist) |
+| WLAN hinzufügen/löschen | Abschnitt WLAN im Webinterface, oder `secrets.h` |
+| Fehlersuche | Abschnitt Protokoll im Webinterface, oder serieller Monitor (115200 Baud) |
 
 ### Stand und Tests
 **Echter Build** mit Arduino-CLI 1.6.0, Board „ESP32 Dev Module“, Standard-Partitionsschema
@@ -67,12 +88,12 @@ Einstellungen (Zeitzone, Pins, Zifferblatt, Strahlgeschwindigkeit, Oszilloskop-P
 
 | Board-Paket | Programmspeicher | Globale Variablen (RAM) |
 |---|---|---|
-| esp32 3.3.12 | 1.217.114 Byte (92 %) | 74.052 Byte (22 %) |
+| esp32 3.3.12 | 1.226.178 Byte (93 %) | 74.148 Byte (22 %) |
 | esp32 2.0.17 | 866.053 Byte (66 %) | 61.048 Byte (18 %) – Stand vor Menü und Zifferblatt-Umschaltung |
 
 Die Konfigurationsvarianten (Profil ANALOG/DIGITAL, Z-Dunkeltastung, Zifferblatt 0/1/2,
 `USE_FAST_DAC 0`, EXCEL-Modus) wurden vor dem Webinterface ebenfalls ohne Warnungen gebaut.
-Mit dem empfohlenen Partitionsschema **Huge APP** belegt dieselbe Firmware ca. 1.217.000 von 3.145.728 Byte
+Mit dem empfohlenen Partitionsschema **Huge APP** belegt dieselbe Firmware ca. 1.226.000 von 3.145.728 Byte
 (**39 %**), mit „Minimal SPIFFS“ 62 %.
 
 Zusätzlich auf dem PC simuliert: Strahlverlauf (Helligkeit, Rücklaufspuren, Bildrate),

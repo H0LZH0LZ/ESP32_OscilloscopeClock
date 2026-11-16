@@ -1,5 +1,7 @@
 # Software – ESP32 Oscilloscope Clock v2.0
 
+**Deutsch** · [English](SOFTWARE.en.md)
+
 Diese Datei beschreibt, wie die Firmware aufgebaut ist. Für Verdrahtung und Gehäuse siehe
 [HARDWARE.md](HARDWARE.md), für den Schnellstart die [README](README.md).
 
@@ -7,7 +9,7 @@ Diese Datei beschreibt, wie die Firmware aufgebaut ist. Für Verdrahtung und Geh
 
 | Datei | Inhalt |
 |---|---|
-| `ESP32_OscilloscopeClock_v2.0/ESP32_OscilloscopeClock_v2.0.ino` | Firmware (Tasks, DAC, Zeit, WLAN, OLED) |
+| `ESP32_OscilloscopeClock_v2.0/ESP32_OscilloscopeClock_v2.0.ino` | Firmware (Tasks, DAC, Zeit, WLAN, OLED, Webserver) |
 | `ESP32_OscilloscopeClock_v2.0/config.h` | Alle Einstellungen: Zeitzone, NTP, Pins, OLED, Strahlgeschwindigkeit, Oszilloskop-Profil, Zifferblatt |
 | `ESP32_OscilloscopeClock_v2.0/secrets.h` | WLAN-Liste, **nur lokal** (steht in `.gitignore`) |
 | `ESP32_OscilloscopeClock_v2.0/secrets_example.h` | Vorlage für `secrets.h`. Wird verwendet, wenn `secrets.h` fehlt (dann Offline-Betrieb) |
@@ -29,7 +31,7 @@ Diese Datei beschreibt, wie die Firmware aufgebaut ist. Für Verdrahtung und Geh
  │   Zeit lesen  ◄──────────┼──Packed──┤  buttonPoll()   → g_scopeProfile       │
  │   Stunden-, Minutenzeiger│ (32 Bit) │  oledUpdate()   alle 200 ms (SPI)      │
  │   Sekundenzeiger hin     │          │  wifiLogChanges() jede Sekunde (Serial)│
- │   Rundtour Zifferblatt   │ g_scope- │                                        │
+ │   Rundtour Zifferblatt   │ g_scope- │  webLoop()      Webserver              │
  │   Sekundenzeiger zurück  │◄─Profile─┤                                        │
  │   → DAC GPIO25 / GPIO26  │ (1 Byte) ├────────────────────────────────────────┤
  └──────────────────────────┘          │ wifiTask: WiFiMulti, Verbindung halten │
@@ -51,11 +53,12 @@ Diese Datei beschreibt, wie die Firmware aufgebaut ist. Für Verdrahtung und Geh
 | Variable | Schreiber | Leser | Absicherung |
 |---|---|---|---|
 | `g_timePacked` (Std/Min/Sek) | uiTask | scopeTask | 32-Bit-Zugriff ist atomar |
-| `g_scopeProfile` (ANALOG/DIGITAL) | uiTask (BOOT-Taster), `setup()` | scopeTask (`beamJump`) | 1 Byte, atomar |
+| `g_scopeProfile` (ANALOG/DIGITAL) | uiTask (BOOT-Taster, Webinterface), `setup()` | scopeTask (`beamJump`) | 1 Byte, atomar |
 | `g_dialStyle` (Zifferblatt 0–3) | uiTask (Webinterface), `setup()` | scopeTask (baut Rundtour neu) | 1 Byte, atomar |
 | `g_frameCount` (Bildzähler) | scopeTask | uiTask (Bildrate) | 32-Bit-Zugriff ist atomar |
 | Log-Ringpuffer | `logMsg()` auf beiden Kernen | Webinterface | Spinlock |
 | `g_ntpSynced` | SNTP-Callback | uiTask | `bool`, atomar |
+| `g_timeManual` | Webinterface (`POST /api/time`) | uiTask | `bool`, atomar |
 | `g_lastSyncEpoch` | SNTP-Callback | uiTask | Spinlock (`time_t` ist 64 Bit) |
 
 ## Zeit und NTP
@@ -67,6 +70,12 @@ Diese Datei beschreibt, wie die Firmware aufgebaut ist. Für Verdrahtung und Geh
   die Ausgabe auf der Konsole übernimmt `wifiLogChanges()`.
 - Vor dem ersten Sync zählt `currentTime()` ab `FALLBACK_H:M:S` hoch. Datum und KW sind dann
   unbekannt. Nach dem ersten Sync läuft die Systemuhr des ESP32 selbstständig weiter, auch ohne WLAN.
+- **Ohne Internet** lässt sich die Zeit im Webinterface stellen (`POST /api/time`): entweder als
+  Unix-Zeit vom Handy (`epoch`, „Uhrzeit dieses Geräts übernehmen“) oder als Datum und Uhrzeit aus
+  den Eingabefeldern (`local`, gilt in der eingestellten Zeitzone, umgerechnet mit `mktime()`).
+  `settimeofday()` setzt die Systemuhr, `g_timeManual` macht sie gültig (`timeValid()`). Ein späterer
+  NTP-Abgleich überschreibt sie. Der ESP32 hat keine gepufferte Echtzeituhr: Nach einem Neustart
+  muss die Zeit erneut gestellt werden.
 
 ## WLAN
 
@@ -84,7 +93,7 @@ Passwort. Das gilt immer, wenn die Uhr mit einem WLAN verbunden ist, nicht nur i
 die Strahlausgabe auf Core 1 nicht.
 
 **Seite (`webpage.h`):** eine Seite mit **einklappbarem Seitenmenü** (☰ oben links, bleibt beim
-Scrollen sichtbar): Uhr, Status, WLAN, Log. Der oberste Abschnitt (Überschrift, Vorschau, Uhrzeit,
+Scrollen sichtbar): Uhr, Status, Einstellungen, WLAN, Protokoll. Der oberste Abschnitt (Überschrift, Vorschau, Uhrzeit,
 Datum) ist zentriert. Die Titelleiste „ESP32 Oscilloscope Clock“ bleibt immer oben neben der
 Menütaste stehen, die Abschnittsüberschriften direkt darunter (`position: sticky`). Jede
 Abschnittsüberschrift ist nur innerhalb ihres Abschnitts (`.grp`) angeheftet, so schiebt die
@@ -99,7 +108,10 @@ Vektordaten von `/api/vectors`, also dieselben Tabellen, die der `scopeTask` zei
 die Zeiger selbst nach der Uhrzeit (Stunde = `(h%12)*5 + m/12`, wie in der Firmware). Zwischen den
 Statusabfragen läuft die Zeit im Browser sekundengenau weiter.
 
-**Zifferblatt umschalten:** Tippen auf die Vorschau wechselt reihum zwischen vier Zifferblättern:
+**Zifferblatt wechseln:** Wischen über die Vorschau wechselt reihum zwischen vier Zifferblättern –
+nach links zum nächsten, nach rechts zum vorigen (Pointer-Events, ab 40 px waagerecht; senkrechtes
+Wischen scrollt weiter die Seite, `touch-action: pan-y`). Am PC gehen auch die Pfeiltasten, wenn die
+Vorschau den Fokus hat. Tippen allein wechselt nicht:
 
 | Stil | Ziffern | Tabelle |
 |---|---|---|
@@ -113,7 +125,7 @@ und berechnet die Rundtour neu. Das dauert einige zehn Millisekunden, so lange s
 (kurzer Lichtpunkt). Die Auswahl wird im NVS gespeichert (Schlüssel `dial`), `DIAL_STYLE` in
 `config.h` ist nur der Startwert. Alle vier Ziffernsätze liegen deshalb im RAM (zusammen ca. 0,7 KB).
 
-Darunter folgen drei Bereiche:
+Darunter folgen vier Bereiche. Jede Einstellung und jede Schaltfläche hat eine kurze Beschreibung:
 - **Status:** große Uhrzeit, KW und Datum, Zeitabgleich (NTP) mit letztem Abgleich, WLAN,
   Signalstärke, Netzwerkadresse, Profil, Bildrate, Laufzeit, Arbeitsspeicher (frei/gesamt,
   Tiefstwert seit dem Neustart, größter freier Speicherblock), Prozessorlast beider Kerne (mit
@@ -121,9 +133,11 @@ Darunter folgen drei Bereiche:
   Uhrzeit, BOOT-Taster; Kern 1 = Strahlausgabe), Grund des letzten Neustarts, Firmware-Version.
   Wird alle 2 s aktualisiert.
   Farbig hervorgehoben werden nur Probleme: Orange = Warnung (NTP wartet oder überfällig, WLAN
-  sucht, Setup-WLAN aktiv, Tiefstwert unter 20 KB, größter Block unter 8 KB, Kern 0 über 85 %,
+  sucht, Signal unter −80 dBm, Setup-WLAN aktiv, Tiefstwert unter 20 KB, größter Block unter 8 KB, Kern 0 über 85 %,
   Neustart nach Absturz, Watchdog oder Unterspannung), Rot = Fehler (keine Antwort von der Uhr,
   abgelehnte Eingaben). Normale Zustände und Bestätigungen stehen in normaler Schriftfarbe.
+- **Einstellungen:** siehe [Einstellungen im Webinterface](#einstellungen-im-webinterface). Solange
+  kein Zeitserver erreichbar war, steht ganz oben zusätzlich „Uhrzeit stellen“ (siehe [Zeit und NTP](#zeit-und-ntp)).
 - **WLAN:** gespeicherte Netze (Netze aus dem Webinterface lassen sich löschen), Netzsuche
   (Netz antippen übernimmt den Namen), Formular, „Neu verbinden“.
 - **Protokoll** (das Log der Firmware): die letzten `LOG_BUFFER_SIZE` Byte (8 KB, ca. 120 Zeilen),
@@ -135,7 +149,7 @@ Darunter folgen drei Bereiche:
 
 Für Handys optimiert: eine Spalte, Schaltflächen mindestens 44 px hoch, Eingabefelder mit 16 px
 Schrift (iOS zoomt sonst), helles/dunkles Design nach Systemeinstellung, Rand für Notch und
-Home-Balken, keine externen Dateien (funktioniert im Setup-WLAN ohne Internet). Abfragen
+Home-Balken, keine externen Dateien – auch die Schrift kommt von der Uhr (funktioniert im Setup-WLAN ohne Internet). Abfragen
 pausieren, solange die Seite im Hintergrund ist. Texte von der Uhr werden immer als Text
 eingesetzt (`textContent`), nie als HTML.
 
@@ -144,7 +158,7 @@ eingesetzt (`textContent`), nie als HTML.
 | Methode und Pfad | Funktion |
 |---|---|
 | `GET /` | die Seite |
-| `GET /api/status` | JSON: `time`, `date`, `kw`, `ntp{synced,overdue,last,server}`, `wifi{configured,connected,ssid,rssi,ip,host}`, `ap{active,ssid,ip}`, `profile`, `dial`, `fps`, `heap`, `heapTotal`, `heapMin`, `heapBlock`, `cpu0`, `reset`, `uptime`, `heap`, `fw` |
+| `GET /api/status` | JSON: `time`, `date`, `kw`, `ntp{synced,overdue,manual,last,server}`, `wifi{configured,connected,ssid,rssi,ip,host}`, `ap{active,ssid,ip}`, `profile`, `dial`, `fps`, `heap`, `heapTotal`, `heapMin`, `heapBlock`, `cpu0`, `reset`, `uptime`, `fw` |
 | `GET /api/log` | Log als Text, älteste Zeile zuerst |
 | `GET /api/networks` | gespeicherte Netze `[{ssid, source:"secrets"/"web"}]`, nie Passwörter |
 | `GET /font.woff2` | Schrift der Seite (aus `font.h`), wird ein Jahr im Browser zwischengespeichert |
@@ -154,9 +168,10 @@ eingesetzt (`textContent`), nie als HTML.
 | `POST /api/wifi/delete` | `ssid` löschen, danach Neustart (WiFiMulti kann Netze nicht vergessen) |
 | `POST /api/reconnect` | Verbindung trennen, `wifiTask` verbindet mit dem stärksten Netz |
 | `GET /api/settings` | aktuelle Einstellungen, Standardwerte (`defaults`) und Zeitzonen-Liste |
-| `POST /api/settings` | beliebige Felder `profile`, `dial`, `beamNs`, `handPct`, `jumpSpeed`, `tz`, `ntp`, `oledContrast`, `oledShift`: prüfen, sofort anwenden, speichern. Antwort `{ok, msg, settings}` |
+| `POST /api/settings` | beliebige Felder `profile`, `dial`, `beamNs`, `handPct`, `jumpSpeed`, `tz`, `ntp`, `oledContrast`, `oledShift`, `oledFlip`: prüfen, sofort anwenden, speichern. Antwort `{ok, msg, settings}` |
 | `POST /api/settings/reset` | alle Einstellungen auf die Werte aus `config.h` |
 | `POST /api/dial` | `style` 0 = 1–12, 1 = 12/3/6/9, 2 = römisch I–XII, 3 = römisch XII/III/VI/IX: Zifferblatt umschalten (Oszilloskop und Vorschau), wird gespeichert |
+| `POST /api/time` | `epoch` (Unix-Sekunden, UTC) **oder** `local` (`JJJJ-MM-TTTHH:MM[:SS]`, Ortszeit): Uhrzeit von Hand stellen, 2024–2099 |
 
 **Gespeicherte WLANs:** bis zu `WEB_MAX_NETWORKS` (5) Netze im NVS (Namensraum `scopeclock`,
 Schlüssel `netn`, `net_s0…`, `net_p0…`), zusätzlich zu `secrets.h`. Sie bleiben bei einem
@@ -171,9 +186,9 @@ das Setup-WLAN wieder. Das OLED zeigt in dieser Zeit „Setup ScopeClock-Setup�
 „http://192.168.4.1“.
 
 **Log:** `logMsg()` ersetzt die direkten `Serial`-Ausgaben. Jede Zeile bekommt einen Zeitstempel
-(`hh:mm:ss` nach dem ersten NTP-Sync, davor `+<s>s` seit dem Start) und geht an die Konsole und in
+(`hh:mm:ss`, sobald die Uhrzeit gültig ist – per NTP oder von Hand gestellt –, davor `+<s>s` seit dem Start) und geht an die Konsole und in
 einen Ringpuffer (`LOG_BUFFER_SIZE`, 8 KB). Ein Spinlock schützt den Puffer, weil beide Kerne
-schreiben können.
+schreiben können. Die Zeilen kommen ohne Umlaute aus, weil sie auch über die serielle Konsole laufen.
 
 **Bildrate:** `scopeTask` zählt die Bilder (`g_frameCount`), der `uiTask` rechnet daraus jede
 Sekunde die Bildrate für die Statusanzeige.
@@ -190,13 +205,13 @@ immer zu 100 % mit der Strahlausgabe belegt.
 
 Der Abschnitt „Einstellungen“ ändert Werte im laufenden Betrieb. Jede Änderung wirkt sofort und wird
 im NVS gespeichert. Schieberegler senden beim Loslassen, damit nicht bei jeder Bewegung in den Flash
-geschrieben wird. `config.h` liefert nur die Startwerte. „Auf Standard zurücksetzen“ löscht die
+geschrieben wird. `config.h` liefert nur die Startwerte. „Auf Standardwerte zurücksetzen“ löscht die
 gespeicherten Werte, die WLANs bleiben erhalten.
 
 | Einstellung | NVS-Schlüssel | Bereich | Wirkung |
 |---|---|---|---|
 | Oszilloskop-Profil | `profile` | DIGITAL / ANALOG | `g_scopeProfile`, auch per BOOT-Taster |
-| Zifferblatt | `dial` | 4 Stile | `g_dialStyle`, synchron mit Tippen auf die Vorschau |
+| Zifferblatt | `dial` | 4 Stile | `g_dialStyle`, synchron mit dem Wischen über die Vorschau |
 | Verweilzeit des Strahls | `beam` | 1.000–10.000 ns pro Schritt | `g_beamNs`, `scopeTask` berechnet das Timing zwischen zwei Bildern neu (`beamTiming()`) |
 | Helligkeit Stunden-/Minutenzeiger | `hand` | 30–100 % | `g_handPct` |
 | Rücklauf-Tempo | `jump` | 0 (sofortiger Sprung) – 48 (× Zeichentempo) | `g_jumpSpeed`, nur im Profil ANALOG wirksam. Bei DIGITAL zeigt der Regler ausgegraut 0 (sofortiger Sprung); der ANALOG-Wert bleibt gespeichert und erscheint beim Zurückschalten wieder |
@@ -251,6 +266,7 @@ Beide zeigen dieselben Zeilen, mit Zeitstempel (`+<s>s` bis zum ersten NTP-Sync)
 21:40:12 [WiFi] Verbindung verloren – versuche erneut
 21:41:12 [Web] Setup-WLAN "ScopeClock-Setup" aktiv – Einrichtung unter http://192.168.4.1
 22:02:30 [Web] WLAN "Werkstatt" gespeichert
+22:05:10 [Zeit] von Hand gestellt (vom Handy): 15.11.2026 22:05:10
 23:15:06 [NTP] Warnung: letzter Sync liegt mehr als 2 Intervalle zurueck
 23:20:00 [Scope] Profil umgeschaltet: ANALOG, gespeichert
 ```
@@ -291,7 +307,7 @@ Strahlgeschwindigkeit:
 | Gleiche Verweilzeit | Jeder Schritt genau `BEAM_NS_PER_UNIT`, über den CPU-Taktzähler. Wird ein Schritt durch einen Interrupt verzögert, werden die folgenden kürzer | Zeit pro Punkt je nach Treiberaufruf |
 | Ecken | Endpunkt einer Linie = Startpunkt der nächsten, wird nur **einmal** ausgegeben | doppelt, helle Punkte an Ecken |
 | Kurze Linien | Rundungsrest wird an die nächste Linie weitergereicht, ein Linienzug bekommt exakt seine Länge an Zeit | jede Linie für sich gerundet |
-| Oszilloskop-Profil | DIGITAL: harte Sprünge, sonst zeigt ein abtastendes Oszilloskop Zwischenpunkte. ANALOG: gebremste Sprünge (siehe nächste Zeile). Umschalten im Betrieb per BOOT-Taster (3 s), gespeichert im NVS (`Preferences`, Namensraum `scopeclock`) | – |
+| Oszilloskop-Profil | DIGITAL: harte Sprünge, sonst zeigt ein abtastendes Oszilloskop Zwischenpunkte. ANALOG: gebremste Sprünge (siehe nächste Zeile). Umschalten im Betrieb per BOOT-Taster (3 s) oder im Webinterface, gespeichert im NVS (`Preferences`, Namensraum `scopeclock`) | – |
 | Sprünge (ANALOG) | in 1-Einheit-Schritten mit 24-facher Geschwindigkeit (`JUMP_SPEED`), auf den letzten 4 Einheiten bremsend (`JUMP_LANDING`, `JUMP_RAMP`). Die Rücklaufspur hat ca. 1/24 der Linienhelligkeit, alte Verstärker landen trotzdem genau | harter Sprung |
 | Reihenfolge | Zifferblatt und Ziffern werden beim Start einmal zu einer Rundtour mit minimalen Sprüngen sortiert (Nächster-Nachbar + 2-opt), Einstieg dort, wo der Sekundenzeiger endet | Tabellenreihenfolge |
 | Sekundenzeiger | hin und zurück (Mitte ↔ Spitze) mit je halber Helligkeit gezeichnet, dadurch entfällt der lange Sprung vom Rand zur Mitte | – |
@@ -343,7 +359,7 @@ bei Bedarf `BEAM_NS_PER_UNIT` erhöhen (hellere Spur, weniger Bilder/s).
 
 ## Feineinstellung
 
-| Symptom | Stellschraube (`config.h`) |
+| Symptom | Stellschraube (`config.h` oder Webinterface) |
 |---|---|
 | Bild flimmert | `BEAM_NS_PER_UNIT` verringern (z. B. 2000) |
 | Linien zu dunkel | `BEAM_NS_PER_UNIT` erhöhen (z. B. 5000) oder Intensität am Oszilloskop erhöhen |
@@ -351,6 +367,7 @@ bei Bedarf `BEAM_NS_PER_UNIT` erhöhen (hellere Spur, weniger Bilder/s).
 | Linienanfänge mit kleinen „Haken“ | `JUMP_SPEED` (z. B. 12) oder `JUMP_LANDING` (z. B. 4) verringern |
 | Rücklaufspuren zwischen den Linien sichtbar | `JUMP_SPEED` erhöhen (32), `0` (harter Sprung, für schnelle Oszilloskope) oder Z-Dunkeltastung nutzen (`ZBLANK_PIN`) |
 | Zeiger heller/dunkler als das Zifferblatt | `HAND_BRIGHT_PCT` anpassen |
-| Zeit falsch um ganze Stunden | `TZ_INFO` prüfen |
+| Zeit falsch um ganze Stunden | Zeitzone im Webinterface bzw. `TZ_INFO` prüfen |
+| Kein Internet, Uhrzeit läuft ab 10:08:37 (Startzeit `FALLBACK_H:M:S`) | Webinterface → Einstellungen → „Uhrzeit stellen“ |
 | OLED-Bild 2 px versetzt | in der `.ino` `NONAME0` → `NONAME2` |
 | OLED bleibt dunkel | Verdrahtung prüfen: CLK GPIO18, DIN GPIO23, CS GPIO5, DC GPIO17, RST GPIO4, VCC an 3V3 (siehe HARDWARE.md) |
