@@ -122,6 +122,7 @@ struct StoredNet {
 #include "DataTable.h"
 #include "webpage.h"          // HTML/CSS/JS des Webinterfaces (PROGMEM)
 #include "font.h"             // Schrift des Webinterfaces (2 Schnitte WOFF2, PROGMEM, ca. 30 KB)
+#include "icon.h"             // App-Symbol (SVG/PNG) und Manifest für den Startbildschirm
 
 // Nur der klassische ESP32 hat DACs an GPIO25/26 (S2 hat andere Pins und nur
 // einen Kern; S3/C3/C6 haben gar keine DACs).
@@ -1794,6 +1795,19 @@ static void webStart()
   web.on("/font-600.woff2",  HTTP_GET,  [] {                // halbfetter Schnitt (Überschriften, Knöpfe)
     web.sendHeader("Cache-Control", "max-age=31536000");
     web.send_P(200, "font/woff2", (const char *)FONT_WOFF2_600, sizeof(FONT_WOFF2_600));
+  });
+  // „Zum Startbildschirm hinzufügen“: Manifest und Symbol (ändern sich nur mit der Firmware)
+  web.on("/manifest.json",   HTTP_GET,  [] {
+    web.sendHeader("Cache-Control", "max-age=86400");
+    web.send_P(200, "application/manifest+json", MANIFEST_JSON);
+  });
+  web.on("/icon.svg",        HTTP_GET,  [] {
+    web.sendHeader("Cache-Control", "max-age=31536000");
+    web.send_P(200, "image/svg+xml", ICON_SVG);
+  });
+  web.on("/icon.png",        HTTP_GET,  [] {
+    web.sendHeader("Cache-Control", "max-age=31536000");
+    web.send_P(200, "image/png", (const char *)ICON_PNG, sizeof(ICON_PNG));
   });
   web.on("/api/status",      HTTP_GET,  handleStatus);
   web.on("/api/log",         HTTP_GET,  [] { web.send(200, "text/plain; charset=utf-8", logRead()); });

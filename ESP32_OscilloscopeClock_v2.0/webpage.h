@@ -23,11 +23,15 @@
    - einklappbares Seitenmenü (☰ oben links) zum Springen in die Abschnitte
    - Uhr-Abschnitt zentriert; Abschnittsüberschriften bleiben beim Scrollen stehen
    - Einstellungen (Profil, Zifferblatt, Strahl, Zeitzone, NTP, OLED) wirken sofort
-   - Tippen auf die Vorschau schaltet das Zifferblatt um (Webseite + Oszilloskop):
-     1–12 → 12·3·6·9 → römisch I–XII → römisch XII·III·VI·IX
+   - Wischen über die Vorschau (oder Punkte/Pfeile darunter) wechselt das Zifferblatt
+     (Webseite + Oszilloskop): 1–12 → 12·3·6·9 → römisch XII·III·VI·IX → römisch I–XII
+   - Einstellungen in Gruppen (ein-/ausklappbar), „✓ Gespeichert“ direkt an der Einstellung,
+     Zurücksetzen je Gruppe mit „Rückgängig“
+   - Darstellung hell/dunkel/automatisch, Sprache Deutsch/English (Seitenmenü)
+   - als App auf den Startbildschirm (manifest.json, icon.png/icon.svg)
    - Schaltflächen und Listeneinträge mindestens 44 px hoch
    - Eingabefelder mit 16 px Schrift (iOS zoomt sonst beim Antippen)
-   - helles/dunkles Design nach Systemeinstellung, Rand für Notch/Home-Balken
+   - helles/dunkles Design (System oder fest), Rand für Notch/Home-Balken
    - keine externen Dateien: funktioniert auch im Setup-WLAN ohne Internet
    - alle Texte von der Uhr werden als Text (textContent) eingesetzt, nie als
      HTML – WLAN-Namen mit Sonderzeichen können die Seite nicht verändern
@@ -39,7 +43,17 @@ static const char INDEX_HTML[] PROGMEM = R"HTML(<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#0a7d44">
+<!-- Als App auf den Startbildschirm (Android/iOS): Manifest und Symbol kommen von der Uhr -->
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Scope Clock">
 <title>Scope Clock</title>
+<!-- Gewählte Darstellung (hell/dunkel) sofort setzen, damit nichts aufblitzt -->
+<script>try{const m=localStorage.getItem('theme');if(m==='light'||m==='dark'){document.documentElement.dataset.theme=m;document.documentElement.style.colorScheme=m}}catch(e){}</script>
 <style>
 /* Schrift aus der Firmware (Raleway, verkleinert – siehe tools/gen_font.py): zwei feste Schnitte,
    Light (300) für Text und SemiBold (600) für Überschriften/Knöpfe. Der schlanke Light-Schnitt ist
@@ -47,14 +61,16 @@ static const char INDEX_HTML[] PROGMEM = R"HTML(<!doctype html>
 @font-face{font-family:'ScopeClock Sans';src:url(/font.woff2) format('woff2');font-weight:300 500;font-display:swap}
 @font-face{font-family:'ScopeClock Sans';src:url(/font-600.woff2) format('woff2');font-weight:600;font-display:swap}
 :root{--scope-bg:transparent;--scope-trace:#0b7a3e;--scope-glow:rgba(11,122,62,.12);--scope-halo:rgba(11,122,62,.35);--scope-grid:rgba(0,0,0,.07);
---bg:#f2f2f5;--card:#fff;--fg:#111;--mute:#5c5c63;--line:#e3e3e8;--acc:#0a7d44;--warn:#b45309;--err:#b91c1c;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+--bg:#f2f2f5;--card:#fff;--fg:#000;--mute:#38383d;--line:#e3e3e8;--acc:#0a7d44;--warn:#b45309;--err:#b91c1c;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
  --sans:'ScopeClock Sans',system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
-@media (prefers-color-scheme:dark){:root{--scope-bg:#050805;--scope-trace:#b6ffc4;--scope-glow:rgba(80,255,120,.18);--scope-halo:#3dff6a;--scope-grid:rgba(120,255,140,.08);--bg:#000;--card:#1c1c1e;--fg:#f2f2f7;--mute:#9a9aa0;--line:#2c2c2e;--acc:#30d158;--warn:#ffb340;--err:#ff6961}}
+/* Dunkles Design: nach Systemeinstellung, außer im Seitenmenü ist „Hell“ gewählt;
+   „Dunkel“ (data-theme="dark") gilt immer. */
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--scope-bg:#050805;--scope-trace:#b6ffc4;--scope-glow:rgba(80,255,120,.18);--scope-halo:#3dff6a;--scope-grid:rgba(120,255,140,.08);--bg:#000;--card:#1c1c1e;--fg:#fff;--mute:#d0d0d6;--line:#2c2c2e;--acc:#30d158;--warn:#ffb340;--err:#ff6961}}
+:root[data-theme="dark"]{--scope-bg:#050805;--scope-trace:#b6ffc4;--scope-glow:rgba(80,255,120,.18);--scope-halo:#3dff6a;--scope-grid:rgba(120,255,140,.08);--bg:#000;--card:#1c1c1e;--fg:#fff;--mute:#d0d0d6;--line:#2c2c2e;--acc:#30d158;--warn:#ffb340;--err:#ff6961}
 *{box-sizing:border-box}
 b,strong{font-weight:600}   /* Fettdruck im SemiBold-Schnitt */
 body{margin:0;background:var(--bg);color:var(--fg);font:300 16px/1.45 var(--sans);letter-spacing:.01em;
  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;
- font-feature-settings:'lnum' 1;   /* Raleway: Ziffern in Versalhöhe statt Mediävalziffern (vererbt sich überallhin) */
  padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);-webkit-text-size-adjust:100%}
 main{max-width:640px;margin:0 auto;padding:0 16px 32px}
 /* Titelleiste: bleibt beim Scrollen immer oben stehen (64 px, auf Höhe der
@@ -64,7 +80,7 @@ h1{position:sticky;top:env(safe-area-inset-top);z-index:22;display:flex;align-it
  font-size:15px;font-weight:600;color:var(--mute);text-transform:uppercase;letter-spacing:.06em}
 /* Oberster Abschnitt (Uhr): alles zentriert, die Oszilloskop-Vorschau nutzt die volle Breite. */
 header{padding:0 0 4px;text-align:center;scroll-margin-top:calc(env(safe-area-inset-top) + 64px)}
-#clock{font:300 50px/1.1 var(--sans);font-feature-settings:'lnum' 1;letter-spacing:.02em;margin:4px 0 0}   /* große Uhrzeit im feinen Light-Schnitt */   /* 'font' setzt lnum zurück */
+#clock{font:300 50px/1.1 var(--sans);letter-spacing:.02em;margin:4px 0 0}   /* große Uhrzeit im feinen Light-Schnitt, mit Raleways Original-Ziffern */
 /* Raleway hat unterschiedlich breite Ziffern – jede Ziffer bekommt ein festes Feld,
    damit die Uhrzeit beim Weiterzählen nicht hin und her springt. */
 #clock i{display:inline-block;width:.62em;font-style:normal;text-align:center}
@@ -83,7 +99,7 @@ h2{position:sticky;top:calc(env(safe-area-inset-top) + 64px);scroll-margin-top:c
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top);background:var(--bg);z-index:25}
 .row{display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:44px;border-top:1px solid var(--line);padding:6px 0}
 .row:first-of-type{border-top:0}
-.row span:first-child{color:var(--mute)}
+.row span:first-child{color:var(--fg)}
 .row span:last-child{text-align:right;overflow-wrap:anywhere}
 .row .note{display:block;font-size:12px;line-height:1.3;color:var(--mute);opacity:.85;margin-top:2px}
 /* Farbig hervorgehoben werden nur Probleme: Orange = Warnung, Rot = Fehler.
@@ -129,7 +145,7 @@ pre.full{height:auto;overflow-y:visible}
 .greset{margin:4px 0 4px}.gmsg{font-size:14px;margin:6px 0 0}.gmsg:empty{display:none}
 .set .head{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
 .set .head label{margin:0;color:var(--fg);font-size:16px}
-.set .val{color:var(--mute);font-variant-numeric:tabular-nums;white-space:nowrap}
+.set .val{color:var(--fg);font-variant-numeric:tabular-nums;white-space:nowrap}
 .set .sub{color:var(--mute);font-size:13px;margin-top:2px}
 .set input[type=range]{width:100%;min-height:44px;padding:0;border:0;background:transparent;accent-color:var(--acc)}
 .set select{font:inherit;font-size:16px;width:100%;min-height:44px;padding:0 10px;margin-top:6px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--fg)}
@@ -176,6 +192,26 @@ html{scroll-behavior:smooth}
 #nav select{font:inherit;font-size:16px;width:100%;min-height:44px;padding:0 10px;margin-bottom:6px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--fg)}
 #shade{position:fixed;inset:0;z-index:35;background:rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .25s}
 #shade.open{opacity:1;pointer-events:auto}
+/* Punkte unter der Vorschau: aktives Zifferblatt, antippen wechselt; Pfeile = voriges/nächstes */
+.dots{display:flex;align-items:center;justify-content:center;gap:2px;margin:0 0 4px}
+.dots button{width:auto;min-height:36px;margin:0;padding:0 12px;background:transparent;color:var(--mute);font-size:22px;font-weight:300}
+.dots .dot{width:30px;padding:0;display:flex;align-items:center;justify-content:center}
+.dots .dot::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--mute);opacity:.3}
+.dots .dot[aria-current="true"]::before{background:var(--acc);opacity:1;width:10px;height:10px}
+/* Kurzstatus unter dem Datum */
+.quick{display:inline-block;font-size:14px;color:var(--fg);margin:6px 0 2px;text-decoration:none}
+/* „✓ Gespeichert“ direkt an der geänderten Einstellung */
+.svd{font-size:13px;margin-top:4px;color:var(--acc);font-weight:600}.svd.err{color:var(--err)}
+/* Gruppen der Einstellungen ein-/ausklappbar (Überschrift antippen) */
+.grouphead{cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none;-webkit-tap-highlight-color:transparent}
+.grouphead::after{content:"›";font-size:22px;font-weight:300;line-height:1;transition:transform .2s;transform:rotate(90deg)}
+.sgroup.closed>.grouphead::after{transform:none}
+.sgroup.closed>:not(.grouphead){display:none}
+.sgroup.closed>.grouphead{padding-bottom:14px}
+/* Rückgängig nach dem Zurücksetzen */
+.undo{width:auto;min-height:32px;margin:0 0 0 10px;padding:0 12px;font-size:14px;display:inline-flex;align-items:center}
+/* Filter des Protokolls */
+.logf{flex-wrap:wrap;margin-top:10px}.logf button{flex:1 1 28%;min-height:38px;font-size:14px;padding:0 6px}
 
 </style></head>
 <body>
@@ -197,6 +233,10 @@ html{scroll-behavior:smooth}
  <div class="navlang"><label for="sLang">Sprache</label>
   <select id="sLang"><option value="de" lang="de">Deutsch</option><option value="en" lang="en">English</option></select>
   <div class="desc">Gilt für Webinterface, OLED-Anzeige und Protokoll.</div></div>
+ <!-- Darstellung: automatisch (System), hell oder dunkel – nur in diesem Browser gespeichert -->
+ <div class="navlang"><label for="sTheme">Darstellung</label>
+  <select id="sTheme"><option value="auto">Automatisch</option><option value="light">Hell</option><option value="dark">Dunkel</option></select>
+  <div class="desc">Hell, dunkel oder wie im System eingestellt. Wird nur in diesem Browser gespeichert.</div></div>
 </nav>
 <div id="shade"></div>
 <main>
@@ -205,9 +245,12 @@ html{scroll-behavior:smooth}
 <!-- Vorschau des Oszilloskop-Bildes: Wischen wechselt das Zifferblatt -->
 <div class="scope"><canvas id="scope" width="512" height="512" role="img" tabindex="0"
  aria-label="Vorschau des Oszilloskop-Bildes – nach links oder rechts wischen (oder Pfeiltasten), um das Zifferblatt zu wechseln"></canvas><div class="dialtag" id="dialTag"></div></div>
-<p class="scopehint">‹ Nach links oder rechts wischen, um das Zifferblatt zu wechseln ›</p>
+<!-- Punkte: aktives Zifferblatt (antippen wechselt), Pfeile = voriges/nächstes; Wischen geht weiterhin -->
+<div class="dots" id="dots"><button type="button" id="dPrev" aria-label="Voriges Zifferblatt">‹</button><span id="dotList" style="display:flex"></span><button type="button" id="dNext" aria-label="Nächstes Zifferblatt">›</button></div>
 <!-- Uhrzeit und Datum der Uhr (läuft zwischen den Statusabfragen im Browser weiter) -->
-<div id="clock">--:--:--</div><div id="date">&nbsp;</div></header>
+<div id="clock">--:--:--</div><div id="date">&nbsp;</div>
+<!-- Kurzstatus: WLAN · Zeitabgleich · Profil (antippen springt zum Status) -->
+<a class="quick" id="quick" href="#status-h"></a></header>
 
 <div class="grp"><h2 id="status-h">Status</h2>
 <!-- Statuszeilen: werden alle 2 s von status() neu aufgebaut -->
@@ -215,7 +258,7 @@ html{scroll-behavior:smooth}
 
 <div class="grp"><h2 id="set-h">Einstellungen</h2>
 <section id="settings">
- <div class="sgroup"><div class="grouphead" id="scope-h">Oszilloskop</div>
+ <div class="sgroup"><div class="grouphead" id="scope-h" role="button" tabindex="0" aria-expanded="true">Oszilloskop</div>
  <!-- Profil DIGITAL/ANALOG (auch per BOOT-Taster) -->
  <div class="set"><div class="head"><label>Oszilloskop-Profil</label></div>
   <div class="seg" role="group" aria-label="Oszilloskop-Profil">
@@ -252,7 +295,7 @@ html{scroll-behavior:smooth}
   <button type="button" class="sec greset" data-reset="scope">Auf Standardwerte zurücksetzen</button>
   <div class="desc">Setzt nur die Einstellungen dieser Gruppe auf die Werte aus config.h zurück. <span class="saved">Änderungen wirken sofort und bleiben gespeichert.</span></div>
  </div>
- <div class="sgroup"><div class="grouphead" id="time-h">Uhrzeit</div>
+ <div class="sgroup"><div class="grouphead" id="time-h" role="button" tabindex="0" aria-expanded="true">Uhrzeit</div>
  <!-- Nur sichtbar, solange kein Zeitserver erreichbar war (kein Internet, Setup-WLAN) -->
  <div class="set" id="timeRow" hidden><div class="head"><label>Uhrzeit stellen</label></div>
   <div class="sub">Kein Zeitserver erreichbar (kein Internet). Die Uhrzeit lässt sich hier von Hand stellen.</div>
@@ -290,7 +333,7 @@ html{scroll-behavior:smooth}
   <button type="button" class="sec greset" data-reset="time">Auf Standardwerte zurücksetzen</button>
   <div class="desc">Setzt nur die Einstellungen dieser Gruppe auf die Werte aus config.h zurück. <span class="saved">Änderungen wirken sofort und bleiben gespeichert.</span></div>
  </div>
- <div class="sgroup"><div class="grouphead" id="disp-h">Display</div>
+ <div class="sgroup"><div class="grouphead" id="disp-h" role="button" tabindex="0" aria-expanded="true">Display</div>
  <!-- OLED-Helligkeit 0–100 % (0 = aus) -->
  <div class="set"><div class="head"><label for="sOled">OLED-Helligkeit</label><span class="val" id="vOled"></span></div>
   <input type="range" id="sOled" min="0" max="100" step="1">
@@ -318,7 +361,7 @@ html{scroll-behavior:smooth}
  </div>
  <div id="setMsg"></div>
  <!-- Gruppe WLAN: gespeicherte Netze, Netzsuche, Netz hinzufügen, Neu verbinden, Zurücksetzen -->
- <div class="sgroup"><div class="grouphead" id="wlan-h">WLAN</div>
+ <div class="sgroup"><div class="grouphead" id="wlan-h" role="button" tabindex="0" aria-expanded="true">WLAN</div>
  <div class="subhead">Gespeicherte Netze</div>
  <!-- Gespeicherte Netze, je mit „Löschen“ (Neustart danach) -->
  <div class="desc">Netze, mit denen sich die Uhr verbinden darf. Sie wählt automatisch das stärkste. „Löschen“ entfernt ein Netz – die Uhr startet danach neu.</div>
@@ -355,6 +398,15 @@ html{scroll-behavior:smooth}
 <div class="grp"><h2 id="log-h">Protokoll</h2>
 <section>
  <div class="desc top">Meldungen der Uhr zu WLAN, Zeitabgleich und Einstellungen – hilfreich bei der Fehlersuche.</div>
+ <!-- Filter: nur Meldungen eines Bereichs anzeigen -->
+ <div class="seg logf" role="group" aria-label="Filter">
+  <button type="button" data-lf="all" aria-pressed="true">Alle</button>
+  <button type="button" data-lf="wifi" aria-pressed="false">WLAN</button>
+  <button type="button" data-lf="time" aria-pressed="false">Zeit</button>
+  <button type="button" data-lf="web" aria-pressed="false">Web</button>
+  <button type="button" data-lf="scope" aria-pressed="false">Oszilloskop</button>
+  <button type="button" data-lf="warn" aria-pressed="false">Warnungen</button></div>
+ <div class="desc" style="margin-top:6px">Zeigt nur Meldungen eines Bereichs; „Warnungen“ zeigt Probleme wie Verbindungsabbrüche.</div>
  <!-- Protokoll-Feld mit eigener Scrollleiste -->
  <pre id="log" tabindex="0" aria-label="Protokoll, im Feld scrollbar">wird geladen …</pre>
  <div class="loginfo"><span id="logInfo"></span><span>neueste Einträge unten</span></div>
@@ -387,6 +439,7 @@ Object.assign(EN,{"Setzt nur die Einstellungen dieser Gruppe auf die Werte aus c
 Object.assign(EN,{"Helligkeit Minutenstriche": "Tick mark brightness", "Helligkeit Ziffern": "Numeral brightness", "Die 60 Striche am Rand. Über 100 % heller, aber weniger Bilder pro Sekunde.": "The 60 marks around the edge. Above 100 % brighter, but fewer frames per second.", "Die Zahlen auf dem Zifferblatt. Über 100 % heller, aber weniger Bilder pro Sekunde.": "The numerals on the dial. Above 100 % brighter, but fewer frames per second."});
 Object.assign(EN,{"Unter 100 %, weil die schmalen Zeiger sonst heller wirken als der Rest. 0 % blendet die Zeiger aus.": "Below 100 % because the narrow hands would otherwise look brighter than the rest. 0 % hides the hands.", "Die 60 Striche am Rand. 0 % blendet sie aus.": "The 60 marks around the edge. 0 % hides them.", "Die Zahlen auf dem Zifferblatt. 0 % blendet sie aus.": "The numerals on the dial. 0 % hides them.", "Helligkeit des kleinen Displays an der Uhr. 0 % schaltet es aus; niedrige Werte schonen das OLED.": "Brightness of the small display on the clock. 0 % switches it off; low values protect the OLED.", "Sekunden anzeigen": "Show seconds", "Uhrzeit auf dem OLED als HH:MM:SS oder nur HH:MM.": "Time on the OLED as HH:MM:SS or just HH:MM.", "Nachtmodus": "Night mode", "Von": "From", "Bis": "To", "Helligkeit nachts": "Brightness at night", "Im gewählten Zeitraum gilt die Helligkeit nachts – 0 % schaltet das OLED dann ganz aus. Braucht eine gültige Uhrzeit.": "During the selected period the night brightness applies – 0 % switches the OLED off completely. Requires a valid time.", "Beginn Nachtmodus": "Night mode start", "Ende Nachtmodus": "Night mode end", "aus": "off"});
 Object.assign(EN,{"WLAN zurücksetzen": "Reset Wi-Fi", "Löscht alle gespeicherten Netze. Die Uhr startet danach neu und öffnet das Setup-WLAN „ScopeClock-Setup“.": "Deletes all saved networks. The clock then restarts and opens the setup network “ScopeClock-Setup”."});
+Object.assign(EN,{"Darstellung": "Appearance", "Hell": "Light", "Dunkel": "Dark", "Hell, dunkel oder wie im System eingestellt. Wird nur in diesem Browser gespeichert.": "Light, dark or as set in the system. Saved only in this browser.", "Voriges Zifferblatt": "Previous dial", "Nächstes Zifferblatt": "Next dial", "Alle": "All", "Zeit": "Time", "Warnungen": "Warnings", "Zeigt nur Meldungen eines Bereichs; „Warnungen“ zeigt Probleme wie Verbindungsabbrüche.": "Shows only messages of one area; “Warnings” shows problems such as connection losses.", "Rückgängig": "Undo", "Wiederhergestellt": "Restored", "von Hand": "manual"});
 const DE={};for(const k in EN)DE[EN[k]]=k;
 let lang='de';try{if(localStorage.getItem('lang')==='en')lang='en'}catch(e){}
 const t=s=>lang==='en'&&EN[s]||s;
@@ -437,6 +490,7 @@ function drawScope(){
  g.clearRect(0,0,W,W);if(SC.bg!=='transparent'&&!/rgba\(.*,\s*0\)$/.test(SC.bg)){g.fillStyle=SC.bg;g.fillRect(0,0,W,W)}
  g.strokeStyle=SC.grid;g.lineWidth=1;            // Raster 8x8 wie am Oszilloskop
  for(let i=1;i<8;i++){const p=Math.round(i*W/8)+.5;g.beginPath();g.moveTo(p,0);g.lineTo(p,W);g.moveTo(0,p);g.lineTo(W,p);g.stroke()}
+ showDots();                                     // Punkte gleich zeigen, auch ohne Vektordaten
  if(!V||tBase===null)return;
  const sec=(tBase+Math.floor((performance.now()-tAt)/1000))%86400;
  const h=Math.floor(sec/3600),m=Math.floor(sec/60)%60,s=sec%60;
@@ -445,25 +499,40 @@ function drawScope(){
  const a=v=>v===undefined||v===null?1:(+v===0?0:Math.max(.25,Math.min(1,v/100*.8+.2)));
  const groups=[[V.dial,a(S&&S.tickPct)],[V.digits[dial]||[],a(S&&S.digitPct)],
   [[V.hr[(h%12)*5+Math.floor(m/12)],V.min[m]],S&&S.handPct!==undefined?a(S.handPct/0.67>100?100:S.handPct/0.67):1],[[V.sec[s]],1]];
+ // Verweilzeit des Strahls: länger = heller (Vorschau ändert sich schon beim Ziehen)
+ const bf=S&&S.beamNs?Math.max(.4,Math.min(1,S.beamNs/3000)):1;
  g.lineCap='round';g.lineJoin='round';
- for(const [polys,alpha] of groups){g.globalAlpha=alpha;
+ for(const [polys,alpha] of groups){g.globalAlpha=alpha*bf;
   for(const [w,col,blur] of [[5,SC.glow,10],[1.8,SC.trace,3]]){   // Leuchten + Spur (SC: Farben s.o.)
    g.lineWidth=w*k/2;g.strokeStyle=col;g.shadowColor=SC.halo;g.shadowBlur=blur;
    g.beginPath();
    for(const p of polys){if(!p||p.length<4)continue;g.moveTo(p[0]*k,(255-p[1])*k);for(let i=2;i<p.length;i+=2)g.lineTo(p[i]*k,(255-p[i+1])*k)}
    g.stroke()}}
+ // Rücklaufspuren wie am Röhren-Oszilloskop: nur im Profil ANALOG mit gebremstem Sprung,
+ // umso schwächer, je schneller gesprungen wird (Rücklauf-Tempo)
+ if(S&&S.profile===0&&S.jumpSpeed>0){const tr=[...V.dial,...(V.digits[dial]||[])].filter(p=>p&&p.length>=4);
+  g.globalAlpha=Math.min(.45,4/S.jumpSpeed)*.6*bf;g.lineWidth=.8*k;g.strokeStyle=SC.trace;g.shadowBlur=0;g.beginPath();
+  for(let i=1;i<tr.length;i++){const a=tr[i-1],b=tr[i];g.moveTo(a[a.length-2]*k,(255-a[a.length-1])*k);g.lineTo(b[0]*k,(255-b[1])*k)}
+  g.stroke()}
  g.globalAlpha=1;g.shadowBlur=0;
 }
+// Punkte unter der Vorschau: aktives Zifferblatt markieren (Reihenfolge wie beim Wischen)
+function showDots(){const l=$('dotList');if(!l.children.length)for(const st of DIAL_ORDER){const b=document.createElement('button');b.type='button';b.className='dot';b.dataset.dial=st;
+  b.onclick=()=>setDialTo(st);l.append(b)}
+ for(const b of l.children){b.setAttribute('aria-current',String(+b.dataset.dial===dial));b.setAttribute('aria-label',t(DIALS[+b.dataset.dial]))}}
 // Zifferblatt wechseln – sofort in der Vorschau,
 // per POST /api/dial auch am Oszilloskop (wird dort gespeichert).
 let tagTimer=0,dialBusy=false;
 // Namen des Zifferblatts kurz unten in der Vorschau einblenden
 function showTag(t){const e=$('dialTag');e.textContent=t;e.classList.add('show');clearTimeout(tagTimer);tagTimer=setTimeout(()=>e.classList.remove('show'),1600)}
-// step = +1 (nächstes) oder -1 (voriges Zifferblatt), reihum
-async function nextDial(step=1){
- if(dialBusy)return;dialBusy=true;const prev=dial;const o=DIAL_ORDER;dial=o[(o.indexOf(dial)+step+o.length)%o.length];drawScope();showTag(t(DIALS[dial]));
+// Zifferblatt auf Stil st stellen (Vorschau sofort, Uhr per POST /api/dial)
+async function setDialTo(st){
+ if(dialBusy||st===dial)return;dialBusy=true;const prev=dial;dial=st;drawScope();showTag(t(DIALS[dial]));
  try{const r=await post('/api/dial',{style:dial});if(!r.ok)throw 0;if(S){S.dial=dial;renderSettings()}}catch(e){dial=prev;drawScope();showTag(t('Wechsel fehlgeschlagen'))}
  dialBusy=false}
+// step = +1 (nächstes) oder -1 (voriges Zifferblatt), reihum in DIAL_ORDER
+function nextDial(step=1){const o=DIAL_ORDER;setDialTo(o[(o.indexOf(dial)+step+o.length)%o.length])}
+$('dPrev').onclick=()=>nextDial(-1);$('dNext').onclick=()=>nextDial(1);
 // Wischen über die Vorschau: nach links = nächstes, nach rechts = voriges Zifferblatt
 // (wie beim Blättern in Fotos). Pointer-Events decken Finger und Maus ab.
 // Senkrechtes Wischen bleibt Seiten-Scrollen (CSS touch-action:pan-y).
@@ -480,11 +549,17 @@ function menu(open){$('nav').classList.toggle('open',open);$('shade').classList.
 $('menuBtn').onclick=()=>menu(!$('nav').classList.contains('open'));
 $('shade').onclick=()=>menu(false);
 document.addEventListener('keydown',e=>{if(e.key==='Escape')menu(false)});
-document.querySelectorAll('#nav a').forEach(a=>a.addEventListener('click',()=>menu(false)));
+document.querySelectorAll('#nav a').forEach(a=>a.addEventListener('click',()=>{menu(false);
+ const h=document.querySelector(a.getAttribute('href'));if(h&&h.classList.contains('grouphead'))openGroup(h.parentNode,true)}));
 // Uhrzeit der Uhr (hh:mm:ss) übernehmen; die Seite zählt danach selbst weiter
 function setTime(t){const a=t.split(':').map(Number);if(a.length===3&&!a.some(isNaN)){tBase=a[0]*3600+a[1]*60+a[2];tAt=performance.now()}}
 drawScope();                                           // Schirm/Raster sofort zeichnen, noch vor den Daten
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>drawScope());
+// Darstellung (Seitenmenü): auto = Systemeinstellung, sonst fest hell/dunkel; nur im Browser gespeichert
+$('sTheme').value=document.documentElement.dataset.theme||'auto';
+$('sTheme').onchange=e=>{const m=e.target.value,r=document.documentElement;
+ if(m==='auto'){delete r.dataset.theme;r.style.colorScheme=''}else{r.dataset.theme=m;r.style.colorScheme=m}
+ try{localStorage.setItem('theme',m)}catch(x){}drawScope()};
 get('/api/vectors').then(r=>r.json()).then(v=>{V=v;drawScope()}).catch(()=>{});
 let lastSec=-1;
 setInterval(()=>{if(tBase===null)return;const n=Math.floor((performance.now()-tAt)/1000);
@@ -528,6 +603,12 @@ function renderSettings(){
  $('sShift').checked=S.oledShift;
  $('sFlip').checked=S.oledFlip;
 }
+// Zuletzt bediente Einstellung merken – dort erscheint die Rückmeldung „✓ Gespeichert“
+let lastCtl=null;
+['change','click'].forEach(ev=>document.addEventListener(ev,e=>{if(e.target.closest&&e.target.closest('#settings .set'))lastCtl=e.target},true));
+function ctlMsg(r){const box=lastCtl&&lastCtl.closest('.set');if(!box||!r.msg){setMsg(r);return}
+ let m=box.querySelector(':scope>.svd');if(!m){m=document.createElement('div');m.className='svd';box.append(m)}
+ m.textContent=(r.ok?'✓ ':'')+r.msg;m.className='svd'+(r.ok?'':' err');clearTimeout(m.t);m.t=setTimeout(()=>m.remove(),r.ok?1800:5000)}
 // Meldung unter den Einstellungen anzeigen (Erfolg verschwindet nach 2,5 s)
 function setMsg(r){const m=$('setMsg');m.textContent=r.msg||'';m.className=r.ok?'ok':'err';clearTimeout(setMsg.t);if(r.ok)setMsg.t=setTimeout(()=>m.textContent='',2500)}
 // Einstellungen von der Uhr laden
@@ -535,14 +616,17 @@ async function loadSettings(){try{S=(await (await get('/api/settings')).json()).
 // Eine oder mehrere Einstellungen an die Uhr senden und die Antwort übernehmen
 async function setSetting(d){
  setBusy=true;
- try{const r=await post('/api/settings',d);if(r.settings){S=r.settings;renderSettings()}setMsg(r);
+ try{const r=await post('/api/settings',d);if(r.settings){S=r.settings;renderSettings()}ctlMsg(r);
   if('dial' in d&&r.ok){dial=S.dial;drawScope()}}
- catch(e){setMsg({ok:false,msg:t('Keine Antwort von der Uhr')});loadSettings()}
+ catch(e){ctlMsg({ok:false,msg:t('Keine Antwort von der Uhr')});loadSettings()}
  setBusy=false}
 document.querySelectorAll('[data-profile]').forEach(b=>b.onclick=()=>setSetting({profile:b.dataset.profile}));
 document.querySelectorAll('[data-h12]').forEach(b=>b.onclick=()=>{h12=b.dataset.h12==='1';lastSec=-1;setSetting({h12:b.dataset.h12})});
 $('sDial').onchange=e=>setSetting({dial:e.target.value});
-$('sBeam').oninput=e=>$('vBeam').textContent=fmtBeam(e.target.value);
+// Beim Ziehen: Vorschau-Helligkeit und geschätzte Bildrate (Bildrate ~ 1/Verweilzeit)
+let lastFps=0,fpsNs=0;
+$('sBeam').oninput=e=>{const v=+e.target.value;$('vBeam').textContent=fmtBeam(v);
+ if(lastFps&&fpsNs)$('vFps').textContent='~'+Math.round(lastFps*fpsNs/v)+' '+t('Bilder/s');if(S){S.beamNs=v;drawScope()}};
 $('sBeam').onchange=e=>setSetting({beamNs:e.target.value});
 $('sHand').oninput=e=>{$('vHand').textContent=fmtPct(e.target.value);if(S){S.handPct=+e.target.value;drawScope()}};
 $('sHand').onchange=e=>setSetting({handPct:e.target.value});
@@ -550,7 +634,7 @@ $('sTick').oninput=e=>{$('vTick').textContent=fmtPct(e.target.value);if(S){S.tic
 $('sTick').onchange=e=>setSetting({tickPct:e.target.value});
 $('sDigit').oninput=e=>{$('vDigit').textContent=fmtPct(e.target.value);if(S){S.digitPct=+e.target.value;drawScope()}};
 $('sDigit').onchange=e=>setSetting({digitPct:e.target.value});
-$('sJump').oninput=e=>$('vJump').textContent=fmtJump(e.target.value);
+$('sJump').oninput=e=>{$('vJump').textContent=fmtJump(e.target.value);if(S){S.jumpSpeed=+e.target.value;drawScope()}};
 $('sJump').onchange=e=>setSetting({jumpSpeed:e.target.value});
 $('sTz').onchange=e=>setSetting({tz:e.target.value});
 $('sNtpSave').onclick=()=>setSetting({ntp:$('sNtp').value.trim()});
@@ -574,6 +658,7 @@ document.querySelectorAll('[data-dst]').forEach(b=>b.onclick=()=>{dstMode=+b.dat
 function showTimeRow(on,dst){const r=$('timeRow');
  $('tDstBox').hidden=!(S&&S.tz&&S.tz.includes(','));            // nur bei Zeitzonen mit Sommerzeit
  if(r.hidden===!on)return;r.hidden=!on;
+ if(on)openGroup($('time-h').parentNode,true);              // wichtig: Gruppe Uhrzeit aufklappen
  if(on&&typeof dst==='number'){dstMode=dst;showDst()}
  if(on){const d=new Date();$('tDate').value=d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
   $('tTime').value=pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds())}}
@@ -594,13 +679,28 @@ function setLangLocal(l){lang=l;try{localStorage.setItem('lang',l)}catch(e){}app
 $('sLang').onchange=async e=>{const l=e.target.value;if(l===lang)return;
  langBusy=true;setLangLocal(l);await setSetting({lang:l});langBusy=false};
 // Zurücksetzen je Gruppe (Oszilloskop, Uhrzeit, Display); Meldung erscheint direkt über dem Knopf
-const GNAME={scope:'Oszilloskop',time:'Uhrzeit',display:'Display'};
-document.querySelectorAll('[data-reset]').forEach(b=>b.onclick=async()=>{const g=b.dataset.reset,n=t(GNAME[g]);
- if(!confirm(lang==='en'?'Reset the “'+n+'” settings to the default values from config.h?':'Einstellungen „'+n+'“ auf die Standardwerte aus config.h zurücksetzen?'))return;
- const m=document.querySelector('[data-gmsg="'+g+'"]');
+// Ohne Rückfrage: Die vorigen Werte werden gemerkt, 8 s lang lässt sich alles mit
+// „Rückgängig“ wiederherstellen (sendet die alten Werte per POST /api/settings).
+const GFIELDS={scope:['profile','dial','beamNs','handPct','tickPct','digitPct','jumpSpeed'],time:['tz','ntp','h12'],
+ display:['oledPct','oledSec','oledNight','nightFrom','nightTo','nightPct','oledShift','oledFlip']};
+document.querySelectorAll('[data-reset]').forEach(b=>b.onclick=async()=>{const g=b.dataset.reset;
+ const m=document.querySelector('[data-gmsg="'+g+'"]'),old={};
+ if(S)for(const k of GFIELDS[g])old[k]=typeof S[k]==='boolean'?(S[k]?1:0):S[k];
  setBusy=true;try{const r=await post('/api/settings/reset',{group:g});if(r.settings){S=r.settings;h12=!!S.h12;lastSec=-1;renderSettings();dial=S.dial;drawScope()}
-  m.textContent=r.msg||'';m.className='gmsg '+(r.ok?'ok':'err');clearTimeout(m.t);if(r.ok)m.t=setTimeout(()=>m.textContent='',2500)}
+  m.textContent=r.msg||'';m.className='gmsg '+(r.ok?'ok':'err');clearTimeout(m.t);
+  if(r.ok&&Object.keys(old).length){const u=document.createElement('button');u.type='button';u.className='sec undo';u.textContent=t('Rückgängig');
+   u.onclick=async()=>{clearTimeout(m.t);try{const x=await post('/api/settings',old);if(x.settings){S=x.settings;h12=!!S.h12;lastSec=-1;renderSettings();dial=S.dial;drawScope()}
+    m.textContent=x.ok?t('Wiederhergestellt'):(x.msg||'');m.className='gmsg '+(x.ok?'ok':'err');m.t=setTimeout(()=>m.textContent='',2500)}catch(e){}};
+   m.append(u);m.t=setTimeout(()=>m.textContent='',8000)}}
  catch(e){m.textContent=t('Keine Antwort von der Uhr');m.className='gmsg err'}setBusy=false});
+// ---- Gruppen ein-/ausklappen (Überschrift antippen); Zustand im Browser gespeichert
+function openGroup(g,open){g.classList.toggle('closed',!open);g.firstElementChild.setAttribute('aria-expanded',String(open));
+ try{const o=[...document.querySelectorAll('.sgroup')].filter(x=>!x.classList.contains('closed')).map(x=>x.firstElementChild.id);localStorage.setItem('groups',JSON.stringify(o))}catch(e){}}
+{let o=null;try{o=JSON.parse(localStorage.getItem('groups'))}catch(e){}   // Standard: alle Gruppen zu
+ document.querySelectorAll('.sgroup').forEach(g=>{const h=g.firstElementChild,on=Array.isArray(o)&&o.includes(h.id);
+  g.classList.toggle('closed',!on);h.setAttribute('aria-expanded',String(on));
+  h.onclick=()=>openGroup(g,g.classList.contains('closed'));
+  h.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();h.onclick()}}})}
 
 let online=true;
 // Status holen (alle 2 s): Uhrzeit, Datum, Statusliste, Vorschau, Einstellungen abgleichen
@@ -610,13 +710,18 @@ async function status(){
   if(!dialBusy&&typeof s.dial==='number'&&s.dial!==dial){dial=s.dial;drawScope()}
   if(s.lang&&s.lang!==lang&&!langBusy)setLangLocal(s.lang);
   if(typeof s.h12==='boolean'&&s.h12!==h12&&!setBusy){h12=s.h12;lastSec=-1}
-  $('vFps').textContent=s.fps+' '+t('Bilder/s');
+  lastFps=s.fps;fpsNs=S?S.beamNs:0;if(document.activeElement!==$('sBeam'))$('vFps').textContent=s.fps+' '+t('Bilder/s');
   showTimeRow(!s.ntp.synced,s.ntp.dst);
   if(S&&!setBusy){const p=s.profile==='DIGITAL'?1:0;if(p!==S.profile||s.dial!==S.dial){S.profile=p;S.dial=s.dial;renderSettings()}}$('date').textContent=s.date?(t('KW')+' '+s.kw+' – '+(lang==='en'?s.date.split('.').reverse().join('-'):s.date)):t('Datum unbekannt');
+  // Kurzstatus unter dem Datum: WLAN · Zeitabgleich · Profil; Probleme in Orange
+  {const q=$('quick');q.replaceChildren();const it=[
+   [t('WLAN')+(s.wifi.connected?' ✓':s.ap.active?': Setup':' ✗'),!s.wifi.connected],
+   ['NTP'+(s.ntp.synced?' ✓':s.ntp.manual?': '+t('von Hand'):' ✗'),!s.ntp.synced&&!s.ntp.manual],[s.profile,false]];
+   it.forEach(([x,w],i)=>{if(i)q.append(' · ');const e=document.createElement('span');e.textContent=x;if(w)e.className='warn';q.append(e)})}
   const st=$('status');st.replaceChildren(
    row(t('Zeitabgleich (NTP)'),s.ntp.synced?(t('zuletzt')+' '+s.ntp.last):s.ntp.manual?t('aus – Uhrzeit von Hand gestellt'):(s.wifi.configured?t('wartet auf ersten Abgleich …'):t('aus (kein WLAN)')),s.ntp.synced?(s.ntp.overdue?'warn':''):(s.ntp.manual?'':'warn'),t('Uhrzeit aus dem Internet, stündlich abgeglichen')),
    row(t('WLAN'),s.wifi.connected?s.wifi.ssid:(s.wifi.configured?t('sucht Netz …'):t('kein Netz eingetragen')),s.wifi.connected?'':'warn',t('verbundenes Netz')),
-   ...(s.wifi.connected?[row(t('Signalstärke'),s.wifi.rssi+' dBm',s.wifi.rssi<-80?'warn':'',t('über −67 dBm gut, unter −80 dBm schwach')),row(t('Netzwerkadresse'),s.wifi.ip+'  ·  '+s.wifi.host,'',t('unter dieser Adresse ist die Uhr im Browser erreichbar'))]:[]),
+   ...(s.wifi.connected?[row(t('Signalstärke'),bars(s.wifi.rssi).trim()+'  '+s.wifi.rssi+' dBm',s.wifi.rssi<-80?'warn':'',t('über −67 dBm gut, unter −80 dBm schwach')),row(t('Netzwerkadresse'),s.wifi.ip+'  ·  '+s.wifi.host,'',t('unter dieser Adresse ist die Uhr im Browser erreichbar'))]:[]),
    ...(s.ap.active?[row(t('Setup-WLAN'),s.ap.ssid+' ('+s.ap.ip+')','warn',t('mit dem Handy verbinden, um die Uhr einzurichten'))]:[]),
    row(t('Laufzeit'),dur(s.uptime),'',t('seit dem letzten Neustart')),
    // Arbeitsspeicher in einer Zeile: frei/gesamt, darunter Tiefstwert und größter Block
@@ -659,10 +764,17 @@ let logAuto=true;
 // liest man weiter oben, bleibt die Position erhalten.
 let logFirst=true;
 // Protokoll laden; bleibt unten, wenn man unten war, sonst an der Leseposition
-async function log(){try{const txt=await (await get('/api/log')).text();const p=$('log');
- const end=logFirst||p.scrollTop+p.clientHeight>=p.scrollHeight-20,top=p.scrollTop;
- p.textContent=txt||t('(leer)');p.scrollTop=end?p.scrollHeight:top;logFirst=false;
- const n=txt?txt.replace(/\n$/,'').split('\n').length:0;$('logInfo').textContent=n+' '+t('Zeilen')}catch(e){}}
+// Filter: Bereich nach dem Kürzel in eckigen Klammern, „Warnungen“ nach typischen Wörtern
+let logRaw='',logF='all';
+const LOGF={wifi:/\[WiFi\]/,time:/\[(NTP|Zeit|Time)\]/,web:/\[Web\]/,scope:/\[(Scope|UI)\]/,
+ warn:/Warnung|warning|verloren|lost|Absturz|Crash|ungültig|invalid|fehlgeschlagen|failed|Unterspannung|Brown-out/i};
+function showLog(){const p=$('log'),end=logFirst||p.scrollTop+p.clientHeight>=p.scrollHeight-20,top=p.scrollTop;
+ const all=logRaw?logRaw.replace(/\n$/,'').split('\n'):[],ls=logF==='all'?all:all.filter(l=>LOGF[logF].test(l));
+ p.textContent=ls.length?ls.join('\n'):t('(leer)');p.scrollTop=end?p.scrollHeight:top;logFirst=false;
+ $('logInfo').textContent=(logF==='all'?'':ls.length+' '+t('von')+' ')+all.length+' '+t('Zeilen')}
+async function log(){try{logRaw=await (await get('/api/log')).text();showLog()}catch(e){}}
+document.querySelectorAll('[data-lf]').forEach(b=>b.onclick=()=>{logF=b.dataset.lf;logFirst=true;
+ document.querySelectorAll('[data-lf]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));showLog()});
 $('wf').onsubmit=async e=>{e.preventDefault();const r=await post('/api/wifi',{ssid:$('ssid').value.trim(),pw:$('pw').value});msg(r);if(r.ok)$('pw').value=''};
 $('eye').onclick=()=>{const p=$('pw');p.type=p.type==='password'?'text':'password';$('eye').textContent=t(p.type==='password'?'Anzeigen':'Ausblenden')};
 $('scanBtn').onclick=scan;

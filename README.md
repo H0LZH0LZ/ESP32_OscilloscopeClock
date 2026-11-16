@@ -32,7 +32,8 @@ Hardware angepasst: **ESP32-WROOM-32U DevKitC V4**, **Waveshare 2.42" OLED (SPI)
 - **12- oder 24-Stunden-Format** für OLED und Webinterface (12 h mit AM/PM), umschaltbar im Webinterface.
 - **Sprache Deutsch oder Englisch** für Webinterface, OLED-Anzeige und Protokoll, umschaltbar im
   Webinterface (Seitenmenü) und gespeichert. Startwert `UI_LANG` in `config.h`.
-- **Webinterface** unter `http://scope-clock.local`, für Handys optimiert und ohne Passwort.
+- **Webinterface** unter `http://scope-clock.local`, für Handys optimiert und ohne Passwort, auch als App auf den
+  Startbildschirm. Darstellung hell/dunkel/automatisch, Protokoll mit Filter, Zurücksetzen mit „Rückgängig“.
   Oben zeigt es eine Live-Vorschau des Oszilloskop-Bildes (im hellen Design ohne Hintergrund),
   darunter den Status (Zeitabgleich, WLAN, Signalstärke, Profil, Bildrate, Laufzeit, Arbeitsspeicher,
   Prozessorlast, Grund des letzten Neustarts) und das Protokoll. Außerdem dient es zum Eintragen von
@@ -50,7 +51,7 @@ Hardware angepasst: **ESP32-WROOM-32U DevKitC V4**, **Waveshare 2.42" OLED (SPI)
 ### Schnellstart (Arduino IDE 2.x)
 1. Boardverwalter: **esp32 by Espressif** (2.0.x oder 3.x) installieren, Board **ESP32 Dev Module**.
    Unter **Werkzeuge → Partition Scheme** „**Huge APP (3MB No OTA/1MB SPIFFS)**“ wählen. Dann stehen
-   3 MB statt 1,25 MB für das Programm zur Verfügung (Belegung 40 % statt 96 %). Die Uhr nutzt weder
+   3 MB statt 1,25 MB für das Programm zur Verfügung (Belegung 41 % statt 97 %). Die Uhr nutzt weder
    OTA-Updates noch SPIFFS, und gespeicherte WLANs und Einstellungen bleiben beim Umstellen erhalten.
 2. Bibliotheksverwalter: **U8g2** (by oliver) installieren.
 3. `ESP32_OscilloscopeClock_v2.0.ino` öffnen und hochladen. Seriellen Monitor auf 115200 Baud stellen.
@@ -90,13 +91,13 @@ stehen in `ESP32_OscilloscopeClock_v2.0/config.h`. Im Betrieb ändert man sie be
 
 | Board-Paket | Programmspeicher | Globale Variablen (RAM) |
 |---|---|---|
-| esp32 3.3.12 | 1.259.902 Byte (96 %) | 74.148 Byte (22 %) |
+| esp32 3.3.12 | 1.280.054 Byte (97 %) | 74.148 Byte (22 %) |
 | esp32 2.0.17 | 866.053 Byte (66 %) | 61.048 Byte (18 %) – Stand vor Menü und Zifferblatt-Umschaltung |
 
 Die Konfigurationsvarianten (Profil ANALOG/DIGITAL, Z-Dunkeltastung, Zifferblatt 0/1/2,
 `USE_FAST_DAC 0`, EXCEL-Modus) wurden vor dem Webinterface ebenfalls ohne Warnungen gebaut.
-Mit dem empfohlenen Partitionsschema **Huge APP** belegt dieselbe Firmware ca. 1.245.000 von 3.145.728 Byte
-(**40 %**), mit „Minimal SPIFFS“ 63 %.
+Mit dem empfohlenen Partitionsschema **Huge APP** belegt dieselbe Firmware ca. 1.280.000 von 3.145.728 Byte
+(**41 %**), mit „Minimal SPIFFS“ 65 %.
 
 Zusätzlich auf dem PC simuliert: Strahlverlauf (Helligkeit, Rücklaufspuren, Bildrate),
 OLED-Inhalt, BOOT-Taster, Kalenderwoche, Speicherzugriffe (AddressSanitizer). Die Webseite

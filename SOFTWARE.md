@@ -17,6 +17,7 @@ Diese Datei beschreibt, wie die Firmware aufgebaut ist. Für Verdrahtung und Geh
 | `ESP32_OscilloscopeClock_v2.0/font.h` | Schrift des Webinterfaces („ScopeClock Sans“ = verkleinertes Raleway, zwei feste Schnitte Light (300) für Text und SemiBold (600) für Überschriften/Knöpfe, WOFF2, zusammen ca. 30 KB), ausgeliefert unter `/font.woff2` und `/font-600.woff2` – erzeugt mit `tools/gen_font.py` |
 | `tools/gen_font.py` | Erzeugt `font.h` aus `Raleway[wght].ttf` (braucht `pip install fonttools brotli`) |
 | `fonts/OFL.txt` | Lizenz der Schrift (SIL Open Font License 1.1) |
+| `ESP32_OscilloscopeClock_v2.0/icon.h` | App-Symbol (`/icon.svg`, `/icon.png` 192 px) und `/manifest.json` für „Zum Startbildschirm hinzufügen“ – erzeugt mit `tools/gen_icon.py` (braucht Pillow) |
 | `platformio.ini` | Alternative zur Arduino IDE |
 
 ## Aufgabenteilung auf die beiden Kerne
@@ -169,6 +170,22 @@ Darunter folgen drei Bereiche. Jede Einstellung und jede Schaltfläche hat eine 
   oben, bleibt die Position beim Aktualisieren erhalten. „Alles anzeigen“ klappt das Log auf volle
   Länge auf, darunter steht die Zeilenzahl.
 
+**Bedienhilfen der Seite:**
+- **Punkte unter der Vorschau** zeigen das aktive Zifferblatt; Punkt oder Pfeil ‹ › antippen wechselt (zusätzlich zum Wischen).
+- **Kurzstatus** unter dem Datum: „WLAN ✓ · NTP ✓ · DIGITAL“, Probleme in Orange; antippen springt zum Status.
+- **Gruppen der Einstellungen** sind eingeklappt und öffnen sich per Tippen auf die Überschrift (Zustand im Browser
+  gespeichert). Menü-Unterpunkte öffnen ihre Gruppe; erscheint „Uhrzeit stellen“, öffnet sich „Uhrzeit“ von selbst.
+- **„✓ Gespeichert“** erscheint kurz direkt an der geänderten Einstellung (Fehler in Rot).
+- **Vorschau beim Ziehen:** Verweilzeit ändert Helligkeit der Vorschau und zeigt die geschätzte Bildrate (~), das
+  Rücklauf-Tempo zeigt im Profil ANALOG die Rücklaufspuren in der Vorschau (schwächer, je schneller).
+- **Zurücksetzen** einer Gruppe ohne Rückfrage, dafür 8 s lang „Rückgängig“ (sendet die vorigen Werte).
+  „WLAN zurücksetzen“ fragt weiterhin nach (Neustart, nicht umkehrbar).
+- **Signalstärke** im Status mit Balken.
+- **Darstellung** im Seitenmenü: Automatisch, Hell oder Dunkel (nur im Browser gespeichert, `data-theme`).
+- **Protokoll-Filter:** Alle, WLAN, Zeit, Web, Oszilloskop, Warnungen.
+- **Als App:** Manifest und Symbol erlauben „Zum Startbildschirm hinzufügen“; die Seite öffnet sich dann ohne Browserleiste.
+- **Schrift:** Raleway Light/SemiBold mit Raleways Original-Ziffern (Mediävalziffern), Text in Schwarz.
+
 Für Handys optimiert: eine Spalte, Schaltflächen mindestens 44 px hoch, Eingabefelder mit 16 px
 Schrift (iOS zoomt sonst), helles/dunkles Design nach Systemeinstellung, Rand für Notch und
 Home-Balken, keine externen Dateien – auch die Schrift kommt von der Uhr (funktioniert im Setup-WLAN ohne Internet). Abfragen
@@ -180,6 +197,7 @@ eingesetzt (`textContent`), nie als HTML.
 | Methode und Pfad | Funktion |
 |---|---|
 | `GET /` | die Seite |
+| `GET /manifest.json`, `/icon.svg`, `/icon.png` | App-Manifest und Symbol für den Startbildschirm |
 | `GET /api/status` | JSON: `time`, `date`, `kw`, `ntp{synced,overdue,manual,dst,last,server}`, `wifi{configured,connected,ssid,rssi,ip,host}`, `ap{active,ssid,ip}`, `profile`, `dial`, `fps`, `heap`, `heapTotal`, `heapMin`, `heapBlock`, `cpu0`, `reset`, `uptime`, `fw`, `lang`, `h12` |
 | `GET /api/log` | Log als Text, älteste Zeile zuerst |
 | `GET /api/networks` | gespeicherte Netze `[{ssid, source:"web"}]`, nie Passwörter |

@@ -19,6 +19,7 @@ German with the English label in parentheses. Code comments are in German.
 | `ESP32_OscilloscopeClock_v2.0/font.h` | Web interface font (“ScopeClock Sans” = reduced Raleway, two static styles Light (300) for text and SemiBold (600) for headings/buttons, WOFF2, approx. 30 KB in total), served at `/font.woff2` and `/font-600.woff2` – generated with `tools/gen_font.py` |
 | `tools/gen_font.py` | Generates `font.h` from `Raleway[wght].ttf` (needs `pip install fonttools brotli`) |
 | `fonts/OFL.txt` | Font licence (SIL Open Font License 1.1) |
+| `ESP32_OscilloscopeClock_v2.0/icon.h` | App icon (`/icon.svg`, `/icon.png` 192 px) and `/manifest.json` for “Add to home screen” – generated with `tools/gen_icon.py` (needs Pillow) |
 | `platformio.ini` | Alternative to the Arduino IDE |
 
 ## Division of work between the two cores
@@ -175,6 +176,22 @@ Below follow three sections. Every setting and every button has a short descript
   lines follow automatically. If you are reading further up, the position is kept on refresh.
   „Alles anzeigen“ (show all) expands the log to full length; the line count is shown below.
 
+**Usability aids of the page:**
+- **Dots below the preview** show the active dial; tapping a dot or the arrows ‹ › changes it (in addition to swiping).
+- **Short status** below the date: “Wi-Fi ✓ · NTP ✓ · DIGITAL”, problems in orange; tapping jumps to the status.
+- **Settings groups** are collapsed and open by tapping the heading (state saved in the browser). Menu sub-entries
+  open their group; when “Set time” appears, the time group opens by itself.
+- **“✓ Saved”** briefly appears right at the changed setting (errors in red).
+- **Preview while dragging:** the dwell time changes the preview brightness and shows the estimated frame rate (~);
+  in profile ANALOG the retrace speed shows the retrace lines in the preview (fainter the faster).
+- **Resetting** a group needs no confirmation; instead “Undo” is offered for 8 s (sends the previous values).
+  “Reset Wi-Fi” still asks (restart, cannot be undone).
+- **Signal strength** in the status with bars.
+- **Appearance** in the side menu: automatic, light or dark (saved only in the browser, `data-theme`).
+- **Log filter:** all, Wi-Fi, time, web, oscilloscope, warnings.
+- **As an app:** manifest and icon allow “Add to home screen”; the page then opens without browser bar.
+- **Font:** Raleway Light/SemiBold with Raleway's original old-style figures, text in black.
+
 Optimised for phones: one column, buttons at least 44 px high, input fields with 16 px text (iOS
 zooms otherwise), light/dark theme following the system setting, margins for notch and home bar,
 no external files – even the font comes from the clock (works in the setup network without
@@ -186,6 +203,7 @@ inserted as text (`textContent`), never as HTML.
 | Method and path | Function |
 |---|---|
 | `GET /` | the page |
+| `GET /manifest.json`, `/icon.svg`, `/icon.png` | app manifest and icon for the home screen |
 | `GET /font.woff2`, `GET /font-600.woff2` | font of the page, Light and SemiBold (from `font.h`), cached by the browser for one year. Two static styles instead of a variable font, because some Android browsers otherwise show bold text of a variable font in the system font |
 | `GET /api/status` | JSON: `time`, `date`, `kw`, `ntp{synced,overdue,manual,dst,last,server}`, `wifi{configured,connected,ssid,rssi,ip,host}`, `ap{active,ssid,ip}`, `profile`, `dial`, `fps`, `heap`, `heapTotal`, `heapMin`, `heapBlock`, `cpu0`, `reset`, `uptime`, `fw`, `lang`, `h12` |
 | `GET /api/log` | log as text, oldest line first |
