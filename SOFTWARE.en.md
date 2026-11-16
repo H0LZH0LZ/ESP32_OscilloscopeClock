@@ -113,10 +113,11 @@ network. The `WebServer` runs in the `uiTask` on core 0 (`webLoop()` every 10 ms
 affect the beam output on core 1.
 
 **Page (`webpage.h`):** one page with a **collapsible side menu** (☰ top left, stays visible while
-scrolling): „Uhr“ (clock), Status, „Einstellungen“ (settings), „WLAN“ (Wi-Fi), „Protokoll“ (log), below them
-the language selection. The settings are split into three groups: **„Oszilloskop“** (Oscilloscope: profile first, dial,
+scrolling): „Uhr“ (clock), Status, „Einstellungen“ (settings), „WLAN“ (Wi-Fi, jumps to the Wi-Fi group of the settings), „Protokoll“ (log), below them
+the language selection. The settings are split into four groups: **„Oszilloskop“** (Oscilloscope: profile first, dial,
 dwell time, hand brightness, retrace speed), **„Uhrzeit“** (Time: “Set time” if shown, time format,
-time zone, time server) and **„Display“** (OLED brightness, seconds, night mode, rotation, pixel shift).
+time zone, time server), **„Display“** (OLED brightness, seconds, night mode, rotation, pixel shift)
+and **„WLAN“** (Wi-Fi: saved networks, network scan, add network, reconnect, reset Wi-Fi).
 The top section (title, preview, time, date) is centred. The title bar “ESP32 Oscilloscope Clock”
 always stays at the top next to the menu button, the section headings directly below it
 (`position: sticky`). Each section heading is only pinned within its section (`.grp`), so the
@@ -150,7 +151,7 @@ trip. This takes a few tens of milliseconds, during which the beam stands still 
 dot). The choice is stored in NVS (key `dial`); `DIAL_STYLE` in `config.h` is only the start
 value. All four digit sets are therefore kept in RAM (approx. 0.7 KB in total).
 
-Below follow four sections. Every setting and every button has a short description:
+Below follow three sections. Every setting and every button has a short description:
 - **Status:** large time, calendar week and date, time sync (NTP) with last sync, Wi-Fi, signal
   strength, network address, uptime, memory (free/total, below it the minimum since restart and the
   largest free block), CPU usage of core 0 and core 1 (one row each with a short note; core 1 draws
@@ -164,8 +165,8 @@ Below follow four sections. Every setting and every button has a short descripti
 - **„Einstellungen“ (settings):** see [Settings in the web interface](#settings-in-the-web-interface).
   As long as no time server has been reached, „Uhrzeit stellen“ (set time) appears at the top
   (see [Time and NTP](#time-and-ntp)).
-- **„WLAN“ (Wi-Fi):** saved networks (networks added in the web interface can be deleted), network
-  scan (tapping a network takes over its name), form, „Neu verbinden“ (reconnect).
+- **„WLAN“ (Wi-Fi, group in the settings):** saved networks (up to 10, each with “Delete”), network
+  scan (tapping a network takes over its name), form, „Neu verbinden“ (reconnect), „WLAN zurücksetzen“ (reset Wi-Fi: delete all networks).
 - **„Protokoll“ (log):** the last `LOG_BUFFER_SIZE` bytes (8 KB, approx. 120 lines), refreshed every
   5 s while „Automatisch aktualisieren“ (auto refresh) is on („Jetzt aktualisieren“ – refresh now –
   loads immediately). The field has a fixed height (max. 60 % of the screen) with its own scroll

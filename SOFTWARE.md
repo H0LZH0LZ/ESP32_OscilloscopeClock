@@ -108,10 +108,12 @@ Passwort. Das gilt immer, wenn die Uhr mit einem WLAN verbunden ist, nicht nur i
 die Strahlausgabe auf Core 1 nicht.
 
 **Seite (`webpage.h`):** eine Seite mit **einklappbarem Seitenmenü** (☰ oben links, bleibt beim
-Scrollen sichtbar): Uhr, Status, Einstellungen, WLAN, Protokoll, darunter die Sprachauswahl.
-Die Einstellungen sind in drei Gruppen geteilt: **Oszilloskop** (Profil zuerst, Zifferblatt,
+Scrollen sichtbar): Uhr, Status, Einstellungen, WLAN (springt in die WLAN-Gruppe der Einstellungen),
+Protokoll, darunter die Sprachauswahl.
+Die Einstellungen sind in vier Gruppen geteilt: **Oszilloskop** (Profil zuerst, Zifferblatt,
 Verweilzeit, Zeigerhelligkeit, Rücklauf-Tempo), **Uhrzeit** (ggf. „Uhrzeit stellen“, Zeitformat,
-Zeitzone, Zeitserver) und **Display** (OLED-Helligkeit, Sekunden, Nachtmodus, Drehung, Pixelverschiebung). Der oberste Abschnitt (Überschrift, Vorschau, Uhrzeit,
+Zeitzone, Zeitserver), **Display** (OLED-Helligkeit, Sekunden, Nachtmodus, Drehung, Pixelverschiebung)
+und **WLAN** (gespeicherte Netze, Netzsuche, Netz hinzufügen, Neu verbinden, WLAN zurücksetzen). Der oberste Abschnitt (Überschrift, Vorschau, Uhrzeit,
 Datum) ist zentriert. Die Titelleiste „ESP32 Oscilloscope Clock“ bleibt immer oben neben der
 Menütaste stehen, die Abschnittsüberschriften direkt darunter (`position: sticky`). Jede
 Abschnittsüberschrift ist nur innerhalb ihres Abschnitts (`.grp`) angeheftet, so schiebt die
@@ -145,7 +147,7 @@ und berechnet die Rundtour neu. Das dauert einige zehn Millisekunden, so lange s
 (kurzer Lichtpunkt). Die Auswahl wird im NVS gespeichert (Schlüssel `dial`), `DIAL_STYLE` in
 `config.h` ist nur der Startwert. Alle vier Ziffernsätze liegen deshalb im RAM (zusammen ca. 0,7 KB).
 
-Darunter folgen vier Bereiche. Jede Einstellung und jede Schaltfläche hat eine kurze Beschreibung:
+Darunter folgen drei Bereiche. Jede Einstellung und jede Schaltfläche hat eine kurze Beschreibung:
 - **Status:** große Uhrzeit, KW und Datum, Zeitabgleich (NTP) mit letztem Abgleich, WLAN,
   Signalstärke, Netzwerkadresse, Laufzeit, Arbeitsspeicher (frei/gesamt, darunter Tiefstwert seit
   dem Neustart und größter freier Block), Prozessorauslastung Kern 0 und Kern 1 (je eine Zeile mit
@@ -158,8 +160,8 @@ Darunter folgen vier Bereiche. Jede Einstellung und jede Schaltfläche hat eine 
   abgelehnte Eingaben). Normale Zustände und Bestätigungen stehen in normaler Schriftfarbe.
 - **Einstellungen:** siehe [Einstellungen im Webinterface](#einstellungen-im-webinterface). Solange
   kein Zeitserver erreichbar war, steht ganz oben zusätzlich „Uhrzeit stellen“ (siehe [Zeit und NTP](#zeit-und-ntp)).
-- **WLAN:** gespeicherte Netze (Netze aus dem Webinterface lassen sich löschen), Netzsuche
-  (Netz antippen übernimmt den Namen), Formular, „Neu verbinden“.
+- **WLAN** (Gruppe in den Einstellungen): gespeicherte Netze (bis zu 10, je mit „Löschen“), Netzsuche
+  (Netz antippen übernimmt den Namen), Formular, „Neu verbinden“, „WLAN zurücksetzen“ (alle Netze löschen).
 - **Protokoll** (das Log der Firmware): die letzten `LOG_BUFFER_SIZE` Byte (8 KB, ca. 120 Zeilen),
   alle 5 s aktualisiert, solange „Automatisch aktualisieren“ an ist („Jetzt aktualisieren“ lädt sofort). Das Feld
   hat eine feste Höhe (max. 60 % des Bildschirms) mit eigener Scrollleiste. Wischen im Feld scrollt

@@ -120,8 +120,9 @@ pre.full{height:auto;overflow-y:visible}
 .set{border-top:1px solid var(--line);padding:10px 0}
 .grouphead+.set,.grouphead+.set[hidden]+.set{border-top:0}   /* keine Linie direkt unter einer Gruppenüberschrift */
 /* Gruppen der Einstellungen: Oszilloskop, Uhrzeit, Display */
+#wlan-h{scroll-margin-top:calc(env(safe-area-inset-top) + 112px)}   /* Menü-Sprung: unter Titel und „Einstellungen“ */
 .grouphead{font-size:13px;font-weight:600;color:var(--acc);text-transform:uppercase;letter-spacing:.06em;padding:14px 0 2px}
-.sgroup+.sgroup{border-top:2px solid var(--line);margin-top:6px}
+.sgroup~.sgroup{border-top:2px solid var(--line);margin-top:6px}
 .greset{margin:4px 0 4px}.gmsg{font-size:14px;margin:6px 0 0}.gmsg:empty{display:none}
 .set .head{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
 .set .head label{margin:0;color:var(--fg);font-size:16px}
@@ -308,10 +309,8 @@ html{scroll-behavior:smooth}
   <div class="desc">Setzt nur die Einstellungen dieser Gruppe auf die Werte aus config.h zurück. <span class="saved">Änderungen wirken sofort und bleiben gespeichert.</span></div>
  </div>
  <div id="setMsg"></div>
-</section></div>
-
-<div class="grp"><h2 id="wlan-h">WLAN</h2>
-<section>
+ <!-- Gruppe WLAN: gespeicherte Netze, Netzsuche, Netz hinzufügen, Neu verbinden, Zurücksetzen -->
+ <div class="sgroup"><div class="grouphead" id="wlan-h">WLAN</div>
  <div class="subhead">Gespeicherte Netze</div>
  <!-- Gespeicherte Netze, je mit „Löschen“ (Neustart danach) -->
  <div class="desc">Netze, mit denen sich die Uhr verbinden darf. Sie wählt automatisch das stärkste. „Löschen“ entfernt ein Netz – die Uhr startet danach neu.</div>
@@ -341,7 +340,9 @@ html{scroll-behavior:smooth}
  <div class="gmsg" id="wMsg"></div>
  <button type="button" class="sec greset" id="wReset">WLAN zurücksetzen</button>
  <div class="desc">Löscht alle gespeicherten Netze. Die Uhr startet danach neu und öffnet das Setup-WLAN „ScopeClock-Setup“.</div>
+ </div>
 </section></div>
+
 
 <div class="grp"><h2 id="log-h">Protokoll</h2>
 <section>

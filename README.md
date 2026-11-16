@@ -55,7 +55,7 @@ Hardware angepasst: **ESP32-WROOM-32U DevKitC V4**, **Waveshare 2.42" OLED (SPI)
 2. Bibliotheksverwalter: **U8g2** (by oliver) installieren.
 3. `ESP32_OscilloscopeClock_v2.0.ino` öffnen und hochladen. Seriellen Monitor auf 115200 Baud stellen.
 4. WLAN eintragen: Mit dem Handy das WLAN **„ScopeClock-Setup“** wählen. Die Einrichtungsseite
-   öffnet sich automatisch, sonst `http://192.168.4.1` aufrufen. Dort im Abschnitt WLAN das Netz
+   öffnet sich automatisch, sonst `http://192.168.4.1` aufrufen. Dort unter Einstellungen → WLAN das Netz
    eintragen (bis zu 10 Netze). Zugangsdaten stehen nie im Quelltext.
    Die Uhr verbindet sich automatisch mit dem stärksten bekannten Netz in Reichweite.
 5. Oszilloskop in den X/Y-Modus schalten, 0,5 V/Div, DC-Kopplung. Bei digitalen Oszilloskopen die Zeitbasis
@@ -81,7 +81,7 @@ stehen in `ESP32_OscilloscopeClock_v2.0/config.h`. Im Betrieb ändert man sie be
 | Uhrzeit ohne Internet stellen | Einstellungen → „Uhrzeit stellen“ (erscheint nur, solange kein Zeitserver erreichbar ist); Sommer-/Winterzeit automatisch oder fest |
 | 12/24-Stunden-Format | Einstellungen → „Zeitformat“ |
 | Sprache Deutsch/English | Seitenmenü (☰) → „Sprache“ (Auswahlliste) |
-| WLAN hinzufügen/löschen | Abschnitt WLAN im Webinterface |
+| WLAN hinzufügen/löschen | Einstellungen → WLAN (auch direkt über das Seitenmenü) |
 | Fehlersuche | Abschnitt Protokoll im Webinterface, oder serieller Monitor (115200 Baud) |
 
 ### Stand und Tests
