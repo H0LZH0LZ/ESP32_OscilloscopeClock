@@ -155,8 +155,8 @@ dot). The choice is stored in NVS (key `dial`); `DIAL_STYLE` in `config.h` is on
 value. All four digit sets are therefore kept in RAM (approx. 0.7 KB in total).
 
 Below follow three sections. Every setting and every button has a short description:
-- **Status:** large time, calendar week and date, time sync (NTP) with last sync, Wi-Fi, signal
-  strength, network address, uptime, memory (free/total, below it the minimum since restart and the
+- **Status:** large time, calendar week and date, Wi-Fi, signal
+  strength, network address, below it time sync (NTP) with last sync, uptime, memory (free/total, below it the minimum since restart and the
   largest free block), CPU usage of core 0 and core 1 (one row each with a short note; core 1 draws
   all the time and always shows 100 %), reason for the last restart, firmware version. Updated every 2 s. Oscilloscope
   profile and frame rate are not duplicated in the status but only shown in the settings (profile
@@ -200,8 +200,7 @@ Below follow three sections. Every setting and every button has a short descript
 - **Appearance** in the side menu: automatic, light or dark (saved only in the browser, `data-theme`).
 - **Log filter** (drop-down list): all, Wi-Fi, time, web, oscilloscope, warnings.
 - **As an app:** manifest and icon allow “Add to home screen”; the page then opens without browser bar.
-- **Preview:** drawn about 30 times per second via `requestAnimationFrame`; the second hand glides
-  (linear blend between `sec[s]` and `sec[s+1]`, preview only – the oscilloscope still steps once a second).
+- **Preview:** redrawn once per second; the second hand steps from second to second like on the oscilloscope.
   Larger on tablet/PC (up to 460 or 560 px); on a phone in landscape, preview and time sit side by side.
 - **Font:** Raleway Light/SemiBold with Raleway's original old-style figures, text in black.
 

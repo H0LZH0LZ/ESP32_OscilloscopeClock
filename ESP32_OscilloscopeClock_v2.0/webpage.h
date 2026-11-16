@@ -526,8 +526,6 @@ function scopeColors(){const c=getComputedStyle(document.documentElement),v=n=>c
 const DIALS=['Ziffern 1–12','Ziffern 12 · 3 · 6 · 9','Römisch I–XII','Römisch XII · III · VI · IX','Nur Striche'];   // Index = Stil-Nummer der Uhr
 // Reihenfolge beim Wischen und in der Auswahlliste: 1–12, 12·3·6·9, nur Striche, römisch XII·III·VI·IX, römisch I–XII
 const DIAL_ORDER=[0,1,4,3,2];
-// Sekundenzeiger in der Vorschau gleitend: zwischen Stellung s und s+1 nach Bruchteil fr
-function secHand(s,fr){const a=V.sec[s],b=V.sec[(s+1)%60];if(!a||!b||a.length!==b.length)return a;return a.map((v,i)=>v+(b[i]-v)*fr)}
 // Oszilloskop-Vorschau zeichnen: Raster, Zifferblatt, Ziffern, drei Zeiger
 function drawScope(){
  const c=$('scope'),g=c.getContext('2d'),W=c.width,k=W/256;
@@ -541,13 +539,13 @@ function drawScope(){
   for(const [w,col,blur] of [[5,SC.glow,10],[1.8,SC.trace,3]]){g.lineWidth=w*k/2;g.strokeStyle=col;g.shadowColor=SC.halo;g.shadowBlur=blur;g.beginPath();
    for(const p of V.test){g.moveTo(p[0]*k,(255-p[1])*k);for(let i=2;i<p.length;i+=2)g.lineTo(p[i]*k,(255-p[i+1])*k)}g.stroke()}
   g.shadowBlur=0;return}
- const el=(performance.now()-tAt)/1000,sec=(tBase+Math.floor(el))%86400,fr=el%1;
+ const sec=(tBase+Math.floor((performance.now()-tAt)/1000))%86400;
  const h=Math.floor(sec/3600),m=Math.floor(sec/60)%60,s=sec%60;
  // Drei Gruppen mit eigener Helligkeit wie am Oszilloskop (Einstellungen, 100 % = normal):
  // Minutenstriche, Ziffern, Zeiger. Die Vorschau bildet das über die Deckkraft nach.
  const a=v=>v===undefined||v===null?1:(+v===0?0:Math.max(.25,Math.min(1,v/100*.8+.2)));
  const groups=[[V.dial,a(S&&S.tickPct)],[V.digits[dial]||[],a(S&&S.digitPct)],
-  [[V.hr[(h%12)*5+Math.floor(m/12)],V.min[m]],S&&S.handPct!==undefined?a(S.handPct/0.67>100?100:S.handPct/0.67):1],[[secHand(s,fr)],1]];
+  [[V.hr[(h%12)*5+Math.floor(m/12)],V.min[m]],S&&S.handPct!==undefined?a(S.handPct/0.67>100?100:S.handPct/0.67):1],[[V.sec[s]],1]];
  // Verweilzeit des Strahls: länger = heller (Vorschau ändert sich schon beim Ziehen)
  const bf=S&&S.beamNs?Math.max(.4,Math.min(1,S.beamNs/3000)):1;
  g.lineCap='round';g.lineJoin='round';
@@ -613,9 +611,7 @@ $('sTheme').onchange=e=>{const m=e.target.value,r=document.documentElement;
 get('/api/vectors').then(r=>r.json()).then(v=>{V=v;drawScope()}).catch(()=>{});
 let lastSec=-1;
 setInterval(()=>{if(tBase===null)return;const n=Math.floor((performance.now()-tAt)/1000);
- if(n!==lastSec){lastSec=n;const x=(tBase+n)%86400;showClock([x/3600|0,(x/60|0)%60,x%60].map(v=>String(v).padStart(2,'0')).join(':'))}},200);
-// Vorschau ca. 30× pro Sekunde neu zeichnen (gleitender Sekundenzeiger); pausiert im Hintergrund
-let rafT=0;(function anim(ts){if(ts-rafT>=33){rafT=ts;drawScope()}requestAnimationFrame(anim)})(0);
+ if(n!==lastSec){lastSec=n;const x=(tBase+n)%86400;showClock([x/3600|0,(x/60|0)%60,x%60].map(v=>String(v).padStart(2,'0')).join(':'));drawScope()}},200);   // Sekundenzeiger springt wie am Oszilloskop
 
 // ---- Einstellungen ---------------------------------------------------------
 // Laden von /api/settings, jede Änderung sofort per POST übernehmen (Schieberegler
@@ -787,9 +783,9 @@ async function status(){
   if(S&&!setBusy&&typeof s.test==='boolean'&&s.test!==!!S.test){S.test=s.test;renderSettings()}
   if(S&&!setBusy){const p=s.profile==='DIGITAL'?1:0;if(p!==S.profile||s.dial!==S.dial){S.profile=p;S.dial=s.dial;renderSettings()}}$('date').textContent=s.date?(t('KW')+' '+s.kw+' – '+(lang==='en'?s.date.split('.').reverse().join('-'):s.date)):t('Datum unbekannt');
   const st=$('status');st.replaceChildren(
-   row(t('Zeitabgleich (NTP)'),s.ntp.synced?(t('zuletzt')+' '+s.ntp.last):s.ntp.manual?t('aus – Uhrzeit von Hand gestellt'):(s.wifi.configured?t('wartet auf ersten Abgleich …'):t('aus (kein WLAN)')),s.ntp.synced?(s.ntp.overdue?'warn':''):(s.ntp.manual?'':'warn'),t('Uhrzeit aus dem Internet, stündlich abgeglichen')),
    row(t('WLAN'),s.wifi.connected?s.wifi.ssid:(s.wifi.configured?t('sucht Netz …'):t('kein Netz eingetragen')),s.wifi.connected?'':'warn',t('verbundenes Netz')),
    ...(s.wifi.connected?[row(t('Signalstärke'),bars(s.wifi.rssi).trim()+'  '+s.wifi.rssi+' dBm',s.wifi.rssi<-80?'warn':'',t('über −67 dBm gut, unter −80 dBm schwach')),row(t('Netzwerkadresse'),s.wifi.ip+'  ·  '+s.wifi.host,'',t('unter dieser Adresse ist die Uhr im Browser erreichbar'))]:[]),
+   row(t('Zeitabgleich (NTP)'),s.ntp.synced?(t('zuletzt')+' '+s.ntp.last):s.ntp.manual?t('aus – Uhrzeit von Hand gestellt'):(s.wifi.configured?t('wartet auf ersten Abgleich …'):t('aus (kein WLAN)')),s.ntp.synced?(s.ntp.overdue?'warn':''):(s.ntp.manual?'':'warn'),t('Uhrzeit aus dem Internet, stündlich abgeglichen')),
    ...(s.ap.active?[row(t('Setup-WLAN'),s.ap.ssid+' ('+s.ap.ip+')','warn',t('mit dem Handy verbinden, um die Uhr einzurichten'))]:[]),
    row(t('Laufzeit'),dur(s.uptime),'',t('seit dem letzten Neustart')),
    // Arbeitsspeicher in einer Zeile: frei/gesamt, darunter Tiefstwert und größter Block

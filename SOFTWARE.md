@@ -127,10 +127,8 @@ und zartem Raster. Die Farben stehen in den CSS-Variablen `--scope-*`, das Canva
 Zeichnen neu, so greift ein Wechsel des Designs sofort. Die Seite lädt dafür einmal die
 Vektordaten von `/api/vectors`, also dieselben Tabellen, die der `scopeTask` zeichnet, und stellt
 die Zeiger selbst nach der Uhrzeit (Stunde = `(h%12)*5 + m/12`, wie in der Firmware). Zwischen den
-Statusabfragen läuft die Zeit im Browser sekundengenau weiter. Die Vorschau wird per
-`requestAnimationFrame` etwa 30-mal pro Sekunde gezeichnet; der Sekundenzeiger gleitet dabei, indem er
-zwischen den Stellungen `sec[s]` und `sec[s+1]` linear überblendet wird (nur in der Vorschau – das
-Oszilloskop springt wie bisher sekundenweise). Auf Tablet/PC wird die Vorschau größer (bis 460 bzw.
+Statusabfragen läuft die Zeit im Browser sekundengenau weiter. Die Vorschau wird einmal pro Sekunde neu
+gezeichnet; der Sekundenzeiger springt wie am Oszilloskop von Sekunde zu Sekunde. Auf Tablet/PC wird die Vorschau größer (bis 460 bzw.
 560 px), auf dem Handy im Querformat stehen Vorschau und Uhrzeit nebeneinander.
 
 **Zifferblatt wechseln:** Wischen über die Vorschau wechselt reihum zwischen fünf Zifferblättern –
@@ -155,8 +153,8 @@ und berechnet die Rundtour neu. Das dauert einige zehn Millisekunden, so lange s
 
 Darunter folgen drei Bereiche. **Status** und **Protokoll** sind einklappbar (Pfeil V): Status ist anfangs offen, Protokoll zu
 (Zustand im Browser gespeichert; ein Sprung aus dem Menü klappt sie auf). Jede Einstellung und jede Schaltfläche hat eine kurze Beschreibung:
-- **Status:** große Uhrzeit, KW und Datum, Zeitabgleich (NTP) mit letztem Abgleich, WLAN,
-  Signalstärke, Netzwerkadresse, Laufzeit, Arbeitsspeicher (frei/gesamt, darunter Tiefstwert seit
+- **Status:** große Uhrzeit, KW und Datum, WLAN, Signalstärke, Netzwerkadresse, darunter
+  Zeitabgleich (NTP) mit letztem Abgleich, Laufzeit, Arbeitsspeicher (frei/gesamt, darunter Tiefstwert seit
   dem Neustart und größter freier Block), Prozessorauslastung Kern 0 und Kern 1 (je eine Zeile mit
   kurzer Erläuterung; Kern 1 zeichnet ständig und steht immer auf 100 %), Grund des letzten Neustarts,
   Firmware-Version. Wird alle 2 s aktualisiert. Oszilloskop-Profil und Bildrate stehen nicht doppelt
