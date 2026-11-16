@@ -301,9 +301,13 @@ function renderSettings(){
  $('sDial').value=S.dial;
  $('sBeam').value=S.beamNs;$('vBeam').textContent=fmtBeam(S.beamNs);
  $('sHand').value=S.handPct;$('vHand').textContent=S.handPct+' %';
- $('sJump').value=S.jumpSpeed;$('vJump').textContent=fmtJump(S.jumpSpeed);
- const ana=S.profile===0;$('jumpRow').classList.toggle('off',!ana);$('sJump').disabled=!ana;
- $('jumpHint').textContent=ana?'Schneller = schwächere Rücklaufspur. 0 = harter Sprung.':'Nur im Profil ANALOG wirksam – DIGITAL springt immer hart.';
+ // Rücklauf-Tempo: im Profil DIGITAL wird immer hart gesprungen – der Regler zeigt dann
+ // ausgegraut 0. Der gespeicherte ANALOG-Wert bleibt erhalten und erscheint wieder,
+ // sobald auf ANALOG umgeschaltet wird.
+ const ana=S.profile===0,jv=ana?S.jumpSpeed:0;
+ $('sJump').value=jv;$('vJump').textContent=fmtJump(jv);
+ $('jumpRow').classList.toggle('off',!ana);$('sJump').disabled=!ana;
+ $('jumpHint').textContent=ana?'Schneller = schwächere Rücklaufspur. 0 = harter Sprung.':'Im Profil DIGITAL immer 0 (harter Sprung). Dein ANALOG-Wert ('+fmtJump(S.jumpSpeed)+') bleibt gespeichert.';
  const tz=$('sTz');if(!tz.options.length){for(const z of S.timezones){const o=document.createElement('option');o.value=z.tz;o.textContent=z.label;tz.append(o)}}
  tz.value=S.tz;
  if(document.activeElement!==$('sNtp'))$('sNtp').value=S.ntp;

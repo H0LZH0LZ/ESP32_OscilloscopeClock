@@ -190,7 +190,7 @@ gespeicherten Werte, die WLANs bleiben erhalten.
 | Zifferblatt | `dial` | 4 Stile | `g_dialStyle`, synchron mit Tippen auf die Vorschau |
 | Strahlgeschwindigkeit | `beam` | 1.000–10.000 ns pro Schritt | `g_beamNs`, `scopeTask` berechnet das Timing zwischen zwei Bildern neu (`beamTiming()`) |
 | Zeiger-Helligkeit | `hand` | 30–100 % | `g_handPct` |
-| Rücklauf-Tempo | `jump` | 0 (hart) – 48 | `g_jumpSpeed`, nur im Profil ANALOG wirksam |
+| Rücklauf-Tempo | `jump` | 0 (hart) – 48 | `g_jumpSpeed`, nur im Profil ANALOG wirksam. Bei DIGITAL zeigt der Regler ausgegraut 0 (harter Sprung); der ANALOG-Wert bleibt gespeichert und erscheint beim Zurückschalten wieder |
 | Zeitzone | `tz` | Liste `TIMEZONES[]` (bzw. `TZ_INFO`) | `configTzTime()` neu |
 | NTP-Server | `ntp` | Hostname, max. 63 Zeichen | erster Server, `configTzTime()` neu |
 | OLED-Helligkeit | `oled` | 1–255 | `u8g2.setContrast()` |
