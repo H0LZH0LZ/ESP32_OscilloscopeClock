@@ -41,9 +41,9 @@ static const char INDEX_HTML[] PROGMEM = R"HTML(<!doctype html>
 <meta name="color-scheme" content="light dark">
 <title>Scope Clock</title>
 <style>
-:root{--scope-bg:#050805;--scope-trace:#b6ffc4;--scope-glow:rgba(80,255,120,.18);--scope-halo:#3dff6a;--scope-grid:rgba(120,255,140,.08);
+:root{--scope-bg:transparent;--scope-trace:#0b7a3e;--scope-glow:rgba(11,122,62,.12);--scope-halo:rgba(11,122,62,.35);--scope-grid:rgba(0,0,0,.07);
 --bg:#f2f2f5;--card:#fff;--fg:#111;--mute:#6b6b70;--line:#e3e3e8;--acc:#0a7d44;--warn:#b45309;--err:#b91c1c;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
-@media (prefers-color-scheme:dark){:root{--bg:#000;--card:#1c1c1e;--fg:#f2f2f7;--mute:#9a9aa0;--line:#2c2c2e;--acc:#30d158;--warn:#ffb340;--err:#ff6961}}
+@media (prefers-color-scheme:dark){:root{--scope-bg:#050805;--scope-trace:#b6ffc4;--scope-glow:rgba(80,255,120,.18);--scope-halo:#3dff6a;--scope-grid:rgba(120,255,140,.08);--bg:#000;--card:#1c1c1e;--fg:#f2f2f7;--mute:#9a9aa0;--line:#2c2c2e;--acc:#30d158;--warn:#ffb340;--err:#ff6961}}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.4 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
  padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);-webkit-text-size-adjust:100%}
@@ -110,13 +110,11 @@ pre.full{height:auto;overflow-y:visible}
 .sw input{width:52px;height:30px;min-height:0;accent-color:var(--acc)}
 .set.off{opacity:.55}
 #setMsg{min-height:20px;font-size:14px;margin:6px 0}
-/* Oszilloskop-Schirm: in hellem UND dunklem Design immer dunkel (eigene Farben,
-   die kein Farbschema umstellt). Auch bei Farbumkehr (iOS "Intelligente Umkehrung")
-   und erzwungenen Farben (Windows-Kontrastmodus) bleibt er dunkel. */
+/* Oszilloskop-Schirm: im hellen Design durchsichtig mit dunkelgrünen Linien,
+   im dunklen Design schwarzer Schirm mit leuchtend grünen Linien (Farben --scope-*). */
 .scope{background:var(--scope-bg);border-radius:14px;margin:12px 0 4px;padding:10px;display:flex;justify-content:center;forced-color-adjust:none}
-@media (inverted-colors:inverted){.scope{filter:invert(1)}}
 .scope{position:relative}
-.scope canvas{width:100%;max-width:340px;aspect-ratio:1;display:block;cursor:pointer;-webkit-tap-highlight-color:transparent;background:var(--scope-bg)}
+.scope canvas{width:100%;max-width:340px;aspect-ratio:1;display:block;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .dialtag{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);background:rgba(0,0,0,.65);color:#b6ffc4;
  font-size:13px;padding:4px 10px;border-radius:999px;pointer-events:none;transition:opacity .4s;opacity:0;white-space:nowrap}
 .dialtag.show{opacity:1}
@@ -232,13 +230,16 @@ function dur(s){const d=Math.floor(s/86400),h=Math.floor(s/3600)%24,m=Math.floor
 // scopeTask berechnet: Stunde = (h%12)*5 + m/12, Minute = m, Sekunde = s.
 // Zwischen den Status-Abfragen läuft die Zeit lokal weiter (jede Sekunde).
 let V=null,tBase=null,tAt=0,dial=0;
-const SC=(()=>{const c=getComputedStyle(document.documentElement),v=n=>c.getPropertyValue(n).trim();
- return {bg:v('--scope-bg')||'#050805',trace:v('--scope-trace')||'#b6ffc4',glow:v('--scope-glow')||'rgba(80,255,120,.18)',
-  halo:v('--scope-halo')||'#3dff6a',grid:v('--scope-grid')||'rgba(120,255,140,.08)'}})();
+// Schirmfarben aus den CSS-Variablen – bei jedem Zeichnen neu gelesen, damit ein
+// Wechsel zwischen hellem und dunklem Design sofort greift.
+function scopeColors(){const c=getComputedStyle(document.documentElement),v=n=>c.getPropertyValue(n).trim();
+ return {bg:v('--scope-bg')||'transparent',trace:v('--scope-trace')||'#0b7a3e',glow:v('--scope-glow')||'rgba(11,122,62,.12)',
+  halo:v('--scope-halo')||'rgba(11,122,62,.35)',grid:v('--scope-grid')||'rgba(0,0,0,.07)'}}
 const DIALS=['Ziffern 1–12','12 · 3 · 6 · 9','Römisch I–XII','Römisch XII · III · VI · IX'];
 function drawScope(){
  const c=$('scope'),g=c.getContext('2d'),W=c.width,k=W/256;
- g.fillStyle=SC.bg;g.fillRect(0,0,W,W);
+ const SC=scopeColors();
+ g.clearRect(0,0,W,W);if(SC.bg!=='transparent'&&!/rgba\(.*,\s*0\)$/.test(SC.bg)){g.fillStyle=SC.bg;g.fillRect(0,0,W,W)}
  g.strokeStyle=SC.grid;g.lineWidth=1;            // Raster 8x8 wie am Oszilloskop
  for(let i=1;i<8;i++){const p=Math.round(i*W/8)+.5;g.beginPath();g.moveTo(p,0);g.lineTo(p,W);g.moveTo(0,p);g.lineTo(W,p);g.stroke()}
  if(!V||tBase===null)return;
@@ -246,7 +247,7 @@ function drawScope(){
  const h=Math.floor(sec/3600),m=Math.floor(sec/60)%60,s=sec%60;
  const polys=[...V.dial,...(V.digits[dial]||[]),V.hr[(h%12)*5+Math.floor(m/12)],V.min[m],V.sec[s]];
  g.lineCap='round';g.lineJoin='round';
- for(const [w,col,blur] of [[5,SC.glow,10],[1.8,SC.trace,3]]){   // Leuchten + Spur
+ for(const [w,col,blur] of [[5,SC.glow,10],[1.8,SC.trace,3]]){   // Leuchten + Spur (SC: Farben s.o.)
   g.lineWidth=w*k/2;g.strokeStyle=col;g.shadowColor=SC.halo;g.shadowBlur=blur;
   g.beginPath();
   for(const p of polys){if(!p||p.length<4)continue;g.moveTo(p[0]*k,(255-p[1])*k);for(let i=2;i<p.length;i+=2)g.lineTo(p[i]*k,(255-p[i+1])*k)}
@@ -271,7 +272,8 @@ $('shade').onclick=()=>menu(false);
 document.addEventListener('keydown',e=>{if(e.key==='Escape')menu(false)});
 document.querySelectorAll('#nav a').forEach(a=>a.addEventListener('click',()=>menu(false)));
 function setTime(t){const a=t.split(':').map(Number);if(a.length===3&&!a.some(isNaN)){tBase=a[0]*3600+a[1]*60+a[2];tAt=performance.now()}}
-drawScope();                                           // Schirm sofort dunkel, noch vor den Daten
+drawScope();                                           // Schirm/Raster sofort zeichnen, noch vor den Daten
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>drawScope());
 get('/api/vectors').then(r=>r.json()).then(v=>{V=v;drawScope()}).catch(()=>{});
 let lastSec=-1;
 setInterval(()=>{if(tBase===null)return;const n=Math.floor((performance.now()-tAt)/1000);
@@ -338,7 +340,12 @@ async function status(){
    row('Oszilloskop-Profil',s.profile),
    row('Bildrate',s.fps+' Bilder/s'),
    row('Laufzeit',dur(s.uptime)),
-   row('Freier Speicher',Math.round(s.heap/1024)+' KB'),
+   row('Arbeitsspeicher',Math.round(s.heap/1024)+' von '+Math.round(s.heapTotal/1024)+' KB frei'),
+   row('RAM-Minimum seit Start',Math.round(s.heapMin/1024)+' KB frei',s.heapMin<20480?'warn':''),
+   row('Größter freier RAM-Block',Math.round(s.heapBlock/1024)+' KB',s.heapBlock<8192?'warn':''),
+   row('CPU-Last Core 0',s.cpu0+' %',s.cpu0>85?'warn':''),
+   row('CPU-Last Core 1','100 % (Strahlausgabe)'),
+   row('Letzter Neustart',s.reset,/Absturz|Watchdog|Unterspannung/.test(s.reset)?'warn':''),
    row('Firmware','v'+s.fw));
  }catch(e){if(online){$('status').replaceChildren(row('Verbindung','keine Antwort von der Uhr','err'))}online=false}
 }

@@ -95,6 +95,9 @@
 #include <DNSServer.h>        // Setup-WLAN: alle Namen auf die Uhr umleiten (Captive Portal)
 #include <ESPmDNS.h>          // Erreichbar als http://<WIFI_HOSTNAME>.local
 #include <stdarg.h>
+#include <esp_freertos_hooks.h>   // Leerlauf-Hook für die CPU-Last-Messung (Core 0)
+#include <esp_timer.h>
+#include <esp_system.h>           // esp_reset_reason()
 
 #include "config.h"
 
@@ -1021,6 +1024,43 @@ static uint32_t  s_lastConnMs   = 0;    // zuletzt mit WLAN verbunden (0 = noch 
 static uint32_t  s_connSinceMs  = 0;    // verbunden seit (0 = nicht verbunden)
 static uint32_t  s_restartAtMs  = 0;    // geplanter Neustart (0 = keiner)
 static uint32_t  s_fps          = 0;    // Bildrate des Oszilloskop-Bildes
+static uint8_t   s_cpu0Load     = 0;    // CPU-Last Core 0 in % (siehe idleHookCore0)
+
+// ---- CPU-Last von Core 0 -----------------------------------------------------
+// Der Leerlauf-Task von Core 0 ruft idleHookCore0() in einer Schleife auf, solange
+// nichts anderes zu tun ist. Folgen zwei Aufrufe dicht aufeinander (< 200 µs),
+// war der Kern dazwischen frei – diese Zeit wird als Leerlauf aufsummiert.
+// Einmal pro Sekunde ergibt sich daraus die Last: 100 % − Leerlaufanteil.
+// (Core 1 ist absichtlich immer zu 100 % mit der Strahlausgabe belegt.)
+// Rückgabe false: kein Stromsparschlaf im Leerlauf, damit die Messung stimmt.
+static volatile uint32_t s_idleUs   = 0;      // Leerlaufzeit seit der letzten Auswertung (µs)
+static int64_t           s_idleLast = 0;
+static bool idleHookCore0()
+{
+  const int64_t now = esp_timer_get_time();
+  const int64_t d = now - s_idleLast;
+  if (d > 0 && d < 200) s_idleUs = s_idleUs + (uint32_t)d;
+  s_idleLast = now;
+  return false;
+}
+
+// Grund des letzten Neustarts im Klartext (für Status und Log).
+static const char *resetReasonText()
+{
+  switch (esp_reset_reason()) {
+    case ESP_RST_POWERON:   return "Einschalten";
+    case ESP_RST_EXT:       return "Reset-Taster";
+    case ESP_RST_SW:        return "Neustart durch Software";
+    case ESP_RST_PANIC:     return "Absturz (Exception)";
+    case ESP_RST_INT_WDT:   return "Watchdog (Interrupt)";
+    case ESP_RST_TASK_WDT:  return "Watchdog (Task)";
+    case ESP_RST_WDT:       return "Watchdog";
+    case ESP_RST_DEEPSLEEP: return "Aufwachen aus Tiefschlaf";
+    case ESP_RST_BROWNOUT:  return "Unterspannung (Brownout)";
+    case ESP_RST_SDIO:      return "SDIO";
+    default:                return "unbekannt";
+  }
+}
 
 // Hängt s als JSON-String (mit Anführungszeichen, Sonderzeichen maskiert) an out an.
 static void jsonStr(String &out, const char *s)
@@ -1082,7 +1122,12 @@ static void handleStatus()
   o += ",\"dial\":";                 o += (int)g_dialStyle;
   o += ",\"fps\":";                  o += s_fps;
   o += ",\"uptime\":";               o += (uint32_t)(millis() / 1000UL);
-  o += ",\"heap\":";                 o += (uint32_t)ESP.getFreeHeap();
+  o += ",\"heap\":";                 o += (uint32_t)ESP.getFreeHeap();        // RAM frei (Byte)
+  o += ",\"heapTotal\":";            o += (uint32_t)ESP.getHeapSize();        // RAM gesamt (Heap)
+  o += ",\"heapMin\":";              o += (uint32_t)ESP.getMinFreeHeap();     // kleinster freier Wert seit Start
+  o += ",\"heapBlock\":";            o += (uint32_t)ESP.getMaxAllocHeap();    // größter freier Block
+  o += ",\"cpu0\":";                 o += (int)s_cpu0Load;                    // Last Core 0 in %
+  o += ",\"reset\":";                jsonStr(o, resetReasonText());
   o += ",\"fw\":";                   jsonStr(o, FW_VERSION);
   o += '}';
   web.send(200, "application/json", o);
@@ -1897,6 +1942,11 @@ static void uiTask(void *)
       static uint32_t lastFrames = 0;
       const uint32_t f = g_frameCount;
       s_fps = (f - lastFrames) * 1000UL / (now - lastLog);
+      // CPU-Last Core 0 aus der Leerlaufzeit der letzten Sekunde
+      const uint32_t idle = s_idleUs;
+      s_idleUs = 0;
+      const uint32_t spanUs = (now - lastLog) * 1000UL;
+      s_cpu0Load = idle >= spanUs ? 0 : (uint8_t)(100UL - idle * 100UL / spanUs);
       lastFrames = f;
       lastLog = now;
       wifiLogChanges();
@@ -1929,6 +1979,9 @@ void setup()
                 profileName(g_scopeProfile), (unsigned)(BUTTON_LONG_MS / 1000));
 
   //                      Funktion   Name     Stack  Param    Prio Handle           Kern
+  logMsg("Letzter Neustart: %s", resetReasonText());
+  esp_register_freertos_idle_hook_for_cpu(idleHookCore0, 0);   // CPU-Last-Messung Core 0
+
   xTaskCreatePinnedToCore(uiTask,    "ui",    8192, nullptr, 1,   &uiTaskHandle,    UI_CORE);
   xTaskCreatePinnedToCore(scopeTask, "scope", 4096, nullptr, 1,   &scopeTaskHandle, SCOPE_CORE);
 }

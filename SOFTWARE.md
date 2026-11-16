@@ -85,10 +85,10 @@ Datum) ist zentriert. Die Abschnittsüberschriften bleiben beim Scrollen oben ne
 stehen (`position: sticky`). Jede ist nur innerhalb ihres Abschnitts (`.grp`) angeheftet, so
 schiebt die nächste die vorige hinaus. Tippen auf einen Eintrag springt weich dorthin und
 schließt das Menü wieder, ebenso Tippen daneben oder Esc. Ganz oben steht eine **Live-Vorschau des Oszilloskop-Bildes**
-(Canvas im Look eines grünen Leuchtschirms mit 8×8-Raster). Der Schirm ist im hellen und im dunklen
-Design immer dunkel (eigene Farb-Variablen `--scope-*`, die kein Farbschema umstellt). Er wird sofort
-beim Laden gezeichnet und bleibt auch bei Farbumkehr (`inverted-colors`) und erzwungenen Farben
-(`forced-color-adjust: none`) dunkel. Die Seite lädt dafür einmal die
+(Canvas mit 8×8-Raster wie am Oszilloskop). Im **dunklen Design** ist das ein schwarzer Schirm mit
+leuchtend grünen Linien, im **hellen Design** ist der Hintergrund durchsichtig, mit dunkelgrünen Linien
+und zartem Raster. Die Farben stehen in den CSS-Variablen `--scope-*`, das Canvas liest sie bei jedem
+Zeichnen neu, so greift ein Wechsel des Designs sofort. Die Seite lädt dafür einmal die
 Vektordaten von `/api/vectors`, also dieselben Tabellen, die der `scopeTask` zeichnet, und stellt
 die Zeiger selbst nach der Uhrzeit (Stunde = `(h%12)*5 + m/12`, wie in der Firmware). Zwischen den
 Statusabfragen läuft die Zeit im Browser sekundengenau weiter.
@@ -109,7 +109,10 @@ und berechnet die Rundtour neu. Das dauert einige zehn Millisekunden, so lange s
 
 Darunter folgen drei Bereiche:
 - **Status:** große Uhrzeit, KW und Datum, NTP mit letztem Sync, WLAN, Signal, Adresse, Profil,
-  Bildrate, Laufzeit, freier Speicher. Wird alle 2 s aktualisiert.
+  Bildrate, Laufzeit, Arbeitsspeicher (frei/gesamt, Minimum seit Start, größter freier Block),
+  CPU-Last beider Kerne, Grund des letzten Neustarts, Firmware. Wird alle 2 s aktualisiert.
+  Auffällige Werte erscheinen orange: RAM-Minimum unter 20 KB, größter Block unter 8 KB,
+  Core 0 über 85 %, Neustart nach Absturz, Watchdog oder Unterspannung.
 - **WLAN:** gespeicherte Netze (Netze aus dem Webinterface lassen sich löschen), Netzsuche
   (Netz antippen übernimmt den Namen), Formular, „Neu verbinden“.
 - **Log:** die letzten `LOG_BUFFER_SIZE` Byte (8 KB, ca. 120 Zeilen), alle 5 s aktualisiert. Das Feld
@@ -129,7 +132,7 @@ eingesetzt (`textContent`), nie als HTML.
 | Methode und Pfad | Funktion |
 |---|---|
 | `GET /` | die Seite |
-| `GET /api/status` | JSON: `time`, `date`, `kw`, `ntp{synced,overdue,last,server}`, `wifi{configured,connected,ssid,rssi,ip,host}`, `ap{active,ssid,ip}`, `profile`, `dial`, `fps`, `uptime`, `heap`, `fw` |
+| `GET /api/status` | JSON: `time`, `date`, `kw`, `ntp{synced,overdue,last,server}`, `wifi{configured,connected,ssid,rssi,ip,host}`, `ap{active,ssid,ip}`, `profile`, `dial`, `fps`, `heap`, `heapTotal`, `heapMin`, `heapBlock`, `cpu0`, `reset`, `uptime`, `heap`, `fw` |
 | `GET /api/log` | Log als Text, älteste Zeile zuerst |
 | `GET /api/networks` | gespeicherte Netze `[{ssid, source:"secrets"/"web"}]`, nie Passwörter |
 | `GET /api/vectors` | Vektordaten für die Vorschau (ca. 9 KB): `dial`, `digits` (alle vier Zifferblätter, Index = Stil), `hr`, `min`, `sec` (je 60 Stellungen). Linienzüge als `[x0,y0,x1,y1,…]`, 0–255, y nach oben |
@@ -161,6 +164,14 @@ schreiben können.
 
 **Bildrate:** `scopeTask` zählt die Bilder (`g_frameCount`), der `uiTask` rechnet daraus jede
 Sekunde die Bildrate für die Statusanzeige.
+
+**CPU-Last Core 0:** Ein Leerlauf-Hook (`esp_register_freertos_idle_hook_for_cpu`) summiert die Zeit,
+in der der Leerlauf-Task von Core 0 läuft. Folgen zwei Aufrufe dicht aufeinander (< 200 µs), war der
+Kern dazwischen frei. Last = 100 % minus Leerlaufanteil, jede Sekunde neu. Core 1 ist absichtlich
+immer zu 100 % mit der Strahlausgabe belegt.
+
+**Arbeitsspeicher und Neustartgrund:** `ESP.getFreeHeap()`, `getHeapSize()`, `getMinFreeHeap()`,
+`getMaxAllocHeap()` und `esp_reset_reason()`. Der Neustartgrund steht zusätzlich beim Start im Log.
 
 ## Einstellungen im Webinterface
 
@@ -212,6 +223,7 @@ Beide zeigen dieselben Zeilen, mit Zeitstempel (`+<s>s` bis zum ersten NTP-Sync)
 ```
 +0s ESP32 Oscilloscope Clock v2.0 (basierend auf v1.0 von Mauro Pintus 2018)
 +0s CPU: 240 MHz
++0s Letzter Neustart: Einschalten
 +0s [Scope] Profil: DIGITAL – BOOT-Taster 3 s halten zum Umschalten
 +0s [UI] laeuft auf Core 0
 +0s [Scope] laeuft auf Core 1
