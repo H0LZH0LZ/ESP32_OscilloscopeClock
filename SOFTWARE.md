@@ -188,7 +188,7 @@ eingesetzt (`textContent`), nie als HTML.
 | `POST /api/wifi/delete` | `ssid` löschen, danach Neustart (WiFiMulti kann Netze nicht vergessen) |
 | `POST /api/reconnect` | Verbindung trennen, `wifiTask` verbindet mit dem stärksten Netz |
 | `GET /api/settings` | aktuelle Einstellungen, Standardwerte (`defaults`) und Zeitzonen-Liste |
-| `POST /api/settings` | beliebige Felder `profile`, `dial`, `beamNs`, `handPct`, `jumpSpeed`, `tz`, `ntp`, `oledContrast`, `oledShift`, `oledFlip`, `lang` (`de`/`en`), `h12` (0/1): prüfen, sofort anwenden, speichern. Antwort `{ok, msg, settings}` |
+| `POST /api/settings` | beliebige Felder `profile`, `dial`, `beamNs`, `handPct`, `tickPct`, `digitPct`, `jumpSpeed`, `tz`, `ntp`, `oledContrast`, `oledShift`, `oledFlip`, `lang` (`de`/`en`), `h12` (0/1): prüfen, sofort anwenden, speichern. Antwort `{ok, msg, settings}` |
 | `POST /api/settings/reset` | `group` = `scope` (Oszilloskop), `time` (Uhrzeit) oder `display`: nur diese Gruppe auf die Werte aus `config.h`; ohne `group` alles inkl. Sprache. WLANs bleiben immer erhalten |
 | `POST /api/dial` | `style` 0 = 1–12, 1 = 12/3/6/9, 2 = römisch I–XII, 3 = römisch XII/III/VI/IX: Zifferblatt umschalten (Oszilloskop und Vorschau), wird gespeichert |
 | `POST /api/time` | `epoch` (Unix-Sekunden, UTC) **oder** `local` (`JJJJ-MM-TTTHH:MM[:SS]`, Ortszeit), optional `dst` (-1 automatisch, 1 Sommerzeit, 0 Winterzeit): Uhrzeit von Hand stellen, 2024–2099 |
@@ -234,6 +234,8 @@ Knopf „Auf Standardwerte zurücksetzen“: Er löscht nur die gespeicherten We
 | Zifferblatt | `dial` | 4 Stile | `g_dialStyle`, synchron mit dem Wischen über die Vorschau |
 | Verweilzeit des Strahls | `beam` | 1.000–10.000 ns pro Schritt | `g_beamNs`, `scopeTask` berechnet das Timing zwischen zwei Bildern neu (`beamTiming()`) |
 | Helligkeit Stunden-/Minutenzeiger | `hand` | 30–100 % | `g_handPct` |
+| Helligkeit Minutenstriche | `tick` | 30–150 % | `g_tickPct`: Verweilzeit der Striche (Tabelle `DialData`) in der Rundtour; über 100 % heller, aber weniger Bilder/s |
+| Helligkeit Ziffern | `digit` | 30–150 % | `g_digitPct`: Verweilzeit der Ziffern in der Rundtour |
 | Rücklauf-Tempo | `jump` | 0 (sofortiger Sprung) – 48 (× Zeichentempo) | `g_jumpSpeed`, nur im Profil ANALOG wirksam. Bei DIGITAL zeigt der Regler ausgegraut 0 (sofortiger Sprung); der ANALOG-Wert bleibt gespeichert und erscheint beim Zurückschalten wieder |
 | Zeitzone | `tz` | Liste `TIMEZONES[]` (bzw. `TZ_INFO`) | `configTzTime()` neu |
 | Zeitserver (NTP) | `ntp` | Hostname, max. 63 Zeichen | erster Server, `configTzTime()` neu |

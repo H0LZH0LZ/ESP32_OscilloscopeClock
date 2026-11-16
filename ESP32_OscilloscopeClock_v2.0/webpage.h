@@ -223,6 +223,14 @@ html{scroll-behavior:smooth}
  <div class="set"><div class="head"><label for="sHand">Helligkeit Stunden-/Minutenzeiger</label><span class="val" id="vHand"></span></div>
   <input type="range" id="sHand" min="30" max="100" step="1">
   <div class="sub">Unter 100 %, weil die schmalen Zeiger sonst heller wirken als der Rest. <span class="saved">Änderungen wirken sofort und bleiben gespeichert.</span></div></div>
+ <!-- Helligkeit der Minutenstriche (Tabelle DialData) -->
+ <div class="set"><div class="head"><label for="sTick">Helligkeit Minutenstriche</label><span class="val" id="vTick"></span></div>
+  <input type="range" id="sTick" min="30" max="150" step="1">
+  <div class="sub">Die 60 Striche am Rand. Über 100 % heller, aber weniger Bilder pro Sekunde. <span class="saved">Änderungen wirken sofort und bleiben gespeichert.</span></div></div>
+ <!-- Helligkeit der Ziffern -->
+ <div class="set"><div class="head"><label for="sDigit">Helligkeit Ziffern</label><span class="val" id="vDigit"></span></div>
+  <input type="range" id="sDigit" min="30" max="150" step="1">
+  <div class="sub">Die Zahlen auf dem Zifferblatt. Über 100 % heller, aber weniger Bilder pro Sekunde. <span class="saved">Änderungen wirken sofort und bleiben gespeichert.</span></div></div>
  <!-- Rücklauf-Tempo, nur im Profil ANALOG wirksam -->
  <div class="set" id="jumpRow"><div class="head"><label for="sJump">Rücklauf-Tempo</label><span class="val" id="vJump"></span></div>
   <input type="range" id="sJump" min="0" max="48" step="1">
@@ -350,6 +358,7 @@ Object.assign(EN,{'Tiefstwert':'minimum','größter Block':'largest block','Proz
  'zeichnet ständig das Oszilloskop-Bild – absichtlich ohne Pause':'draws the oscilloscope picture all the time – without pause on purpose'});
 Object.assign(EN,{'Oszilloskop':'Oscilloscope','Display':'Display'});
 Object.assign(EN,{"Setzt nur die Einstellungen dieser Gruppe auf die Werte aus config.h zurück.": "Resets only the settings of this group to the values from config.h.", "Änderungen wirken sofort und bleiben gespeichert.": "Changes take effect immediately and are saved.", "Übernimmt Datum und Uhrzeit dieses Handys oder PCs.": "Takes over date and time from this phone or PC.", "Stellt die Uhr auf das oben eingetragene Datum und die Uhrzeit.": "Sets the clock to the date and time entered above.", "Server im Internet, von dem die Uhr die genaue Zeit holt (Standard: de.pool.ntp.org). „Übernehmen“ speichert den Namen und gleicht sofort neu ab.": "Internet server from which the clock gets the exact time (default: de.pool.ntp.org). “Apply” saves the name and syncs again right away.", "Netze, mit denen sich die Uhr verbinden darf. Sie wählt automatisch das stärkste. „Löschen“ entfernt ein Netz – die Uhr startet danach neu.": "Networks the clock may connect to. It automatically picks the strongest one. “Delete” removes a network – the clock restarts afterwards.", "Name des WLANs genau wie am Router (Groß-/Kleinschreibung beachten).": "Name of the network exactly as on the router (case-sensitive).", "Für offene Netze leer lassen. „Anzeigen“ blendet das Passwort beim Tippen ein.": "Leave empty for open networks. “Show” reveals the password while typing.", "Speichert das Netz auf der Uhr (bis zu 5 Netze).": "Saves the network on the clock (up to 5 networks).", "Lädt das Protokoll alle 5 Sekunden neu, solange die Seite sichtbar ist.": "Reloads the log every 5 seconds while the page is visible.", "„Jetzt aktualisieren“ lädt sofort neu. „Alles anzeigen“ hebt die feste Höhe des Feldes auf. Die Uhr speichert die letzten 8 KB (ca. 120 Zeilen).": "“Refresh now” reloads immediately. “Show all” removes the fixed height of the field. The clock keeps the last 8 KB (approx. 120 lines).", "Uhrzeit aus dem Internet, stündlich abgeglichen": "time from the internet, synced every hour", "verbundenes Netz": "connected network", "mit dem Handy verbinden, um die Uhr einzurichten": "connect with your phone to set up the clock", "hilft bei der Fehlersuche nach unerwarteten Neustarts": "helps to diagnose unexpected restarts", "installierte Programmversion": "installed program version"});
+Object.assign(EN,{"Helligkeit Minutenstriche": "Tick mark brightness", "Helligkeit Ziffern": "Numeral brightness", "Die 60 Striche am Rand. Über 100 % heller, aber weniger Bilder pro Sekunde.": "The 60 marks around the edge. Above 100 % brighter, but fewer frames per second.", "Die Zahlen auf dem Zifferblatt. Über 100 % heller, aber weniger Bilder pro Sekunde.": "The numerals on the dial. Above 100 % brighter, but fewer frames per second."});
 const DE={};for(const k in EN)DE[EN[k]]=k;
 let lang='de';try{if(localStorage.getItem('lang')==='en')lang='en'}catch(e){}
 const t=s=>lang==='en'&&EN[s]||s;
@@ -403,14 +412,19 @@ function drawScope(){
  if(!V||tBase===null)return;
  const sec=(tBase+Math.floor((performance.now()-tAt)/1000))%86400;
  const h=Math.floor(sec/3600),m=Math.floor(sec/60)%60,s=sec%60;
- const polys=[...V.dial,...(V.digits[dial]||[]),V.hr[(h%12)*5+Math.floor(m/12)],V.min[m],V.sec[s]];
+ // Drei Gruppen mit eigener Helligkeit wie am Oszilloskop (Einstellungen, 100 % = normal):
+ // Minutenstriche, Ziffern, Zeiger. Die Vorschau bildet das über die Deckkraft nach.
+ const a=v=>Math.max(.25,Math.min(1,(v||100)/100*.8+.2));
+ const groups=[[V.dial,a(S&&S.tickPct)],[V.digits[dial]||[],a(S&&S.digitPct)],
+  [[V.hr[(h%12)*5+Math.floor(m/12)],V.min[m],V.sec[s]],1]];
  g.lineCap='round';g.lineJoin='round';
- for(const [w,col,blur] of [[5,SC.glow,10],[1.8,SC.trace,3]]){   // Leuchten + Spur (SC: Farben s.o.)
-  g.lineWidth=w*k/2;g.strokeStyle=col;g.shadowColor=SC.halo;g.shadowBlur=blur;
-  g.beginPath();
-  for(const p of polys){if(!p||p.length<4)continue;g.moveTo(p[0]*k,(255-p[1])*k);for(let i=2;i<p.length;i+=2)g.lineTo(p[i]*k,(255-p[i+1])*k)}
-  g.stroke()}
- g.shadowBlur=0;
+ for(const [polys,alpha] of groups){g.globalAlpha=alpha;
+  for(const [w,col,blur] of [[5,SC.glow,10],[1.8,SC.trace,3]]){   // Leuchten + Spur (SC: Farben s.o.)
+   g.lineWidth=w*k/2;g.strokeStyle=col;g.shadowColor=SC.halo;g.shadowBlur=blur;
+   g.beginPath();
+   for(const p of polys){if(!p||p.length<4)continue;g.moveTo(p[0]*k,(255-p[1])*k);for(let i=2;i<p.length;i+=2)g.lineTo(p[i]*k,(255-p[i+1])*k)}
+   g.stroke()}}
+ g.globalAlpha=1;g.shadowBlur=0;
 }
 // Zifferblatt wechseln – sofort in der Vorschau,
 // per POST /api/dial auch am Oszilloskop (wird dort gespeichert).
@@ -463,6 +477,8 @@ function renderSettings(){
  h12=!!S.h12; document.querySelectorAll('[data-h12]').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.h12===(S.h12?1:0))));
  $('sBeam').value=S.beamNs;$('vBeam').textContent=fmtBeam(S.beamNs);
  $('sHand').value=S.handPct;$('vHand').textContent=S.handPct+' %';
+ $('sTick').value=S.tickPct;$('vTick').textContent=S.tickPct+' %';
+ $('sDigit').value=S.digitPct;$('vDigit').textContent=S.digitPct+' %';
  // Rücklauf-Tempo: im Profil DIGITAL wird immer hart gesprungen – der Regler zeigt dann
  // ausgegraut 0. Der gespeicherte ANALOG-Wert bleibt erhalten und erscheint wieder,
  // sobald auf ANALOG umgeschaltet wird.
@@ -496,6 +512,10 @@ $('sBeam').oninput=e=>$('vBeam').textContent=fmtBeam(e.target.value);
 $('sBeam').onchange=e=>setSetting({beamNs:e.target.value});
 $('sHand').oninput=e=>$('vHand').textContent=e.target.value+' %';
 $('sHand').onchange=e=>setSetting({handPct:e.target.value});
+$('sTick').oninput=e=>{$('vTick').textContent=e.target.value+' %';if(S){S.tickPct=+e.target.value;drawScope()}};
+$('sTick').onchange=e=>setSetting({tickPct:e.target.value});
+$('sDigit').oninput=e=>{$('vDigit').textContent=e.target.value+' %';if(S){S.digitPct=+e.target.value;drawScope()}};
+$('sDigit').onchange=e=>setSetting({digitPct:e.target.value});
 $('sJump').oninput=e=>$('vJump').textContent=fmtJump(e.target.value);
 $('sJump').onchange=e=>setSetting({jumpSpeed:e.target.value});
 $('sTz').onchange=e=>setSetting({tz:e.target.value});

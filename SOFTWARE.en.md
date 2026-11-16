@@ -194,7 +194,7 @@ inserted as text (`textContent`), never as HTML.
 | `POST /api/wifi/delete` | delete `ssid`, then restart (WiFiMulti cannot forget networks) |
 | `POST /api/reconnect` | disconnect, `wifiTask` connects to the strongest network |
 | `GET /api/settings` | current settings, default values (`defaults`) and time zone list |
-| `POST /api/settings` | any of the fields `profile`, `dial`, `beamNs`, `handPct`, `jumpSpeed`, `tz`, `ntp`, `oledContrast`, `oledShift`, `oledFlip`, `lang` (`de`/`en`), `h12` (0/1): validate, apply immediately, save. Answer `{ok, msg, settings}` |
+| `POST /api/settings` | any of the fields `profile`, `dial`, `beamNs`, `handPct`, `tickPct`, `digitPct`, `jumpSpeed`, `tz`, `ntp`, `oledContrast`, `oledShift`, `oledFlip`, `lang` (`de`/`en`), `h12` (0/1): validate, apply immediately, save. Answer `{ok, msg, settings}` |
 | `POST /api/settings/reset` | `group` = `scope` (oscilloscope), `time` or `display`: reset only this group to the values from `config.h`; without `group` everything incl. language. Wi-Fi networks are always kept |
 | `POST /api/dial` | `style` 0 = 1–12, 1 = 12/3/6/9, 2 = Roman I–XII, 3 = Roman XII/III/VI/IX: change the dial (oscilloscope and preview), saved |
 | `POST /api/time` | `epoch` (Unix seconds, UTC) **or** `local` (`YYYY-MM-DDTHH:MM[:SS]`, local time), optional `dst` (-1 automatic, 1 summer time, 0 winter time): set the time by hand, 2024–2099 |
@@ -242,6 +242,8 @@ that group; Wi-Fi networks are kept.
 | Dial („Zifferblatt“) | `dial` | 4 styles | `g_dialStyle`, in sync with swiping over the preview |
 | Beam dwell time („Verweilzeit des Strahls“) | `beam` | 1,000–10,000 ns per step | `g_beamNs`, `scopeTask` recalculates the timing between two frames (`beamTiming()`) |
 | Hour/minute hand brightness („Helligkeit Stunden-/Minutenzeiger“) | `hand` | 30–100 % | `g_handPct` |
+| Tick mark brightness („Helligkeit Minutenstriche“) | `tick` | 30–150 % | `g_tickPct`: dwell time of the marks (table `DialData`) in the round trip; above 100 % brighter but fewer frames/s |
+| Numeral brightness („Helligkeit Ziffern“) | `digit` | 30–150 % | `g_digitPct`: dwell time of the numerals in the round trip |
 | Retrace speed („Rücklauf-Tempo“) | `jump` | 0 (instant jump) – 48 (× drawing speed) | `g_jumpSpeed`, only effective in profile ANALOG. With DIGITAL the slider shows a greyed-out 0 (instant jump); the ANALOG value stays saved and reappears when switching back |
 | Time zone („Zeitzone“) | `tz` | list `TIMEZONES[]` (or `TZ_INFO`) | `configTzTime()` again |
 | Time server („Zeitserver (NTP)“) | `ntp` | host name, max. 63 characters | first server, `configTzTime()` again |

@@ -47,7 +47,7 @@ This documentation quotes the German labels and adds the English label in parent
   to add Wi-Fi networks. A collapsible side menu (☰) jumps to the sections. **Swiping left or right
   over the preview changes the dial**: 1–12, only 12/3/6/9, Roman I–XII or only XII/III/VI/IX. This
   also applies to the oscilloscope and is saved. Under „Einstellungen“ (settings) you can change
-  the oscilloscope profile, dial, beam dwell time, hand brightness, retrace speed, time zone, time
+  the oscilloscope profile, dial, beam dwell time, brightness of hands, tick marks and numerals, retrace speed, time zone, time
   server (NTP) and OLED (brightness, pixel shift, 180° rotation) online. Changes apply immediately
   and are saved. The web interface is always reachable as soon as the clock is on Wi-Fi. Without
   a known network the clock opens the setup network **“ScopeClock-Setup”**, and the phone shows

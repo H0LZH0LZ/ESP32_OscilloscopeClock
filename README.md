@@ -39,7 +39,7 @@ Hardware angepasst: **ESP32-WROOM-32U DevKitC V4**, **Waveshare 2.42" OLED (SPI)
   WLANs. Ein einklappbares Seitenmenü (☰) springt in die Abschnitte. **Wischen über die Vorschau
   (nach links oder rechts) wechselt das Zifferblatt**: 1–12, nur 12/3/6/9, römisch I–XII oder nur XII/III/VI/IX. Das gilt auch am Oszilloskop und bleibt
   gespeichert. Unter **Einstellungen** lassen sich Oszilloskop-Profil, Zifferblatt,
-  Verweilzeit des Strahls, Zeigerhelligkeit, Rücklauf-Tempo, Zeitzone, Zeitserver (NTP) und OLED
+  Verweilzeit des Strahls, Helligkeit von Zeigern, Minutenstrichen und Ziffern, Rücklauf-Tempo, Zeitzone, Zeitserver (NTP) und OLED
   (Helligkeit, Pixelverschiebung, Drehung um 180°) online ändern. Die Änderungen wirken sofort und bleiben gespeichert. Das Webinterface ist immer
   erreichbar, sobald die Uhr im WLAN ist. Ohne bekanntes WLAN öffnet die Uhr das Setup-WLAN
   **„ScopeClock-Setup“**, das Handy zeigt dann automatisch die Einrichtungsseite.

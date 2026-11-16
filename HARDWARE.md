@@ -166,7 +166,7 @@ Ein Bild dauert ca. 4,3 ms, mit römischen Ziffern ca. 6,2 ms.
 - Beide Geräte hängen am selben PC, damit haben sie gemeinsame Masse, das ist unkritisch.
 
 ## Feinabstimmung in `config.h`
-Profil, Zifferblatt, Verweilzeit des Strahls, Zeigerhelligkeit, Rücklauf-Tempo, Zeitzone, Zeitserver (NTP)
+Profil, Zifferblatt, Verweilzeit des Strahls, Helligkeit von Zeigern, Minutenstrichen und Ziffern, Rücklauf-Tempo, Zeitzone, Zeitserver (NTP)
 und OLED lassen sich bequemer im **Webinterface unter „Einstellungen“** ändern, mit sofortiger Wirkung
 am Oszilloskop. Die Werte in `config.h` sind dann nur die Startwerte.
 
@@ -179,6 +179,7 @@ am Oszilloskop. Die Werte in `config.h` sind dann nur die Startwerte.
 | `JUMP_LANDING`, `JUMP_RAMP` | Abbremsen vor dem Linienanfang (Standard 8 und 4). Kleinere `JUMP_LANDING` bei „Haken“ an Linienanfängen |
 | `ZBLANK_PIN` | optionaler Ausgang zur Dunkeltastung (Z-Eingang), -1 = aus |
 | `HAND_BRIGHT_PCT` | Helligkeit von Stunden- und Minutenzeiger im Verhältnis zum Rest (Standard 67 %, wirkt dann gleich hell) |
+| `TICK_BRIGHT_PCT`, `DIGIT_BRIGHT_PCT` | Helligkeit von Minutenstrichen und Ziffern (Standard 100 %, 30–150 %). Über 100 % heller, aber weniger Bilder/s. Im Webinterface regelbar |
 | `USE_FAST_DAC` | `1` = direkte Registerzugriffe (Standard). `0` = `dacWrite()`, nur als Notlösung |
 | `DIAL_STYLE` | Start-Zifferblatt: 0 = 1–12, 1 = 12/3/6/9, 2 = römisch I–XII, 3 = römisch XII/III/VI/IX. Im Webinterface durch Wischen über die Vorschau umschaltbar, die Auswahl wird gespeichert |
 | `TZ_INFO` | Zeitzone inkl. Sommerzeitregel (Standard: Mitteleuropa) |

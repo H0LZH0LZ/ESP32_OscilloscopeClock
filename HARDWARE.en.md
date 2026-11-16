@@ -167,7 +167,7 @@ takes approx. 4.3 ms, with Roman numerals approx. 6.2 ms.
 - Both devices are connected to the same PC and therefore share ground, which is fine.
 
 ## Fine tuning in `config.h`
-Profile, dial, beam dwell time, hand brightness, retrace speed, time zone, time server (NTP) and
+Profile, dial, beam dwell time, brightness of hands, tick marks and numerals, retrace speed, time zone, time server (NTP) and
 OLED are easier to change in the **web interface under „Einstellungen“**, with immediate effect on
 the oscilloscope. The values in `config.h` are then only the start values.
 
@@ -180,6 +180,7 @@ the oscilloscope. The values in `config.h` are then only the start values.
 | `JUMP_LANDING`, `JUMP_RAMP` | Braking before the start of a line (default 8 and 4). Smaller `JUMP_LANDING` if lines start with small “hooks” |
 | `ZBLANK_PIN` | optional output for blanking (Z input), -1 = off |
 | `HAND_BRIGHT_PCT` | Brightness of hour and minute hand relative to the rest (default 67 %, then they look equally bright) |
+| `TICK_BRIGHT_PCT`, `DIGIT_BRIGHT_PCT` | Brightness of tick marks and numerals (default 100 %, 30–150 %). Above 100 % brighter but fewer frames/s. Adjustable in the web interface |
 | `USE_FAST_DAC` | `1` = direct register access (default). `0` = `dacWrite()`, only as a fallback |
 | `DIAL_STYLE` | Start dial: 0 = 1–12, 1 = 12/3/6/9, 2 = Roman I–XII, 3 = Roman XII/III/VI/IX. Switchable in the web interface by swiping over the preview, the choice is saved |
 | `TZ_INFO` | Time zone incl. daylight saving rule (default: Central Europe) |

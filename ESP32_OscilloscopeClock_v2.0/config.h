@@ -120,6 +120,11 @@
 // 100 = Zeiger heller hervorheben.
 #define HAND_BRIGHT_PCT 67
 
+// Helligkeit der Minutenstriche und der Ziffern (Prozent der normalen Verweilzeit,
+// 30–150). Über 100 % = heller, aber weniger Bilder pro Sekunde. Im Webinterface regelbar.
+#define TICK_BRIGHT_PCT  100
+#define DIGIT_BRIGHT_PCT 100
+
 // Kernzuordnung. Nicht ändern: Der WLAN-Stack des ESP32 läuft auf Core 0,
 // die Strahlausgabe braucht Core 1 exklusiv.
 #define SCOPE_CORE 1

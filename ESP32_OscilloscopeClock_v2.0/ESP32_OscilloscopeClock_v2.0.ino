@@ -38,7 +38,7 @@
   Von Core 0 nach Core 1 gehen nur drei Werte, alle atomar lesbar:
   g_timePacked (32 Bit: Stunde/Minute/Sekunde, einmal pro Bild gelesen),
   g_scopeProfile (1 Byte: ANALOG/DIGITAL), g_dialStyle (1 Byte: Zifferblatt)
-  sowie g_beamNs/g_handPct/g_jumpSpeed (Einstellungen). Der Zeichenpfad muss
+  sowie g_beamNs/g_handPct/g_tickPct/g_digitPct/g_jumpSpeed (Einstellungen). Der Zeichenpfad muss
   nie warten; geänderte Werte übernimmt er zwischen zwei Bildern.
 
   ---------------------------------------------------------------------------
@@ -166,6 +166,8 @@ static volatile uint8_t g_dialStyle = DIAL_STYLE;
 // Schreiber: uiTask, Leser: scopeTask – je ≤ 16 Bit, atomar.
 static volatile uint16_t g_beamNs    = BEAM_NS_PER_UNIT;   // Strahlgeschwindigkeit (ns pro Schritt)
 static volatile uint8_t  g_handPct   = HAND_BRIGHT_PCT;    // Helligkeit Stunden-/Minutenzeiger (%)
+static volatile uint8_t  g_tickPct   = TICK_BRIGHT_PCT;    // Helligkeit Minutenstriche (%)
+static volatile uint8_t  g_digitPct  = DIGIT_BRIGHT_PCT;   // Helligkeit Ziffern (%)
 static volatile uint8_t  g_jumpSpeed = JUMP_SPEED;         // Rücklauf-Tempo (Profil ANALOG), 0 = hart
 
 // Einstellungen, die nur Core 0 nutzt (Zeit, OLED)
@@ -770,8 +772,14 @@ static void IRAM_ATTR scopeTask(void *)
       const int dx = strokeX(s_tour[k], 0) - lastx, dy = strokeY(s_tour[k], 0) - lasty;
       if (dx * dx + dy * dy < bestD) { bestD = dx * dx + dy * dy; start = k; }
     }
-    for (int k = 0; k < s_tourLen; k++)
-      drawStroke(s_tour[(start + k) % s_tourLen], s_stepCycles);
+    // Minutenstriche (Tabelle DialData) und Ziffern mit eigener Helligkeit:
+    // längere Verweilzeit pro Schritt = heller (Prozent wie bei den Zeigern)
+    const uint32_t tickCycles  = (uint32_t)((uint64_t)s_stepCycles * g_tickPct  / 100);
+    const uint32_t digitCycles = (uint32_t)((uint64_t)s_stepCycles * g_digitPct / 100);
+    for (int k = 0; k < s_tourLen; k++) {
+      const Stroke &st = s_tour[(start + k) % s_tourLen];
+      drawStroke(st, st.t == DialData ? tickCycles : digitCycles);
+    }
 
     // 4. Sekundenzeiger zurück zur Mitte (statt eines langen Rücksprungs)
     drawStroke(secBack, secCycles);
@@ -1456,6 +1464,10 @@ static void loadSettings()
   g_beamNs    = (beam >= 1000 && beam <= 10000) ? beam : BEAM_NS_PER_UNIT;
   const uint8_t hand = p.getUChar("hand", HAND_BRIGHT_PCT);
   g_handPct   = (hand >= 30 && hand <= 100) ? hand : HAND_BRIGHT_PCT;
+  const uint8_t tick = p.getUChar("tick", TICK_BRIGHT_PCT);
+  g_tickPct   = (tick >= 30 && tick <= 150) ? tick : TICK_BRIGHT_PCT;
+  const uint8_t digit = p.getUChar("digit", DIGIT_BRIGHT_PCT);
+  g_digitPct  = (digit >= 30 && digit <= 150) ? digit : DIGIT_BRIGHT_PCT;
   const uint8_t jump = p.getUChar("jump", JUMP_SPEED);
   g_jumpSpeed = jump <= 48 ? jump : JUMP_SPEED;
   char buf[64];
@@ -1477,6 +1489,8 @@ static void settingsJson(String &o)
   o += ",\"dial\":";         o += (int)g_dialStyle;
   o += ",\"beamNs\":";       o += (int)g_beamNs;
   o += ",\"handPct\":";      o += (int)g_handPct;
+  o += ",\"tickPct\":";      o += (int)g_tickPct;
+  o += ",\"digitPct\":";     o += (int)g_digitPct;
   o += ",\"jumpSpeed\":";    o += (int)g_jumpSpeed;
   o += ",\"tz\":";           jsonStr(o, s_tz);
   o += ",\"ntp\":";          jsonStr(o, s_ntpServer);
@@ -1489,6 +1503,8 @@ static void settingsJson(String &o)
   o += ",\"dial\":";         o += DIAL_STYLE;
   o += ",\"beamNs\":";       o += BEAM_NS_PER_UNIT;
   o += ",\"handPct\":";      o += HAND_BRIGHT_PCT;
+  o += ",\"tickPct\":";      o += TICK_BRIGHT_PCT;
+  o += ",\"digitPct\":";     o += DIGIT_BRIGHT_PCT;
   o += ",\"jumpSpeed\":";    o += JUMP_SPEED;
   o += ",\"tz\":";           jsonStr(o, TZ_INFO);
   o += ",\"ntp\":";          jsonStr(o, NTP_SERVER_1);
@@ -1563,6 +1579,18 @@ static void handleSettingsPost()
       logMsg(tr("[Web] Zeigerhelligkeit: %d %%", "[Web] hand brightness: %d %%"), v); }
     else bad(tr("Zeigerhelligkeit: 30 bis 100 %", "Hand brightness: 30 to 100 %"));
   }
+  if (web.hasArg("tickPct")) {
+    const int v = web.arg("tickPct").toInt();
+    if (v >= 30 && v <= 150) { g_tickPct = v; p.putUChar("tick", v); changed++;
+      logMsg(tr("[Web] Helligkeit Minutenstriche: %d %%", "[Web] tick mark brightness: %d %%"), v); }
+    else bad(tr("Helligkeit Minutenstriche: 30 bis 150 %", "Tick mark brightness: 30 to 150 %"));
+  }
+  if (web.hasArg("digitPct")) {
+    const int v = web.arg("digitPct").toInt();
+    if (v >= 30 && v <= 150) { g_digitPct = v; p.putUChar("digit", v); changed++;
+      logMsg(tr("[Web] Helligkeit Ziffern: %d %%", "[Web] numeral brightness: %d %%"), v); }
+    else bad(tr("Helligkeit Ziffern: 30 bis 150 %", "Numeral brightness: 30 to 150 %"));
+  }
   if (web.hasArg("jumpSpeed")) {
     const int v = web.arg("jumpSpeed").toInt();
     if (v >= 0 && v <= 48) { g_jumpSpeed = v; p.putUChar("jump", v); changed++;
@@ -1632,7 +1660,7 @@ static void handleSettingsReset()
   if (!scope && !tim && !disp) { sendSettings(false, tr("Unbekannte Gruppe", "Unknown group")); return; }
   Preferences p;
   if (p.begin("scopeclock", false)) {
-    if (scope) for (const char *k : { "profile", "dial", "beam", "hand", "jump" }) p.remove(k);
+    if (scope) for (const char *k : { "profile", "dial", "beam", "hand", "tick", "digit", "jump" }) p.remove(k);
     if (tim)   for (const char *k : { "tz", "ntp", "h12" }) p.remove(k);
     if (disp)  for (const char *k : { "oled", "shift", "flip" }) p.remove(k);
     if (all)   p.remove("lang");
@@ -1641,6 +1669,7 @@ static void handleSettingsReset()
   if (scope) {
     g_scopeProfile = SCOPE_PROFILE;  g_dialStyle = DIAL_STYLE;
     g_beamNs = BEAM_NS_PER_UNIT;     g_handPct = HAND_BRIGHT_PCT;   g_jumpSpeed = JUMP_SPEED;
+    g_tickPct = TICK_BRIGHT_PCT;     g_digitPct = DIGIT_BRIGHT_PCT;
   }
   if (tim) {
     strlcpy(s_tz, TZ_INFO, sizeof(s_tz));
