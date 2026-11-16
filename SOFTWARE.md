@@ -129,7 +129,9 @@ Statusabfragen läuft die Zeit im Browser sekundengenau weiter.
 **Zifferblatt wechseln:** Wischen über die Vorschau wechselt reihum zwischen vier Zifferblättern –
 nach links zum nächsten, nach rechts zum vorigen (Pointer-Events, ab 40 px waagerecht; senkrechtes
 Wischen scrollt weiter die Seite, `touch-action: pan-y`). Am PC gehen auch die Pfeiltasten, wenn die
-Vorschau den Fokus hat. Tippen allein wechselt nicht:
+Vorschau den Fokus hat. Tippen allein wechselt nicht. Reihenfolge beim Wischen und in der
+Auswahlliste: Ziffern 1–12 → Ziffern 12 · 3 · 6 · 9 → Römisch XII · III · VI · IX → Römisch I–XII
+(Stil 0, 1, 3, 2):
 
 | Stil | Ziffern | Tabelle |
 |---|---|---|

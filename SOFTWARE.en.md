@@ -134,7 +134,8 @@ time keeps running in the browser to the second.
 **Changing the dial:** swiping over the preview cycles through four dials – left for the next,
 right for the previous one (pointer events, at least 40 px horizontally; vertical swiping still
 scrolls the page, `touch-action: pan-y`). On a PC the arrow keys work too when the preview has
-focus. A plain tap does not change the dial:
+focus. A plain tap does not change the dial. Order when swiping and in the drop-down list:
+numbers 1–12 → numbers 12 · 3 · 6 · 9 → Roman XII · III · VI · IX → Roman I–XII (style 0, 1, 3, 2):
 
 | Style | Digits | Table |
 |---|---|---|
