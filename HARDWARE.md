@@ -35,7 +35,7 @@ GPIO5  ───────────────── OLED CS
 GPIO17 ───────────────── OLED DC
 GPIO4  ───────────────── OLED RST
 
-IPEX/U.FL ── Pigtail (Antennen-Kit) ── SMA-Buchse in der Anschlussseite ── Bingfu-Antenne (SMA)
+IPEX/U.FL ── Pigtail (Antennen-Kit) ── SMA-Buchse in der gegenüberliegenden Seite ── Bingfu-Antenne (SMA)
 ```
 
 Die Pins stehen zentral in `ESP32_OscilloscopeClock_v2.0/config.h`. Fest vorgegeben sind GPIO25/26
@@ -86,7 +86,8 @@ eingebaut, im Webinterface „OLED um 180° drehen“ einschalten.
   (z. B. 100 µF) zwischen 3V3 und GND nahe am DevKit reduzieren.
 
 ## Gehäuse (Abzweigdose 150 × 100 × 70 mm)
-- Alle Anschlüsse auf **einer kurzen Seite** (Anschlussseite, 100 mm), von außen gesehen: links die beiden Pigtails (Kabelverschraubungen M6 bei 14 und 28 mm – Ø 5,0 bohren und M6-Gewinde schneiden, oder Ø 6,2 + Mutter), **mittig die USB-C-Einbaubuchse** (Ø 16 mm bei 50 mm), rechts die Antenne (SMA, Ø 6,5 mm bei 80 mm).
+- **Anschlussseite** (kurze Seite, 100 mm), von außen gesehen: Pigtail X bei 28 mm, **mittig die USB-C-Einbaubuchse** (Ø 16 mm bei 50 mm), Pigtail Y bei 72 mm. Kabelverschraubungen M6: Ø 5,0 bohren und M6-Gewinde schneiden (oder Ø 6,2 + Mutter).
+- **Gegenüberliegende Seite:** Antenne (SMA, Ø 6,5 mm, mittig).
 - Deckel: Fenster für das OLED (aktive Fläche ca. 55 × 28 mm), Modul mit M2,5-Abstandsbolzen befestigen.
 - Breakout-Board auf der Montageplatte; die Pigtails in die Klemmen P25/P26 (rot, über 220 Ω) und GND (braun).
 - Bohrplan 1:1: `docs/images/bohrplan.svg`.

@@ -138,22 +138,22 @@ kommt direkt in den Eingang des Oszilloskops, ein zusätzliches BNC-Kabel ist ni
  <tr><td>P5</td><td>direkt</td><td>OLED CS</td></tr>
  <tr><td>P17</td><td>direkt</td><td>OLED DC</td></tr>
  <tr><td>P4</td><td>direkt</td><td>OLED RST</td></tr>
- <tr><td>IPEX-Buchse am Modul</td><td>Antennen-Pigtail</td><td>SMA-Buchse in der Anschlussseite → Antenne</td></tr>
+ <tr><td>IPEX-Buchse am Modul</td><td>Antennen-Pigtail</td><td>SMA-Buchse in der gegenüberliegenden Seite → Antenne</td></tr>
  <tr><td>USB-C des DevKits</td><td>Flachbandkabel</td><td>USB-C-Einbaubuchse in der Anschlussseite</td></tr>
 </table>
 <div class="warn"><b>Wichtig:</b> Klemme P0 (GPIO0) ist der BOOT-Taster – dort nichts anschließen. Das OLED an <b>3V3</b>,
 nicht an 5V. Das Modul -32U nie ohne Antenne im WLAN-Betrieb laufen lassen.</div>
 
 <div class="step"><b class="n">1</b><div><b>Bohrplan ausdrucken.</b> Die Datei <code>docs/images/bohrplan.svg</code> mit <b>100 % (ohne Anpassen)</b>
-drucken und die Prüflinie nachmessen: Sie muss 50 mm lang sein. Schablonen ausschneiden und mit Klebeband auf den Deckel
-und die Anschlussseite kleben.</div></div>
+drucken und die Prüflinie nachmessen: Sie muss 50 mm lang sein. Schablonen ausschneiden und mit Klebeband auf den Deckel,
+die Anschlussseite und die gegenüberliegende Seite kleben.</div></div>
 <figure><img src="images/bohrplan.svg" style="width:100%"><figcaption>Abb. 5 – Bohrplan (verkleinert; zum Bohren die SVG-Datei 1:1 drucken)</figcaption></figure>
 <div class="step"><b class="n">2</b><div><b>Gehäuse bohren.</b> Alle Löcher mit 3 mm vorbohren.
-Alle Anschlüsse sitzen auf <b>einer kurzen Seite</b> (Anschlussseite, 100 mm): auf der einen Seite die beiden
-Pigtails, auf der anderen die Antenne, <b>mittig dazwischen die USB-C-Buchse</b>.
-<b>Pigtails:</b> 2 Löcher für die Kabelverschraubungen, Abstand 14 mm: <b>5,0 mm bohren und M6-Gewinde schneiden</b>
+<b>Anschlussseite</b> (eine kurze Seite, 100 mm): Pigtail X, <b>mittig dazwischen die USB-C-Buchse</b>, Pigtail Y.
+<b>Pigtails:</b> 2 Löcher bei 28 und 72 mm für die Kabelverschraubungen: <b>5,0 mm bohren und M6-Gewinde schneiden</b>
 (ABS hält das Gewinde gut) – oder 6,2 mm bohren und innen eine M6-Mutter aufschrauben.
-<b>USB-C:</b> <b>16 mm</b> in der Mitte (Stufenbohrer). <b>Antenne:</b> <b>6,5 mm</b> für die SMA-Buchse.
+<b>USB-C:</b> <b>16 mm</b> in der Mitte (50 mm, Stufenbohrer).
+<b>Gegenüberliegende Seite:</b> <b>6,5 mm</b> mittig für die SMA-Buchse der Antenne.
 <b>Deckel:</b> OLED-Fenster 55 × 28 mm mit Bohrungen in den Ecken vorbereiten, mit dem Cuttermesser ausschneiden und sauber feilen.</div></div>
 <div class="step"><b class="n">3</b><div><b>Widerstände in die Pigtails löten.</b> Bei jedem Pigtail die rote Ader (Innenleiter) etwa 5 cm vor dem
 DuPont-Stift durchtrennen, den 220-Ω-Widerstand dazwischenlöten und mit Schrumpfschlauch isolieren. Vorher mit dem
@@ -162,17 +162,17 @@ Durchgangsprüfer bestätigen, dass Rot zum Mittelstift und Braun zum Außenkont
 und das Pigtail von außen mit dem DuPont-Ende voran durch Hutmutter, Dichteinsatz und Gehäuse schieben. Passt der DuPont-Stecker
 nicht durch die 3-mm-Öffnung, das kleine Kunststoffgehäuse des Stifts kurz abziehen und danach wieder aufstecken. Den
 BNC-Stecker außen so weit herausziehen wie nötig, Hutmutter festziehen. Pigtails mit „X“ und „Y“ beschriften.</div></div>
-<div class="step"><b class="n">5</b><div><b>USB-C-Einbaubuchse und Antenne einbauen.</b> USB-C-Buchse in das mittlere 16-mm-Loch setzen und von innen
-verschrauben. SMA-Buchse des Antennen-Pigtails (aus dem Antennen-Kit des DevKits) in das 6,5-mm-Loch schrauben, die Bingfu-Antenne
-außen aufschrauben.</div></div>
+<div class="step"><b class="n">5</b><div><b>USB-C-Einbaubuchse und Antenne einbauen.</b> USB-C-Buchse in das mittlere 16-mm-Loch der Anschlussseite setzen
+und von innen verschrauben. SMA-Buchse des Antennen-Pigtails (aus dem Antennen-Kit des DevKits) in das 6,5-mm-Loch der
+gegenüberliegenden Seite schrauben, die Bingfu-Antenne außen aufschrauben.</div></div>
 <div class="step"><b class="n">6</b><div><b>Breakout-Board montieren.</b> Board mit Abstandsbolzen M3 auf die gelochte Montageplatte der Abzweigdose
-schrauben, so dass die USB-C-Buchse des DevKits zur Anschlussseite zeigt. DevKit aufstecken. Den kleinen IPEX-Stecker der
+schrauben, so dass die USB-C-Buchse des DevKits zur Anschlussseite und das Modul mit der Antennenbuchse zur Antenne zeigt. DevKit aufstecken. Den kleinen IPEX-Stecker der
 Antenne vorsichtig senkrecht auf die Buchse am Modul drücken, bis er einrastet. Das FPC-Flachbandkabel der USB-Einbaubuchse
 in das DevKit stecken – das Flachbandkabel nicht scharf knicken.</div></div>
 <div class="step"><b class="n">7</b><div><b>Pigtails anklemmen:</b> rote Ader (mit Widerstand) von X in die Klemme <b>P25</b>, von Y in <b>P26</b> Beide braunen Adern (Schirm) in <b>GND</b>. Optional den Elko 100 µF in 3V3 und GND (Plus an 3V3).</div></div>
 <div class="step"><b class="n">8</b><div><b>OLED in den Deckel</b> setzen: mit Abstandsbolzen M2,5 hinter dem Fenster befestigen und die 7 Leitungen
 nach der Tabelle oben in die Klemmen legen. Die Leitungen so lang lassen, dass sich der Scharnierdeckel ganz öffnen lässt.</div></div>
-<figure><img src="images/aufbau.svg" style="width:56%"><figcaption>Abb. 6 – Anordnung in der Abzweigdose (maßstäblich; Anschlussseite unten, gleiche Lage wie im Bohrplan)</figcaption></figure>
+<figure><img src="images/aufbau.svg" style="width:56%"><figcaption>Abb. 6 – Anordnung in der Abzweigdose (maßstäblich): unten die Anschlussseite mit Pigtail X, USB-C und Pigtail Y, oben die Antenne</figcaption></figure>
 <div class="step"><b class="n">9</b><div><b>Prüfen vor dem ersten Einschalten</b> (Multimeter): Kein Durchgang zwischen 3V3 und GND und zwischen 5V und GND.
 Zwischen dem Mittelstift jedes BNC-Steckers und der Klemme P25 bzw. P26 je ca. 220 Ω, zum Außenkontakt kein Durchgang.
 Der Außenkontakt hat Durchgang zu GND. Alle Schraubklemmen leicht nachziehen.</div></div>

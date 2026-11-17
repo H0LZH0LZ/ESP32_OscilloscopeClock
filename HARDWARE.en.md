@@ -35,7 +35,7 @@ GPIO5  ───────────────── OLED CS
 GPIO17 ───────────────── OLED DC
 GPIO4  ───────────────── OLED RST
 
-IPEX/U.FL ── pigtail (antenna kit) ── SMA socket in the connector side ── Bingfu antenna (SMA)
+IPEX/U.FL ── pigtail (antenna kit) ── SMA socket in the opposite side ── Bingfu antenna (SMA)
 ```
 
 All pins are defined in `ESP32_OscilloscopeClock_v2.0/config.h`. Fixed are GPIO25/26 (the only
@@ -86,7 +86,8 @@ replace `NONAME0` with `NONAME2` in the `.ino`. If the display is mounted upside
   an electrolytic capacitor (e.g. 100 µF) between 3V3 and GND close to the DevKit.
 
 ## Enclosure (junction box 150 × 100 × 70 mm)
-- All connections on **one short side** (connector side, 100 mm), seen from outside: the two pigtails on the left (M6 cable glands at 14 and 28 mm – drill Ø 5.0 and tap M6, or Ø 6.2 + nut), **the USB-C panel socket in the middle** (Ø 16 mm at 50 mm), the antenna on the right (SMA, Ø 6.5 mm at 80 mm).
+- **Connector side** (short side, 100 mm), seen from outside: pigtail X at 28 mm, **the USB-C panel socket in the middle** (Ø 16 mm at 50 mm), pigtail Y at 72 mm. M6 cable glands: drill Ø 5.0 and tap M6 (or Ø 6.2 + nut).
+- **Opposite side:** antenna (SMA, Ø 6.5 mm, centred).
 - Lid: window for the OLED (active area approx. 55 × 28 mm), mount the module on M2.5 standoffs.
 - Breakout board on the mounting plate; pigtails into terminals P25/P26 (red, via 220 Ω) and GND (brown).
 - Drilling template 1:1: `docs/images/bohrplan.svg`.
