@@ -86,6 +86,21 @@ Diese Datei beschreibt, wie die Firmware aufgebaut ist. Für Verdrahtung und Geh
   Versatz aus der POSIX-Zeitzone). Beim nächsten NTP-Abgleich oder einer Zeitzonen-Änderung gilt
   wieder die normale Zeitzone. Die Auswahl erscheint nur bei Zeitzonen mit Sommerzeit.
 
+## Echtzeituhr DS3231 (optional)
+
+Ab Werk aus (`RTC_ENABLE 0`), einschaltbar unter Einstellungen → Uhrzeit (NVS-Schlüssel `rtc`).
+Der DS3231 hängt an I²C (`RTC_SDA_PIN` 21, `RTC_SCL_PIN` 22, 100 kHz, Adresse 0x68) und läuft in **UTC**.
+Die Firmware spricht ihn direkt über `Wire` an (keine zusätzliche Bibliothek); alle Zugriffe laufen im `uiTask`.
+
+- **Start / Einschalten** (`rtcApply`): Ist die Systemzeit schon gültig (NTP oder von Hand), wird sie in die RTC
+  geschrieben, sonst wird die Systemzeit aus der RTC gestellt (`g_timeRtc` – zählt als gültige Zeit mit Datum).
+- **NTP-Abgleich** (stündlich) und **Uhrzeit von Hand**: RTC nachstellen (`rtcSetFromSystem`, löscht das OSF-Bit).
+- **Ohne NTP:** alle 10 min die Systemuhr aus der RTC nachstellen (`rtcToSystem`) – genauer als der ESP32-Takt.
+- **Ungültig** ist die RTC-Zeit, wenn das OSF-Bit gesetzt ist (Oszillator stand, z. B. Batterie leer oder neu)
+  oder das Datum unplausibel ist. Sie wird dann nicht übernommen.
+- **Status:** `/api/status` → `rtc{enabled,found,valid,tempQ}` (Temperatur in 1/4 °C) und `ntp.rtc`
+  (Zeit kommt gerade aus der RTC). Die Gruppe „Uhrzeit stellen“ klappt dann nicht automatisch auf.
+
 ## Sprache (Deutsch/English)
 
 - `s_lang` (NVS-Schlüssel `lang`, Startwert `UI_LANG`) gilt für Meldungen des Webinterfaces, das OLED
@@ -287,6 +302,7 @@ Knopf „Auf Standardwerte zurücksetzen“: Er löscht nur die gespeicherten We
 | Dunkeltastung (Z-Eingang) | `zbl`, `zhi` | an/aus; High oder Low = dunkel | `g_zblank`, `g_zblankHigh`: `zblankApply()` schaltet GPIO `ZBLANK_PIN` (27) als Ausgang bzw. hochohmig; `beamJump()` springt dann im Dunkeln. Nur mit drittem Kabel zum Z-Eingang |
 | Rücklauf-Tempo | `jump` | 0 (sofortiger Sprung) – 48 (× Zeichentempo) | `g_jumpSpeed`, nur im Profil ANALOG wirksam. Bei DIGITAL zeigt der Regler ausgegraut 0 (sofortiger Sprung); der ANALOG-Wert bleibt gespeichert und erscheint beim Zurückschalten wieder |
 | Zeitzone | `tz` | Liste `TIMEZONES[]` (bzw. `TZ_INFO`) | `configTzTime()` neu |
+| Echtzeituhr (RTC) | `rtc` | an/aus | `rtcApply()`: DS3231 an I²C GPIO21/22 nutzen (siehe Abschnitt Echtzeituhr) |
 | Zeitserver (NTP) | `ntp` | Hostname, max. 63 Zeichen | erster Server, `configTzTime()` neu |
 | OLED-Helligkeit | `oledp` | 0–100 % (0 = aus) | `oledApplyBrightness()`: 0 % = `setPowerSave(1)`, sonst Kontrast 1–255. Ein alter Wert `oled` (Kontrast) wird beim ersten Start umgerechnet |
 | Sekunden anzeigen | `osec` | an/aus | OLED-Uhrzeit HH:MM:SS oder HH:MM |
@@ -333,10 +349,8 @@ startet nach 2 s neu. Danach gelten die Werte aus `config.h`, ohne WLAN öffnet 
 Vorher loslassen bricht ab (das Profil ist dann schon umgeschaltet).
 
 ```
- Werkseinstellungen       Font 6x10
-Loescht alles inkl. WLAN  Font 5x8
-         5                Countdown 5 … 1 (7-Segment 9×16 px)
- Loslassen = Abbruch      Font 5x8
+ Werkseinstellungen       Font 7x14 fett
+         5                ablaufende Zeit 5 … 1, dann 0 bis zum Neustart (7-Segment 11×20 px)
 ```
 
 ## Konsolenausgaben (115200 Baud) und Log im Webinterface

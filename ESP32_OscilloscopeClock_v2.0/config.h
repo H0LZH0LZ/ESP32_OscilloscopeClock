@@ -28,6 +28,16 @@
 #define NTP_SERVER_3   "time.nist.gov"
 #define NTP_SYNC_INTERVAL_MS (60UL * 60UL * 1000UL)  // Nachsynchronisieren: 1x pro Stunde
 
+// ---- Optional: Echtzeituhr DS3231 (z.B. Modul ZS-042) über I²C ------------------
+// Hält Datum und Uhrzeit mit Knopfzelle auch ohne Strom und ohne Internet.
+// Anschluss: VCC → 3V3, GND → GND, SDA → RTC_SDA_PIN, SCL → RTC_SCL_PIN.
+// Ein-/ausschalten im Webinterface (Einstellungen → Uhrzeit → "Echtzeituhr (RTC)").
+// Hinweis ZS-042: Das Modul lädt die Knopfzelle über Diode + 200 Ω – mit einer
+// normalen CR2032 die Diode auslöten oder eine aufladbare LIR2032 verwenden.
+#define RTC_ENABLE   0          // Startwert: 0 = aus (Standard), 1 = an
+#define RTC_SDA_PIN 21
+#define RTC_SCL_PIN 22
+
 // Startzeit, solange (noch) kein NTP-Sync erfolgt ist (wie im Original).
 // Gilt auch dauerhaft ohne WLAN, solange die Uhrzeit nicht von Hand gestellt wird.
 #define FALLBACK_H  10

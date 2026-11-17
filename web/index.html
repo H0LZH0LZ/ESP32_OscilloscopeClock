@@ -361,6 +361,9 @@ h2.coll::after{content:"";width:8px;height:8px;margin:0 10px 4px 0;border:solid 
   <div class="pw"><input id="sNtp" maxlength="63" autocapitalize="none" autocorrect="off" spellcheck="false">
   <button type="button" class="sec" id="sNtpSave">Übernehmen</button></div>
   <div class="sub">Server im Internet, von dem die Uhr die genaue Zeit holt (Standard: de.pool.ntp.org). „Übernehmen“ speichert den Namen und gleicht sofort neu ab.</div></div>
+ <!-- Echtzeituhr DS3231 (optional, I²C) -->
+ <div class="set"><label class="sw"><span>Echtzeituhr (RTC)</span><input type="checkbox" id="sRtc"></label>
+  <div class="sub">Nur mit angeschlossenem DS3231-Modul (<span id="rtcPins">SDA GPIO21, SCL GPIO22</span>): hält Datum und Uhrzeit mit Knopfzelle auch ohne Internet und nach einem Stromausfall. Ohne Modul ausgeschaltet lassen.</div></div>
   <div class="gmsg" data-gmsg="time"></div>
   <!-- Nur diese Gruppe auf die Werte aus config.h zurücksetzen -->
   <button type="button" class="sec greset" data-reset="time">Auf Standardwerte zurücksetzen</button>
@@ -476,7 +479,7 @@ Object.assign(EN,{'Zeitformat':'Time format','24 Stunden':'24 hours','12 Stunden
 Object.assign(EN,{'Tiefstwert':'Minimum','größter Block':'largest block','Prozessorauslastung Kern 0':'CPU usage core 0','Prozessorauslastung Kern 1':'CPU usage core 1',
  'Zeichnet ständig das Oszilloskop-Bild – absichtlich ohne Pause':'Draws the oscilloscope picture all the time – without pause on purpose'});
 Object.assign(EN,{'Oszilloskop':'Oscilloscope','Display':'Display'});
-Object.assign(EN,{"Setzt nur die Einstellungen dieser Gruppe auf die Werte aus config.h zurück.": "Resets only the settings of this group to the values from config.h.", "Änderungen wirken sofort und bleiben gespeichert.": "Changes take effect immediately and are saved.", "Übernimmt Datum und Uhrzeit dieses Handys oder PCs.": "Takes over date and time from this phone or PC.", "Stellt die Uhr auf das oben eingetragene Datum und die Uhrzeit.": "Sets the clock to the date and time entered above.", "Server im Internet, von dem die Uhr die genaue Zeit holt (Standard: de.pool.ntp.org). „Übernehmen“ speichert den Namen und gleicht sofort neu ab.": "Internet server from which the clock gets the exact time (default: de.pool.ntp.org). “Apply” saves the name and syncs again right away.", "Netze, mit denen sich die Uhr verbinden darf. Sie wählt automatisch das stärkste. „Löschen“ entfernt ein Netz – die Uhr startet danach neu.": "Networks the clock may connect to. It automatically picks the strongest one. “Delete” removes a network – the clock restarts afterwards.", "Name des WLANs genau wie am Router (Groß-/Kleinschreibung beachten).": "Name of the network exactly as on the router (case-sensitive).", "Für offene Netze leer lassen. „Anzeigen“ blendet das Passwort beim Tippen ein.": "Leave empty for open networks. “Show” reveals the password while typing.", "Speichert das Netz auf der Uhr (bis zu 10 Netze).": "Saves the network on the clock (up to 10 networks).", "Lädt das Protokoll alle 5 Sekunden neu, solange die Seite sichtbar ist.": "Reloads the log every 5 seconds while the page is visible.", "Uhrzeit aus dem Internet, stündlich abgeglichen": "Time from the internet, synced every hour", "Verbundenes Netz":"Connected network", "Mit dem Handy verbinden, um die Uhr einzurichten":"Connect with your phone to set up the clock", "Hilft bei der Fehlersuche nach unerwarteten Neustarts":"Helps to diagnose unexpected restarts", "Installierte Programmversion":"Installed program version", "Dunkeltastung (Z-Eingang)":"Z blanking (Z input)", "Nur mit einem dritten Kabel von":"Only with a third wire from", "zum Z-Eingang des Oszilloskops: Der Strahl ist bei den Sprüngen aus, Rücklaufspuren verschwinden. Ohne dieses Kabel ausgeschaltet lassen.":"to the Z input of the oscilloscope: the beam is off during jumps, retrace lines disappear. Leave switched off without this wire.", "High = dunkel":"High = dark", "Low = dunkel":"Low = dark", "Pegel für dunkel":"Level for dark", "Welcher Pegel den Strahl ausschaltet, steht im Handbuch des Oszilloskops (bei vielen Hameg: High).":"Which level switches the beam off is stated in the oscilloscope manual (many Hameg: high).", "Mit Dunkeltastung springt der Strahl immer sofort im Dunkeln. Der ANALOG-Wert":"With Z blanking the beam always jumps instantly in the dark. The ANALOG value", "OLED-Anzeige":"OLED display", "An":"On", "Aus":"Off", "Helligkeit, einstellbar unter Einstellungen, Gruppe Display":"Brightness, adjustable under Settings, group Display", "Helligkeit 0 % – einschalten unter Einstellungen, Gruppe Display":"Brightness 0 % – switch on under Settings, group Display"});
+Object.assign(EN,{"Setzt nur die Einstellungen dieser Gruppe auf die Werte aus config.h zurück.": "Resets only the settings of this group to the values from config.h.", "Änderungen wirken sofort und bleiben gespeichert.": "Changes take effect immediately and are saved.", "Übernimmt Datum und Uhrzeit dieses Handys oder PCs.": "Takes over date and time from this phone or PC.", "Stellt die Uhr auf das oben eingetragene Datum und die Uhrzeit.": "Sets the clock to the date and time entered above.", "Server im Internet, von dem die Uhr die genaue Zeit holt (Standard: de.pool.ntp.org). „Übernehmen“ speichert den Namen und gleicht sofort neu ab.": "Internet server from which the clock gets the exact time (default: de.pool.ntp.org). “Apply” saves the name and syncs again right away.", "Netze, mit denen sich die Uhr verbinden darf. Sie wählt automatisch das stärkste. „Löschen“ entfernt ein Netz – die Uhr startet danach neu.": "Networks the clock may connect to. It automatically picks the strongest one. “Delete” removes a network – the clock restarts afterwards.", "Name des WLANs genau wie am Router (Groß-/Kleinschreibung beachten).": "Name of the network exactly as on the router (case-sensitive).", "Für offene Netze leer lassen. „Anzeigen“ blendet das Passwort beim Tippen ein.": "Leave empty for open networks. “Show” reveals the password while typing.", "Speichert das Netz auf der Uhr (bis zu 10 Netze).": "Saves the network on the clock (up to 10 networks).", "Lädt das Protokoll alle 5 Sekunden neu, solange die Seite sichtbar ist.": "Reloads the log every 5 seconds while the page is visible.", "Uhrzeit aus dem Internet, stündlich abgeglichen": "Time from the internet, synced every hour", "Verbundenes Netz":"Connected network", "Mit dem Handy verbinden, um die Uhr einzurichten":"Connect with your phone to set up the clock", "Hilft bei der Fehlersuche nach unerwarteten Neustarts":"Helps to diagnose unexpected restarts", "Installierte Programmversion":"Installed program version", "Echtzeituhr (RTC)":"Real-time clock (RTC)", "Nur mit angeschlossenem DS3231-Modul (":"Only with a DS3231 module connected (", "): hält Datum und Uhrzeit mit Knopfzelle auch ohne Internet und nach einem Stromausfall. Ohne Modul ausgeschaltet lassen.":"): keeps date and time with its coin cell even without internet and after a power failure. Leave switched off without a module.", "Aus – Uhrzeit von der RTC":"Off – time from the RTC", "Nicht gefunden":"Not found", "Zeit ungültig":"Time invalid", "Läuft":"Running", "DS3231-Modul, einschalten unter Einstellungen, Gruppe Uhrzeit":"DS3231 module, switch on under Settings, group Time", "Verdrahtung prüfen: SDA GPIO21, SCL GPIO22, VCC an 3V3":"Check the wiring: SDA GPIO21, SCL GPIO22, VCC to 3V3", "Batterie leer oder neu – wird beim nächsten Zeitabgleich gestellt":"Battery empty or new – set at the next time sync", "Hält die Uhrzeit auch ohne Strom und Internet":"Keeps the time even without power and internet", "Dunkeltastung (Z-Eingang)":"Z blanking (Z input)", "Nur mit einem dritten Kabel von":"Only with a third wire from", "zum Z-Eingang des Oszilloskops: Der Strahl ist bei den Sprüngen aus, Rücklaufspuren verschwinden. Ohne dieses Kabel ausgeschaltet lassen.":"to the Z input of the oscilloscope: the beam is off during jumps, retrace lines disappear. Leave switched off without this wire.", "High = dunkel":"High = dark", "Low = dunkel":"Low = dark", "Pegel für dunkel":"Level for dark", "Welcher Pegel den Strahl ausschaltet, steht im Handbuch des Oszilloskops (bei vielen Hameg: High).":"Which level switches the beam off is stated in the oscilloscope manual (many Hameg: high).", "Mit Dunkeltastung springt der Strahl immer sofort im Dunkeln. Der ANALOG-Wert":"With Z blanking the beam always jumps instantly in the dark. The ANALOG value", "OLED-Anzeige":"OLED display", "An":"On", "Aus":"Off", "Helligkeit, einstellbar unter Einstellungen, Gruppe Display":"Brightness, adjustable under Settings, group Display", "Helligkeit 0 % – einschalten unter Einstellungen, Gruppe Display":"Brightness 0 % – switch on under Settings, group Display"});
 Object.assign(EN,{"Helligkeit Minutenstriche": "Tick mark brightness", "Helligkeit Ziffern": "Numeral brightness", "Die 60 Striche am Rand. Über 100 % heller, aber weniger Bilder pro Sekunde.": "The 60 marks around the edge. Above 100 % brighter, but fewer frames per second.", "Die Zahlen auf dem Zifferblatt. Über 100 % heller, aber weniger Bilder pro Sekunde.": "The numerals on the dial. Above 100 % brighter, but fewer frames per second."});
 Object.assign(EN,{"Unter 100 %, weil die schmalen Zeiger sonst heller wirken als der Rest. 0 % blendet die Zeiger aus.": "Below 100 % because the narrow hands would otherwise look brighter than the rest. 0 % hides the hands.", "Die 60 Striche am Rand. 0 % blendet sie aus.": "The 60 marks around the edge. 0 % hides them.", "Die Zahlen auf dem Zifferblatt. 0 % blendet sie aus.": "The numerals on the dial. 0 % hides them.", "Helligkeit des kleinen Displays an der Uhr. 0 % schaltet es aus; niedrige Werte schonen das OLED.": "Brightness of the small display on the clock. 0 % switches it off; low values protect the OLED.", "Sekunden anzeigen": "Show seconds", "Uhrzeit auf dem OLED als HH:MM:SS oder nur HH:MM.": "Time on the OLED as HH:MM:SS or just HH:MM.", "aus": "off"});
 Object.assign(EN,{"WLAN zurücksetzen": "Reset Wi-Fi", "Löscht alle gespeicherten Netze. Die Uhr startet danach neu und öffnet das Setup-WLAN „ScopeClock-Setup“.": "Deletes all saved networks. The clock then restarts and opens the setup network “ScopeClock-Setup”."});
@@ -677,6 +680,7 @@ function renderSettings(){
  if(document.activeElement!==$('sNtp'))$('sNtp').value=S.ntp;
  $('sOled').value=S.oledPct;$('vOled').textContent=fmtPct(S.oledPct);
  $('sSec').checked=S.oledSec;$('sTest').checked=!!S.test;
+ $('sRtc').checked=!!S.rtc;if(S.rtcSda!==undefined)$('rtcPins').textContent='SDA GPIO'+S.rtcSda+', SCL GPIO'+S.rtcScl;
  if(document.activeElement!==$('sHost'))$('sHost').value=S.host||'';$('vHost').textContent=S.host||'scope-clock';
  $('sShift').checked=S.oledShift;
  $('sFlip').checked=S.oledFlip;
@@ -700,6 +704,7 @@ async function setSetting(d){
  setBusy=false}
 document.querySelectorAll('[data-profile]').forEach(b=>b.onclick=()=>setSetting({profile:b.dataset.profile}));
 $('sZbl').onchange=e=>setSetting({zblank:e.target.checked?1:0});
+$('sRtc').onchange=e=>setSetting({rtc:e.target.checked?1:0});
 document.querySelectorAll('[data-zhi]').forEach(b=>b.onclick=()=>setSetting({zblankHigh:b.dataset.zhi}));
 document.querySelectorAll('[data-h12]').forEach(b=>b.onclick=()=>{h12=b.dataset.h12==='1';lastSec=-1;setSetting({h12:b.dataset.h12})});
 $('sDial').onchange=e=>setSetting({dial:e.target.value});
@@ -725,7 +730,7 @@ $('sShift').onchange=e=>setSetting({oledShift:e.target.checked?1:0});
 $('sFlip').onchange=e=>setSetting({oledFlip:e.target.checked?1:0});
 $('sHostSave').onclick=()=>setSetting({host:$('sHost').value.trim().toLowerCase()});
 // Sichern: alle Einstellungen (ohne WLANs) als JSON-Datei herunterladen; Laden: Datei wählen, an die Uhr senden
-const BK=['profile','dial','beamNs','handPct','tickPct','digitPct','jumpSpeed','zblank','zblankHigh','tz','ntp','h12','oledPct','oledSec','oledShift','oledFlip','lang','host'];
+const BK=['profile','dial','beamNs','handPct','tickPct','digitPct','jumpSpeed','zblank','zblankHigh','tz','ntp','h12','rtc','oledPct','oledSec','oledShift','oledFlip','lang','host'];
 $('bkSave').onclick=()=>{if(!S)return;const o={app:'scope-clock',version:1,settings:{}};for(const k of BK)if(k in S)o.settings[k]=S[k];
  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(o,null,1)],{type:'application/json'}));
  a.download=(S.host||'scope-clock')+'-einstellungen.json';document.body.append(a);a.click();a.remove()};
@@ -744,10 +749,10 @@ const pad=v=>String(v).padStart(2,'0');
 let dstMode=-1;
 function showDst(){document.querySelectorAll('[data-dst]').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.dst===dstMode)))}
 document.querySelectorAll('[data-dst]').forEach(b=>b.onclick=()=>{dstMode=+b.dataset.dst;showDst()});
-function showTimeRow(on,dst){const r=$('timeRow');
+function showTimeRow(on,dst,rtc){const r=$('timeRow');
  $('tDstBox').hidden=!(S&&S.tz&&S.tz.includes(','));            // nur bei Zeitzonen mit Sommerzeit
  if(r.hidden===!on)return;r.hidden=!on;
- autoGroup('time-h',on);   // ohne Zeit: Gruppe Uhrzeit aufklappen; ist NTP wieder da: wieder einklappen
+ autoGroup('time-h',on&&!rtc);   // ohne Zeit (und ohne RTC-Zeit): Gruppe Uhrzeit aufklappen; ist NTP wieder da: wieder einklappen
  if(on&&typeof dst==='number'){dstMode=dst;showDst()}
  if(on){const d=new Date();$('tDate').value=d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
   $('tTime').value=pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds())}}
@@ -775,7 +780,7 @@ $('sLang').onchange=async e=>{const l=e.target.value;if(l===lang)return;
 // Zurücksetzen je Gruppe (Oszilloskop, Uhrzeit, Display); Meldung erscheint direkt über dem Knopf
 // Ohne Rückfrage: Die vorigen Werte werden gemerkt, 8 s lang lässt sich alles mit
 // „Rückgängig“ wiederherstellen (sendet die alten Werte per POST /api/settings).
-const GFIELDS={scope:['profile','dial','beamNs','handPct','tickPct','digitPct','jumpSpeed','zblank','zblankHigh'],time:['tz','ntp','h12'],
+const GFIELDS={scope:['profile','dial','beamNs','handPct','tickPct','digitPct','jumpSpeed','zblank','zblankHigh'],time:['tz','ntp','h12','rtc'],
  display:['oledPct','oledSec','oledShift','oledFlip']};
 GFIELDS.all=[...GFIELDS.scope,...GFIELDS.time,...GFIELDS.display,'lang','host'];
 document.querySelectorAll('[data-reset]').forEach(b=>b.onclick=async()=>{const g=b.dataset.reset;
@@ -821,7 +826,7 @@ async function status(){
   if(s.lang&&s.lang!==lang&&!langBusy)setLangLocal(s.lang);
   if(typeof s.h12==='boolean'&&s.h12!==h12&&!setBusy){h12=s.h12;lastSec=-1}
   lastFps=s.fps;fpsNs=S?S.beamNs:0;if(document.activeElement!==$('sBeam'))$('vFps').textContent=s.fps+' '+t('Bilder/s');
-  showTimeRow(!s.ntp.synced,s.ntp.dst);
+  showTimeRow(!s.ntp.synced,s.ntp.dst,!!s.ntp.rtc);
   curSsid=s.wifi.connected?s.wifi.ssid:'';
   {const noNet=!s.wifi.connected;if(noNet!==lastNoNet){if(noNet||lastNoNet!==null)autoGroup('wlan-h',noNet);lastNoNet=noNet}}   // ohne WLAN: Gruppe WLAN aufklappen
   if(S&&!setBusy&&typeof s.test==='boolean'&&s.test!==!!S.test){S.test=s.test;renderSettings()}
@@ -829,9 +834,13 @@ async function status(){
   const st=$('status');st.replaceChildren(
    row(t('WLAN'),s.wifi.connected?s.wifi.ssid:(s.wifi.configured?t('Sucht Netz …'):t('Kein Netz eingetragen')),s.wifi.connected?'':'warn',t('Verbundenes Netz')),
    ...(s.wifi.connected?[row(t('Signalstärke'),bars(s.wifi.rssi).trim()+'  '+s.wifi.rssi+' dBm',s.wifi.rssi<-80?'warn':'',t('Über −67 dBm gut, unter −80 dBm schwach')),row(t('Netzwerkadresse'),s.wifi.ip+'\n'+s.wifi.host,'addr',t('Unter dieser Adresse ist die Uhr im Browser erreichbar'))]:[]),
-   row(t('Zeitabgleich (NTP)'),s.ntp.synced?(t('Zuletzt')+' '+s.ntp.last):s.ntp.manual?t('Aus – Uhrzeit von Hand gestellt'):(s.wifi.configured?t('Wartet auf ersten Abgleich …'):t('Aus (kein WLAN)')),s.ntp.synced?(s.ntp.overdue?'warn':''):(s.ntp.manual?'':'warn'),t('Uhrzeit aus dem Internet, stündlich abgeglichen')),
+   row(t('Zeitabgleich (NTP)'),s.ntp.synced?(t('Zuletzt')+' '+s.ntp.last):s.ntp.manual?t('Aus – Uhrzeit von Hand gestellt'):s.ntp.rtc?t('Aus – Uhrzeit von der RTC'):(s.wifi.configured?t('Wartet auf ersten Abgleich …'):t('Aus (kein WLAN)')),s.ntp.synced?(s.ntp.overdue?'warn':''):(s.ntp.manual||s.ntp.rtc?'':'warn'),t('Uhrzeit aus dem Internet, stündlich abgeglichen')),
    ...(s.ap.active?[row(t('Setup-WLAN'),s.ap.ssid+' ('+s.ap.ip+')','warn',t('Mit dem Handy verbinden, um die Uhr einzurichten'))]:[]),
    // OLED: an/aus nach der eingestellten Helligkeit (ob ein Display angeschlossen ist, lässt sich per SPI nicht prüfen)
+   // Echtzeituhr: aus / nicht gefunden / Zeit ungültig / läuft (mit Temperatur des DS3231)
+   ...(s.rtc?[row(t('Echtzeituhr (RTC)'),!s.rtc.enabled?t('Aus'):!s.rtc.found?t('Nicht gefunden'):!s.rtc.valid?t('Zeit ungültig'):t('Läuft')+(s.rtc.tempQ>-1000?' – '+(s.rtc.tempQ/4).toLocaleString(lang==='en'?'en':'de',{maximumFractionDigits:2})+' °C':''),
+    s.rtc.enabled&&(!s.rtc.found||!s.rtc.valid)?'warn':'',
+    !s.rtc.enabled?t('DS3231-Modul, einschalten unter Einstellungen, Gruppe Uhrzeit'):!s.rtc.found?t('Verdrahtung prüfen: SDA GPIO21, SCL GPIO22, VCC an 3V3'):!s.rtc.valid?t('Batterie leer oder neu – wird beim nächsten Zeitabgleich gestellt'):t('Hält die Uhrzeit auch ohne Strom und Internet'))]:[]),
    ...(typeof s.oled==='number'?[row(t('OLED-Anzeige'),s.oled>0?t('An')+' – '+s.oled+' %':t('Aus'),s.oled>0?'':'warn',s.oled>0?t('Helligkeit, einstellbar unter Einstellungen, Gruppe Display'):t('Helligkeit 0 % – einschalten unter Einstellungen, Gruppe Display'))]:[]),
    row(t('Laufzeit'),dur(s.uptime),'',t('Seit dem letzten Neustart')),
    row(t('Grund des letzten Neustarts'),s.reset,/Absturz|Watchdog|Unterspannung|Crash|Brown-out/.test(s.reset)?'warn':'',t('Hilft bei der Fehlersuche nach unerwarteten Neustarts')),

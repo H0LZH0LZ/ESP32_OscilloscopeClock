@@ -32,6 +32,8 @@ Hardware angepasst: **ESP32-WROOM-32U DevKitC V4**, **Waveshare 2.42" OLED (SPI)
 - Ohne Internet läuft die Uhr trotzdem: Die Uhrzeit lässt sich im Webinterface von Hand stellen
   (oder mit einem Fingertipp vom Handy übernehmen), wahlweise mit fester Sommer- oder Winterzeit.
   Ohne Zeitquelle zählt sie ab einer festen Startzeit hoch.
+- **Optional Echtzeituhr DS3231** (I²C, GPIO21/22): hält Datum und Uhrzeit mit Knopfzelle auch nach einem
+  Stromausfall ohne Internet. Im Webinterface einschaltbar, ab Werk aus.
 - Mehrere WLANs: Die Uhr verbindet sich automatisch mit dem stärksten bekannten Netz.
 - **12- oder 24-Stunden-Format** für OLED und Webinterface (12 h mit AM/PM), umschaltbar im Webinterface.
 - **Sprache Deutsch oder Englisch** für Webinterface, OLED-Anzeige und Protokoll, umschaltbar im
@@ -83,6 +85,7 @@ stehen in `ESP32_OscilloscopeClock_v2.0/config.h`. Im Betrieb ändert man sie be
 | Webinterface öffnen | `http://scope-clock.local` oder die IP-Adresse vom OLED/Log; ohne bekanntes WLAN über das Setup-WLAN „ScopeClock-Setup“ (`http://192.168.4.1`) |
 | Zifferblatt wechseln | im Webinterface über die Vorschau nach links/rechts wischen (am PC: Pfeiltasten), oder Einstellungen → Zifferblatt |
 | Oszilloskop-Profil DIGITAL/ANALOG | BOOT-Taster 3 s halten, oder Einstellungen → Oszilloskop-Profil |
+| Echtzeituhr DS3231 (optional) | Einstellungen → Uhrzeit → „Echtzeituhr (RTC)“ |
 | Werkseinstellungen (alle Einstellungen und WLANs löschen) | BOOT-Taster 10 s halten – ab 5 s zählt das OLED 5 … 1 herunter, Loslassen bricht ab |
 | Dunkeltastung über den Z-Eingang (optional, drittes Kabel an GPIO27) | Einstellungen → Oszilloskop → „Dunkeltastung (Z-Eingang)“ |
 | Uhrzeit ohne Internet stellen | Einstellungen → „Uhrzeit stellen“ (erscheint nur, solange kein Zeitserver erreichbar ist); Sommer-/Winterzeit automatisch oder fest |
@@ -100,7 +103,7 @@ stehen in `ESP32_OscilloscopeClock_v2.0/config.h`. Im Betrieb ändert man sie be
 
 | Board-Paket | Programmspeicher | Globale Variablen (RAM) |
 |---|---|---|
-| esp32 3.3.12 | 1.234.578 Byte (94 %) | 74.916 Byte (22 %) |
+| esp32 3.3.12 | 1.238.302 Byte (94 %) | 74.924 Byte (22 %) |
 | esp32 2.0.17 | 866.053 Byte (66 %) | 61.048 Byte (18 %) – Stand vor Menü und Zifferblatt-Umschaltung |
 
 Die Konfigurationsvarianten (Profil ANALOG/DIGITAL, Z-Dunkeltastung, Zifferblatt 0/1/2,

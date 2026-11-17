@@ -109,6 +109,7 @@ kommt direkt in den Eingang des Oszilloskops, ein zusätzliches BNC-Kabel ist ni
  <tr><td>1</td><td><b>Waveshare 2,42inch OLED Display Module</b>, weiß, 128 × 64 Pixel, SPI/I²C (SSD1309); Platine 61,5 × 39,5 mm, aktive Fläche 55,0 × 27,5 mm</td><td>Im Auslieferungszustand (4-Wire-SPI) verwenden, nichts umlöten. Stiftleiste von unten: VCC, GND, DIN, CLK, CS, DC, RST.</td></tr>
  <tr><td>1</td><td><b>WLAN-Antenne Bingfu</b> 2,4/5,8 GHz, 8 dBi, SMA-Stecker (Variante „SMA“), abwinkelbar</td><td>Pflicht: Das Modul -32U hat keine eingebaute Antenne. Sie wird auf die SMA-Buchse des IPEX-Pigtails aus dem Antennen-Kit geschraubt – SMA und RP-SMA nicht mischen (Stecker der Antenne muss zur Buchse des Pigtails passen).</td></tr>
  <tr><td>2</td><td>Widerstand <b>220 Ω</b>, 0,25 W (empfohlen)</td><td>In die rote Ader jedes Pigtails eingelötet; schützt die DAC-Ausgänge bei einem Kurzschluss am BNC-Stecker.</td></tr>
+ <tr><td>(1)</td><td><i>Optional:</i> Echtzeituhr <b>DS3231</b>, Modul ZS-042 (z. B. WINGONEER „Tiny DS3231 AT24C32“)</td><td>Hält die Uhrzeit nach einem Stromausfall ohne Internet. VCC → 3V3, GND → GND, SDA → P21, SCL → P22. Knopfzelle: LIR2032 – oder bei CR2032 die Ladediode auslöten. Im Webinterface einschalten.</td></tr>
  <tr><td>–</td><td>Kleinteile</td><td>7 Leitungen für das OLED (DuPont-Kabel oder Litze), Schrumpfschlauch, Abstandsbolzen M2,5 (OLED) und M3 (Breakout-Board), ggf. 2–3 Muttern M6</td></tr>
  <tr><td>1</td><td>USB-Netzteil 5 V, ≥ 1 A, mit USB-C-Kabel</td><td>Ein normales, ungeerdetes Steckernetzteil vermeidet Brummschleifen.</td></tr>
 </table>
@@ -266,7 +267,7 @@ Handy gemacht und lässt sich über „Zum Startbildschirm hinzufügen“ wie ei
 <ul>
  <li><b>Vorschau:</b> zeigt das Oszilloskop-Bild live. <b>Wischen nach links/rechts</b> (oder Punkte/Pfeile darunter, am PC Pfeiltasten) wechselt das Zifferblatt – auch am Oszilloskop.</li>
  <li><b>Beim Aufruf</b> ist nur <b>Status</b> aufgeklappt, alles andere ist eingeklappt. Ohne Zeitserver klappt „Uhrzeit“ von selbst auf, ohne WLAN-Verbindung die Gruppe „WLAN“; sobald alles wieder verbunden ist, klappen sie wieder zu.</li>
- <li><b>Status:</b> WLAN, Signalstärke, Netzwerkadresse, Zeitabgleich (NTP), OLED-Anzeige (an/aus), Laufzeit, Grund des letzten Neustarts, Arbeitsspeicher, Auslastung beider Kerne, Firmware-Version. Orange = Warnung, Rot = Fehler.</li>
+ <li><b>Status:</b> WLAN, Signalstärke, Netzwerkadresse, Zeitabgleich (NTP), Echtzeituhr, OLED-Anzeige (an/aus), Laufzeit, Grund des letzten Neustarts, Arbeitsspeicher, Auslastung beider Kerne, Firmware-Version. Orange = Warnung, Rot = Fehler.</li>
  <li><b>Einstellungen</b> in fünf Gruppen (Oszilloskop, Uhrzeit, Display, WLAN, System). Änderungen wirken sofort und werden gespeichert; „✓ Gespeichert“ erscheint direkt an der Einstellung. Jede Gruppe hat „Auf Standardwerte zurücksetzen“ mit 8 s „Rückgängig“.</li>
  <li><b>Debug:</b> Meldungen der Uhr mit Filter (WLAN, Zeit, Web, Oszilloskop, Warnungen), „Aktualisieren“, „Herunterladen“ (Textdatei) und „Leeren“.</li>
  <li><b>Seitenmenü (☰):</b> springt in die Bereiche, dazu Sprache (Deutsch/English) und Darstellung (automatisch/hell/dunkel). Der Bereich, in dem man gerade ist, ist im Menü grün markiert; der schmale grüne Balken am oberen Bildschirmrand zeigt, wie weit man gescrollt hat.</li>
@@ -330,6 +331,7 @@ beschrieben wird. Jede Gruppe hat „Auf Standardwerte zurücksetzen“; danach 
  Oszilloskop ist davon unabhängig, das Debug-Protokoll bleibt immer bei 24 h.</td></tr>
  <tr><td>Zeitzone</td><td>Liste (Mitteleuropa)</td><td>Bestimmt die Ortszeit einschließlich der Regeln für Sommer- und Winterzeit. Wirkt sofort auf Zeiger,
  OLED und Webseite. Geht die Uhr um ganze Stunden falsch, ist meist die Zeitzone falsch gewählt.</td></tr>
+ <tr><td>Echtzeituhr (RTC)</td><td>an / aus (aus)</td><td>Nur mit DS3231-Modul (SDA GPIO21, SCL GPIO22): hält die Uhrzeit mit Knopfzelle auch nach einem Stromausfall ohne Internet. Status: „Läuft“, „Nicht gefunden“ oder „Zeit ungültig“.</td></tr>
  <tr><td>Zeitserver (NTP)</td><td>Hostname (de.pool.ntp.org)</td><td>Server im Internet, von dem die Uhr die genaue Zeit holt – nach dem Start und danach stündlich.
  „Übernehmen“ speichert den Namen und gleicht sofort neu ab. Zwei weitere Server aus <code>config.h</code> dienen als Reserve.</td></tr>
 </table>
@@ -340,21 +342,17 @@ beschrieben wird. Jede Gruppe hat „Auf Standardwerte zurücksetzen“; danach 
  <tr><td>OLED-Helligkeit</td><td>0–100 % (50 %)</td><td>Helligkeit des kleinen Displays an der Uhr. Niedrige Werte schonen das OLED (weniger Einbrennen,
  längere Lebensdauer); 0 % schaltet es ganz aus. Beim Halten des BOOT-Tasters wird es für die Anzeige des Profilwechsels
  trotzdem kurz eingeschaltet.</td></tr>
- <tr><td>Sekunden anzeigen</td><td>an / aus (an)</td><td>Uhrzeit auf dem OLED als HH:MM:SS oder nur HH:MM. Ohne Sekunden ändert sich das Bild nur einmal pro
- Minute – das schont das Display zusätzlich.</td></tr>
+ <tr><td>Sekunden anzeigen</td><td>an / aus (an)</td><td>Uhrzeit auf dem OLED als HH:MM:SS oder nur HH:MM. Ohne Sekunden ändert sich das Bild nur einmal pro Minute – schont das Display.</td></tr>
  <tr><td>OLED um 180° drehen</td><td>an / aus (aus)</td><td>Dreht die Anzeige auf den Kopf, falls das Display im Deckel kopfüber eingebaut ist.</td></tr>
- <tr><td>OLED-Pixelverschiebung</td><td>an / aus (an)</td><td>Verschiebt das gesamte Bild jede Minute um wenige Pixel, damit sich dauerhaft leuchtende Punkte
- (z. B. der Doppelpunkt) nicht einbrennen. Die Verschiebung ist kaum zu sehen.</td></tr>
+ <tr><td>OLED-Pixelverschiebung</td><td>an / aus (an)</td><td>Verschiebt das Bild jede Minute um wenige Pixel, damit dauerhaft leuchtende Punkte nicht einbrennen. Kaum zu sehen.</td></tr>
 </table>
 
 <h3>WLAN</h3>
 <table>
  <tr><th style="width:24%">Einstellung</th><th style="width:16%">Bereich</th><th>Wirkung</th></tr>
- <tr><td>Gespeicherte Netze</td><td>bis zu 10</td><td>Netze, mit denen sich die Uhr verbinden darf. Sie wählt automatisch das stärkste erreichbare Netz.
- „Löschen“ entfernt ein Netz; die Uhr startet danach neu. Passwörter werden nie angezeigt. Ohne WLAN-Verbindung klappt
- die Gruppe von selbst auf.</td></tr>
- <tr><td>Netze in Reichweite suchen</td><td>–</td><td>Listet die Netze in der Nähe, das stärkste oben, mit Balken und dBm; das verbundene Netz ist markiert.
- Antippen übernimmt den Namen ins Formular.</td></tr>
+ <tr><td>Gespeicherte Netze</td><td>bis zu 10</td><td>Netze, mit denen sich die Uhr verbinden darf; sie wählt das stärkste. „Löschen“ entfernt ein Netz (danach Neustart).
+ Passwörter werden nie angezeigt. Ohne WLAN-Verbindung klappt die Gruppe von selbst auf.</td></tr>
+ <tr><td>Netze in Reichweite suchen</td><td>–</td><td>Listet die Netze in der Nähe mit Signalstärke, das stärkste oben. Antippen übernimmt den Namen ins Formular.</td></tr>
  <tr><td>Netz hinzufügen</td><td>SSID 1–32, Passwort leer oder 8–63 Zeichen</td><td>Speichert ein neues Netz bzw. ein geändertes Passwort (nach einer Passwortänderung startet die Uhr kurz neu). Für offene Netze das Passwort leer lassen.
  Danach „Neu verbinden“, damit die Uhr das stärkste Netz neu wählt.</td></tr>
  <tr><td>Neu verbinden</td><td>–</td><td>Trennt kurz und verbindet sich mit dem stärksten bekannten Netz; die Seite ist dabei einige Sekunden nicht erreichbar.</td></tr>
@@ -365,15 +363,12 @@ beschrieben wird. Jede Gruppe hat „Auf Standardwerte zurücksetzen“; danach 
 <h3>System und Seitenmenü</h3>
 <table>
  <tr><th style="width:24%">Einstellung</th><th style="width:16%">Bereich (Standard)</th><th>Wirkung</th></tr>
- <tr><td>Gerätename</td><td>a–z, 0–9, Bindestrich, max. 32 (scope-clock)</td><td>Name der Uhr im Router und Adresse im Browser: <code>http://&lt;name&gt;.local</code>. Gilt sofort für die
- .local-Adresse, im Router nach dem nächsten Verbinden. Praktisch, wenn mehrere Uhren im selben Netz laufen.</td></tr>
- <tr><td>Einstellungen sichern / laden</td><td>JSON-Datei</td><td>„Sichern“ lädt alle Einstellungen (außer WLANs) als Datei herunter, „Laden“ spielt eine solche Datei wieder
- ein – etwa nach einem Tausch des ESP32 oder um mehrere Uhren gleich einzustellen.</td></tr>
+ <tr><td>Gerätename</td><td>a–z, 0–9, Bindestrich, max. 32 (scope-clock)</td><td>Name im Router und Adresse <code>http://&lt;name&gt;.local</code> (im Router nach dem nächsten Verbinden). Praktisch bei mehreren Uhren im selben Netz.</td></tr>
+ <tr><td>Einstellungen sichern / laden</td><td>JSON-Datei</td><td>„Sichern“ lädt alle Einstellungen (außer WLANs) als Datei herunter, „Laden“ spielt sie wieder ein – etwa nach einem Tausch des ESP32.</td></tr>
  <tr><td>Alle Einstellungen zurücksetzen</td><td>–</td><td>Setzt alle Gruppen, die Sprache und den Gerätenamen auf die Werte aus <code>config.h</code> und schaltet
  das Testbild aus. WLANs bleiben erhalten; 8 Sekunden lang „Rückgängig“.</td></tr>
  <tr><td>Sprache (Seitenmenü)</td><td>Deutsch / English (Deutsch)</td><td>Sprache der Webseite, des OLED und des Debug-Protokolls; wird auf der Uhr gespeichert und gilt für alle Geräte.</td></tr>
- <tr><td>Darstellung (Seitenmenü)</td><td>automatisch / hell / dunkel (automatisch)</td><td>Farbschema der Webseite. „Automatisch“ folgt der Einstellung des Handys/PCs. Wird nur im jeweiligen
- Browser gespeichert, nicht auf der Uhr.</td></tr>
+ <tr><td>Darstellung (Seitenmenü)</td><td>automatisch, hell, dunkel</td><td>Farbschema der Webseite; „Automatisch“ folgt dem Handy/PC. Nur im Browser gespeichert.</td></tr>
 </table>
 
 <h2>9 Fehlersuche</h2>
@@ -389,7 +384,7 @@ beschrieben wird. Jede Gruppe hat „Auf Standardwerte zurücksetzen“; danach 
  <tr><td>Uhr soll komplett neu eingerichtet werden</td><td>BOOT-Taster 10 s halten (Werkseinstellungen: alle Einstellungen und WLANs werden gelöscht)</td></tr>
  <tr><td>Kreis im Testbild oval</td><td>Empfindlichkeit von X und Y gleich einstellen (beide 0,5 V/Div, Feinregler auf „kalibriert“)</td></tr>
  <tr><td>Brummen/Zittern im Bild</td><td>Ungeerdetes USB-Netzteil statt PC verwenden</td></tr>
- <tr><td>„Keine NTP-Verbindung“</td><td>WLAN prüfen (Status); ohne Internet die Zeit unter Einstellungen → Uhrzeit stellen</td></tr>
+ <tr><td>„Keine NTP-Verbindung“</td><td>WLAN prüfen (Status); ohne Internet die Zeit unter Einstellungen → Uhrzeit stellen – mit DS3231-Modul bleibt sie dann auch nach einem Stromausfall erhalten</td></tr>
  <tr><td>Zeit um ganze Stunden falsch</td><td>Zeitzone prüfen; Sommer-/Winterzeit beim Stellen von Hand</td></tr>
  <tr><td>http://scope-clock.local geht nicht</td><td>IP-Adresse aus dem Status oder dem Router verwenden (manche Android-Geräte unterstützen .local nicht)</td></tr>
  <tr><td>OLED bleibt dunkel</td><td>Im Status „OLED-Anzeige“ ansehen: „Aus“ = Helligkeit 0 %, unter Einstellungen → Display erhöhen. Steht dort „An“, die Verdrahtung prüfen: CLK GPIO18, DIN GPIO23, CS GPIO5, DC GPIO17, RST GPIO4, VCC an 3V3 (ob ein Display angeschlossen ist, kann die Uhr nicht erkennen)</td></tr>
@@ -410,8 +405,8 @@ Im Profil ANALOG springt der Strahl schnell und bremst vor dem Ziel, im Profil D
 unterwegs keine Abtastpunkte zeigt.</p>
 <p><b>Vektordaten:</b> Zifferblatt, Ziffern, Zeiger und Testbild sind eigene Zeichnungen, erzeugt mit <code>tools/gen_vectors.py</code>
 (Koordinaten 0–255, 8 Bit je Achse).</p>
-<p><b>Speicher:</b> Programmspeicher 1.234.578 Byte (94 % beim Standard-Partitionsschema, ca. 39 % mit „Huge APP“), globale Variablen
-74.916 Byte (22 %). Die Webseite liegt gzip-komprimiert im Flash (21 KB), die Schrift (Raleway, auf die benötigten Zeichen reduziert) als WOFF2 (30 KB).</p>
+<p><b>Speicher:</b> Programmspeicher 1.238.302 Byte (94 % beim Standard-Partitionsschema, ca. 39 % mit „Huge APP“), globale Variablen
+74.924 Byte (22 %). Die Webseite liegt gzip-komprimiert im Flash (21 KB), die Schrift (Raleway, auf die benötigten Zeichen reduziert) als WOFF2 (30 KB).</p>
 <h3>Debug-Meldungen (Beispiel)</h3>
 <pre>+0s ESP32 Oscilloscope Clock v2.0
 +0s [Scope] Profil: DIGITAL – BOOT-Taster 3 s halten zum Umschalten
@@ -434,6 +429,7 @@ unterwegs keine Abtastpunkte zeigt.</p>
  <tr><td><code>JUMP_SPEED</code>, <code>JUMP_LANDING</code>, <code>JUMP_RAMP</code></td><td>24, 8, 4</td><td>Sprünge im Profil ANALOG</td></tr>
  <tr><td><code>HAND/TICK/DIGIT_BRIGHT_PCT</code></td><td>67, 100, 100</td><td>Helligkeiten</td></tr>
  <tr><td><code>DIAL_STYLE</code></td><td>0</td><td>0 = 1–12, 1 = 12/3/6/9, 2 = I–XII, 3 = XII/III/VI/IX, 4 = nur Striche</td></tr>
+ <tr><td><code>RTC_ENABLE</code>, <code>RTC_SDA_PIN</code>, <code>RTC_SCL_PIN</code></td><td>0, 21, 22</td><td>Optionale Echtzeituhr DS3231 (im Webinterface umschaltbar)</td></tr>
  <tr><td><code>TZ_INFO</code>, <code>NTP_SERVER_1…3</code></td><td>Mitteleuropa, de.pool.ntp.org …</td><td>Zeitzone und Zeitserver</td></tr>
  <tr><td><code>FALLBACK_H/M/S</code></td><td>10:08:37</td><td>Startzeit ohne Zeitquelle</td></tr>
  <tr><td><code>OLED_BRIGHT_PCT</code>, <code>OLED_SECONDS</code>, <code>OLED_FLIP</code>, <code>OLED_SHIFT_EVERY_S</code></td><td>50, 1, 0, 60</td><td>OLED</td></tr>

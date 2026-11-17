@@ -90,6 +90,21 @@ German with the English label in parentheses. Code comments are in German.
   next NTP sync or a time zone change the normal time zone applies again. The choice is only shown
   for time zones with daylight saving time.
 
+## DS3231 real-time clock (optional)
+
+Off by default (`RTC_ENABLE 0`), switch on under Settings → Time (NVS key `rtc`). The DS3231 is connected
+via I²C (`RTC_SDA_PIN` 21, `RTC_SCL_PIN` 22, 100 kHz, address 0x68) and runs in **UTC**. The firmware talks
+to it directly via `Wire` (no extra library); all accesses run in the `uiTask`.
+
+- **Start / switching on** (`rtcApply`): if the system time is already valid (NTP or set by hand), it is
+  written to the RTC; otherwise the system time is set from the RTC (`g_timeRtc` – counts as a valid time with date).
+- **NTP sync** (hourly) and **time set by hand**: update the RTC (`rtcSetFromSystem`, clears the OSF bit).
+- **Without NTP:** every 10 min the system clock is corrected from the RTC (`rtcToSystem`) – more accurate than the ESP32 clock.
+- The RTC time is **invalid** if the OSF bit is set (oscillator stopped, e.g. battery empty or new) or the date
+  is implausible. It is then not used.
+- **Status:** `/api/status` → `rtc{enabled,found,valid,tempQ}` (temperature in 1/4 °C) and `ntp.rtc`
+  (time currently comes from the RTC). The “Set time” group then does not expand automatically.
+
 ## Language (German/English)
 
 - `s_lang` (NVS key `lang`, start value `UI_LANG`) applies to web interface messages, the OLED and
@@ -294,6 +309,7 @@ that group; Wi-Fi networks are kept.
 | Z blanking („Dunkeltastung (Z-Eingang)“) | `zbl`, `zhi` | on/off; high or low = dark | `g_zblank`, `g_zblankHigh`: `zblankApply()` switches GPIO `ZBLANK_PIN` (27) to output or high impedance; `beamJump()` then jumps in the dark. Only with a third wire to the Z input |
 | Retrace speed („Rücklauf-Tempo“) | `jump` | 0 (instant jump) – 48 (× drawing speed) | `g_jumpSpeed`, only effective in profile ANALOG. With DIGITAL the slider shows a greyed-out 0 (instant jump); the ANALOG value stays saved and reappears when switching back |
 | Time zone („Zeitzone“) | `tz` | list `TIMEZONES[]` (or `TZ_INFO`) | `configTzTime()` again |
+| Real-time clock („Echtzeituhr (RTC)“) | `rtc` | on/off | `rtcApply()`: use the DS3231 on I²C GPIO21/22 (see section real-time clock) |
 | Time server („Zeitserver (NTP)“) | `ntp` | host name, max. 63 characters | first server, `configTzTime()` again |
 | OLED brightness („OLED-Helligkeit“) | `oledp` | 0–100 % (0 = off) | `oledApplyBrightness()`: 0 % = `setPowerSave(1)`, otherwise contrast 1–255. An old value `oled` (contrast) is converted on first start |
 | Show seconds („Sekunden anzeigen“) | `osec` | on/off | OLED time HH:MM:SS or HH:MM |
@@ -339,10 +355,8 @@ Afterwards the values from `config.h` apply; without a network the clock opens t
 Releasing earlier cancels (the profile has already been switched by then).
 
 ```
- Factory reset            font 6x10
-Erases all incl. Wi-Fi    font 5x8
-         5                countdown 5 … 1 (7-segment 9×16 px)
- Release = cancel         font 5x8
+ Factory reset            font 7x14 bold
+         5                time remaining 5 … 1, then 0 until the restart (7-segment 11×20 px)
 ```
 
 ## Console output (115200 baud) and log in the web interface

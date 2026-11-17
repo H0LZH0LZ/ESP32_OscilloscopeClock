@@ -40,6 +40,8 @@ This documentation quotes the German labels and adds the English label in parent
 - Works without internet too: the time can be set by hand in the web interface (or taken over
   from the phone with one tap), optionally with summer or winter time fixed. Without any time source
   the clock counts from a fixed start time.
+- **Optional DS3231 real-time clock** (I²C, GPIO21/22): keeps date and time with its coin cell even after a
+  power failure without internet. Switch on in the web interface, off by default.
 - Several Wi-Fi networks: the clock automatically connects to the strongest known network.
 - **12- or 24-hour format** for OLED and web interface (12 h with AM/PM), switchable in the web interface.
 - **German or English** for the web interface, OLED display and log, switchable in the web
@@ -93,6 +95,7 @@ interface.
 | Open the web interface | `http://scope-clock.local` or the IP address from the OLED/log; without a known network via the setup network “ScopeClock-Setup” (`http://192.168.4.1`) |
 | Change the dial | swipe left/right over the preview (on a PC: arrow keys), or „Einstellungen“ → „Zifferblatt“ (dial) |
 | Oscilloscope profile DIGITAL/ANALOG | hold the BOOT button for 3 s, or „Einstellungen“ → „Oszilloskop-Profil“ |
+| DS3231 real-time clock (optional) | „Einstellungen“ → „Uhrzeit“ → „Echtzeituhr (RTC)“ (real-time clock) |
 | Factory reset (erase all settings and networks) | hold the BOOT button for 10 s – from 5 s the OLED counts down 5 … 1, releasing cancels |
 | Z blanking via the Z input (optional, third wire to GPIO27) | „Einstellungen“ → „Oszilloskop“ → „Dunkeltastung (Z-Eingang)“ (Z blanking) |
 | Set the time without internet | „Einstellungen“ → „Uhrzeit stellen“ (Set time; only shown while no time server has been reached); summer/winter time automatic or fixed |
@@ -110,7 +113,7 @@ interface.
 
 | Board package | Program memory | Global variables (RAM) |
 |---|---|---|
-| esp32 3.3.12 | 1,234,578 bytes (94 %) | 74,916 bytes (22 %) |
+| esp32 3.3.12 | 1,238,302 bytes (94 %) | 74,924 bytes (22 %) |
 | esp32 2.0.17 | 866,053 bytes (66 %) | 61,048 bytes (18 %) – state before the menu and dial switching |
 
 The configuration variants (profile ANALOG/DIGITAL, Z blanking, dial 0/1/2, `USE_FAST_DAC 0`,

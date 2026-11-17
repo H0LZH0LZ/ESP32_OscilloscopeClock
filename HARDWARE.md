@@ -77,6 +77,26 @@ eingebaut, im Webinterface „OLED um 180° drehen“ einschalten.
 - Die SMA-Buchse des Pigtails in die Gehäusewand schrauben. Die Antenne zeigt nach oben und sitzt
   möglichst weit weg von den BNC-Kabeln.
 
+### Optional: Echtzeituhr DS3231 (z. B. Modul ZS-042)
+Hält Datum und Uhrzeit mit Knopfzelle auch nach einem Stromausfall ohne Internet (DS3231: ±2 ppm, etwa
+1 Minute pro Jahr). Im beschriebenen Aufbau nicht enthalten.
+
+| Modul | Breakout-Board |
+|---|---|
+| VCC | 3V3 |
+| GND | GND |
+| SDA | P21 |
+| SCL | P22 |
+| 32K, SQW | nicht anschließen |
+
+- Einschalten im Webinterface: „Einstellungen“ → „Uhrzeit“ → „Echtzeituhr (RTC)“ (ab Werk aus). Der Status
+  zeigt dann „Läuft“ mit der Temperatur des Chips, „Nicht gefunden“ oder „Zeit ungültig“.
+- **Knopfzelle beim ZS-042:** Das Modul lädt die Zelle über eine Diode und 200 Ω. Entweder eine aufladbare
+  **LIR2032** einsetzen oder bei einer normalen **CR2032** die Diode auslöten.
+- Auf dem großen Chip sollte **DS3231SN** stehen – sehr billige Module haben manchmal ungenauere Nachbauten.
+- Die RTC läuft in UTC; Zeitzone und Sommerzeit rechnet weiterhin die Firmware. Bei jedem NTP-Abgleich
+  (stündlich) und beim Stellen von Hand wird sie nachgestellt.
+
 ### Stromversorgung & Masse
 - Versorgung über USB-C (5 V). Der Regler auf dem DevKit liefert 3,3 V, die auch für das OLED reichen.
 - **Brummschleife vermeiden:** Die BNC-Masse des Oszilloskops liegt am Schutzleiter. Ein ebenfalls
@@ -190,6 +210,7 @@ am Oszilloskop. Die Werte in `config.h` sind dann nur die Startwerte.
 | `USE_FAST_DAC` | `1` = direkte Registerzugriffe (Standard). `0` = `dacWrite()`, nur als Notlösung |
 | `DIAL_STYLE` | Start-Zifferblatt: 0 = 1–12, 1 = 12/3/6/9, 2 = römisch I–XII, 3 = römisch XII/III/VI/IX, 4 = nur Striche (ohne Zahlen). Im Webinterface durch Wischen über die Vorschau umschaltbar, die Auswahl wird gespeichert |
 | `TZ_INFO` | Zeitzone inkl. Sommerzeitregel (Standard: Mitteleuropa) |
+| `RTC_ENABLE`, `RTC_SDA_PIN`, `RTC_SCL_PIN` | Optionale Echtzeituhr DS3231: Startwert aus, I²C an GPIO21/22 (im Webinterface umschaltbar) |
 | `NTP_SERVER_1` … `_3` | Zeitserver (der erste ist im Webinterface änderbar) |
 | `FALLBACK_H`, `FALLBACK_M`, `FALLBACK_S` | Startzeit, ab der die Uhr zählt, solange weder Zeitserver noch Handeingabe eine Uhrzeit geliefert haben |
 | `OLED_SHIFT_EVERY_S` | Pixelverschiebung gegen OLED-Einbrennen: alle n Sekunden (0 = aus) |

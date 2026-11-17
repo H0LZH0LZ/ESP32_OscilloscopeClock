@@ -90,6 +90,7 @@
 #include <U8g2lib.h>          // OLED-Treiber
 #include <Preferences.h>      // dauerhafte Einstellungen im Flash (NVS): Profil, WLANs
 #include <WebServer.h>        // Webinterface (HTTP, Port 80)
+#include <Wire.h>             // I²C für die optionale Echtzeituhr (DS3231)
 #include <DNSServer.h>        // Setup-WLAN: alle Namen auf die Uhr umleiten (Captive Portal)
 #include <ESPmDNS.h>          // Erreichbar als http://<WIFI_HOSTNAME>.local
 #include <stdarg.h>
@@ -194,11 +195,12 @@ static inline const char *tr(const char *de, const char *en) { return s_lang ? e
 // NICHT atomar – daher der Spinlock für den Zeitstempel.
 static volatile bool g_ntpSynced     = false;  // true nach dem ersten erfolgreichen Sync
 static volatile bool g_timeManual    = false;  // true, wenn die Zeit im Webinterface gestellt wurde
+static volatile bool g_timeRtc       = false;  // true, wenn die Zeit beim Start aus der Echtzeituhr (RTC) kam
 static int8_t        s_dstForced     = -1;     // von Hand gewählt: -1 = automatisch, 0 = Winterzeit, 1 = Sommerzeit
 static time_t        g_lastSyncEpoch = 0;      // Unix-Zeit der letzten Synchronisierung
 
-// Gültige Uhrzeit mit Datum: per NTP oder von Hand gestellt (ohne Internet).
-static inline bool timeValid() { return g_ntpSynced || g_timeManual; }
+// Gültige Uhrzeit mit Datum: per NTP, von Hand gestellt (ohne Internet) oder aus der RTC.
+static inline bool timeValid() { return g_ntpSynced || g_timeManual || g_timeRtc; }
 static portMUX_TYPE  g_syncMux       = portMUX_INITIALIZER_UNLOCKED;
 
 // Zeitpunkt der letzten NTP-Synchronisierung lesen (unter Spinlock, da 64 Bit)
@@ -885,6 +887,139 @@ static void publishTime()
 }
 
 //*****************************************************************************
+// Echtzeituhr DS3231 (optional, Core 0)
+//*****************************************************************************
+// Ein DS3231-Modul (z.B. ZS-042) an I²C (SDA = RTC_SDA_PIN, SCL = RTC_SCL_PIN, 3V3, GND)
+// hält Datum und Uhrzeit mit seiner Knopfzelle auch ohne Strom und ohne Internet
+// (±2 ppm ≈ 1 Minute pro Jahr). Im Webinterface ein-/ausschaltbar (Standard: aus).
+//   Start:      gültige RTC-Zeit → Systemuhr stellen (g_timeRtc), bis NTP kommt
+//   NTP-Sync:   RTC nachstellen (jede Stunde, siehe wifiLogChanges)
+//   Von Hand:   gestellte Zeit auch in die RTC schreiben
+//   ohne NTP:   alle 10 min die Systemuhr aus der RTC nachstellen (genauer als der ESP32)
+// Die RTC läuft in UTC – Zeitzone und Sommerzeit rechnet weiterhin der ESP32.
+// Alle Zugriffe laufen im uiTask (auch die Webserver-Handler), also ohne Sperren.
+static const uint8_t RTC_ADDR = 0x68;
+static bool    s_rtcEnabled = RTC_ENABLE;   // Einstellung (NVS "rtc")
+static bool    s_rtcFound   = false;        // DS3231 antwortet
+static bool    s_rtcValid   = false;        // RTC-Zeit gültig (Oszillator lief durch, Jahr plausibel)
+static bool    s_wireOn     = false;
+
+static uint8_t bcd2bin(uint8_t v) { return (v >> 4) * 10 + (v & 0x0F); }
+static uint8_t bin2bcd(int v)     { return (uint8_t)(((v / 10) << 4) | (v % 10)); }
+
+// Tage seit 1970-01-01 für ein Datum (gregorianisch) – ohne timegm(), das newlib nicht hat
+static int64_t daysFromCivil(int y, int m, int d)
+{
+  y -= m <= 2;
+  const int64_t era = (y >= 0 ? y : y - 399) / 400;
+  const int yoe = y - era * 400;
+  const int doy = (153 * (m + (m > 2 ? -3 : 9)) + 2) / 5 + d - 1;
+  const int doe = yoe * 365 + yoe / 4 - yoe / 100 + doy;
+  return era * 146097 + doe - 719468;
+}
+
+static bool rtcRead(uint8_t reg, uint8_t *buf, size_t n)
+{
+  Wire.beginTransmission(RTC_ADDR);
+  Wire.write(reg);
+  if (Wire.endTransmission(false) != 0) return false;
+  if (Wire.requestFrom((int)RTC_ADDR, (int)n) != (int)n) return false;
+  for (size_t i = 0; i < n; i++) buf[i] = Wire.read();
+  return true;
+}
+
+static bool rtcWrite(uint8_t reg, const uint8_t *buf, size_t n)
+{
+  Wire.beginTransmission(RTC_ADDR);
+  Wire.write(reg);
+  Wire.write(buf, n);
+  return Wire.endTransmission() == 0;
+}
+
+// Liest die RTC-Zeit (UTC) als Unix-Zeit. false: keine Antwort, Oszillator war
+// gestoppt (Batterie leer/fehlt, OSF-Bit) oder unplausibles Datum.
+static bool rtcGet(time_t &out)
+{
+  uint8_t r[7], st;
+  if (!rtcRead(0x00, r, 7) || !rtcRead(0x0F, &st, 1)) { s_rtcFound = false; return false; }
+  s_rtcFound = true;
+  if (st & 0x80) { s_rtcValid = false; return false; }               // OSF: Zeit nicht verlässlich
+  const int sec = bcd2bin(r[0] & 0x7F), min = bcd2bin(r[1] & 0x7F);
+  const int hour = (r[2] & 0x40) ? (bcd2bin(r[2] & 0x1F) % 12 + ((r[2] & 0x20) ? 12 : 0))   // 12-h-Modus
+                                 : bcd2bin(r[2] & 0x3F);
+  const int day = bcd2bin(r[4] & 0x3F), mon = bcd2bin(r[5] & 0x1F), year = 2000 + bcd2bin(r[6]);
+  if (year < 2024 || mon < 1 || mon > 12 || day < 1 || day > 31 || hour > 23 || min > 59 || sec > 59) { s_rtcValid = false; return false; }
+  out = (time_t)(daysFromCivil(year, mon, day) * 86400LL + hour * 3600 + min * 60 + sec);
+  s_rtcValid = true;
+  return true;
+}
+
+// Schreibt die aktuelle Systemzeit (UTC) in die RTC und löscht das OSF-Bit.
+static bool rtcSetFromSystem()
+{
+  if (!s_wireOn) return false;
+  const time_t now = time(nullptr);
+  struct tm u;
+  gmtime_r(&now, &u);
+  const uint8_t r[7] = { bin2bcd(u.tm_sec), bin2bcd(u.tm_min), bin2bcd(u.tm_hour),   // 24-h-Modus
+                         (uint8_t)(u.tm_wday + 1), bin2bcd(u.tm_mday), bin2bcd(u.tm_mon + 1),
+                         bin2bcd((u.tm_year + 1900) % 100) };
+  uint8_t ctl = 0, st = 0;
+  bool ok = rtcWrite(0x00, r, 7);
+  if (ok && rtcRead(0x0E, &ctl, 1) && (ctl & 0x80)) { ctl &= 0x7F; rtcWrite(0x0E, &ctl, 1); }   // EOSC aus → läuft auch auf Batterie
+  if (ok && rtcRead(0x0F, &st, 1)) { st &= 0x7F; ok = rtcWrite(0x0F, &st, 1); }                  // OSF löschen
+  s_rtcFound = ok;
+  if (ok) s_rtcValid = true;
+  return ok;
+}
+
+// Systemuhr aus der RTC stellen (nur solange kein NTP da ist). Liefert true bei Erfolg.
+static bool rtcToSystem()
+{
+  time_t e;
+  if (!s_wireOn || g_ntpSynced || !rtcGet(e)) return false;
+  struct timeval tv = { e, 0 };
+  settimeofday(&tv, nullptr);
+  g_timeRtc = true;
+  return true;
+}
+
+// Temperatur des DS3231 in 1/4 °C (für den Status); INT16_MIN = unbekannt
+static int16_t rtcTempQ()
+{
+  uint8_t t[2];
+  if (!s_wireOn || !rtcRead(0x11, t, 2)) return INT16_MIN;
+  return (int16_t)(((int8_t)t[0]) * 4 + (t[1] >> 6));
+}
+
+// RTC ein- oder ausschalten (Start und Webinterface). Beim Einschalten: Ist die
+// Systemzeit schon gültig (NTP oder von Hand), wird sie in die RTC geschrieben,
+// sonst wird die Systemzeit aus der RTC gestellt.
+static void rtcApply(bool on)
+{
+  s_rtcEnabled = on;
+  if (!on) {
+    if (s_wireOn) { Wire.end(); s_wireOn = false; }
+    s_rtcFound = s_rtcValid = false;
+    return;
+  }
+  if (!s_wireOn) { s_wireOn = Wire.begin(RTC_SDA_PIN, RTC_SCL_PIN, 100000); Wire.setTimeOut(20); }
+  time_t e;
+  if (g_ntpSynced || g_timeManual) {
+    if (rtcSetFromSystem()) logMsg("%s", tr("[RTC] DS3231 gefunden, Uhrzeit uebertragen", "[RTC] DS3231 found, time transferred"));
+  } else if (rtcToSystem()) {
+    e = time(nullptr); struct tm lt; localtime_r(&e, &lt);
+    logMsg(tr("[RTC] Uhrzeit aus der RTC: %02d.%02d.%04d %02d:%02d:%02d", "[RTC] time from RTC: %02d.%02d.%04d %02d:%02d:%02d"),
+           lt.tm_mday, lt.tm_mon + 1, lt.tm_year + 1900, lt.tm_hour, lt.tm_min, lt.tm_sec);
+  }
+  if (!s_rtcFound)
+    logMsg(tr("[RTC] kein DS3231 gefunden (SDA GPIO%d, SCL GPIO%d)", "[RTC] no DS3231 found (SDA GPIO%d, SCL GPIO%d)"), RTC_SDA_PIN, RTC_SCL_PIN);
+  else if (!s_rtcValid)
+    logMsg("%s", tr("[RTC] Zeit ungueltig (Batterie leer oder neu) – wird beim naechsten NTP-Abgleich oder von Hand gestellt",
+                    "[RTC] time invalid (battery empty or new) – set at the next NTP sync or by hand"));
+}
+
+//*****************************************************************************
 // WLAN (Core 0)
 //*****************************************************************************
 
@@ -1047,6 +1182,7 @@ static void wifiLogChanges()
     localtime_r(&syncEpoch, &st);
     logMsg("[NTP] Sync %02d.%02d.%04d %02d:%02d:%02d",
            st.tm_mday, st.tm_mon + 1, st.tm_year + 1900, st.tm_hour, st.tm_min, st.tm_sec);
+    if (s_rtcEnabled && !rtcSetFromSystem()) logMsg("%s", tr("[RTC] Nachstellen fehlgeschlagen", "[RTC] update failed"));
     lastLoggedSync = syncEpoch;
     overdueLogged  = false;
   }
@@ -1158,6 +1294,7 @@ static void handleStatus()
   o += ",\"ntp\":{\"synced\":"; o += g_ntpSynced ? "true" : "false";
   o += ",\"overdue\":";         o += ntpOverdue() ? "true" : "false";
   o += ",\"manual\":";          o += g_timeManual ? "true" : "false";
+  o += ",\"rtc\":";             o += (g_timeRtc && !g_ntpSynced && !g_timeManual) ? "true" : "false";   // Zeit kommt aus der RTC
   o += ",\"dst\":";             o += (int)s_dstForced;
   o += ",\"last\":";
   if (g_ntpSynced) {
@@ -1190,6 +1327,11 @@ static void handleStatus()
   o += ",\"fw\":";                   jsonStr(o, FW_VERSION);
   o += ",\"test\":";                 o += g_testPattern ? "true" : "false";
   o += ",\"oled\":";                 o += (int)s_oledPct;                     // OLED-Helligkeit in %, 0 = aus
+  o += ",\"rtc\":{\"enabled\":";      o += s_rtcEnabled ? "true" : "false";     // Echtzeituhr (DS3231)
+  o += ",\"found\":";              o += s_rtcFound ? "true" : "false";
+  o += ",\"valid\":";              o += s_rtcValid ? "true" : "false";
+  o += ",\"tempQ\":";              o += s_rtcFound ? (int)rtcTempQ() : (int)INT16_MIN;
+  o += '}';
   o += ",\"h12\":";                  o += s_h12 ? "true" : "false";
   o += ",\"lang\":";                 o += s_lang ? "\"en\"" : "\"de\"";
   o += '}';
@@ -1423,6 +1565,7 @@ static void handleTimeSet()
   struct timeval tv = { e, 0 };
   settimeofday(&tv, nullptr);
   g_timeManual = true;
+  if (s_rtcEnabled) rtcSetFromSystem();                 // auch die Echtzeituhr stellen
   struct tm lt;
   localtime_r(&e, &lt);
   logMsg(tr("[Zeit] von Hand gestellt (%s, %s): %02d.%02d.%04d %02d:%02d:%02d", "[Time] set by hand (%s, %s): %02d.%02d.%04d %02d:%02d:%02d"),
@@ -1472,6 +1615,7 @@ static void handleDial()
 //   tz         Zeitzone                      eine aus TIMEZONES[] bzw. TZ_INFO
 //   ntp        erster NTP-Server             Hostname, max. 63 Zeichen
 //   h12        12-Stunden-Format             0/1
+//   rtc        Echtzeituhr DS3231 nutzen     0/1
 //   oledp      OLED-Helligkeit               0…100 % (0 = aus; früher "oled" 1…255)
 //   osec       Sekunden auf dem OLED         0/1
 //   shift      OLED-Pixel-Shift              0/1
@@ -1549,6 +1693,7 @@ static void loadSettings()
   s_oledFlip     = p.getUChar("flip", OLED_FLIP) != 0;
   s_h12          = p.getUChar("h12", CLOCK_12H) != 0;
   s_lang         = p.getUChar("lang", UI_LANG) ? 1 : 0;
+  s_rtcEnabled   = p.getUChar("rtc", RTC_ENABLE) != 0;
   p.end();
 }
 
@@ -1574,6 +1719,9 @@ static void settingsJson(String &o)
   o += ",\"oledShift\":";    o += s_oledShift ? "true" : "false";
   o += ",\"oledFlip\":";     o += s_oledFlip ? "true" : "false";
   o += ",\"h12\":";          o += s_h12 ? "true" : "false";
+  o += ",\"rtc\":";          o += s_rtcEnabled ? "true" : "false";
+  o += ",\"rtcSda\":";       o += RTC_SDA_PIN;
+  o += ",\"rtcScl\":";       o += RTC_SCL_PIN;
   o += ",\"lang\":";         o += s_lang ? "\"en\"" : "\"de\"";
   o += ",\"defaults\":{\"profile\":"; o += SCOPE_PROFILE;
   o += ",\"dial\":";         o += DIAL_STYLE;
@@ -1592,6 +1740,7 @@ static void settingsJson(String &o)
   o += ",\"oledShift\":";    o += OLED_SHIFT_EVERY_S > 0 ? "true" : "false";
   o += ",\"oledFlip\":";     o += OLED_FLIP ? "true" : "false";
   o += ",\"h12\":";          o += CLOCK_12H ? "true" : "false";
+  o += ",\"rtc\":";          o += RTC_ENABLE ? "true" : "false";
   o += ",\"lang\":";         o += UI_LANG ? "\"en\"" : "\"de\"";
   o += "},\"timezones\":[";
   bool cfgListed = false;
@@ -1741,6 +1890,13 @@ static void handleSettingsPost()
     s_oledShift = web.arg("oledShift") == "1" || web.arg("oledShift") == "true";
     p.putUChar("shift", s_oledShift); changed++;
   }
+  // Echtzeituhr DS3231 ein/aus
+  if (web.hasArg("rtc")) {
+    const bool on = web.arg("rtc") == "1" || web.arg("rtc") == "true";
+    p.putUChar("rtc", on); changed++;
+    logMsg(tr("[Web] Echtzeituhr (RTC): %s", "[Web] real-time clock (RTC): %s"), on ? tr("an", "on") : tr("aus", "off"));
+    rtcApply(on);
+  }
   // Sprache für Webinterface, OLED und Protokoll ("de" oder "en")
   if (web.hasArg("lang")) {
     const String v = web.arg("lang");
@@ -1771,7 +1927,7 @@ static void handleSettingsReset()
   Preferences p;
   if (p.begin("scopeclock", false)) {
     if (scope) for (const char *k : { "profile", "dial", "beam", "hand", "tick", "digit", "jump", "zbl", "zhi" }) p.remove(k);
-    if (tim)   for (const char *k : { "tz", "ntp", "h12" }) p.remove(k);
+    if (tim)   for (const char *k : { "tz", "ntp", "h12", "rtc" }) p.remove(k);
     if (disp)  for (const char *k : { "oled", "oledp", "osec", "night", "nfrom", "nto", "npct", "shift", "flip" }) p.remove(k);
     if (all)   { p.remove("lang"); p.remove("host"); }
     p.end();
@@ -1787,6 +1943,7 @@ static void handleSettingsReset()
     strlcpy(s_ntpServer, NTP_SERVER_1, sizeof(s_ntpServer));
     s_h12 = CLOCK_12H;
     applyTime();
+    if (s_rtcEnabled != (bool)RTC_ENABLE) rtcApply(RTC_ENABLE);
   }
   if (disp) {
     s_oledPct = OLED_BRIGHT_PCT;     s_oledSec = OLED_SECONDS;
@@ -2226,32 +2383,23 @@ static bool factoryPhase()
   return s_factoryDone || (s_btnDownSince && millis() - s_btnDownSince >= BUTTON_FACTORY_MS - 5000UL);
 }
 
-// Warnung vor den Werkseinstellungen (BOOT-Taster weiter gehalten) bzw. Meldung danach:
+// Werkseinstellungen (BOOT-Taster weiter gehalten): Überschrift und die ablaufende
+// Zeit als große 7-Segment-Ziffer (wie die Uhrzeit, 11x20 px) – 5, 4, 3, 2, 1, dann 0
+// bis zum Neustart. Loslassen vorher bricht ab.
 //
-//      Werkseinstellungen
-//    Loescht alles inkl. WLAN
-//              5              (Countdown 5 … 1 bis BUTTON_FACTORY_MS, 7-Segment 9x16 px)
-//     Loslassen = Abbruch
+//      Werkseinstellungen      Font 7x14 fett (EN: "Factory reset")
+//              5
 static void oledFactoryOverlay()
 {
   u8g2.clearBuffer();
-  u8g2.setFont(u8g2_font_6x10_tf);
-  drawCentered(tr("Werkseinstellungen", "Factory reset"), 10, 1);
-  u8g2.setFont(u8g2_font_5x8_tf);
-  if (s_factoryDone) {
-    drawCentered(tr("Alles geloescht", "Everything erased"), 30, 1);
-    u8g2.setFont(u8g2_font_7x14B_tf);
-    drawCentered(tr("Neustart ...", "Restarting ..."), 50, 1);
-  } else {
-    drawCentered(tr("Loescht alles inkl. WLAN", "Erases all incl. Wi-Fi"), 22, 1);
-    const uint32_t held = millis() - s_btnDownSince;
-    const uint32_t left = held >= BUTTON_FACTORY_MS ? 0 : (BUTTON_FACTORY_MS - held + 999) / 1000;   // aufgerundet
-    const int CW = 9, CH = 16, CT = 2;
-    int x0 = (128 - 3 - CW) / 2 + 1;
-    if (left == 1) x0 -= (CW - CT) / 2;                  // "1" besteht nur aus den rechten Segmenten
-    drawSegDigit(x0, 29, (int)left, CW, CH, CT);
-    drawCentered(tr("Loslassen = Abbruch", "Release = cancel"), 59, 1);
-  }
+  u8g2.setFont(u8g2_font_7x14B_tf);
+  drawCentered(tr("Werkseinstellungen", "Factory reset"), 16, 1);   // 18 Zeichen = 126 px
+  const uint32_t held = millis() - s_btnDownSince;
+  const uint32_t left = s_factoryDone || held >= BUTTON_FACTORY_MS ? 0 : (BUTTON_FACTORY_MS - held + 999) / 1000;   // aufgerundet
+  const int CW = 11, CH = 20, CT = 2;
+  int x0 = (128 - 3 - CW) / 2 + 1;
+  if (left == 1) x0 -= (CW - CT) / 2;                    // "1" besteht nur aus den rechten Segmenten
+  drawSegDigit(x0, 32, (int)left, CW, CH, CT);
   u8g2.sendBuffer();
 }
 
@@ -2379,6 +2527,7 @@ static void uiTask(void *)
   // ihre Interrupts landen damit auf Core 0 und stören den Zeichenpfad nicht.
   logMsg(tr("[UI] laeuft auf Core %d", "[UI] running on core %d"), xPortGetCoreID());
   oledInit();
+  if (s_rtcEnabled) rtcApply(true);         // Echtzeituhr: Zeit holen, bevor WLAN/NTP starten (I²C-Interrupts auf Core 0)
   wifiStart();
   pinMode(BOOT_BUTTON_PIN, INPUT_PULLUP);    // DevKitC hat zusätzlich einen externen Pull-up
 
@@ -2411,6 +2560,9 @@ static void uiTask(void *)
       lastLog = now;
       wifiLogChanges();
       webApManage();
+      // Ohne NTP: Systemuhr alle 10 min aus der genaueren RTC nachstellen
+      static uint32_t lastRtc = 0;
+      if (s_rtcEnabled && !g_ntpSynced && now - lastRtc >= 600000UL) { lastRtc = now; rtcToSystem(); }
     }
     vTaskDelay(pdMS_TO_TICKS(10));        // Rechenzeit an WLAN-Stack & Co. abgeben
   }

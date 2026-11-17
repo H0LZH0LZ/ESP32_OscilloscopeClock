@@ -77,6 +77,26 @@ replace `NONAME0` with `NONAME2` in the `.ino`. If the display is mounted upside
 - Screw the pigtail's SMA socket into the enclosure wall. The antenna points upwards and sits as
   far away from the BNC cables as possible.
 
+### Optional: DS3231 real-time clock (e.g. module ZS-042)
+Keeps date and time with its coin cell even after a power failure without internet (DS3231: ±2 ppm, about
+1 minute per year). Not part of the described build.
+
+| Module | Breakout board |
+|---|---|
+| VCC | 3V3 |
+| GND | GND |
+| SDA | P21 |
+| SCL | P22 |
+| 32K, SQW | do not connect |
+
+- Switch on in the web interface: „Einstellungen“ → „Uhrzeit“ → „Echtzeituhr (RTC)“ (off by default). The status
+  then shows “Running” with the chip temperature, “Not found” or “Time invalid”.
+- **Coin cell on the ZS-042:** the module charges the cell via a diode and 200 Ω. Either use a rechargeable
+  **LIR2032** or, with a normal **CR2032**, desolder the diode.
+- The large chip should read **DS3231SN** – very cheap modules sometimes contain less accurate copies.
+- The RTC runs in UTC; time zone and daylight saving time are still handled by the firmware. It is updated
+  at every NTP sync (hourly) and when the time is set by hand.
+
 ### Power supply & ground
 - Power via USB-C (5 V). The regulator on the DevKit provides 3.3 V, which is enough for the OLED.
 - **Avoid ground loops:** the BNC ground of the oscilloscope is connected to protective earth. An
@@ -190,6 +210,7 @@ the oscilloscope. The values in `config.h` are then only the start values.
 | `USE_FAST_DAC` | `1` = direct register access (default). `0` = `dacWrite()`, only as a fallback |
 | `DIAL_STYLE` | Start dial: 0 = 1–12, 1 = 12/3/6/9, 2 = Roman I–XII, 3 = Roman XII/III/VI/IX, 4 = ticks only (no numbers). Switchable in the web interface by swiping over the preview, the choice is saved |
 | `TZ_INFO` | Time zone incl. daylight saving rule (default: Central Europe) |
+| `RTC_ENABLE`, `RTC_SDA_PIN`, `RTC_SCL_PIN` | Optional DS3231 real-time clock: start value off, I²C on GPIO21/22 (switchable in the web interface) |
 | `NTP_SERVER_1` … `_3` | Time servers (the first one can be changed in the web interface) |
 | `FALLBACK_H`, `FALLBACK_M`, `FALLBACK_S` | Start time from which the clock counts as long as neither a time server nor manual input has provided the time |
 | `OLED_SHIFT_EVERY_S` | Pixel shift against OLED burn-in: every n seconds (0 = off) |
