@@ -282,31 +282,93 @@ Drehung um 180° und Pixelverschiebung gegen Einbrennen sind einstellbar.</p>
 vorher loslassen bricht ab. Die Einstellung wird gespeichert. <b>Nicht beim Einschalten drücken</b> – sonst startet der ESP32 im Download-Modus.</p>
 
 <h2>8 Alle Einstellungen im Überblick</h2>
+<p>Alle Einstellungen wirken <b>sofort</b> – am Oszilloskop, auf dem OLED und in der Vorschau – und werden dauerhaft auf der
+Uhr gespeichert (Ausnahme: Testbild). Schieberegler senden erst beim Loslassen, damit der Speicher nicht bei jeder Bewegung
+beschrieben wird. Jede Gruppe hat „Auf Standardwerte zurücksetzen“; danach lässt sich die Änderung 8 Sekunden lang mit
+„Rückgängig“ wieder aufheben. Die Standardwerte stammen aus <code>config.h</code>.</p>
+
+<h3>Oszilloskop</h3>
 <table>
- <tr><th>Gruppe</th><th>Einstellung</th><th>Bereich</th><th>Wirkung</th></tr>
- <tr><td rowspan="8">Oszilloskop</td><td>Oszilloskop-Profil</td><td>DIGITAL / ANALOG</td><td>Art der Sprünge zwischen den Linien</td></tr>
- <tr><td>Testbild</td><td>an / aus</td><td>Rahmen, Kreis, Mittelkreuz statt der Uhr (nicht gespeichert)</td></tr>
- <tr><td>Zifferblatt</td><td>5 Stile</td><td>auch durch Wischen über die Vorschau</td></tr>
- <tr><td>Verweilzeit des Strahls</td><td>1,00–10,00 µs pro Schritt</td><td>länger = hellere Linien, weniger Bilder/s</td></tr>
- <tr><td>Helligkeit Stunden-/Minutenzeiger</td><td>0–100 %</td><td>Standard 67 %, wirkt dann gleich hell wie der Rest</td></tr>
- <tr><td>Helligkeit Minutenstriche</td><td>0–100 %</td><td>0 % blendet sie aus</td></tr>
- <tr><td>Helligkeit Ziffern</td><td>0–100 %</td><td>0 % blendet sie aus</td></tr>
- <tr><td>Rücklauf-Tempo</td><td>0–48</td><td>nur ANALOG: schneller = schwächere Rücklaufspur</td></tr>
- <tr><td rowspan="4">Uhrzeit</td><td>Uhrzeit stellen</td><td>Gerätezeit oder Datum/Uhrzeit</td><td>nur sichtbar ohne Zeitserver; Sommer-/Winterzeit automatisch oder fest</td></tr>
- <tr><td>Zeitformat</td><td>24 h / 12 h (AM/PM)</td><td>OLED und Webseite</td></tr>
- <tr><td>Zeitzone</td><td>Liste</td><td>inkl. Sommerzeitregel</td></tr>
- <tr><td>Zeitserver (NTP)</td><td>Hostname</td><td>Standard de.pool.ntp.org</td></tr>
- <tr><td rowspan="4">Display</td><td>OLED-Helligkeit</td><td>0–100 % (0 = aus)</td><td>niedrig = langlebiger</td></tr>
- <tr><td>Sekunden anzeigen</td><td>an / aus</td><td>HH:MM:SS oder HH:MM</td></tr>
- <tr><td>OLED um 180° drehen</td><td>an / aus</td><td>für ein kopfüber eingebautes Display</td></tr>
- <tr><td>OLED-Pixelverschiebung</td><td>an / aus</td><td>verschiebt das Bild jede Minute um wenige Pixel</td></tr>
- <tr><td rowspan="3">WLAN</td><td>Gespeicherte Netze</td><td>bis 10</td><td>die Uhr wählt das stärkste; „Löschen“ startet neu</td></tr>
- <tr><td>Netzsuche / Netz hinzufügen</td><td>–</td><td>stärkstes Netz oben, verbundenes markiert</td></tr>
- <tr><td>Neu verbinden / WLAN zurücksetzen</td><td>–</td><td>Zurücksetzen löscht alle Netze und öffnet das Setup-WLAN</td></tr>
- <tr><td rowspan="3">System</td><td>Gerätename</td><td>a–z, 0–9, Bindestrich</td><td>Adresse http://&lt;name&gt;.local und Name im Router</td></tr>
- <tr><td>Einstellungen sichern / laden</td><td>JSON-Datei</td><td>alle Einstellungen außer WLANs</td></tr>
- <tr><td>Alle Einstellungen zurücksetzen</td><td>–</td><td>alle Gruppen, Sprache und Gerätename auf config.h; WLANs bleiben</td></tr>
- <tr><td>Seitenmenü</td><td>Sprache, Darstellung</td><td>Deutsch/English; automatisch/hell/dunkel</td><td>Sprache gilt auch für OLED und Debug</td></tr>
+ <tr><th style="width:24%">Einstellung</th><th style="width:16%">Bereich (Standard)</th><th>Wirkung</th></tr>
+ <tr><td>Oszilloskop-Profil</td><td>DIGITAL / ANALOG (DIGITAL)</td><td>Legt fest, wie der Strahl zwischen zwei Linien springt.
+ <b>DIGITAL</b> springt sofort: Ein Speicher-Oszilloskop zeigt so keine Abtastpunkte auf dem Weg, die als Spur sichtbar wären.
+ <b>ANALOG</b> springt schnell, bremst kurz vor dem Ziel und landet sauber am Linienanfang – das ergibt auf einer Röhre die
+ schwächste Rücklaufspur. Auch mit dem BOOT-Taster (3 s halten) umschaltbar.</td></tr>
+ <tr><td>Testbild</td><td>an / aus (aus)</td><td>Zeigt statt der Uhr einen Rahmen mit Marken, einen Kreis und ein Mittelkreuz. Damit werden Position,
+ Größe, gleiche Verstärkung von X und Y (Kreis rund statt oval) und Fokus eingestellt. Wird nicht gespeichert; nach dem
+ Einschalten erscheint es automatisch für 10 Sekunden.</td></tr>
+ <tr><td>Zifferblatt</td><td>5 Stile (Ziffern 1–12)</td><td>Ziffern 1–12, nur 12·3·6·9, nur Striche, römisch XII·III·VI·IX oder römisch I–XII. Wechselt
+ sofort am Oszilloskop; auch durch Wischen über die Vorschau. Weniger Ziffern bedeuten ein kürzeres Bild und damit
+ eine höhere Bildrate (weniger Flimmern).</td></tr>
+ <tr><td>Verweilzeit des Strahls</td><td>1,00–10,00 µs pro Schritt (3,00 µs)</td><td>Wie lange der Strahl auf jedem Wegstück verweilt. <b>Länger</b> = hellere, kräftigere Linien und
+ sauberere Ecken, aber weniger Bilder pro Sekunde (mehr Flimmern). <b>Kürzer</b> = ruhigeres Bild, aber dunklere Linien; ein
+ langsames Oszilloskop rundet dann Ecken ab. Die geschätzte Bildrate wird beim Ziehen angezeigt (Standard ca. 230 Bilder/s).</td></tr>
+ <tr><td>Helligkeit Stunden-/Minutenzeiger</td><td>0–100 % (67 %)</td><td>Verweilzeit auf den beiden Zeigern im Verhältnis zum Rest. Die schmalen, eng beieinander liegenden
+ Doppellinien der Zeiger wirken sonst heller als Zifferblatt und Ziffern; mit 67 % erscheinen sie gleich hell. 0 % blendet die
+ Zeiger aus. Der Sekundenzeiger ist davon nicht betroffen.</td></tr>
+ <tr><td>Helligkeit Minutenstriche</td><td>0–100 % (100 %)</td><td>Helligkeit der 60 Striche am Rand. Weniger Helligkeit lässt die Zeiger stärker hervortreten und
+ verkürzt das Bild etwas; 0 % blendet die Striche ganz aus.</td></tr>
+ <tr><td>Helligkeit Ziffern</td><td>0–100 % (100 %)</td><td>Helligkeit der Zahlen auf dem Zifferblatt. 0 % blendet sie aus – das entspricht dann dem Stil „nur Striche“.</td></tr>
+ <tr><td>Rücklauf-Tempo</td><td>0–48 (24)</td><td>Nur im Profil ANALOG: wie schnell der Strahl zwischen zwei Linien springt (Vielfaches des Zeichentempos).
+ <b>Schneller</b> = schwächere Rücklaufspur; ist das Oszilloskop dafür zu langsam, entstehen kleine „Haken“ an den
+ Linienanfängen – dann Wert verringern (z. B. 12). 0 = harter Sprung. Im Profil DIGITAL ausgegraut, der Wert bleibt gespeichert.</td></tr>
+</table>
+
+<h3>Uhrzeit</h3>
+<table>
+ <tr><th style="width:24%">Einstellung</th><th style="width:16%">Bereich (Standard)</th><th>Wirkung</th></tr>
+ <tr><td>Uhrzeit stellen</td><td>Gerätezeit oder Datum + Uhrzeit</td><td>Erscheint nur, solange kein Zeitserver erreichbar ist (z. B. ohne Internet); die Gruppe Uhrzeit klappt
+ dann von selbst auf. „Uhrzeit dieses Geräts übernehmen“ stellt die Uhr auf die Zeit des Handys/PCs, alternativ Datum und
+ Uhrzeit von Hand. Sommer-/Winterzeit automatisch nach der Zeitzone oder fest. Die Rückmeldung zeigt die gestellte Zeit.
+ Sobald ein Zeitserver erreichbar ist, stellt sich die Uhr wieder selbst; nach einem Neustart muss von Hand neu gestellt werden.</td></tr>
+ <tr><td>Zeitformat</td><td>24 h / 12 h (24 h)</td><td>Darstellung auf dem OLED und auf der Webseite; im 12-Stunden-Format mit AM/PM. Das Zifferblatt am
+ Oszilloskop ist davon unabhängig, das Debug-Protokoll bleibt immer bei 24 h.</td></tr>
+ <tr><td>Zeitzone</td><td>Liste (Mitteleuropa)</td><td>Bestimmt die Ortszeit einschließlich der Regeln für Sommer- und Winterzeit. Wirkt sofort auf Zeiger,
+ OLED und Webseite. Geht die Uhr um ganze Stunden falsch, ist meist die Zeitzone falsch gewählt.</td></tr>
+ <tr><td>Zeitserver (NTP)</td><td>Hostname (de.pool.ntp.org)</td><td>Server im Internet, von dem die Uhr die genaue Zeit holt – nach dem Start und danach stündlich.
+ „Übernehmen“ speichert den Namen und gleicht sofort neu ab. Zwei weitere Server aus <code>config.h</code> dienen als Reserve.</td></tr>
+</table>
+
+<h3>Display (OLED)</h3>
+<table>
+ <tr><th style="width:24%">Einstellung</th><th style="width:16%">Bereich (Standard)</th><th>Wirkung</th></tr>
+ <tr><td>OLED-Helligkeit</td><td>0–100 % (50 %)</td><td>Helligkeit des kleinen Displays an der Uhr. Niedrige Werte schonen das OLED (weniger Einbrennen,
+ längere Lebensdauer); 0 % schaltet es ganz aus. Beim Halten des BOOT-Tasters wird es für die Anzeige des Profilwechsels
+ trotzdem kurz eingeschaltet.</td></tr>
+ <tr><td>Sekunden anzeigen</td><td>an / aus (an)</td><td>Uhrzeit auf dem OLED als HH:MM:SS oder nur HH:MM. Ohne Sekunden ändert sich das Bild nur einmal pro
+ Minute – das schont das Display zusätzlich.</td></tr>
+ <tr><td>OLED um 180° drehen</td><td>an / aus (aus)</td><td>Dreht die Anzeige auf den Kopf, falls das Display im Deckel kopfüber eingebaut ist.</td></tr>
+ <tr><td>OLED-Pixelverschiebung</td><td>an / aus (an)</td><td>Verschiebt das gesamte Bild jede Minute um wenige Pixel, damit sich dauerhaft leuchtende Punkte
+ (z. B. der Doppelpunkt) nicht einbrennen. Die Verschiebung ist kaum zu sehen.</td></tr>
+</table>
+
+<h3>WLAN</h3>
+<table>
+ <tr><th style="width:24%">Einstellung</th><th style="width:16%">Bereich</th><th>Wirkung</th></tr>
+ <tr><td>Gespeicherte Netze</td><td>bis zu 10</td><td>Netze, mit denen sich die Uhr verbinden darf. Sie wählt automatisch das stärkste erreichbare Netz.
+ „Löschen“ entfernt ein Netz; die Uhr startet danach neu. Passwörter werden nie angezeigt. Ohne WLAN-Verbindung klappt
+ die Gruppe von selbst auf.</td></tr>
+ <tr><td>Netze in Reichweite suchen</td><td>–</td><td>Listet die Netze in der Nähe, das stärkste oben, mit Balken und dBm; das verbundene Netz ist markiert.
+ Antippen übernimmt den Namen ins Formular.</td></tr>
+ <tr><td>Netz hinzufügen</td><td>SSID 1–32, Passwort leer oder 8–63 Zeichen</td><td>Speichert ein neues Netz bzw. ein geändertes Passwort. Für offene Netze das Passwort leer lassen.
+ Danach „Neu verbinden“, damit die Uhr das stärkste Netz neu wählt.</td></tr>
+ <tr><td>Neu verbinden</td><td>–</td><td>Trennt kurz und verbindet sich mit dem stärksten bekannten Netz; die Seite ist dabei einige Sekunden nicht erreichbar.</td></tr>
+ <tr><td>WLAN zurücksetzen</td><td>–</td><td>Löscht nach Rückfrage alle gespeicherten Netze. Die Uhr startet neu und öffnet das Setup-WLAN
+ „ScopeClock-Setup“ zum neuen Einrichten.</td></tr>
+</table>
+
+<h3>System und Seitenmenü</h3>
+<table>
+ <tr><th style="width:24%">Einstellung</th><th style="width:16%">Bereich (Standard)</th><th>Wirkung</th></tr>
+ <tr><td>Gerätename</td><td>a–z, 0–9, Bindestrich, max. 32 (scope-clock)</td><td>Name der Uhr im Router und Adresse im Browser: <code>http://&lt;name&gt;.local</code>. Gilt sofort für die
+ .local-Adresse, im Router nach dem nächsten Verbinden. Praktisch, wenn mehrere Uhren im selben Netz laufen.</td></tr>
+ <tr><td>Einstellungen sichern / laden</td><td>JSON-Datei</td><td>„Sichern“ lädt alle Einstellungen (außer WLANs) als Datei herunter, „Laden“ spielt eine solche Datei wieder
+ ein – etwa nach einem Tausch des ESP32 oder um mehrere Uhren gleich einzustellen.</td></tr>
+ <tr><td>Alle Einstellungen zurücksetzen</td><td>–</td><td>Setzt alle Gruppen, die Sprache und den Gerätenamen auf die Werte aus <code>config.h</code> und schaltet
+ das Testbild aus. WLANs bleiben erhalten; 8 Sekunden lang „Rückgängig“.</td></tr>
+ <tr><td>Sprache (Seitenmenü)</td><td>Deutsch / English (Deutsch)</td><td>Sprache der Webseite, des OLED und des Debug-Protokolls; wird auf der Uhr gespeichert und gilt für alle Geräte.</td></tr>
+ <tr><td>Darstellung (Seitenmenü)</td><td>automatisch / hell / dunkel (automatisch)</td><td>Farbschema der Webseite. „Automatisch“ folgt der Einstellung des Handys/PCs. Wird nur im jeweiligen
+ Browser gespeichert, nicht auf der Uhr.</td></tr>
 </table>
 
 <h2>9 Fehlersuche</h2>
