@@ -471,7 +471,7 @@ Object.assign(EN,{"Nur Striche": "Ticks only", "Testbild": "Test pattern", "Zeig
 Object.assign(EN,{"Alle Einstellungen zurücksetzen": "Reset all settings", "Setzt alle Gruppen, Sprache und Gerätename auf die Werte aus config.h zurück und schaltet das Testbild aus. WLANs bleiben erhalten.": "Resets all groups, language and device name to the values from config.h and switches the test pattern off. Wi-Fi networks are kept.", "Leeren": "Clear", "Protokoll auf der Uhr löschen?": "Clear the log on the clock?", "Gelöscht": "Cleared", "Fehler": "Error"});
 Object.assign(EN,{"Herunterladen":"Download","protokoll":"log"});
 Object.assign(EN,{"Wird gestellt …":"Setting …"});
-Object.assign(EN,{"Debug":"Debug","NTP-Verbindung unterbrochen":"NTP connection lost"});
+Object.assign(EN,{"Debug":"Debug","Keine NTP-Verbindung":"No NTP connection"});
 const DE={};for(const k in EN)DE[EN[k]]=k;
 let lang='de';try{if(localStorage.getItem('lang')==='en')lang='en'}catch(e){}
 const t=s=>lang==='en'&&EN[s]||s;
@@ -776,7 +776,7 @@ async function status(){
   curSsid=s.wifi.connected?s.wifi.ssid:'';
   {const noNet=!s.wifi.connected;if(noNet!==lastNoNet){if(noNet||lastNoNet!==null)autoGroup('wlan-h',noNet);lastNoNet=noNet}}   // ohne WLAN: Gruppe WLAN aufklappen
   if(S&&!setBusy&&typeof s.test==='boolean'&&s.test!==!!S.test){S.test=s.test;renderSettings()}
-  if(S&&!setBusy){const p=s.profile==='DIGITAL'?1:0;if(p!==S.profile||s.dial!==S.dial){S.profile=p;S.dial=s.dial;renderSettings()}}$('date').textContent=s.date?(t('KW')+' '+s.kw+' – '+(lang==='en'?s.date.split('.').reverse().join('-'):s.date)):t('NTP-Verbindung unterbrochen');
+  if(S&&!setBusy){const p=s.profile==='DIGITAL'?1:0;if(p!==S.profile||s.dial!==S.dial){S.profile=p;S.dial=s.dial;renderSettings()}}$('date').textContent=s.date?(t('KW')+' '+s.kw+' – '+(lang==='en'?s.date.split('.').reverse().join('-'):s.date)):t('Keine NTP-Verbindung');
   const st=$('status');st.replaceChildren(
    row(t('WLAN'),s.wifi.connected?s.wifi.ssid:(s.wifi.configured?t('Sucht Netz …'):t('Kein Netz eingetragen')),s.wifi.connected?'':'warn',t('Verbundenes Netz')),
    ...(s.wifi.connected?[row(t('Signalstärke'),bars(s.wifi.rssi).trim()+'  '+s.wifi.rssi+' dBm',s.wifi.rssi<-80?'warn':'',t('Über −67 dBm gut, unter −80 dBm schwach')),row(t('Netzwerkadresse'),s.wifi.ip+'\n'+s.wifi.host,'addr',t('Unter dieser Adresse ist die Uhr im Browser erreichbar'))]:[]),
