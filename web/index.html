@@ -591,17 +591,28 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')menu(false)});
 document.querySelectorAll('#nav a').forEach(a=>a.addEventListener('click',()=>{menu(false);
  const h=document.querySelector(a.getAttribute('href'));if(h&&h.classList.contains('grouphead'))openGroup(h.parentNode,true);
  if(h&&h.classList.contains('coll'))openSec(h.parentNode,true)}));
-// Scroll-Spy: markiert im Seitenmenü den Abschnitt, in dem man gerade ist, und
-// setzt den Fortschrittsbalken oben. Aktuell = letzter Abschnitt, dessen Überschrift
-// über der Linie knapp unter den festen Überschriften liegt; ganz unten der letzte sichtbare.
+// Scroll-Spy: markiert im Seitenmenü den Abschnitt, in dem man gerade ist, und setzt
+// den Fortschrittsbalken oben. Aktuell = der Abschnitt, der den größten sichtbaren Teil
+// des Bildschirms unter der festen Titelzeile einnimmt. Ein Abschnitt reicht vom Anfang
+// seines Kastens bis zum Anfang des nächsten Menüziels (so zählen zugeklappte Bereiche
+// kaum, offene Gruppen dagegen voll). Gescrollt wird je nach Browser das Dokument oder
+// ein umgebendes Element – daher wird das Scroll-Ereignis im Capture-Modus abgefangen.
 const navA=[...document.querySelectorAll('#nav a')],navT=navA.map(a=>document.querySelector(a.getAttribute('href')));
 const navSet=navA.findIndex(a=>a.getAttribute('href')==='#set-h');
-function spy(){const se=document.scrollingElement,max=se.scrollHeight-innerHeight,bottom=max>0&&se.scrollTop>=max-2;
- let k=0;navT.forEach((t,i)=>{if(!t)return;const y=t.getBoundingClientRect().top;if(y<=140||(bottom&&y<innerHeight))k=i});
+const navBox=t=>t.classList.contains('coll')||t.classList.contains('grouphead')?t.parentNode:t;   // h2 ist sticky: Kasten nehmen
+let scroller=document.scrollingElement;
+function spy(){const top=document.querySelector('h1').getBoundingClientRect().bottom,bot=innerHeight;
+ const st=navT.map(t=>t?navBox(t).getBoundingClientRect().top:NaN);
+ let k=0,best=-1;navT.forEach((t,i)=>{if(!t)return;
+  let e=navBox(t).getBoundingClientRect().bottom;for(let j=i+1;j<navT.length;j++)if(st[j]>st[i]){e=Math.min(e,st[j]);break}
+  const v=Math.min(e,bot)-Math.max(st[i],top);if(v>best+1){best=v;k=i}});
  navA.forEach((a,i)=>{a.classList.toggle('cur',i===k);a.classList.toggle('par',i===navSet&&navA[k].classList.contains('subnav'));
   if(i===k)a.setAttribute('aria-current','location');else a.removeAttribute('aria-current')});
- $('prog').style.transform='scaleX('+(max>0?Math.min(1,se.scrollTop/max):0)+')'}
-addEventListener('scroll',spy,{passive:true});addEventListener('resize',spy);
+ const max=scroller.scrollHeight-scroller.clientHeight;
+ $('prog').style.transform='scaleX('+(max>0?Math.min(1,scroller.scrollTop/max):0)+')'}
+document.addEventListener('scroll',e=>{const t=e.target;scroller=t===document?document.scrollingElement:t;
+ if(t.id!=='log'&&!$('nav').contains(t))spy()},{capture:true,passive:true});   // Log-Feld und Menü scrollen eigenständig
+addEventListener('resize',spy);
 document.addEventListener('click',()=>setTimeout(spy,350));   // Auf-/Zuklappen ändert die Seitenlänge
 spy();
 // Uhrzeit der Uhr (hh:mm:ss) übernehmen; die Seite zählt danach selbst weiter
