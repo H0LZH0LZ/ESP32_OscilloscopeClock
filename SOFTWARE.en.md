@@ -118,7 +118,7 @@ affect the beam output on core 1.
 **Page (`webpage.h`):** one page with a **collapsible side menu** (☰ top left, stays visible while
 scrolling): „Uhr“ (clock), Status, „Einstellungen“ (settings), with the sub-entries „Oszilloskop“, „Uhrzeit“, „Display“, „WLAN“ and „System“ (jump directly to that group of
 the settings), „Protokoll“ (log), below them
-the language selection. The section taking up most of the screen is highlighted in green in the menu (scroll spy, `spy()`;
+the language selection. The section in the middle of the screen is highlighted in green in the menu (scroll spy, `spy()`;
 for a settings group „Einstellungen“ is green as well), and a 3 px green bar at the top edge shows how far the page
 is scrolled. The settings are split into five groups: **„Oszilloskop“** (Oscilloscope: profile first, dial,
 test pattern in second place, dwell time, brightness, retrace speed), **„Uhrzeit“** (Time: “Set time” if shown, time format,

@@ -955,12 +955,12 @@ const navA=[...document.querySelectorAll('#nav a')],navT=navA.map(a=>document.qu
 const navSet=navA.findIndex(a=>a.getAttribute('href')==='#set-h');
 const navBox=t=>t.classList.contains('coll')||t.classList.contains('grouphead')?t.parentNode:t;   // h2 ist sticky: Kasten nehmen
 let scroller=document.scrollingElement;
-function spy(){const top=document.querySelector('h1').getBoundingClientRect().bottom,bot=innerHeight;
- const st=navT.map(t=>t?navBox(t).getBoundingClientRect().top:NaN);
- let k=0,best=-1;navT.forEach((t,i)=>{if(!t)return;
-  let e=navBox(t).getBoundingClientRect().bottom;for(let j=i+1;j<navT.length;j++)if(st[j]>st[i]){e=Math.min(e,st[j]);break}
-  const v=Math.min(e,bot)-Math.max(st[i],top);if(v>best+1){best=v;k=i}});
- navA.forEach((a,i)=>{a.classList.toggle('cur',i===k);a.classList.toggle('par',i===navSet&&navA[k].classList.contains('subnav'));
+function spy(){const top=document.querySelector('h1').getBoundingClientRect().bottom,mid=(top+innerHeight)/2;
+ const main=navT.map((t,i)=>i).filter(i=>navT[i]&&!navA[i].classList.contains('subnav')&&navT[i].getAttribute('aria-expanded')!=='false');   // zugeklappte Hauptabschnitte zählen nicht
+ let k=main[0];main.forEach((i,n)=>{if(navBox(navT[i]).getBoundingClientRect().top<=mid)k=i});   // letzter Abschnitt, der vor der Mitte beginnt
+ if(k===navSet)navT.forEach((t,i)=>{if(!t||!navA[i].classList.contains('subnav')||t.getAttribute('aria-expanded')!=='true')return;
+  const r=navBox(t).getBoundingClientRect();if(r.top<=mid&&r.bottom>mid)k=i});
+ navA.forEach((a,i)=>{a.classList.toggle('cur',i===k);a.classList.toggle('par',i===navSet&&k!==navSet&&navA[k].classList.contains('subnav'));
   if(i===k)a.setAttribute('aria-current','location');else a.removeAttribute('aria-current')});
  const max=scroller.scrollHeight-scroller.clientHeight;
  $('prog').style.transform='scaleX('+(max>0?Math.min(1,scroller.scrollTop/max):0)+')'}
