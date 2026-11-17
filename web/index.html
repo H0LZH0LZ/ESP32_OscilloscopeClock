@@ -837,8 +837,8 @@ async function status(){
    row(t('Zeitabgleich (NTP)'),s.ntp.synced?(t('Zuletzt')+' '+s.ntp.last):s.ntp.manual?t('Aus – Uhrzeit von Hand gestellt'):s.ntp.rtc?t('Aus – Uhrzeit von der RTC'):(s.wifi.configured?t('Wartet auf ersten Abgleich …'):t('Aus (kein WLAN)')),s.ntp.synced?(s.ntp.overdue?'warn':''):(s.ntp.manual||s.ntp.rtc?'':'warn'),t('Uhrzeit aus dem Internet, stündlich abgeglichen')),
    ...(s.ap.active?[row(t('Setup-WLAN'),s.ap.ssid+' ('+s.ap.ip+')','warn',t('Mit dem Handy verbinden, um die Uhr einzurichten'))]:[]),
    // OLED: an/aus nach der eingestellten Helligkeit (ob ein Display angeschlossen ist, lässt sich per SPI nicht prüfen)
-   // Echtzeituhr: aus / nicht gefunden / Zeit ungültig / läuft (mit Temperatur des DS3231)
-   ...(s.rtc?[row(t('Echtzeituhr (RTC)'),!s.rtc.enabled?t('Aus'):!s.rtc.found?t('Nicht gefunden'):!s.rtc.valid?t('Zeit ungültig'):t('Läuft')+(s.rtc.tempQ>-1000?' – '+(s.rtc.tempQ/4).toLocaleString(lang==='en'?'en':'de',{maximumFractionDigits:2})+' °C':''),
+   // Echtzeituhr: aus / nicht gefunden / Zeit ungültig / läuft
+   ...(s.rtc?[row(t('Echtzeituhr (RTC)'),!s.rtc.enabled?t('Aus'):!s.rtc.found?t('Nicht gefunden'):!s.rtc.valid?t('Zeit ungültig'):t('Läuft'),
     s.rtc.enabled&&(!s.rtc.found||!s.rtc.valid)?'warn':'',
     !s.rtc.enabled?t('DS3231-Modul, einschalten unter Einstellungen, Gruppe Uhrzeit'):!s.rtc.found?t('Verdrahtung prüfen: SDA GPIO21, SCL GPIO22, VCC an 3V3'):!s.rtc.valid?t('Batterie leer oder neu – wird beim nächsten Zeitabgleich gestellt'):t('Hält die Uhrzeit auch ohne Strom und Internet'))]:[]),
    ...(typeof s.oled==='number'?[row(t('OLED-Anzeige'),s.oled>0?t('An')+' – '+s.oled+' %':t('Aus'),s.oled>0?'':'warn',s.oled>0?t('Helligkeit, einstellbar unter Einstellungen, Gruppe Display'):t('Helligkeit 0 % – einschalten unter Einstellungen, Gruppe Display'))]:[]),

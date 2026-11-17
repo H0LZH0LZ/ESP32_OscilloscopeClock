@@ -102,7 +102,7 @@ to it directly via `Wire` (no extra library); all accesses run in the `uiTask`.
 - **Without NTP:** every 10 min the system clock is corrected from the RTC (`rtcToSystem`) – more accurate than the ESP32 clock.
 - The RTC time is **invalid** if the OSF bit is set (oscillator stopped, e.g. battery empty or new) or the date
   is implausible. It is then not used.
-- **Status:** `/api/status` → `rtc{enabled,found,valid,tempQ}` (temperature in 1/4 °C) and `ntp.rtc`
+- **Status:** `/api/status` → `rtc{enabled,found,valid}` and `ntp.rtc`
   (time currently comes from the RTC). The “Set time” group then does not expand automatically.
 
 ## Language (German/English)

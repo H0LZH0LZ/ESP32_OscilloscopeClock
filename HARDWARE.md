@@ -90,7 +90,7 @@ Hält Datum und Uhrzeit mit Knopfzelle auch nach einem Stromausfall ohne Interne
 | 32K, SQW | nicht anschließen |
 
 - Einschalten im Webinterface: „Einstellungen“ → „Uhrzeit“ → „Echtzeituhr (RTC)“ (ab Werk aus). Der Status
-  zeigt dann „Läuft“ mit der Temperatur des Chips, „Nicht gefunden“ oder „Zeit ungültig“.
+  zeigt dann „Läuft“, „Nicht gefunden“ oder „Zeit ungültig“.
 - **Knopfzelle: normale CR2032**, kein Ladegerät und kein Löten nötig. Die Ladeschaltung des ZS-042
   (Diode und 200 Ω) ist für 5 V gedacht. An **3V3** kommen nach der Diode nur etwa 2,7 V an – weniger als
   die Zellspannung, es fließt praktisch kein Ladestrom. Die Zelle hält 5 Jahre und mehr, denn sie wird nur

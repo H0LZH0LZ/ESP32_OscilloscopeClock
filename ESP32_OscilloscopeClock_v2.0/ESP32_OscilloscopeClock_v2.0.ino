@@ -984,14 +984,6 @@ static bool rtcToSystem()
   return true;
 }
 
-// Temperatur des DS3231 in 1/4 °C (für den Status); INT16_MIN = unbekannt
-static int16_t rtcTempQ()
-{
-  uint8_t t[2];
-  if (!s_wireOn || !rtcRead(0x11, t, 2)) return INT16_MIN;
-  return (int16_t)(((int8_t)t[0]) * 4 + (t[1] >> 6));
-}
-
 // RTC ein- oder ausschalten (Start und Webinterface). Beim Einschalten: Ist die
 // Systemzeit schon gültig (NTP oder von Hand), wird sie in die RTC geschrieben,
 // sonst wird die Systemzeit aus der RTC gestellt.
@@ -1330,7 +1322,6 @@ static void handleStatus()
   o += ",\"rtc\":{\"enabled\":";      o += s_rtcEnabled ? "true" : "false";     // Echtzeituhr (DS3231)
   o += ",\"found\":";              o += s_rtcFound ? "true" : "false";
   o += ",\"valid\":";              o += s_rtcValid ? "true" : "false";
-  o += ",\"tempQ\":";              o += s_rtcFound ? (int)rtcTempQ() : (int)INT16_MIN;
   o += '}';
   o += ",\"h12\":";                  o += s_h12 ? "true" : "false";
   o += ",\"lang\":";                 o += s_lang ? "\"en\"" : "\"de\"";

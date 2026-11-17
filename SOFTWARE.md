@@ -98,7 +98,7 @@ Die Firmware spricht ihn direkt über `Wire` an (keine zusätzliche Bibliothek);
 - **Ohne NTP:** alle 10 min die Systemuhr aus der RTC nachstellen (`rtcToSystem`) – genauer als der ESP32-Takt.
 - **Ungültig** ist die RTC-Zeit, wenn das OSF-Bit gesetzt ist (Oszillator stand, z. B. Batterie leer oder neu)
   oder das Datum unplausibel ist. Sie wird dann nicht übernommen.
-- **Status:** `/api/status` → `rtc{enabled,found,valid,tempQ}` (Temperatur in 1/4 °C) und `ntp.rtc`
+- **Status:** `/api/status` → `rtc{enabled,found,valid}` und `ntp.rtc`
   (Zeit kommt gerade aus der RTC). Die Gruppe „Uhrzeit stellen“ klappt dann nicht automatisch auf.
 
 ## Sprache (Deutsch/English)

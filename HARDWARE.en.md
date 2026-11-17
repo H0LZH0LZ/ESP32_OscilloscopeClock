@@ -90,7 +90,7 @@ Keeps date and time with its coin cell even after a power failure without intern
 | 32K, SQW | do not connect |
 
 - Switch on in the web interface: „Einstellungen“ → „Uhrzeit“ → „Echtzeituhr (RTC)“ (off by default). The status
-  then shows “Running” with the chip temperature, “Not found” or “Time invalid”.
+  then shows “Running”, “Not found” or “Time invalid”.
 - **Coin cell: normal CR2032**, no charger and no soldering needed. The ZS-042's charging circuit (diode
   and 200 Ω) is meant for 5 V. At **3V3** only about 2.7 V reach the cell after the diode – less than the cell
   voltage, so practically no charging current flows. The cell lasts 5 years and more, because it is only used
