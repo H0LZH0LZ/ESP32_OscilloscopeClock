@@ -3,8 +3,8 @@
 <title>ESP32 Oscilloscope Clock v2.0 – Dokumentation</title>
 <!-- Quelle der PDF-Dokumentation. Erzeugen: node tools/gen_pdf.js (siehe dort). -->
 <style>
-/* Schrift: Raleway (variable Schrift, SIL Open Font License 1.1 – docs/fonts/OFL.txt) */
-@font-face{font-family:'Raleway';src:url(fonts/Raleway-VF.ttf) format('truetype');font-weight:100 900;font-style:normal}
+/* Schrift: Raleway (variable Schrift, SIL Open Font License 1.1 – ../fonts/OFL.txt) */
+@font-face{font-family:'Raleway';src:url(../fonts/Raleway-VF.ttf) format('truetype');font-weight:100 900;font-style:normal}
 @page{size:A4;margin:18mm 17mm 20mm 17mm}
 *{box-sizing:border-box}
 body{font:400 10.2pt/1.5 Raleway,"Helvetica Neue",Helvetica,Arial,sans-serif;color:#111;margin:0}
@@ -262,7 +262,7 @@ USB kann Brumm ins Bild bringen. Im Dauerbetrieb ein normales USB-Steckernetztei
 <h3>Webinterface</h3>
 <p>Aufruf über <b>http://scope-clock.local</b> (Name unter Einstellungen → System änderbar) oder die IP-Adresse. Die Seite ist für das
 Handy gemacht und lässt sich über „Zum Startbildschirm hinzufügen“ wie eine App ablegen.</p>
-<figure><img src="images/web_uebersicht.png" style="width:92%"><figcaption>Abb. 9 – Webinterface: Startansicht hell und dunkel, Seitenmenü</figcaption></figure>
+<figure><img src="images/web_uebersicht.png" style="width:80%"><figcaption>Abb. 9 – Webinterface: Startansicht hell und dunkel, Seitenmenü</figcaption></figure>
 <ul>
  <li><b>Vorschau:</b> zeigt das Oszilloskop-Bild live. <b>Wischen nach links/rechts</b> (oder Punkte/Pfeile darunter, am PC Pfeiltasten) wechselt das Zifferblatt – auch am Oszilloskop.</li>
  <li><b>Beim Aufruf</b> ist nur <b>Status</b> aufgeklappt, alles andere ist eingeklappt. Ohne Zeitserver klappt „Uhrzeit“ von selbst auf, ohne WLAN-Verbindung die Gruppe „WLAN“; sobald alles wieder verbunden ist, klappen sie wieder zu.</li>
@@ -271,15 +271,19 @@ Handy gemacht und lässt sich über „Zum Startbildschirm hinzufügen“ wie ei
  <li><b>Debug:</b> Meldungen der Uhr mit Filter (WLAN, Zeit, Web, Oszilloskop, Warnungen), „Aktualisieren“, „Herunterladen“ (Textdatei) und „Leeren“.</li>
  <li><b>Seitenmenü (☰):</b> springt in die Bereiche, dazu Sprache (Deutsch/English) und Darstellung (automatisch/hell/dunkel). Der Bereich, in dem man gerade ist, ist im Menü grün markiert; der schmale grüne Balken am oberen Bildschirmrand zeigt, wie weit man gescrollt hat.</li>
 </ul>
-<figure><img src="images/web_einstellungen.png" style="width:92%"><figcaption>Abb. 10 – Gruppe Oszilloskop, Gruppe WLAN mit Netzsuche, Debug-Bereich</figcaption></figure>
+<figure><img src="images/web_einstellungen.png" style="width:80%"><figcaption>Abb. 10 – Gruppe Oszilloskop, Gruppe WLAN mit Netzsuche, Debug-Bereich</figcaption></figure>
 <h3>OLED-Anzeige</h3>
 <p>Oben die Uhrzeit im 7-Segment-Stil, darunter Kalenderwoche und Datum mit kleinen 7-Segment-Ziffern, dann das WLAN und die Signalstärke. Ohne gültige Zeit steht
 dort „Keine NTP-Verbindung“, im Setup-WLAN der Netzname „ScopeClock-Setup“ und die Adresse. Helligkeit 0–100 %, Sekunden,
 Drehung um 180° und Pixelverschiebung gegen Einbrennen sind einstellbar.</p>
-<figure><img src="images/oled_englisch_12h.png" style="width:48%"><figcaption>Abb. 11 – OLED auf Englisch im 12-Stunden-Format</figcaption></figure>
+<div class="two">
+ <figure><img src="images/oled_englisch_12h.png"><figcaption>Abb. 11 – OLED auf Englisch im 12-Stunden-Format</figcaption></figure>
+ <figure><img src="images/oled_werksreset.png"><figcaption>Abb. 12 – OLED kurz vor den Werkseinstellungen (BOOT-Taster gehalten)</figcaption></figure>
+</div>
 <h3>BOOT-Taster</h3>
 <p><b>3 Sekunden halten</b> schaltet das Oszilloskop-Profil um (DIGITAL ↔ ANALOG). Das OLED zeigt den Wechsel mit Countdown 3, 2, 1;
 vorher loslassen bricht ab. Die Einstellung wird gespeichert. <b>Nicht beim Einschalten drücken</b> – sonst startet der ESP32 im Download-Modus.</p>
+<p><b>Werkseinstellungen: 10 Sekunden halten.</b> Ab 5 s zählt das OLED 5 … 1 herunter (Abb. 12), dann werden <b>alle Einstellungen und WLANs gelöscht</b> und die Uhr startet mit dem Setup-WLAN neu. Vorher loslassen bricht ab.</p>
 
 <h2>8 Alle Einstellungen im Überblick</h2>
 <p>Alle Einstellungen wirken <b>sofort</b> – am Oszilloskop, auf dem OLED und in der Vorschau – und werden dauerhaft auf der
@@ -311,7 +315,8 @@ beschrieben wird. Jede Gruppe hat „Auf Standardwerte zurücksetzen“; danach 
  <tr><td>Helligkeit Ziffern</td><td>0–100 % (100 %)</td><td>Helligkeit der Zahlen auf dem Zifferblatt. 0 % blendet sie aus – das entspricht dann dem Stil „nur Striche“.</td></tr>
  <tr><td>Rücklauf-Tempo</td><td>0–48 (24)</td><td>Nur im Profil ANALOG: wie schnell der Strahl zwischen zwei Linien springt (Vielfaches des Zeichentempos).
  <b>Schneller</b> = schwächere Rücklaufspur; ist das Oszilloskop dafür zu langsam, entstehen kleine „Haken“ an den
- Linienanfängen – dann Wert verringern (z. B. 12). 0 = harter Sprung. Im Profil DIGITAL ausgegraut, der Wert bleibt gespeichert.</td></tr>
+ Linienanfängen – dann Wert verringern (z. B. 12). 0 = harter Sprung. Im Profil DIGITAL und bei Dunkeltastung ausgegraut, der Wert bleibt gespeichert.</td></tr>
+ <tr><td>Dunkeltastung (Z-Eingang)</td><td>an / aus (aus); High oder Low = dunkel (High)</td><td>Nur mit einem <b>dritten Kabel</b> von GPIO27 (Klemme P27) zum Z-Eingang des Oszilloskops – im beschriebenen Aufbau nicht vorhanden. Schaltet den Strahl bei jedem Sprung aus, die Rücklaufspuren verschwinden. Pegel laut Handbuch des Oszilloskops; ausgeschaltet ist GPIO27 hochohmig.</td></tr>
 </table>
 
 <h3>Uhrzeit</h3>
@@ -350,7 +355,7 @@ beschrieben wird. Jede Gruppe hat „Auf Standardwerte zurücksetzen“; danach 
  die Gruppe von selbst auf.</td></tr>
  <tr><td>Netze in Reichweite suchen</td><td>–</td><td>Listet die Netze in der Nähe, das stärkste oben, mit Balken und dBm; das verbundene Netz ist markiert.
  Antippen übernimmt den Namen ins Formular.</td></tr>
- <tr><td>Netz hinzufügen</td><td>SSID 1–32, Passwort leer oder 8–63 Zeichen</td><td>Speichert ein neues Netz bzw. ein geändertes Passwort. Für offene Netze das Passwort leer lassen.
+ <tr><td>Netz hinzufügen</td><td>SSID 1–32, Passwort leer oder 8–63 Zeichen</td><td>Speichert ein neues Netz bzw. ein geändertes Passwort (nach einer Passwortänderung startet die Uhr kurz neu). Für offene Netze das Passwort leer lassen.
  Danach „Neu verbinden“, damit die Uhr das stärkste Netz neu wählt.</td></tr>
  <tr><td>Neu verbinden</td><td>–</td><td>Trennt kurz und verbindet sich mit dem stärksten bekannten Netz; die Seite ist dabei einige Sekunden nicht erreichbar.</td></tr>
  <tr><td>WLAN zurücksetzen</td><td>–</td><td>Löscht nach Rückfrage alle gespeicherten Netze. Die Uhr startet neu und öffnet das Setup-WLAN
@@ -380,7 +385,8 @@ beschrieben wird. Jede Gruppe hat „Auf Standardwerte zurücksetzen“; danach 
  <tr><td>Linien zu dunkel</td><td>Verweilzeit erhöhen (z. B. 5,00 µs) oder Intensität am Oszilloskop</td></tr>
  <tr><td>Ecken verrundet, Ziffern verwaschen</td><td>Verweilzeit erhöhen</td></tr>
  <tr><td>Kleine „Haken“ an Linienanfängen</td><td>Rücklauf-Tempo verringern (z. B. 12)</td></tr>
- <tr><td>Rücklaufspuren sichtbar</td><td>Rücklauf-Tempo erhöhen oder Profil DIGITAL probieren</td></tr>
+ <tr><td>Rücklaufspuren sichtbar</td><td>Rücklauf-Tempo erhöhen oder Profil DIGITAL probieren; mit Z-Eingang: Dunkeltastung (drittes Kabel an GPIO27)</td></tr>
+ <tr><td>Uhr soll komplett neu eingerichtet werden</td><td>BOOT-Taster 10 s halten (Werkseinstellungen: alle Einstellungen und WLANs werden gelöscht)</td></tr>
  <tr><td>Kreis im Testbild oval</td><td>Empfindlichkeit von X und Y gleich einstellen (beide 0,5 V/Div, Feinregler auf „kalibriert“)</td></tr>
  <tr><td>Brummen/Zittern im Bild</td><td>Ungeerdetes USB-Netzteil statt PC verwenden</td></tr>
  <tr><td>„Keine NTP-Verbindung“</td><td>WLAN prüfen (Status); ohne Internet die Zeit unter Einstellungen → Uhrzeit stellen</td></tr>
@@ -393,7 +399,7 @@ beschrieben wird. Jede Gruppe hat „Auf Standardwerte zurücksetzen“; danach 
 <p>Für eine Fehlermeldung im Debug-Bereich „Herunterladen“ antippen und die Textdatei weitergeben.</p>
 
 <h2>10 Technik: wie die Uhr arbeitet</h2>
-<figure><img src="images/software.svg" style="width:96%"><figcaption>Abb. 12 – Aufteilung der Firmware auf die beiden Prozessorkerne</figcaption></figure>
+<figure><img src="images/software.svg" style="width:96%"><figcaption>Abb. 13 – Aufteilung der Firmware auf die beiden Prozessorkerne</figcaption></figure>
 <p><b>Kern 1</b> tut nichts anderes, als den Strahl zu führen: ohne Pause, ohne Sperren, ohne WLAN-Unterbrechungen. WLAN und
 Display werden auf <b>Kern 0</b> gestartet, damit ihre Interrupts den Zeichenpfad nicht stören.</p>
 <p><b>Gleiche Helligkeit:</b> Die Helligkeit einer Linie hängt davon ab, wie lange der Strahl auf jedem Stück Weg verweilt. Die Firmware
@@ -404,8 +410,8 @@ Im Profil ANALOG springt der Strahl schnell und bremst vor dem Ziel, im Profil D
 unterwegs keine Abtastpunkte zeigt.</p>
 <p><b>Vektordaten:</b> Zifferblatt, Ziffern, Zeiger und Testbild sind eigene Zeichnungen, erzeugt mit <code>tools/gen_vectors.py</code>
 (Koordinaten 0–255, 8 Bit je Achse).</p>
-<p><b>Speicher:</b> Programmspeicher 1.228.646 Byte (93 % beim Standard-Partitionsschema, ca. 39 % mit „Huge APP“), globale Variablen
-74.892 Byte (22 %). Die Webseite liegt gzip-komprimiert im Flash (21 KB), die Schrift (Raleway, auf die benötigten Zeichen reduziert) als WOFF2 (30 KB).</p>
+<p><b>Speicher:</b> Programmspeicher 1.234.578 Byte (94 % beim Standard-Partitionsschema, ca. 39 % mit „Huge APP“), globale Variablen
+74.916 Byte (22 %). Die Webseite liegt gzip-komprimiert im Flash (21 KB), die Schrift (Raleway, auf die benötigten Zeichen reduziert) als WOFF2 (30 KB).</p>
 <h3>Debug-Meldungen (Beispiel)</h3>
 <pre>+0s ESP32 Oscilloscope Clock v2.0
 +0s [Scope] Profil: DIGITAL – BOOT-Taster 3 s halten zum Umschalten
@@ -435,7 +441,8 @@ unterwegs keine Abtastpunkte zeigt.</p>
  <tr><td><code>WIFI_HOSTNAME</code></td><td>scope-clock</td><td>Start-Gerätename</td></tr>
  <tr><td><code>WEB_SETUP_AP_SSID</code>, <code>WEB_SETUP_AP_AFTER_S</code></td><td>ScopeClock-Setup, 60</td><td>Setup-WLAN und Wartezeit</td></tr>
  <tr><td><code>WEB_MAX_NETWORKS</code>, <code>LOG_BUFFER_SIZE</code></td><td>10, 8192</td><td>WLANs, Größe des Debug-Speichers</td></tr>
- <tr><td><code>BOOT_TEST_S</code>, <code>BUTTON_LONG_MS</code></td><td>10, 3000</td><td>Start-Testbild (s), Haltedauer BOOT-Taster (ms)</td></tr>
+ <tr><td><code>BOOT_TEST_S</code>, <code>BUTTON_LONG_MS</code>, <code>BUTTON_FACTORY_MS</code></td><td>10, 3000, 10000</td><td>Start-Testbild (s), BOOT-Taster: Profil umschalten, Werkseinstellungen (ms)</td></tr>
+ <tr><td><code>ZBLANK_PIN</code>, <code>ZBLANK_ENABLE</code>, <code>ZBLANK_ACTIVE_HIGH</code></td><td>27, 0, 1</td><td>Optionale Dunkeltastung: GPIO, Startwert aus, High = dunkel (im Webinterface umschaltbar)</td></tr>
 </table>
 <h3>Schnittstellen des Webservers</h3>
 <table>
@@ -448,7 +455,7 @@ unterwegs keine Abtastpunkte zeigt.</p>
  <tr><td><code>GET /api/networks</code>, <code>GET /api/scan</code></td><td>gespeicherte Netze (nur Namen), Netzsuche</td></tr>
  <tr><td><code>POST /api/wifi</code>, <code>/api/wifi/delete</code>, <code>/api/wifi/reset</code>, <code>/api/reconnect</code></td><td>WLAN-Verwaltung</td></tr>
  <tr><td><code>GET /api/log</code>, <code>POST /api/log/clear</code></td><td>Debug-Protokoll lesen bzw. leeren</td></tr>
- <tr><td><code>GET /api/vectors</code></td><td>Vektordaten für die Vorschau</td></tr>
+ <tr><td><code>GET /api/vectors</code></td><td>Vektordaten für die Vorschau (fertig erzeugt in <code>vectors.h</code>, gzip)</td></tr>
 </table>
 <h3>Dateien im Projekt</h3>
 <table>
@@ -456,6 +463,7 @@ unterwegs keine Abtastpunkte zeigt.</p>
  <tr><td><code>ESP32_OscilloscopeClock_v2.0/*.ino</code></td><td>Firmware</td></tr>
  <tr><td><code>config.h</code></td><td>Startwerte und Pins</td></tr>
  <tr><td><code>DataTable.h</code></td><td>Vektordaten (aus <code>tools/gen_vectors.py</code>)</td></tr>
+ <tr><td><code>vectors.h</code></td><td>Vorschau-Daten für das Webinterface (aus <code>tools/gen_vectors.py --vectors</code>)</td></tr>
  <tr><td><code>webpage.h</code>, <code>font.h</code>, <code>icon.h</code></td><td>Webseite (aus <code>web/index.html</code> mit <code>tools/gen_webpage.py</code>), Schrift, App-Symbol</td></tr>
  <tr><td><code>web/demo/scope-clock-demo.html</code></td><td>Testseite des Webinterfaces ohne Uhr, im Browser öffnen (erzeugt mit <code>tools/gen_demo.py</code>)</td></tr>
  <tr><td><code>docs/</code></td><td>diese Dokumentation auf Deutsch und Englisch (Quellen <code>dokumentation.html</code>, <code>documentation.en.html</code>), Bilder</td></tr>

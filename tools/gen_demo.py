@@ -10,7 +10,7 @@ Bestandteile:
   web/demo/mock-api.js       simuliert /api/status, /api/log, /api/wifi, /api/time, /api/vectors …
   web/demo/mock-settings.js  simuliert /api/settings und /api/settings/reset
   web/demo/demo-ui.js        Knopf "Setup-WLAN simulieren" im Demo-Hinweis
-Die Vektordaten kommen aus tools/gen_vectors.py, die Schriften aus font.h.
+Die Vektordaten kommen aus tools/gen_vectors.py (wie vectors.h), die Schriften aus font.h.
 
 Aufruf (nach tools/gen_webpage.py):  python3 tools/gen_demo.py
 """
@@ -19,7 +19,6 @@ import gzip
 import json
 import os
 import re
-import subprocess
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -40,31 +39,9 @@ def c_bytes(text):
 
 
 def vectors():
-    """Vektordaten für die Vorschau, im Format von /api/vectors."""
-    t = json.loads(subprocess.check_output([sys.executable, os.path.join(ROOT, 'tools', 'gen_vectors.py'), '--json']))
-
-    def polys(d):
-        out, cur, i = [], [], 0
-        while i < len(d) and d[i] != 0xFF:
-            if d[i] == 0:
-                if cur:
-                    out.append(cur)
-                    cur = []
-                i += 1
-                continue
-            cur += [d[i], d[i + 1]]
-            i += 2
-        if cur:
-            out.append(cur)
-        return out
-
-    def hand(d, n):
-        return [d[p * n:p * n + n - 1] for p in range(60)]
-
-    return {'dial': polys(t['DialData']),
-            'digits': [polys(t[k]) for k in ('DialDigits12', 'DialDigitsMin', 'DialDigitsRoman',
-                                             'DialDigitsRoman4', 'DialDigitsNone')],
-            'hr': hand(t['HrPtrData'], 9), 'min': hand(t['MinPtrData'], 9), 'sec': hand(t['SecPtrData'], 5)}
+    """Vektordaten für die Vorschau – dieselben wie in vectors.h (GET /api/vectors)."""
+    import gen_vectors
+    return gen_vectors.preview()
 
 
 def main():

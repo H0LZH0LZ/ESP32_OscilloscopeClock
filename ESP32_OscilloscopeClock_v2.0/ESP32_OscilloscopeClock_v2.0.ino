@@ -35,11 +35,11 @@
            │ wifiTask   │ WLAN-Verbindung aufbauen/halten (WiFiMulti)
            │ (System)   │ WLAN-Stack, SNTP (NTP-Client des ESP-IDF)
 
-  Von Core 0 nach Core 1 gehen nur drei Werte, alle atomar lesbar:
-  g_timePacked (32 Bit: Stunde/Minute/Sekunde, einmal pro Bild gelesen),
-  g_scopeProfile (1 Byte: ANALOG/DIGITAL), g_dialStyle (1 Byte: Zifferblatt)
-  sowie g_beamNs/g_handPct/g_tickPct/g_digitPct/g_jumpSpeed (Einstellungen). Der Zeichenpfad muss
-  nie warten; geänderte Werte übernimmt er zwischen zwei Bildern.
+  Von Core 0 nach Core 1 gehen nur einzelne Werte, alle atomar lesbar (≤ 32 Bit):
+  g_timePacked (Stunde/Minute/Sekunde, einmal pro Bild gelesen), g_scopeProfile,
+  g_dialStyle, g_testPattern sowie die Einstellungen g_beamNs, g_handPct,
+  g_tickPct, g_digitPct, g_jumpSpeed, g_zblank, g_zblankHigh. Der Zeichenpfad
+  muss nie warten; geänderte Werte übernimmt er spätestens zwischen zwei Bildern.
 
   ---------------------------------------------------------------------------
   Bedienung
@@ -47,18 +47,18 @@
   BOOT-Taster im Betrieb 3 s halten → Oszilloskop-Profil wechselt
   (DIGITAL ↔ ANALOG, siehe config.h: SCOPE_PROFILE). Das OLED zeigt dabei
   "DIGITAL > ANALOG" und einen Countdown 3, 2, 1; das Profil wird im Flash
-  gespeichert. Nicht beim Einschalten drücken (Download-Modus).
+  gespeichert. Weiter halten bis 10 s → Werkseinstellungen (alle Einstellungen
+  und WLANs löschen, Neustart); ab 5 s zählt das OLED 5 … 1 herunter, Loslassen bricht ab.
+  Nicht beim Einschalten drücken (Download-Modus).
 
   Webinterface: http://scope-clock.local (oder IP-Adresse der Uhr) – Live-
-  Vorschau, Status, Log, WLAN-Einrichtung, Seitenmenü; für Handys optimiert,
-  ohne Passwort. Tippen auf die Vorschau schaltet das Zifferblatt um
-  (1–12 / 12-3-6-9 / römisch / XII-III-VI-IX) – auch am Oszilloskop,
-  wird gespeichert. Unter "Einstellungen" lassen sich Profil, Zifferblatt,
-  Strahlgeschwindigkeit, Zeiger-Helligkeit, Rücklauf-Tempo, Zeitzone,
-  NTP-Server und OLED online ändern (sofort wirksam, gespeichert; config.h
-  liefert nur die Startwerte). Ohne bekanntes WLAN öffnet die Uhr das offene
-  Setup-WLAN "ScopeClock-Setup"
-  (Einrichtung unter http://192.168.4.1).
+  Vorschau, Status, Debug-Protokoll, WLAN-Einrichtung, Seitenmenü; für Handys
+  optimiert, ohne Passwort. Wischen über die Vorschau wechselt das Zifferblatt
+  (1–12 / 12-3-6-9 / nur Striche / XII-III-VI-IX / römisch I–XII) – auch am
+  Oszilloskop, wird gespeichert. Unter "Einstellungen" lassen sich alle Werte
+  online ändern (sofort wirksam, gespeichert; config.h liefert nur die
+  Startwerte). Ohne bekanntes WLAN öffnet die Uhr das offene Setup-WLAN
+  "ScopeClock-Setup" (Einrichtung unter http://192.168.4.1).
 
   ---------------------------------------------------------------------------
   Dateien
@@ -66,8 +66,10 @@
     ESP32_OscilloscopeClock_v2.0.ino  dieser Sketch
     config.h                          Pins, Zeitzone, NTP, OLED, Strahl-
                                       geschwindigkeit, Oszilloskop-Profil
-    DataTable.h                       Vektordaten: Zifferblatt, Ziffern, Zeiger
-    webpage.h                         Webinterface (HTML/CSS/JS, eine Seite)
+    DataTable.h                       Vektordaten: Zifferblatt, Ziffern, Zeiger, Testbild
+    vectors.h                         dieselben Daten für die Vorschau der Webseite (gzip-JSON)
+    webpage.h                         Webinterface (aus web/index.html, gzip)
+    font.h, icon.h                    Schrift und App-Symbol des Webinterfaces
     ../HARDWARE.md                    Verdrahtung, Gehäuse, Oszilloskop-Einstellungen
     ../SOFTWARE.md                    Aufbau der Software, Tabellenformat, Tuning
 
@@ -123,6 +125,7 @@ struct StoredNet {
 #include "webpage.h"          // Webinterface, gzip-komprimiert (aus web/index.html, tools/gen_webpage.py)
 #include "font.h"             // Schrift des Webinterfaces (2 Schnitte WOFF2, PROGMEM, ca. 30 KB)
 #include "icon.h"             // App-Symbol (SVG/PNG) und Manifest für den Startbildschirm
+#include "vectors.h"          // Vorschau-Daten für das Webinterface (gzip, aus tools/gen_vectors.py --vectors)
 
 // Nur der klassische ESP32 hat DACs an GPIO25/26 (S2 hat andere Pins und nur
 // einen Kern; S3/C3/C6 haben gar keine DACs).
@@ -148,17 +151,14 @@ static inline uint32_t packTime(int h, int m, int s) {
   return ((uint32_t)h << 16) | ((uint32_t)m << 8) | (uint32_t)s;
 }
 
-// NTP-Status. Schreiber: SNTP-Callback (läuft im lwIP-Task auf Core 0),
-// Leser: uiTask. time_t ist auf aktuellen ESP32-Cores 64 Bit breit und damit
-// NICHT atomar – daher der Spinlock für den Zeitstempel.
 // Oszilloskop-Profil: 0 = analoges Röhren-Oszilloskop, 1 = digitales Oszilloskop.
 // Startwert aus dem Flash (NVS), im Betrieb per BOOT-Taster umschaltbar.
 // Schreiber: uiTask (Core 0), Leser: beamJump (Core 1). 1 Byte = atomar.
 static volatile uint8_t g_scopeProfile = SCOPE_PROFILE;
 
 // Zifferblatt: 0 = Ziffern 1–12, 1 = nur 12/3/6/9, 2 = römisch I–XII,
-// 3 = nur XII/III/VI/IX. Startwert aus dem
-// Flash (NVS), im Betrieb über das Webinterface umschaltbar (Tippen auf die
+// 3 = nur XII/III/VI/IX, 4 = nur Striche (siehe dialDigits). Startwert aus dem
+// Flash (NVS), im Betrieb über das Webinterface umschaltbar (Wischen über die
 // Vorschau). Schreiber: uiTask, Leser: scopeTask (baut dann die Rundtour neu).
 static volatile uint8_t g_dialStyle = DIAL_STYLE;
 
@@ -170,6 +170,8 @@ static volatile uint8_t  g_handPct   = HAND_BRIGHT_PCT;    // Helligkeit Stunden
 static volatile uint8_t  g_tickPct   = TICK_BRIGHT_PCT;    // Helligkeit Minutenstriche (%)
 static volatile uint8_t  g_digitPct  = DIGIT_BRIGHT_PCT;   // Helligkeit Ziffern (%)
 static volatile uint8_t  g_jumpSpeed = JUMP_SPEED;         // Rücklauf-Tempo (Profil ANALOG), 0 = hart
+static volatile bool     g_zblank    = ZBLANK_ENABLE;      // Dunkeltastung über den Z-Eingang an (GPIO ZBLANK_PIN)
+static volatile bool     g_zblankHigh = ZBLANK_ACTIVE_HIGH; // true = High-Pegel macht dunkel, false = Low-Pegel
 
 // Einstellungen, die nur Core 0 nutzt (Zeit, OLED)
 static char    s_tz[48]        = TZ_INFO;                  // POSIX-Zeitzone
@@ -177,8 +179,8 @@ static char    s_ntpServer[64] = NTP_SERVER_1;             // erster NTP-Server 
 static uint8_t s_oledPct       = OLED_BRIGHT_PCT;          // OLED-Helligkeit 0–100 % (0 = aus)
 static bool    s_oledSec       = OLED_SECONDS;             // Uhrzeit mit Sekunden
 static char    s_host[33]      = WIFI_HOSTNAME;            // Gerätename (Router, http://<name>.local)
-static volatile bool g_testPattern = BOOT_TEST_S > 0;    // beim Start BOOT_TEST_S Sekunden an
-static bool s_bootTest = BOOT_TEST_S > 0;                 // Start-Testbild läuft noch                // Testbild statt Uhr (nicht gespeichert)
+static volatile bool g_testPattern = BOOT_TEST_S > 0;    // Testbild statt Uhr (nicht gespeichert); beim Start BOOT_TEST_S Sekunden an
+static bool s_bootTest = BOOT_TEST_S > 0;                 // Start-Testbild läuft noch (endet automatisch)
 static bool    s_oledShift     = OLED_SHIFT_EVERY_S > 0;
 static bool    s_oledFlip      = OLED_FLIP;                // Anzeige um 180° gedreht
 static bool    s_h12           = CLOCK_12H;                // Uhrzeit im 12-Stunden-Format (AM/PM)
@@ -187,6 +189,9 @@ static uint8_t s_lang          = UI_LANG;                  // Sprache: 0 = Deuts
 // Text in der eingestellten Sprache (Webinterface-Meldungen, OLED, Protokoll)
 static inline const char *tr(const char *de, const char *en) { return s_lang ? en : de; }
 
+// NTP-Status. Schreiber: SNTP-Callback (läuft im lwIP-Task auf Core 0),
+// Leser: uiTask. time_t ist auf aktuellen ESP32-Cores 64 Bit breit und damit
+// NICHT atomar – daher der Spinlock für den Zeitstempel.
 static volatile bool g_ntpSynced     = false;  // true nach dem ersten erfolgreichen Sync
 static volatile bool g_timeManual    = false;  // true, wenn die Zeit im Webinterface gestellt wurde
 static int8_t        s_dstForced     = -1;     // von Hand gewählt: -1 = automatisch, 0 = Winterzeit, 1 = Sommerzeit
@@ -324,8 +329,9 @@ static WiFiMulti    wifiMulti;
 //         zur Mitte entfällt damit ganz – der Strahl "läuft" auf dem Zeiger.
 //      d) Jeder Linienzug wird von dem Ende aus gezeichnet, das näher am
 //         Strahl liegt.
-//     Optional (ZBLANK_PIN): Dunkeltastung über den Z-Eingang des Oszilloskops –
-//     der Strahl ist während des Sprungs aus, die Spur verschwindet ganz.
+//     Optional (Webinterface, Kabel an ZBLANK_PIN): Dunkeltastung über den
+//     Z-Eingang des Oszilloskops – der Strahl ist während des Sprungs aus, die
+//     Spur verschwindet ganz.
 //     JUMP_SPEED 0 = harter Sprung wie im Original.
 //  6. Begrenzte Geschwindigkeit: 1 DAC-Einheit (≈ 12,5 mV) pro 3 µs beim
 //     Schreiben ist für jede Röhre langsam genug.
@@ -342,9 +348,7 @@ static uint32_t s_stepCycles = 0;   // Verweilzeit eines Schreibschritts (BEAM_N
 // Verweilzeit eines Sprungschritts abhängig vom Restweg r (0 … JUMP_RAMP):
 // r = JUMP_RAMP und mehr → volle Sprunggeschwindigkeit, r = 0 → JUMP_LANDING
 static uint32_t s_jumpCycles[JUMP_RAMP + 1];
-#if ZBLANK_PIN >= 0
 static uint32_t s_settleCycles = 0; // Einschwingzeit bei Dunkeltastung
-#endif
 static uint32_t s_deadline   = 0;   // Zieltermin des aktuellen Schritts
 
 // Schreibt einen 8-Bit-Wert auf den X-DAC (GPIO25).
@@ -394,11 +398,7 @@ static void dacInit() {
   dacWrite(DAC_Y_PIN, 0x80);
   lastx = lasty = 0x80;
   beamTiming(g_beamNs, g_jumpSpeed);
-#if ZBLANK_PIN >= 0
-  pinMode(ZBLANK_PIN, OUTPUT);
-  digitalWrite(ZBLANK_PIN, ZBLANK_ACTIVE_HIGH ? LOW : HIGH);   // Strahl an
   s_settleCycles = (uint32_t)((uint64_t)ZBLANK_SETTLE_NS * getCpuFrequencyMhz() / 1000ULL);
-#endif
   s_deadline = ESP.getCycleCount();
 }
 
@@ -472,32 +472,48 @@ static void IRAM_ATTR beamMove(int x1, int y1, int x2, int y2, uint32_t cycles, 
   beamPoint(x2, y2, cycles);             // exakt auf dem Endpunkt landen
 }
 
-#if ZBLANK_PIN >= 0
-static_assert(ZBLANK_PIN < 32, "ZBLANK_PIN muss GPIO 0-31 sein");
-// Schaltet den Strahl über den Z-Eingang des Oszilloskops aus (dark=true)
-// oder wieder an. Direkter Registerzugriff: wenige Takte, IRAM-sicher.
+// ---- Dunkeltastung über den Z-Eingang (optional, im Webinterface einschaltbar) ----
+// Ein drittes Kabel von GPIO ZBLANK_PIN zum Z-Eingang des Oszilloskops schaltet den
+// Strahl während der Sprünge aus – die Rücklaufspuren verschwinden ganz.
+static_assert(ZBLANK_PIN >= 0 && ZBLANK_PIN < 32 && ZBLANK_PIN != DAC_X_PIN && ZBLANK_PIN != DAC_Y_PIN,
+              "config.h: ZBLANK_PIN muss ein freier GPIO 0-31 sein (nicht 25/26)");
+// Schaltet den Strahl aus (dark=true) oder wieder an. Direkter Registerzugriff:
+// wenige Takte, IRAM-sicher.
 static inline void IRAM_ATTR zBlank(bool dark)
 {
-  if (dark == (bool)ZBLANK_ACTIVE_HIGH) REG_WRITE(GPIO_OUT_W1TS_REG, 1UL << ZBLANK_PIN);
-  else                                  REG_WRITE(GPIO_OUT_W1TC_REG, 1UL << ZBLANK_PIN);
+  if (dark == g_zblankHigh) REG_WRITE(GPIO_OUT_W1TS_REG, 1UL << ZBLANK_PIN);
+  else                      REG_WRITE(GPIO_OUT_W1TC_REG, 1UL << ZBLANK_PIN);
 }
-#endif
+
+// Dunkeltastung ein-/ausschalten (Core 0, beim Start und aus dem Webinterface).
+// Aus: Pin hochohmig (Eingang) – ohne Kabel am Z-Eingang passiert also nichts.
+// An: erst den Pegel "Strahl an" setzen, dann als Ausgang schalten.
+static void zblankApply(bool on, bool activeHigh)
+{
+  g_zblank = false;                                      // Zeichenpfad tastet ab jetzt nicht mehr
+  g_zblankHigh = activeHigh;
+  if (!on) { pinMode(ZBLANK_PIN, INPUT); return; }
+  digitalWrite(ZBLANK_PIN, activeHigh ? LOW : HIGH);     // Strahl an
+  pinMode(ZBLANK_PIN, OUTPUT);
+  g_zblank = true;
+}
 
 // Sprung (Rücklauf) zum Punkt (x2,y2) – siehe Regel 5.
 // Die Sprungart hängt vom Oszilloskop-Profil ab (BOOT-Taster, g_scopeProfile):
 //   digital → harter Sprung: ein digitales Oszilloskop würde jeden Zwischenpunkt
 //             eines gefahrenen Sprungs als hellen Abtastpunkt zeigen.
 //   analog  → gebremster Sprung (JUMP_SPEED/JUMP_LANDING/JUMP_RAMP).
-// Mit Z-Dunkeltastung (ZBLANK_PIN) wird immer im Dunkeln hart gesprungen.
+// Mit Dunkeltastung (g_zblank) wird immer im Dunkeln hart gesprungen.
 static void IRAM_ATTR beamJump(int x2, int y2)
 {
   if (x2 == lastx && y2 == lasty) return;
-#if ZBLANK_PIN >= 0
-  // Dunkel tasten, hart springen, im Dunkeln einschwingen lassen, Strahl an.
-  zBlank(true);
-  beamPoint(x2, y2, s_settleCycles);
-  zBlank(false);
-#else
+  if (g_zblank) {
+    // Dunkel tasten, hart springen, im Dunkeln einschwingen lassen, Strahl an.
+    zBlank(true);
+    beamPoint(x2, y2, s_settleCycles);
+    zBlank(false);
+    return;
+  }
   if (g_scopeProfile == 1 || g_jumpSpeed == 0) {
     // Harter Sprung wie im Original (ohne Verweilzeit)
     if (x2 != lastx) { lastx = x2; dacOutX((uint8_t)x2); }
@@ -517,7 +533,6 @@ static void IRAM_ATTR beamJump(int x2, int y2)
     beamPoint(fx >> 16, fy >> 16, s_jumpCycles[r < JUMP_RAMP ? r : JUMP_RAMP]);
   }
   beamPoint(x2, y2, s_jumpCycles[0]);
-#endif
 }
 
 //*****************************************************************************
@@ -579,7 +594,7 @@ static bool IRAM_ATTR nextStroke(const byte *table, int size, byte sep, int &i, 
 //
 // Pro Linienzug: Sprung zum näheren Ende (schwache Rücklaufspur), dort einen
 // normalen Schritt verweilen, dann alle Linien – ggf. in umgekehrter
-// Reihenfolge (Regel 6; die Helligkeit ist richtungsunabhängig). Linienzüge
+// Reihenfolge (Regel 5d; die Helligkeit ist richtungsunabhängig). Linienzüge
 // aus nur einem Punkt werden wie im Original nicht gezeichnet. Die
 // Tabellengrenze wird immer geprüft, auch wenn ein Endzeichen fehlt.
 static void IRAM_ATTR PlotTable(const byte *table, int size, byte sep, int offset, int brightPct = 100)
@@ -877,8 +892,20 @@ static void publishTime()
 // WLANs werden ausschließlich im Webinterface eingetragen (bis zu
 // WEB_MAX_NETWORKS Netze). Sie liegen im Flash (NVS, Namensraum "scopeclock",
 // Schlüssel netn, net_s0…, net_p0…) und bleiben auch nach einem Update erhalten.
-static StoredNet s_webNets[WEB_MAX_NETWORKS];
-static int       s_webNetCount = 0;
+static StoredNet    s_webNets[WEB_MAX_NETWORKS];
+static volatile int s_webNetCount = 0;   // gültige Einträge in s_webNets (erst Eintrag füllen, dann erhöhen)
+static bool         s_apActive    = false; // Setup-WLAN offen (siehe webApManage)
+
+// Abstimmung zwischen wifiTask und Webserver (beide auf Core 0):
+//   s_multiCount   so viele Einträge aus s_webNets kennt WiFiMulti schon. Neue Netze
+//                  trägt NUR der wifiTask ein – WiFiMulti ist nicht threadsicher, und
+//                  addAP() aus dem Webserver während wifiMulti.run() könnte abstürzen.
+//   s_multiBusy    wifiTask sucht/verbindet gerade (wifiMulti.run läuft)
+//   s_webScanUntil Webinterface sucht Netze: wifiTask pausiert bis dahin, sonst würde
+//                  seine eigene Suche die Ergebnisse der Seite löschen
+static int               s_multiCount   = 0;
+static volatile bool     s_multiBusy    = false;
+static volatile uint32_t s_webScanUntil = 0;
 
 // Im Webinterface gespeicherte WLANs aus dem NVS laden
 static void webNetsLoad()
@@ -891,7 +918,7 @@ static void webNetsLoad()
     char k[12];
     snprintf(k, sizeof(k), "net_s%d", i); p.getString(k, s_webNets[s_webNetCount].ssid, sizeof(s_webNets[0].ssid));
     snprintf(k, sizeof(k), "net_p%d", i); p.getString(k, s_webNets[s_webNetCount].pw,   sizeof(s_webNets[0].pw));
-    if (s_webNets[s_webNetCount].ssid[0]) s_webNetCount++;
+    if (s_webNets[s_webNetCount].ssid[0]) s_webNetCount = s_webNetCount + 1;
   }
   p.end();
 }
@@ -918,14 +945,30 @@ static bool wifiConfigured() { return s_webNetCount > 0; }
 // Hält die WLAN-Verbindung. Läuft als eigener Task, weil WiFiMulti::run()
 // zuerst einen Scan macht und dabei mehrere Sekunden blockiert – im uiTask
 // würde das OLED so lange stehen bleiben.
-// Ablauf: nicht verbunden → alle Netze scannen → mit dem stärksten bekannten
-// verbinden (max. 10 s) → alle 2 s Verbindung prüfen. Ohne bekanntes Netz
-// wartet der Task, bis im Webinterface eins eingetragen wird.
+// Ablauf: neue Netze bei WiFiMulti eintragen → nicht verbunden: alle Netze
+// scannen → mit dem stärksten bekannten verbinden (max. 10 s) → alle 2 s
+// Verbindung prüfen. Ohne bekanntes Netz wartet der Task, bis im Webinterface
+// eins eingetragen wird.
+// Ist jemand mit dem Setup-WLAN verbunden, wird nur alle 60 s ein Versuch
+// gemacht: Jeder Versuch wechselt kurz den Funkkanal und kann das Handy aus dem
+// Setup-WLAN werfen.
 static void wifiTask(void *)
 {
+  uint32_t lastTry = 0;
   for (;;) {
-    if (wifiConfigured() && WiFi.status() != WL_CONNECTED) {
+    while (s_multiCount < s_webNetCount) {               // neu eingetragene Netze übernehmen
+      wifiMulti.addAP(s_webNets[s_multiCount].ssid, s_webNets[s_multiCount].pw);
+      s_multiCount++;
+    }
+    const uint32_t now = millis();
+    const bool webScan  = (int32_t)(s_webScanUntil - now) > 0;
+    const bool apGuests = s_apActive && WiFi.softAPgetStationNum() > 0;
+    if (wifiConfigured() && WiFi.status() != WL_CONNECTED && !webScan &&
+        (!apGuests || lastTry == 0 || now - lastTry >= 60000UL)) {
+      s_multiBusy = true;
       wifiMulti.run(10000);
+      s_multiBusy = false;
+      lastTry = millis();
     }
     vTaskDelay(pdMS_TO_TICKS(2000));
   }
@@ -942,10 +985,9 @@ static void wifiStart()
   WiFi.mode(WIFI_STA);                 // Client; das Setup-WLAN kommt bei Bedarf dazu
   WiFi.setHostname(s_host);            // Name in der Geräteliste des Routers (Einstellungen → System)
 
-  // Alle im Webinterface gespeicherten Netze bei WiFiMulti anmelden
+  // Gespeicherte Netze laden (bei WiFiMulti trägt sie der wifiTask ein)
   webNetsLoad();
   for (int i = 0; i < s_webNetCount; i++) {
-    wifiMulti.addAP(s_webNets[i].ssid, s_webNets[i].pw);
     logMsg(tr("[WiFi] bekanntes Netz: \"%s\"", "[WiFi] known network: \"%s\""), s_webNets[i].ssid);   // Passwort wird nie ausgegeben
   }
   if (!wifiConfigured())
@@ -1033,10 +1075,10 @@ static void wifiLogChanges()
 // Setup-WLAN wieder.
 static WebServer web(80);
 static DNSServer dns;
-static bool      s_apActive     = false;
 static uint32_t  s_lastConnMs   = 0;    // zuletzt mit WLAN verbunden (0 = noch nie)
 static uint32_t  s_connSinceMs  = 0;    // verbunden seit (0 = nicht verbunden)
 static uint32_t  s_restartAtMs  = 0;    // geplanter Neustart (0 = keiner)
+static uint32_t  s_reconnectAtMs = 0;   // geplantes Neu-Verbinden (0 = keins), nach der Antwort
 static uint32_t  s_fps          = 0;    // Bildrate des Oszilloskop-Bildes
 static uint8_t   s_cpu0Load     = 0;    // CPU-Last Core 0 in % (siehe idleHookCore0)
 
@@ -1154,67 +1196,16 @@ static void handleStatus()
   web.send(200, "application/json", o);
 }
 
-// Hängt die Linienzüge einer Tabelle als JSON an: [[x0,y0,x1,y1,…],[…],…]
-// (bei onlyOne nur den ersten Linienzug ab offset – für eine Zeigerstellung).
-static void appendStrokes(String &o, const uint8_t *t, int size, uint8_t sep, int offset, bool onlyOne)
-{
-  int i = offset;
-  Stroke st;
-  bool first = true;
-  o += '[';
-  while (nextStroke(t, size, sep, i, st)) {
-    if (!first) o += ',';
-    first = false;
-    o += '[';
-    const int dir = (st.b >= st.a) ? 2 : -2;
-    for (int k = st.a; ; k += dir) {
-      o += t[k]; o += ','; o += t[k + 1];
-      if (k == st.b) break;
-      o += ',';
-    }
-    o += ']';
-    if (onlyOne) break;
-  }
-  o += ']';
-}
-
-// Hängt alle 60 Stellungen einer Zeigertabelle an: [[Stellung 0],[1],…,[59]]
-static void appendHand(String &o, const uint8_t *t, int size, int stride)
-{
-  o += '[';
-  for (int pos = 0; pos < 60; pos++) {
-    if (pos) o += ',';
-    String one;
-    appendStrokes(one, t, size, 0xFF, pos * stride, true);
-    o += one.substring(1, one.length() - 1);              // äußere Klammern weg
-  }
-  o += ']';
-}
-
 // GET /api/vectors – Vektordaten für die Oszilloskop-Vorschau der Webseite:
-// dieselben Tabellen, die auch der scopeTask zeichnet (Zifferblatt, alle drei
-// Ziffernsätze (Index = Stil 0–3), alle 60 Stellungen der drei Zeiger). Die Seite lädt sie
-// einmal und stellt die Zeiger dann selbst nach der Uhrzeit (wie scopeTask).
-// Koordinaten 0…255, y nach oben. Ca. 9 KB.
+// dieselben Tabellen, die auch der scopeTask zeichnet (Zifferblatt, Ziffern aller
+// Zifferblätter, alle 60 Stellungen der drei Zeiger). Fertig erzeugt mit
+// tools/gen_vectors.py --vectors (vectors.h, gzip ca. 2 KB) – die Firmware muss
+// nichts zusammensetzen. Die Seite lädt sie einmal und stellt die Zeiger selbst.
 static void handleVectors()
 {
-  String o;
-  o.reserve(9000);
-  o += "{\"dial\":";   appendStrokes(o, DialData, sizeof(DialData), 0x00, 0, false);
-  o += ",\"digits\":[";                                 // alle Zifferblätter (Index = Stil)
-  for (int st = 0; st < DIAL_STYLES; st++) {
-    int size;
-    const uint8_t *d = dialDigits(st, size);
-    if (st) o += ',';
-    appendStrokes(o, d, size, 0x00, 0, false);
-  }
-  o += ']';
-  o += ",\"hr\":";  appendHand(o, HrPtrData,  sizeof(HrPtrData),  9);
-  o += ",\"min\":"; appendHand(o, MinPtrData, sizeof(MinPtrData), 9);
-  o += ",\"sec\":"; appendHand(o, SecPtrData, sizeof(SecPtrData), 5);
-  o += '}';
+  web.sendHeader("Content-Encoding", "gzip");
   web.sendHeader("Cache-Control", "max-age=3600");
-  web.send(200, "application/json", o);
+  web.send_P(200, "application/json", (const char *)VECTORS_JSON_GZ, sizeof(VECTORS_JSON_GZ));
 }
 
 // GET /api/networks – gespeicherte Netze (nur Namen, nie Passwörter)
@@ -1236,6 +1227,10 @@ static void handleNetworks()
 // Gleiche Namen werden zusammengefasst (stärkstes Signal), sortiert nach Signal.
 static void handleScan()
 {
+  // wifiTask für die Dauer der Suche pausieren (er würde sonst selbst suchen und
+  // dabei die Ergebnisse löschen). Läuft sein Versuch gerade, wartet die Seite einfach.
+  s_webScanUntil = millis() + 15000;
+  if (s_multiBusy) { web.send(200, "application/json", "{\"running\":true}"); return; }
   const int n = WiFi.scanComplete();
   if (n == WIFI_SCAN_RUNNING) { web.send(200, "application/json", "{\"running\":true}"); return; }
   if (n < 0) { WiFi.scanNetworks(true); web.send(200, "application/json", "{\"running\":true}"); return; }
@@ -1262,6 +1257,7 @@ static void handleScan()
   }
   o += "]}";
   WiFi.scanDelete();
+  s_webScanUntil = 0;                                        // fertig: wifiTask darf wieder
   web.send(200, "application/json", o);
 }
 
@@ -1286,14 +1282,23 @@ static void handleWifiSave()
   const bool isNew = slot < 0;
   if (isNew) {
     if (s_webNetCount >= WEB_MAX_NETWORKS) { sendJsonResult(false, tr("Speicher voll – bitte zuerst ein Netz löschen", "Storage full – please delete a network first")); return; }
-    slot = s_webNetCount++;
+    slot = s_webNetCount;
+  } else if (pw == s_webNets[slot].pw) {
+    sendJsonResult(true, tr("Dieses Netz ist bereits mit diesem Passwort gespeichert.", "This network is already saved with this password.")); return;
   }
   strlcpy(s_webNets[slot].ssid, ssid.c_str(), sizeof(s_webNets[slot].ssid));
   strlcpy(s_webNets[slot].pw,   pw.c_str(),   sizeof(s_webNets[slot].pw));
+  if (isNew) s_webNetCount = slot + 1;          // erst jetzt sichtbar – der wifiTask trägt es bei WiFiMulti ein
   webNetsSave();
-  wifiMulti.addAP(s_webNets[slot].ssid, s_webNets[slot].pw);   // ab sofort bekannt
-  logMsg(tr("[Web] WLAN \"%s\" %s", "[Web] network \"%s\" %s"), s_webNets[slot].ssid, isNew ? tr("gespeichert", "saved") : tr("aktualisiert", "updated"));
+  logMsg(tr("[Web] WLAN \"%s\" %s", "[Web] network \"%s\" %s"), s_webNets[slot].ssid, isNew ? tr("gespeichert", "saved") : tr("aktualisiert – Neustart", "updated – restarting"));
 
+  // Neues Passwort für ein bekanntes Netz: WiFiMulti kann einen Eintrag nicht ändern
+  // (es würde weiter das alte Passwort nehmen) – daher wie beim Löschen neu starten.
+  if (!isNew) {
+    sendJsonResult(true, tr("Passwort geändert. Die Uhr startet neu – Seite in ca. 10 s neu laden.", "Password changed. The clock restarts – reload the page in about 10 s."));
+    s_restartAtMs = millis() + 1500;
+    return;
+  }
   if (WiFi.status() == WL_CONNECTED)
     sendJsonResult(true, tr("Gespeichert. Wird beim nächsten Verbindungsaufbau genutzt – oder „Neu verbinden“ antippen.", "Saved. Used on the next connection attempt – or tap “Reconnect”."));
   else
@@ -1309,7 +1314,7 @@ static void handleWifiDelete()
   for (int i = 0; i < s_webNetCount; i++) if (ssid == s_webNets[i].ssid) slot = i;
   if (slot < 0) { sendJsonResult(false, tr("Dieses Netz ist nicht im Webinterface gespeichert", "This network is not saved in the web interface")); return; }
   for (int i = slot; i < s_webNetCount - 1; i++) s_webNets[i] = s_webNets[i + 1];
-  s_webNetCount--;
+  s_webNetCount = s_webNetCount - 1;
   webNetsSave();
   logMsg(tr("[Web] WLAN \"%s\" geloescht – Neustart", "[Web] network \"%s\" deleted – restarting"), ssid.c_str());
   sendJsonResult(true, tr("Gelöscht. Die Uhr startet neu – Seite in ca. 10 s neu laden.", "Deleted. The clock restarts – reload the page in about 10 s."));
@@ -1455,17 +1460,25 @@ static void handleDial()
 // config.h liefert nur die Startwerte; "Auf Standard zurücksetzen" löscht die
 // gespeicherten Werte wieder. WLANs sind davon nicht betroffen.
 //
-//   Schlüssel  Wert                    Bereich
-//   profile    Oszilloskop-Profil      0 = ANALOG, 1 = DIGITAL
-//   dial       Zifferblatt             0…3
-//   beam       Strahlgeschwindigkeit   1000…10000 ns pro Schritt
-//   hand       Zeiger-Helligkeit       30…100 %
-//   jump       Rücklauf-Tempo          0 (hart) … 48 (nur Profil ANALOG)
-//   tz         Zeitzone                eine aus TIMEZONES[] bzw. TZ_INFO
-//   ntp        erster NTP-Server       Hostname, max. 63 Zeichen
-//   oled       OLED-Helligkeit         1…255
-//   shift      OLED-Pixel-Shift        0/1
-//   flip       OLED um 180° gedreht    0/1
+//   Schlüssel  Wert                          Bereich
+//   profile    Oszilloskop-Profil            0 = ANALOG, 1 = DIGITAL
+//   dial       Zifferblatt                   0…4 (siehe dialDigits)
+//   beam       Verweilzeit des Strahls       1000…10000 ns pro Schritt
+//   hand       Helligkeit Std.-/Min.-Zeiger  0…100 %
+//   tick       Helligkeit Minutenstriche     0…100 %
+//   digit      Helligkeit Ziffern            0…100 %
+//   jump       Rücklauf-Tempo                0 (hart) … 48 (nur Profil ANALOG)
+//   zbl, zhi   Dunkeltastung an / High = dunkel   0/1
+//   tz         Zeitzone                      eine aus TIMEZONES[] bzw. TZ_INFO
+//   ntp        erster NTP-Server             Hostname, max. 63 Zeichen
+//   h12        12-Stunden-Format             0/1
+//   oledp      OLED-Helligkeit               0…100 % (0 = aus; früher "oled" 1…255)
+//   osec       Sekunden auf dem OLED         0/1
+//   shift      OLED-Pixel-Shift              0/1
+//   flip       OLED um 180° gedreht          0/1
+//   lang       Sprache                       0 = Deutsch, 1 = English
+//   host       Gerätename                    a–z, 0–9, Bindestrich, max. 32
+//   netn, net_s0…, net_p0…  gespeicherte WLANs (siehe webNetsLoad)
 
 struct TzOption { const char *label; const char *labelEn; const char *tz; };
 static const TzOption TIMEZONES[] = {
@@ -1521,6 +1534,8 @@ static void loadSettings()
   g_digitPct  = digit <= 100 ? digit : 100;
   const uint8_t jump = p.getUChar("jump", JUMP_SPEED);
   g_jumpSpeed = jump <= 48 ? jump : JUMP_SPEED;
+  g_zblank     = p.getUChar("zbl", ZBLANK_ENABLE) != 0;
+  g_zblankHigh = p.getUChar("zhi", ZBLANK_ACTIVE_HIGH) != 0;
   char buf[64];
   if (p.getString("tz", buf, sizeof(buf)) && tzAllowed(buf)) strlcpy(s_tz, buf, sizeof(s_tz));
   if (p.getString("ntp", buf, sizeof(buf)) && hostnameValid(String(buf))) strlcpy(s_ntpServer, buf, sizeof(s_ntpServer));
@@ -1547,6 +1562,9 @@ static void settingsJson(String &o)
   o += ",\"tickPct\":";      o += (int)g_tickPct;
   o += ",\"digitPct\":";     o += (int)g_digitPct;
   o += ",\"jumpSpeed\":";    o += (int)g_jumpSpeed;
+  o += ",\"zblank\":";       o += g_zblank ? "true" : "false";
+  o += ",\"zblankHigh\":";   o += g_zblankHigh ? "true" : "false";
+  o += ",\"zblankPin\":";    o += ZBLANK_PIN;
   o += ",\"tz\":";           jsonStr(o, s_tz);
   o += ",\"ntp\":";          jsonStr(o, s_ntpServer);
   o += ",\"oledPct\":";      o += (int)s_oledPct;
@@ -1564,6 +1582,8 @@ static void settingsJson(String &o)
   o += ",\"tickPct\":";      o += TICK_BRIGHT_PCT;
   o += ",\"digitPct\":";     o += DIGIT_BRIGHT_PCT;
   o += ",\"jumpSpeed\":";    o += JUMP_SPEED;
+  o += ",\"zblank\":";       o += ZBLANK_ENABLE ? "true" : "false";
+  o += ",\"zblankHigh\":";   o += ZBLANK_ACTIVE_HIGH ? "true" : "false";
   o += ",\"tz\":";           jsonStr(o, TZ_INFO);
   o += ",\"ntp\":";          jsonStr(o, NTP_SERVER_1);
   o += ",\"oledPct\":";      o += OLED_BRIGHT_PCT;
@@ -1657,6 +1677,15 @@ static void handleSettingsPost()
       logMsg(tr("[Web] Ruecklauf-Tempo: %d%s", "[Web] retrace speed: %d%s"), v, v ? "x" : tr(" (sofortiger Sprung)", " (instant jump)")); }
     else bad(tr("Rücklauf-Tempo: 0 bis 48", "Retrace speed: 0 to 48"));
   }
+  // Dunkeltastung über den Z-Eingang: an/aus und Pegel (High oder Low = dunkel)
+  if (web.hasArg("zblank") || web.hasArg("zblankHigh")) {
+    const bool on = web.hasArg("zblank")     ? (web.arg("zblank") == "1" || web.arg("zblank") == "true") : g_zblank;
+    const bool hi = web.hasArg("zblankHigh") ? (web.arg("zblankHigh") == "1" || web.arg("zblankHigh") == "true") : g_zblankHigh;
+    zblankApply(on, hi);
+    p.putUChar("zbl", on); p.putUChar("zhi", hi); changed++;
+    logMsg(tr("[Web] Dunkeltastung (GPIO%d): %s", "[Web] Z blanking (GPIO%d): %s"), ZBLANK_PIN,
+           !on ? tr("aus", "off") : hi ? tr("an, High = dunkel", "on, high = dark") : tr("an, Low = dunkel", "on, low = dark"));
+  }
   bool timeChanged = false;
   if (web.hasArg("tz")) {
     const String v = web.arg("tz");
@@ -1741,7 +1770,7 @@ static void handleSettingsReset()
   if (!scope && !tim && !disp) { sendSettings(false, tr("Unbekannte Gruppe", "Unknown group")); return; }
   Preferences p;
   if (p.begin("scopeclock", false)) {
-    if (scope) for (const char *k : { "profile", "dial", "beam", "hand", "tick", "digit", "jump" }) p.remove(k);
+    if (scope) for (const char *k : { "profile", "dial", "beam", "hand", "tick", "digit", "jump", "zbl", "zhi" }) p.remove(k);
     if (tim)   for (const char *k : { "tz", "ntp", "h12" }) p.remove(k);
     if (disp)  for (const char *k : { "oled", "oledp", "osec", "night", "nfrom", "nto", "npct", "shift", "flip" }) p.remove(k);
     if (all)   { p.remove("lang"); p.remove("host"); }
@@ -1751,6 +1780,7 @@ static void handleSettingsReset()
     g_scopeProfile = SCOPE_PROFILE;  g_dialStyle = DIAL_STYLE;
     g_beamNs = BEAM_NS_PER_UNIT;     g_handPct = HAND_BRIGHT_PCT;   g_jumpSpeed = JUMP_SPEED;
     g_tickPct = TICK_BRIGHT_PCT;     g_digitPct = DIGIT_BRIGHT_PCT;
+    zblankApply(ZBLANK_ENABLE, ZBLANK_ACTIVE_HIGH);
   }
   if (tim) {
     strlcpy(s_tz, TZ_INFO, sizeof(s_tz));
@@ -1785,9 +1815,7 @@ static void handleReconnect()
   if (!wifiConfigured()) { sendJsonResult(false, tr("Noch kein WLAN eingetragen", "No network configured yet")); return; }
   logMsg(tr("[Web] Neu verbinden angefordert", "[Web] reconnect requested"));
   sendJsonResult(true, tr("Verbinde neu … die Seite ist kurz nicht erreichbar.", "Reconnecting … the page is briefly unavailable."));
-  web.client().flush();
-  delay(100);
-  WiFi.disconnect(false, false);
+  s_reconnectAtMs = millis() + 300;              // erst trennen, wenn die Antwort beim Browser ist
 }
 
 // Unbekannte Adressen: im Setup-WLAN auf die Einrichtungsseite umleiten
@@ -1893,6 +1921,7 @@ static void webLoop()
 {
   if (s_apActive) dns.processNextRequest();
   web.handleClient();
+  if (s_reconnectAtMs && (int32_t)(millis() - s_reconnectAtMs) >= 0) { s_reconnectAtMs = 0; WiFi.disconnect(false, false); }
   if (s_restartAtMs && (int32_t)(millis() - s_restartAtMs) >= 0) ESP.restart();
 }
 
@@ -2128,6 +2157,7 @@ static void fitText(char *buf, size_t maxChars)
 // gehalten, startet der ESP32 im Download-Modus statt der Uhr.
 static uint32_t s_btnDownSince = 0;      // millis() beim Drücken, 0 = losgelassen
 static bool     s_btnHandled   = false;  // Umschaltung für diesen Tastendruck erledigt
+static bool     s_factoryDone  = false;  // Werkseinstellungen ausgelöst, Neustart folgt
 
 static const char *profileName(uint8_t p)  { return p == 1 ? "DIGITAL" : "ANALOG"; }
 
@@ -2155,11 +2185,28 @@ static uint8_t loadSetting(const char *key, uint8_t def, uint8_t maxValid)
   return v > maxValid ? def : v;
 }
 
+// Werkseinstellungen: löscht ALLE gespeicherten Einstellungen und WLANs (NVS-Namensraum
+// "scopeclock") und startet neu. Danach gelten wieder die Werte aus config.h, und ohne
+// WLAN öffnet die Uhr das Setup-WLAN.
+static void factoryReset()
+{
+  Preferences p;
+  if (p.begin("scopeclock", false)) { p.clear(); p.end(); }
+  WiFi.disconnect(false, true);              // auch die vom WLAN-Treiber gemerkten Zugangsdaten löschen
+  logMsg("%s", tr("[Taster] Werkseinstellungen: alle Einstellungen und WLANs geloescht – Neustart",
+                  "[Button] factory reset: all settings and networks erased – restarting"));
+  s_factoryDone = true;
+  s_restartAtMs = millis() + 2000;           // Meldung auf dem OLED noch kurz zeigen
+}
+
 // Wird alle 10 ms aus dem uiTask aufgerufen.
+//   BUTTON_LONG_MS     halten → Oszilloskop-Profil umschalten (wie bisher)
+//   BUTTON_FACTORY_MS  weiter halten → Werkseinstellungen (die letzten 5 s zeigt das OLED einen Countdown)
 static void buttonPoll()
 {
   const bool down = digitalRead(BOOT_BUTTON_PIN) == LOW;
   const uint32_t now = millis();
+  if (s_factoryDone) return;
   if (!down) { s_btnDownSince = 0; s_btnHandled = false; return; }
   if (s_btnDownSince == 0) { s_btnDownSince = now ? now : 1; return; }
   if (!s_btnHandled && now - s_btnDownSince >= BUTTON_LONG_MS) {
@@ -2169,6 +2216,43 @@ static void buttonPoll()
     saveSetting("profile", p);
     logMsg(tr("[Scope] Profil umgeschaltet: %s, gespeichert", "[Scope] profile switched: %s, saved"), profileName(p));
   }
+  if (now - s_btnDownSince >= BUTTON_FACTORY_MS) factoryReset();
+}
+
+// true, solange der Taster lange genug gehalten wird, dass die Warnung zu den
+// Werkseinstellungen erscheint – oder sie bereits ausgelöst wurden.
+static bool factoryPhase()
+{
+  return s_factoryDone || (s_btnDownSince && millis() - s_btnDownSince >= BUTTON_FACTORY_MS - 5000UL);
+}
+
+// Warnung vor den Werkseinstellungen (BOOT-Taster weiter gehalten) bzw. Meldung danach:
+//
+//      Werkseinstellungen
+//    Loescht alles inkl. WLAN
+//              5              (Countdown 5 … 1 bis BUTTON_FACTORY_MS, 7-Segment 9x16 px)
+//     Loslassen = Abbruch
+static void oledFactoryOverlay()
+{
+  u8g2.clearBuffer();
+  u8g2.setFont(u8g2_font_6x10_tf);
+  drawCentered(tr("Werkseinstellungen", "Factory reset"), 10, 1);
+  u8g2.setFont(u8g2_font_5x8_tf);
+  if (s_factoryDone) {
+    drawCentered(tr("Alles geloescht", "Everything erased"), 30, 1);
+    u8g2.setFont(u8g2_font_7x14B_tf);
+    drawCentered(tr("Neustart ...", "Restarting ..."), 50, 1);
+  } else {
+    drawCentered(tr("Loescht alles inkl. WLAN", "Erases all incl. Wi-Fi"), 22, 1);
+    const uint32_t held = millis() - s_btnDownSince;
+    const uint32_t left = held >= BUTTON_FACTORY_MS ? 0 : (BUTTON_FACTORY_MS - held + 999) / 1000;   // aufgerundet
+    const int CW = 9, CH = 16, CT = 2;
+    int x0 = (128 - 3 - CW) / 2 + 1;
+    if (left == 1) x0 -= (CW - CT) / 2;                  // "1" besteht nur aus den rechten Segmenten
+    drawSegDigit(x0, 29, (int)left, CW, CH, CT);
+    drawCentered(tr("Loslassen = Abbruch", "Release = cancel"), 59, 1);
+  }
+  u8g2.sendBuffer();
 }
 
 // Umschaltbildschirm statt der normalen Anzeige, solange der BOOT-Taster
@@ -2182,6 +2266,7 @@ static void buttonPoll()
 static bool oledProfileOverlay()
 {
   const uint32_t now = millis();
+  if (factoryPhase()) { oledFactoryOverlay(); return true; }
   const bool holding = s_btnDownSince && !s_btnHandled && now - s_btnDownSince >= 300;
   if (!holding) return false;
 
@@ -2209,7 +2294,7 @@ static bool oledProfileOverlay()
 // OLED neu zeichnen: Uhrzeit, KW/Datum, WLAN-Name, Signalstärke (1× pro Sekunde)
 static void oledUpdate()
 {
-  const bool overlay = s_btnDownSince && !s_btnHandled && millis() - s_btnDownSince >= 300;
+  const bool overlay = (s_btnDownSince && !s_btnHandled && millis() - s_btnDownSince >= 300) || factoryPhase();
   oledApplyBrightness(overlay);
   if (oledProfileOverlay()) return;
   if (s_oledPct == 0) return;   // Display aus: nichts zeichnen
@@ -2282,11 +2367,12 @@ static void oledUpdate()
 //*****************************************************************************
 // Einfacher Zeitplan ohne weitere Tasks:
 //   alle  10 ms  publishTime()    → Sekundenzeiger springt max. 10 ms zu spät
-//                buttonPoll()     → BOOT-Taster (Oszilloskop-Profil)
+//                buttonPoll()     → BOOT-Taster (Profil, Werkseinstellungen)
 //                webLoop()        → Webinterface, DNS im Setup-WLAN
 //   alle 200 ms  oledUpdate()     → Sekundenanzeige auf dem OLED flüssig
-//   alle   1 s   wifiLogChanges() → Statusmeldungen ins Log
-//                webApManage()    → Setup-WLAN ein/aus, Bildrate
+//   alle   1 s   Bildrate, CPU-Last Core 0
+//                wifiLogChanges() → Statusmeldungen ins Log
+//                webApManage()    → Setup-WLAN ein/aus
 static void uiTask(void *)
 {
   // WICHTIG: OLED (SPI) und WLAN werden HIER initialisiert, nicht in setup():
@@ -2343,6 +2429,7 @@ void setup()
   // Gespeicherte Einstellungen laden (Profil, Zifferblatt, Strahl, Zeit, OLED, Sprache) –
   // vor der ersten Ausgabe (wegen der Sprache) und vor dem Start der Tasks
   loadSettings();
+  zblankApply(g_zblank, g_zblankHigh);      // Z-Ausgang wie gespeichert (aus = Pin hochohmig)
   if (BOOT_TEST_S > 0) logMsg(tr("[Scope] Testbild fuer %d s", "[Scope] test pattern for %d s"), (int)BOOT_TEST_S);
   logMsg(tr("ESP32 Oscilloscope Clock v" FW_VERSION " (Idee nach Mauro Pintus 2018)", "ESP32 Oscilloscope Clock v" FW_VERSION " (idea by Mauro Pintus 2018)"));
   logMsg("CPU: %lu MHz", (unsigned long)getCpuFrequencyMhz());

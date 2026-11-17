@@ -12,12 +12,14 @@ Diese Datei beschreibt, wie die Firmware aufgebaut ist. Für Verdrahtung und Geh
 | `ESP32_OscilloscopeClock_v2.0/ESP32_OscilloscopeClock_v2.0.ino` | Firmware (Tasks, DAC, Zeit, WLAN, OLED, Webserver) |
 | `ESP32_OscilloscopeClock_v2.0/config.h` | Alle Einstellungen: Zeitzone, NTP, Pins, OLED, Strahlgeschwindigkeit, Oszilloskop-Profil, Zifferblatt |
 | `ESP32_OscilloscopeClock_v2.0/DataTable.h` | Vektordaten für Zifferblatt, Ziffern und Zeiger – erzeugt mit `tools/gen_vectors.py` |
-| `tools/gen_vectors.py` | Erzeugt `DataTable.h` (Python 3, keine Zusatzpakete) |
+| `tools/gen_vectors.py` | Erzeugt `DataTable.h` und mit `--vectors` die Vorschau-Daten `vectors.h` (Python 3, keine Zusatzpakete) |
+| `ESP32_OscilloscopeClock_v2.0/vectors.h` | Vorschau-Daten für `/api/vectors`: dieselben Tabellen als gzip-komprimiertes JSON (ca. 2 KB), fertig erzeugt mit `python3 tools/gen_vectors.py --vectors` |
 | `ESP32_OscilloscopeClock_v2.0/webpage.h` | Webinterface: eine Seite (HTML, CSS, JavaScript) im Flash |
 | `web/index.html` | Quelle der Webseite – nach Änderungen `python3 tools/gen_webpage.py` (erzeugt `webpage.h`, gzip) |
 | `web/demo/scope-clock-demo.html` | Testseite: dieselbe Webseite mit simulierten Schnittstellen, läuft im Browser ohne ESP32 – erzeugt mit `python3 tools/gen_demo.py` aus `webpage.h`, `font.h` und `web/demo/mock-api.js`, `mock-settings.js`, `demo-ui.js` |
 | `ESP32_OscilloscopeClock_v2.0/font.h` | Schrift des Webinterfaces („ScopeClock Sans“ = verkleinertes Raleway, zwei feste Schnitte Light (300) für Text und SemiBold (600) für Überschriften/Knöpfe, WOFF2, zusammen ca. 30 KB), ausgeliefert unter `/font.woff2` und `/font-600.woff2` – erzeugt mit `tools/gen_font.py` |
-| `tools/gen_font.py` | Erzeugt `font.h` aus `Raleway[wght].ttf` (braucht `pip install fonttools brotli`) |
+| `tools/gen_font.py` | Erzeugt `font.h` aus `fonts/Raleway-VF.ttf` mit festem Zeichenvorrat – gleiche Eingabe ergibt immer dieselbe Datei (braucht `pip install fonttools brotli`) |
+| `fonts/Raleway-VF.ttf` | Quelle der Schrift (Raleway, variable Schrift), auch für die PDF-Dokumentation |
 | `fonts/OFL.txt` | Lizenz der Schrift (SIL Open Font License 1.1) |
 | `ESP32_OscilloscopeClock_v2.0/icon.h` | App-Symbol (`/icon.svg`, `/icon.png` 192 px) und `/manifest.json` für „Zum Startbildschirm hinzufügen“ – erzeugt mit `tools/gen_icon.py` (braucht Pillow) |
 | `platformio.ini` | Alternative zur Arduino IDE |
@@ -99,10 +101,18 @@ Diese Datei beschreibt, wie die Firmware aufgebaut ist. Für Verdrahtung und Geh
 ## WLAN
 
 - WLANs werden nur im Webinterface eingetragen (keine Zugangsdaten im Quelltext). Beim Start
-  meldet `webNetsLoad()` alle gespeicherten Netze bei `WiFiMulti` an.
+  lädt `webNetsLoad()` die gespeicherten Netze; bei `WiFiMulti` trägt sie **nur der `wifiTask`**
+  ein (`s_multiCount`), auch neu hinzugefügte. `WiFiMulti` ist nicht threadsicher – ein `addAP()`
+  aus dem Webserver während `run()` könnte abstürzen.
 - `wifiTask` prüft alle 2 s die Verbindung. Ist sie weg, scannt `WiFiMulti::run()` und verbindet
   sich mit dem **stärksten bekannten** Netz. Der Scan blockiert einige Sekunden, deshalb läuft er
   im eigenen Task und das OLED läuft weiter.
+- Sucht die Webseite gerade Netze („Netze in Reichweite suchen“), pausiert der `wifiTask` bis zu
+  15 s (`s_webScanUntil`), sonst würde seine eigene Suche die Ergebnisse löschen.
+- Ist jemand mit dem Setup-WLAN verbunden, versucht der `wifiTask` nur alle 60 s, ein bekanntes Netz
+  zu erreichen: Jeder Versuch wechselt kurz den Funkkanal und könnte das Handy aus dem Setup-WLAN werfen.
+- Neues Passwort für ein gespeichertes Netz: `WiFiMulti` kann Einträge nicht ändern, daher startet
+  die Uhr danach neu (wie beim Löschen).
 
 ## Webinterface
 
@@ -221,7 +231,7 @@ eingesetzt (`textContent`), nie als HTML.
 | `GET /font.woff2`, `GET /font-600.woff2` | Schrift der Seite, Light und SemiBold (aus `font.h`), wird ein Jahr im Browser zwischengespeichert. Zwei feste Schnitte statt einer variablen Schrift, weil manche Android-Browser fette Texte einer variablen Schrift sonst in der Systemschrift zeigen |
 | `GET /api/vectors` | Vektordaten für die Vorschau (das Testbild zeigt die Vorschau nicht, nur das Oszilloskop) (ca. 9 KB): `dial`, `digits` (alle Zifferblätter, Index = Stil), `hr`, `min`, `sec` (je 60 Stellungen). Linienzüge als `[x0,y0,x1,y1,…]`, 0–255, y nach oben |
 | `GET /api/scan` | Netzsuche im Hintergrund: erst `{"running":true}`, dann `{"networks":[{ssid,rssi,open}]}` |
-| `POST /api/wifi` | `ssid`, `pw` speichern bzw. Passwort ändern (SSID 1–32, Passwort leer oder 8–63 Zeichen) |
+| `POST /api/wifi` | `ssid`, `pw` speichern bzw. Passwort ändern (SSID 1–32, Passwort leer oder 8–63 Zeichen; Passwortänderung → Neustart) |
 | `POST /api/wifi/delete` | `ssid` löschen, danach Neustart (WiFiMulti kann Netze nicht vergessen) |
 | `POST /api/wifi/reset` | alle gespeicherten Netze löschen, danach Neustart (Setup-WLAN öffnet sich) |
 | `POST /api/reconnect` | Verbindung trennen, `wifiTask` verbindet mit dem stärksten Netz |
@@ -274,6 +284,7 @@ Knopf „Auf Standardwerte zurücksetzen“: Er löscht nur die gespeicherten We
 | Helligkeit Stunden-/Minutenzeiger | `hand` | 0–100 % (0 = aus) | `g_handPct` |
 | Helligkeit Minutenstriche | `tick` | 0–100 % (0 = aus) | `g_tickPct`: Verweilzeit der Striche (Tabelle `DialData`) in der Rundtour, in Prozent der normalen Verweilzeit |
 | Helligkeit Ziffern | `digit` | 0–100 % (0 = aus) | `g_digitPct`: Verweilzeit der Ziffern in der Rundtour |
+| Dunkeltastung (Z-Eingang) | `zbl`, `zhi` | an/aus; High oder Low = dunkel | `g_zblank`, `g_zblankHigh`: `zblankApply()` schaltet GPIO `ZBLANK_PIN` (27) als Ausgang bzw. hochohmig; `beamJump()` springt dann im Dunkeln. Nur mit drittem Kabel zum Z-Eingang |
 | Rücklauf-Tempo | `jump` | 0 (sofortiger Sprung) – 48 (× Zeichentempo) | `g_jumpSpeed`, nur im Profil ANALOG wirksam. Bei DIGITAL zeigt der Regler ausgegraut 0 (sofortiger Sprung); der ANALOG-Wert bleibt gespeichert und erscheint beim Zurückschalten wieder |
 | Zeitzone | `tz` | Liste `TIMEZONES[]` (bzw. `TZ_INFO`) | `configTzTime()` neu |
 | Zeitserver (NTP) | `ntp` | Hostname, max. 63 Zeichen | erster Server, `configTzTime()` neu |
@@ -290,7 +301,7 @@ Die Firmware prüft jeden Wert (`handleSettingsPost()`) und meldet ungültige Ei
 zurück. `loadSettings()` liest alle Werte in `setup()`, bevor die Tasks starten.
 
 
-## BOOT-Taster: Oszilloskop-Profil
+## BOOT-Taster: Oszilloskop-Profil und Werkseinstellungen
 
 **Testbild beim Start:** `g_testPattern` startet mit `BOOT_TEST_S > 0`; der `uiTask` schaltet es nach
 `BOOT_TEST_S` Sekunden aus (Log „Start-Testbild beendet“), außer es wurde vorher im Webinterface von
@@ -314,6 +325,19 @@ Während des Haltens (ab 0,3 s) ersetzt `oledProfileOverlay()` die normale Anzei
 
 Eine „1“ besteht nur aus den rechten Segmenten und wird im Countdown deshalb optisch zur Mitte
 gerückt. Nach der Umschaltung erscheint sofort wieder die normale Anzeige.
+
+**Werkseinstellungen:** Wird der Taster weiter gehalten, zählt `oledFactoryOverlay()` ab 5 s
+5 … 1 herunter. Bei `BUTTON_FACTORY_MS` (10 s) löscht `factoryReset()` den ganzen NVS-Namensraum
+`scopeclock` (alle Einstellungen und WLANs) sowie die vom WLAN-Treiber gemerkten Zugangsdaten und
+startet nach 2 s neu. Danach gelten die Werte aus `config.h`, ohne WLAN öffnet die Uhr das Setup-WLAN.
+Vorher loslassen bricht ab (das Profil ist dann schon umgeschaltet).
+
+```
+ Werkseinstellungen       Font 6x10
+Loescht alles inkl. WLAN  Font 5x8
+         5                Countdown 5 … 1 (7-Segment 9×16 px)
+ Loslassen = Abbruch      Font 5x8
+```
 
 ## Konsolenausgaben (115200 Baud) und Log im Webinterface
 
@@ -384,7 +408,7 @@ Strahlgeschwindigkeit:
 | Reihenfolge | Zifferblatt und Ziffern werden beim Start einmal zu einer Rundtour mit minimalen Sprüngen sortiert (Nächster-Nachbar + 2-opt), Einstieg dort, wo der Sekundenzeiger endet | Tabellenreihenfolge |
 | Sekundenzeiger | hin und zurück (Mitte ↔ Spitze) mit je halber Helligkeit gezeichnet, dadurch entfällt der lange Sprung vom Rand zur Mitte | – |
 | Richtung | jeder Linienzug wird vom näheren Ende aus gezeichnet | immer vom Tabellenanfang |
-| Dunkeltastung | optional über den Z-Eingang des Oszilloskops (`ZBLANK_PIN`), dann gibt es gar keine Rücklaufspur mehr | – |
+| Dunkeltastung | optional über den Z-Eingang des Oszilloskops (drittes Kabel an `ZBLANK_PIN` = GPIO27, im Webinterface einschalten), dann gibt es gar keine Rücklaufspur mehr | – |
 | Zeiger-Nadeln | Stunden- und Minutenzeiger mit `HAND_BRIGHT_PCT` (67 %), weil ihre zwei dicht liegenden Kanten verschmelzen | doppelt so hell |
 | Tabellengrenzen | immer geprüft | Lesezugriff hinter das Tabellenende, wenn ein Endzeichen fehlt |
 
@@ -437,7 +461,7 @@ bei Bedarf `BEAM_NS_PER_UNIT` erhöhen (hellere Spur, weniger Bilder/s).
 | Linien zu dunkel | `BEAM_NS_PER_UNIT` erhöhen (z. B. 5000) oder Intensität am Oszilloskop erhöhen |
 | Ecken verrundet, Ziffern verwaschen (Oszilloskop zu langsam) | `BEAM_NS_PER_UNIT` erhöhen |
 | Linienanfänge mit kleinen „Haken“ | `JUMP_SPEED` (z. B. 12) oder `JUMP_LANDING` (z. B. 4) verringern |
-| Rücklaufspuren zwischen den Linien sichtbar | `JUMP_SPEED` erhöhen (32), `0` (harter Sprung, für schnelle Oszilloskope) oder Z-Dunkeltastung nutzen (`ZBLANK_PIN`) |
+| Rücklaufspuren zwischen den Linien sichtbar | `JUMP_SPEED` erhöhen (32), `0` (harter Sprung, für schnelle Oszilloskope) oder Dunkeltastung über den Z-Eingang nutzen (drittes Kabel an GPIO27, Einstellungen → Oszilloskop) |
 | Zeiger heller/dunkler als das Zifferblatt | `HAND_BRIGHT_PCT` anpassen |
 | Zeit falsch um ganze Stunden | Zeitzone im Webinterface bzw. `TZ_INFO` prüfen |
 | Kein Internet, Uhrzeit läuft ab 10:08:37 (Startzeit `FALLBACK_H:M:S`) | Webinterface → Einstellungen → „Uhrzeit stellen“ |

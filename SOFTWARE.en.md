@@ -14,12 +14,14 @@ German with the English label in parentheses. Code comments are in German.
 | `ESP32_OscilloscopeClock_v2.0/ESP32_OscilloscopeClock_v2.0.ino` | Firmware (tasks, DAC, time, Wi-Fi, OLED, web server) |
 | `ESP32_OscilloscopeClock_v2.0/config.h` | All settings: time zone, NTP, pins, OLED, beam dwell time, oscilloscope profile, dial |
 | `ESP32_OscilloscopeClock_v2.0/DataTable.h` | Vector data for dial, digits and hands – generated with `tools/gen_vectors.py` |
-| `tools/gen_vectors.py` | Generates `DataTable.h` (Python 3, no extra packages) |
+| `tools/gen_vectors.py` | Generates `DataTable.h` and, with `--vectors`, the preview data `vectors.h` (Python 3, no extra packages) |
+| `ESP32_OscilloscopeClock_v2.0/vectors.h` | Preview data for `/api/vectors`: the same tables as gzip-compressed JSON (approx. 2 KB), generated with `python3 tools/gen_vectors.py --vectors` |
 | `ESP32_OscilloscopeClock_v2.0/webpage.h` | Web interface: one page (HTML, CSS, JavaScript) in flash |
 | `web/index.html` | Source of the web page – after changes run `python3 tools/gen_webpage.py` (generates `webpage.h`, gzip) |
 | `web/demo/scope-clock-demo.html` | Test page: the same web page with simulated interfaces, runs in a browser without an ESP32 – generated with `python3 tools/gen_demo.py` from `webpage.h`, `font.h` and `web/demo/mock-api.js`, `mock-settings.js`, `demo-ui.js` |
 | `ESP32_OscilloscopeClock_v2.0/font.h` | Web interface font (“ScopeClock Sans” = reduced Raleway, two static styles Light (300) for text and SemiBold (600) for headings/buttons, WOFF2, approx. 30 KB in total), served at `/font.woff2` and `/font-600.woff2` – generated with `tools/gen_font.py` |
-| `tools/gen_font.py` | Generates `font.h` from `Raleway[wght].ttf` (needs `pip install fonttools brotli`) |
+| `tools/gen_font.py` | Generates `font.h` from `fonts/Raleway-VF.ttf` with a fixed character set – the same input always gives the same file (needs `pip install fonttools brotli`) |
+| `fonts/Raleway-VF.ttf` | Font source (Raleway, variable font), also used by the PDF documentation |
 | `fonts/OFL.txt` | Font licence (SIL Open Font License 1.1) |
 | `ESP32_OscilloscopeClock_v2.0/icon.h` | App icon (`/icon.svg`, `/icon.png` 192 px) and `/manifest.json` for “Add to home screen” – generated with `tools/gen_icon.py` (needs Pillow) |
 | `platformio.ini` | Alternative to the Arduino IDE |
@@ -103,10 +105,18 @@ German with the English label in parentheses. Code comments are in German.
 ## Wi-Fi
 
 - Wi-Fi networks are only entered in the web interface (no credentials in the source code). At
-  start-up `webNetsLoad()` registers all saved networks with `WiFiMulti`.
+  start-up `webNetsLoad()` loads the saved networks; **only the `wifiTask`** registers them with
+  `WiFiMulti` (`s_multiCount`), newly added ones too. `WiFiMulti` is not thread-safe – an `addAP()`
+  from the web server during `run()` could crash.
 - `wifiTask` checks the connection every 2 s. If it is lost, `WiFiMulti::run()` scans and connects
   to the **strongest known** network. The scan blocks for a few seconds, which is why it runs in its
   own task and the OLED keeps running.
+- While the web page searches for networks (“Search for networks in range”), the `wifiTask` pauses for
+  up to 15 s (`s_webScanUntil`); otherwise its own scan would delete the results.
+- While someone is connected to the setup network, the `wifiTask` only tries to reach a known network
+  every 60 s: every attempt briefly changes the radio channel and could drop the phone from the setup network.
+- New password for a saved network: `WiFiMulti` cannot change entries, so the clock restarts afterwards
+  (as when deleting).
 
 ## Web interface
 
@@ -226,7 +236,7 @@ inserted as text (`textContent`), never as HTML.
 | `GET /api/networks` | saved networks `[{ssid, source:"web"}]`, never passwords |
 | `GET /api/vectors` | vector data for the preview (the preview does not show the test pattern, only the oscilloscope does) (approx. 9 KB): `dial`, `digits` (all dials, index = style), `hr`, `min`, `sec` (60 positions each). Polylines as `[x0,y0,x1,y1,…]`, 0–255, y upwards |
 | `GET /api/scan` | network scan in the background: first `{"running":true}`, then `{"networks":[{ssid,rssi,open}]}` |
-| `POST /api/wifi` | save `ssid`, `pw` or change the password (SSID 1–32, password empty or 8–63 characters) |
+| `POST /api/wifi` | save `ssid`, `pw` or change the password (SSID 1–32, password empty or 8–63 characters; password change → restart) |
 | `POST /api/wifi/delete` | delete `ssid`, then restart (WiFiMulti cannot forget networks) |
 | `POST /api/wifi/reset` | delete all saved networks, then restart (the setup network opens) |
 | `POST /api/reconnect` | disconnect, `wifiTask` connects to the strongest network |
@@ -281,6 +291,7 @@ that group; Wi-Fi networks are kept.
 | Hour/minute hand brightness („Helligkeit Stunden-/Minutenzeiger“) | `hand` | 0–100 % (0 = off) | `g_handPct` |
 | Tick mark brightness („Helligkeit Minutenstriche“) | `tick` | 0–100 % (0 = off) | `g_tickPct`: dwell time of the marks (table `DialData`) in the round trip, in percent of the normal dwell time |
 | Numeral brightness („Helligkeit Ziffern“) | `digit` | 0–100 % (0 = off) | `g_digitPct`: dwell time of the numerals in the round trip |
+| Z blanking („Dunkeltastung (Z-Eingang)“) | `zbl`, `zhi` | on/off; high or low = dark | `g_zblank`, `g_zblankHigh`: `zblankApply()` switches GPIO `ZBLANK_PIN` (27) to output or high impedance; `beamJump()` then jumps in the dark. Only with a third wire to the Z input |
 | Retrace speed („Rücklauf-Tempo“) | `jump` | 0 (instant jump) – 48 (× drawing speed) | `g_jumpSpeed`, only effective in profile ANALOG. With DIGITAL the slider shows a greyed-out 0 (instant jump); the ANALOG value stays saved and reappears when switching back |
 | Time zone („Zeitzone“) | `tz` | list `TIMEZONES[]` (or `TZ_INFO`) | `configTzTime()` again |
 | Time server („Zeitserver (NTP)“) | `ntp` | host name, max. 63 characters | first server, `configTzTime()` again |
@@ -297,7 +308,7 @@ The firmware validates every value (`handleSettingsPost()`) and reports invalid 
 reason. `loadSettings()` reads all values in `setup()` before the tasks start.
 
 
-## BOOT button: oscilloscope profile
+## BOOT button: oscilloscope profile and factory reset
 
 **Test pattern at start-up:** `g_testPattern` starts as `BOOT_TEST_S > 0`; the `uiTask` switches it off
 after `BOOT_TEST_S` seconds (log “start-up test pattern finished”) unless it was switched by hand in the
@@ -320,6 +331,19 @@ While the button is held (from 0.3 s), `oledProfileOverlay()` replaces the norma
 
 A “1” consists only of the right-hand segments and is therefore moved towards the centre in the
 countdown. After switching, the normal display returns immediately.
+
+**Factory reset:** if the button is held longer, `oledFactoryOverlay()` counts down 5 … 1 from 5 s.
+At `BUTTON_FACTORY_MS` (10 s) `factoryReset()` erases the whole NVS namespace `scopeclock` (all
+settings and networks) as well as the credentials remembered by the Wi-Fi driver and restarts after 2 s.
+Afterwards the values from `config.h` apply; without a network the clock opens the setup network.
+Releasing earlier cancels (the profile has already been switched by then).
+
+```
+ Factory reset            font 6x10
+Erases all incl. Wi-Fi    font 5x8
+         5                countdown 5 … 1 (7-segment 9×16 px)
+ Release = cancel         font 5x8
+```
 
 ## Console output (115200 baud) and log in the web interface
 
@@ -391,7 +415,7 @@ brightness differences. v2.0 replaces it with a vector engine with constant beam
 | Order | Dial and digits are sorted once at start-up into a round trip with minimal jumps (nearest neighbour + 2-opt), entered where the second hand ends | table order |
 | Second hand | drawn out and back (centre ↔ tip) at half brightness each, which removes the long jump from the edge to the centre | – |
 | Direction | every polyline is drawn from the nearer end | always from the start of the table |
-| Blanking | optional via the oscilloscope's Z input (`ZBLANK_PIN`), then there is no retrace line at all | – |
+| Blanking | optional via the oscilloscope's Z input (third wire to `ZBLANK_PIN` = GPIO27, switch on in the web interface), then there is no retrace line at all | – |
 | Needle hands | hour and minute hands at `HAND_BRIGHT_PCT` (67 %), because their two closely spaced edges merge | twice as bright |
 | Table bounds | always checked | reads past the end of the table if an end marker is missing |
 
@@ -443,7 +467,7 @@ and if needed increase `BEAM_NS_PER_UNIT` (brighter trace, fewer frames/s).
 | Lines too dark | increase `BEAM_NS_PER_UNIT` (e.g. 5000) or increase intensity on the oscilloscope |
 | Rounded corners, blurred digits (oscilloscope too slow) | increase `BEAM_NS_PER_UNIT` |
 | Small “hooks” at the start of lines | decrease `JUMP_SPEED` (e.g. 12) or `JUMP_LANDING` (e.g. 4) |
-| Retrace lines visible between lines | increase `JUMP_SPEED` (32), `0` (instant jump, for fast oscilloscopes) or use Z blanking (`ZBLANK_PIN`) |
+| Retrace lines visible between lines | increase `JUMP_SPEED` (32), `0` (instant jump, for fast oscilloscopes) or use Z blanking (third wire to GPIO27, Settings → Oscilloscope) |
 | Hands brighter/darker than the dial | adjust `HAND_BRIGHT_PCT` |
 | Time wrong by whole hours | check the time zone in the web interface or `TZ_INFO` |
 | No internet, time runs from 10:08:37 (start time `FALLBACK_H:M:S`) | web interface → „Einstellungen“ → „Uhrzeit stellen“ (set time) |

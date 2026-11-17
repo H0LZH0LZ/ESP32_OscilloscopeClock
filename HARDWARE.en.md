@@ -100,6 +100,16 @@ upload is needed. Do **not** press the button **while powering up**, otherwise t
 download mode. When switching, a bright dot may flash briefly on the oscilloscope (flash write).
 The profile can also be changed in the web interface („Einstellungen“ → „Oszilloskop-Profil“).
 
+**Factory reset:** hold the BOOT button **for 10 s**. After 3 s the profile switches first, from 5 s the
+OLED counts down 5 … 1. Then all settings and saved networks are erased and the clock restarts (afterwards
+setup network “ScopeClock-Setup”). Releasing earlier cancels.
+
+**Optional – blanking via the Z input:** if the oscilloscope has a Z input (“Z”, “Z-Mod”, “Intensity”), a
+third wire from **GPIO27** (terminal P27) to it can hide the retrace lines completely. It is not part of the
+described build. Switch it on in the web interface („Einstellungen“ → „Oszilloskop“ → „Dunkeltastung
+(Z-Eingang)“, Z blanking), together with the level (high or low = dark, see the oscilloscope manual).
+When switched off, GPIO27 is high impedance.
+
 **Test pattern:** „Einstellungen“ → „Oszilloskop“ → „Testbild“ shows a frame with marks, a circle
 and a centre cross instead of the clock. Use it to adjust position (cross in the centre of the screen),
 size (the frame almost fills 8 × 8 divisions), equal X and Y gain (the circle is round, not oval) and
@@ -169,9 +179,10 @@ the oscilloscope. The values in `config.h` are then only the start values.
 | `BEAM_NS_PER_UNIT` | Beam dwell time per step in ns. Larger = brighter lines, fewer frames/s (default 3000 ≈ 230 frames/s) |
 | `SCOPE_PROFILE` | Start profile as long as none is saved: 0 = ANALOG, 1 = DIGITAL (default). Switchable at run time with the BOOT button |
 | `BUTTON_LONG_MS` | Hold time of the BOOT button for switching (default 3000 ms) |
+| `BUTTON_FACTORY_MS` | Hold time for the factory reset (default 10000 ms; countdown on the OLED during the last 5 s) |
 | `JUMP_SPEED` | Speed of the jumps between lines in profile ANALOG (default 24; DIGITAL always jumps instantly). Larger = fainter retrace line, smaller (12) for very old oscilloscopes, 0 = instant jump |
 | `JUMP_LANDING`, `JUMP_RAMP` | Braking before the start of a line (default 8 and 4). Smaller `JUMP_LANDING` if lines start with small “hooks” |
-| `ZBLANK_PIN` | blanking via the Z input – not used in the described build, leave at -1 |
+| `ZBLANK_PIN`, `ZBLANK_ENABLE`, `ZBLANK_ACTIVE_HIGH` | Optional blanking via the Z input: GPIO (default 27), start value off/on and level. Not wired in the described build; switch on and off in the web interface (Settings → Oscilloscope) |
 | `HAND_BRIGHT_PCT` | Brightness of hour and minute hand relative to the rest (default 67 %, then they look equally bright) |
 | `TICK_BRIGHT_PCT`, `DIGIT_BRIGHT_PCT` | Brightness of tick marks and numerals, 0–100 % (default 100 %, 0 = hidden). Adjustable in the web interface |
 | `OLED_BRIGHT_PCT` | OLED brightness 0–100 % (default 50 %, 0 = off) |

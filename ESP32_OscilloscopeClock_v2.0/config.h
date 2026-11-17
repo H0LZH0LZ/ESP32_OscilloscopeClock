@@ -65,6 +65,11 @@
 #define SCOPE_PROFILE 1
 #define BOOT_BUTTON_PIN 0        // BOOT-Taster des DevKitC (gedrückt = LOW)
 #define BUTTON_LONG_MS  3000     // so lange halten zum Umschalten (Countdown 3 s)
+// Weiter halten bis BUTTON_FACTORY_MS → Werkseinstellungen: ALLE Einstellungen und
+// gespeicherten WLANs werden gelöscht, die Uhr startet neu (danach Setup-WLAN).
+// Die letzten 5 s (also ab 5 s Halten) zählt das OLED 5 … 1 herunter; Loslassen bricht ab.
+#define BUTTON_FACTORY_MS 10000
+static_assert(BUTTON_FACTORY_MS >= BUTTON_LONG_MS + 5000, "config.h: BUTTON_FACTORY_MS mind. 5 s länger als BUTTON_LONG_MS");
 
 // ---- Strahlgeschwindigkeit (gleichmäßige Helligkeit) -----------------------
 // Der Strahl bewegt sich auf ALLEN Linien gleich schnell: 1 DAC-Einheit
@@ -103,13 +108,16 @@
 // ---- Optional: Dunkeltastung über den Z-Eingang -----------------------------
 // Viele Röhren-Oszilloskope haben hinten eine BNC-Buchse "Z" / "Z-Mod" / "Intensity".
 // Ein Logikpegel dort schaltet den Strahl aus. Mit einem dritten Kabel
-// (GPIO → Z-Eingang) verschwinden die Rücklaufspuren dann vollständig.
-//   ZBLANK_PIN         GPIO für den Z-Ausgang, -1 = nicht verwendet (Standard)
-//                      Empfehlung: 27 (frei, kein Boot-Pin)
-//   ZBLANK_ACTIVE_HIGH 1 = High-Pegel (3,3 V) macht dunkel (z.B. viele Hameg)
-//                      0 = Low-Pegel macht dunkel – im Handbuch des Oszilloskops prüfen
+// (GPIO ZBLANK_PIN → Z-Eingang) verschwinden die Rücklaufspuren dann vollständig.
+// Ein- und ausschalten sowie den Pegel wählen: Webinterface → Einstellungen →
+// Oszilloskop → "Dunkeltastung (Z-Eingang)". Ausgeschaltet ist der Pin hochohmig.
+//   ZBLANK_PIN         GPIO für den Z-Ausgang (frei, kein Boot-Pin; Standard 27)
+//   ZBLANK_ENABLE      Startwert: 0 = aus (Standard, ohne drittes Kabel), 1 = an
+//   ZBLANK_ACTIVE_HIGH Startwert: 1 = High-Pegel (3,3 V) macht dunkel (z.B. viele Hameg)
+//                                 0 = Low-Pegel macht dunkel – im Handbuch des Oszilloskops prüfen
 //   ZBLANK_SETTLE_NS   Wartezeit im Dunkeln nach dem Sprung, bis X/Y stehen
-#define ZBLANK_PIN         -1
+#define ZBLANK_PIN         27
+#define ZBLANK_ENABLE       0
 #define ZBLANK_ACTIVE_HIGH  1
 #define ZBLANK_SETTLE_NS 5000
 
@@ -185,7 +193,7 @@
 #define SERIAL_BAUD   115200          // serielle Konsole (Arduino: Serieller Monitor)
 
 // Zifferblatt-Variante auf dem Oszilloskop (Startwert – im Betrieb im
-// Webinterface umschaltbar: auf die Vorschau oben tippen; wird gespeichert):
+// Webinterface umschaltbar: über die Vorschau wischen; wird gespeichert):
 //   0 = Ziffern 1–12
 //   1 = nur die vier Hauptziffern 12, 3, 6, 9
 //   2 = römische Ziffern I–XII

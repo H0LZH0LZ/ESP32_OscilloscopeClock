@@ -83,6 +83,8 @@ stehen in `ESP32_OscilloscopeClock_v2.0/config.h`. Im Betrieb ändert man sie be
 | Webinterface öffnen | `http://scope-clock.local` oder die IP-Adresse vom OLED/Log; ohne bekanntes WLAN über das Setup-WLAN „ScopeClock-Setup“ (`http://192.168.4.1`) |
 | Zifferblatt wechseln | im Webinterface über die Vorschau nach links/rechts wischen (am PC: Pfeiltasten), oder Einstellungen → Zifferblatt |
 | Oszilloskop-Profil DIGITAL/ANALOG | BOOT-Taster 3 s halten, oder Einstellungen → Oszilloskop-Profil |
+| Werkseinstellungen (alle Einstellungen und WLANs löschen) | BOOT-Taster 10 s halten – ab 5 s zählt das OLED 5 … 1 herunter, Loslassen bricht ab |
+| Dunkeltastung über den Z-Eingang (optional, drittes Kabel an GPIO27) | Einstellungen → Oszilloskop → „Dunkeltastung (Z-Eingang)“ |
 | Uhrzeit ohne Internet stellen | Einstellungen → „Uhrzeit stellen“ (erscheint nur, solange kein Zeitserver erreichbar ist); Sommer-/Winterzeit automatisch oder fest |
 | 12/24-Stunden-Format | Einstellungen → „Zeitformat“ |
 | Sprache Deutsch/English | Seitenmenü (☰) → „Sprache“ (Auswahlliste) |
@@ -98,12 +100,12 @@ stehen in `ESP32_OscilloscopeClock_v2.0/config.h`. Im Betrieb ändert man sie be
 
 | Board-Paket | Programmspeicher | Globale Variablen (RAM) |
 |---|---|---|
-| esp32 3.3.12 | 1.228.646 Byte (93 %) | 74.892 Byte (22 %) |
+| esp32 3.3.12 | 1.234.578 Byte (94 %) | 74.916 Byte (22 %) |
 | esp32 2.0.17 | 866.053 Byte (66 %) | 61.048 Byte (18 %) – Stand vor Menü und Zifferblatt-Umschaltung |
 
 Die Konfigurationsvarianten (Profil ANALOG/DIGITAL, Z-Dunkeltastung, Zifferblatt 0/1/2,
 `USE_FAST_DAC 0`, EXCEL-Modus) wurden vor dem Webinterface ebenfalls ohne Warnungen gebaut.
-Mit dem empfohlenen Partitionsschema **Huge APP** belegt dieselbe Firmware ca. 1.227.000 von 3.145.728 Byte
+Mit dem empfohlenen Partitionsschema **Huge APP** belegt dieselbe Firmware ca. 1.235.000 von 3.145.728 Byte
 (**39 %**), mit „Minimal SPIFFS“ 62 %.
 
 Zusätzlich auf dem PC simuliert: Strahlverlauf (Helligkeit, Rücklaufspuren, Bildrate),

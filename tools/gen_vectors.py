@@ -16,7 +16,9 @@ oben; 0x00 trennt Linienzüge, 0xFF beendet Tabelle bzw. Zeigerstellung.
 Koordinaten liegen immer in 2…253, damit 0x00/0xFF nie als Wert vorkommen.
 
 Aufruf:  python3 tools/gen_vectors.py > ESP32_OscilloscopeClock_v2.0/DataTable.h
-         python3 tools/gen_vectors.py --json     → dieselben Daten als JSON (Vorschau)
+         python3 tools/gen_vectors.py --vectors > ESP32_OscilloscopeClock_v2.0/vectors.h
+                                                 → Vorschau-Daten für das Webinterface (gzip)
+         python3 tools/gen_vectors.py --json     → die Tabellen als JSON
          --font kante|raleway|segment            → Schrift der Ziffern 1–12 wählen
 """
 import json
@@ -270,9 +272,60 @@ HEADER = """/*******************************************************************
 *********************************************************************************/
 """
 
+# ---------------------------------------------------------------- Vorschau (/api/vectors)
+def strokes(data, sep, offset=0, only_one=False):
+    """Linienzüge einer Tabelle genau wie nextStroke() in der Firmware: Punkte bis
+    zum Trenner, Linienzüge aus nur einem Punkt werden ignoriert, 0xFF beendet."""
+    out, i, n = [], offset, len(data)
+    while i + 1 < n and data[i] != 0xFF:
+        if data[i] == sep:
+            i += 1
+            continue
+        end = i
+        while end + 1 < n and data[end] != sep and data[end] != 0xFF:
+            end += 2
+        if (end - i) // 2 >= 2:
+            out.append(list(data[i:end]))
+            if only_one:
+                break
+        i = end
+    return out
+
+
+def preview():
+    """Daten für die Oszilloskop-Vorschau der Webseite (GET /api/vectors):
+    Zifferblatt, Ziffern aller Zifferblätter (Index = DIAL_STYLE) und alle
+    60 Stellungen der drei Zeiger. Koordinaten 0…255, y nach oben."""
+    hand = lambda name, stride: [strokes(TABLES[name], 0xFF, p * stride, True)[0] for p in range(60)]
+    return {'dial': strokes(TABLES['DialData'], 0x00),
+            'digits': [strokes(TABLES[k], 0x00) for k in
+                       ('DialDigits12', 'DialDigitsMin', 'DialDigitsRoman', 'DialDigitsRoman4', 'DialDigitsNone')],
+            'hr': hand('HrPtrData', 9), 'min': hand('MinPtrData', 9), 'sec': hand('SecPtrData', 5)}
+
+
+def vectors_header():
+    """vectors.h: die Vorschau-Daten als gzip-komprimiertes JSON im Flash – die
+    Firmware schickt sie unverändert (Content-Encoding: gzip), statt sie bei jedem
+    Aufruf aus den Tabellen zusammenzusetzen."""
+    import gzip
+    js = json.dumps(preview(), separators=(',', ':')).encode()
+    gz = gzip.compress(js, 9, mtime=0)            # mtime=0: gleiche Eingabe → gleiche Datei
+    lines = ['// ---- Erzeugt mit tools/gen_vectors.py --vectors – nicht von Hand ändern ----',
+             f'// Vorschau-Daten für GET /api/vectors: {len(js)} Byte JSON, gzip {len(gz)} Byte',
+             '#pragma once',
+             f'static const uint8_t VECTORS_JSON_GZ[{len(gz)}] PROGMEM = {{']
+    for i in range(0, len(gz), 24):
+        lines.append('  ' + ','.join(f'0x{b:02x}' for b in gz[i:i + 24]) + ',')
+    lines.append('};')
+    return '\n'.join(lines)
+
+
 if __name__ == '__main__':
     if '--json' in sys.argv:
         print(json.dumps(TABLES))
+        sys.exit()
+    if '--vectors' in sys.argv:
+        print(vectors_header())
         sys.exit()
     print(HEADER)
     for name, data in TABLES.items():

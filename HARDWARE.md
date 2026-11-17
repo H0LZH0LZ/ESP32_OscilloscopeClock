@@ -101,6 +101,16 @@ startet der ESP32 im Download-Modus. Beim Umschalten kann einmal kurz ein Lichtp
 aufblitzen (Schreibzugriff auf den Flash).
 Das Profil lässt sich auch im Webinterface umschalten („Einstellungen“ → „Oszilloskop-Profil“).
 
+**Werkseinstellungen:** Den BOOT-Taster **10 s halten**. Nach 3 s wechselt zunächst das Profil, ab 5 s zählt
+das OLED 5 … 1 herunter. Dann werden alle Einstellungen und gespeicherten WLANs gelöscht und die Uhr startet
+neu (danach Setup-WLAN „ScopeClock-Setup“). Vorher loslassen bricht ab.
+
+**Optional – Dunkeltastung über den Z-Eingang:** Hat das Oszilloskop einen Z-Eingang („Z“, „Z-Mod“,
+„Intensity“), kann ein drittes Kabel von **GPIO27** (Klemme P27) dorthin die Rücklaufspuren ganz
+ausblenden. Im beschriebenen Aufbau ist es nicht vorhanden. Eingeschaltet wird es im Webinterface
+(„Einstellungen“ → „Oszilloskop“ → „Dunkeltastung (Z-Eingang)“), dort auch der Pegel (High oder Low = dunkel,
+siehe Handbuch des Oszilloskops). Ausgeschaltet ist GPIO27 hochohmig.
+
 **Testbild:** „Einstellungen“ → „Oszilloskop“ → „Testbild“ zeigt statt der Uhr einen Rahmen mit
 Marken, einen Kreis und ein Mittelkreuz. Damit lassen sich Position (Kreuz in der Bildmitte), Größe
 (Rahmen füllt 8 × 8 Teilungen fast aus), gleiche Verstärkung von X und Y (der Kreis ist rund, nicht oval)
@@ -169,9 +179,10 @@ am Oszilloskop. Die Werte in `config.h` sind dann nur die Startwerte.
 | `BEAM_NS_PER_UNIT` | Verweilzeit des Strahls pro Schritt in ns. Größer = hellere Linien, weniger Bilder/s (Standard 3000 ≈ 230 Bilder/s) |
 | `SCOPE_PROFILE` | Start-Profil, solange keins gespeichert ist: 0 = ANALOG, 1 = DIGITAL (Standard). Im Betrieb per BOOT-Taster umschaltbar |
 | `BUTTON_LONG_MS` | Haltedauer des BOOT-Tasters zum Umschalten (Standard 3000 ms) |
+| `BUTTON_FACTORY_MS` | Haltedauer für die Werkseinstellungen (Standard 10000 ms; die letzten 5 s Countdown auf dem OLED) |
 | `JUMP_SPEED` | Geschwindigkeit der Sprünge zwischen Linien im Profil ANALOG (Standard 24; DIGITAL springt immer hart). Größer = schwächere Rücklaufspur, kleiner (12) für sehr alte Oszilloskope, 0 = harter Sprung |
 | `JUMP_LANDING`, `JUMP_RAMP` | Abbremsen vor dem Linienanfang (Standard 8 und 4). Kleinere `JUMP_LANDING` bei „Haken“ an Linienanfängen |
-| `ZBLANK_PIN` | Dunkeltastung über den Z-Eingang – im beschriebenen Aufbau nicht verwendet, auf -1 lassen |
+| `ZBLANK_PIN`, `ZBLANK_ENABLE`, `ZBLANK_ACTIVE_HIGH` | Optionale Dunkeltastung über den Z-Eingang: GPIO (Standard 27), Startwert aus/an und Pegel. Im beschriebenen Aufbau nicht verdrahtet; ein- und ausschalten im Webinterface (Einstellungen → Oszilloskop) |
 | `HAND_BRIGHT_PCT` | Helligkeit von Stunden- und Minutenzeiger im Verhältnis zum Rest (Standard 67 %, wirkt dann gleich hell) |
 | `TICK_BRIGHT_PCT`, `DIGIT_BRIGHT_PCT` | Helligkeit von Minutenstrichen und Ziffern, 0–100 % (Standard 100 %, 0 = ausgeblendet). Im Webinterface regelbar |
 | `OLED_BRIGHT_PCT` | OLED-Helligkeit 0–100 % (Standard 50 %, 0 = aus) |
