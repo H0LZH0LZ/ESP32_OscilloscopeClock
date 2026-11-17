@@ -14,7 +14,7 @@
 | 2× Kabelverschraubung Lapp SKINDICHT MINI M6×1 (52001860), Klemmbereich 2–3 mm | führt die Pigtails durch die Gehäusewand |
 | USB-C-Einbauverlängerung (IP67, 0,2 m, Einbauöffnung 16 mm) | Versorgung und Programmierung von außen |
 | ABS-Abzweigdose 150 × 100 × 70 mm, IP67, Scharnierdeckel, Montageplatte | Gehäuse (funkdurchlässig) |
-| Kleinteile | 7 DuPont-Kabel für das OLED, Abstandsbolzen M2,5/M3 – gelötet wird nichts |
+| Kleinteile | 2× 220 Ω (in die rote Ader der Pigtails), Abstandsbolzen M2,5/M3 |
 
 Ausführliche Aufbauanleitung mit Bohrplan: [docs/ESP32_Oscilloscope_Clock_Dokumentation.pdf](docs/ESP32_Oscilloscope_Clock_Dokumentation.pdf).
 
@@ -23,8 +23,8 @@ Ausführliche Aufbauanleitung mit Bohrplan: [docs/ESP32_Oscilloscope_Clock_Dokum
 ```
 Klemme (Breakout-Board)  Ziel
 ─────────────            ──────────────────────────────────────────────
-P25 (DAC1) ─────────── Pigtail "X" rot (Innenleiter) ──> BNC-Stecker → Oszilloskop Kanal 1
-P26 (DAC2) ─────────── Pigtail "Y" rot (Innenleiter) ──> BNC-Stecker → Oszilloskop Kanal 2
+P25 (DAC1) ──[220Ω]── Pigtail "X" rot (Innenleiter) ──> BNC-Stecker → Oszilloskop Kanal 1
+P26 (DAC2) ──[220Ω]── Pigtail "Y" rot (Innenleiter) ──> BNC-Stecker → Oszilloskop Kanal 2
 GND ─────────────────── Pigtail "X" + "Y" braun (Schirm)
 
 3V3  ─────────────────── OLED VCC
@@ -46,8 +46,8 @@ Die Pins stehen zentral in `ESP32_OscilloscopeClock_v2.0/config.h`. Fest vorgege
 | Leiste | Pos. | Pin | Anschluss |
 |---|---|---|---|
 | links | 1 | 3V3 | OLED VCC |
-| links | 9 | GPIO25 (DAC_1) | Pigtail „X“ rot |
-| links | 10 | GPIO26 (DAC_2) | Pigtail „Y“ rot |
+| links | 9 | GPIO25 (DAC_1) | über 220 Ω → BNC „X“ Mitte |
+| links | 10 | GPIO26 (DAC_2) | über 220 Ω → BNC „Y“ Mitte |
 | links | 14 | GND | braune Adern (Schirm) aller Pigtails |
 | rechts | 1 | GND | OLED GND |
 | rechts | 2 | GPIO23 | OLED DIN |
@@ -60,8 +60,8 @@ GPIO0 (rechts, Pos. 14) ist der BOOT-Taster auf dem Board – dort nichts anschl
 
 ### Hinweise zu den DAC-Ausgängen
 - Ausgangsbereich ca. 0 … 3,2 V, Bildmitte ca. 1,6 V.
-- Die Pigtails hängen direkt an den DAC-Ausgängen (kein Löten). BNC-Stecker nicht kurzschließen.
-  Wer löten möchte, kann je einen 220-Ω-Widerstand in die rote Ader setzen (Kurzschlussschutz).
+- **220 Ω in Serie** schützen den DAC bei Kurzschluss am BNC-Kabel und dämpfen Schwingneigung
+  durch die Kabelkapazität.
 - Optional **1 nF vom BNC-Mittelkontakt nach GND**: so entsteht ein RC-Tiefpass (≈ 720 kHz),
   der die DAC-Stufen glättet. Wenn Ziffern dadurch „verrundet“ aussehen, den Kondensator weglassen.
 - Kein Pegelwandler und kein Verstärker nötig: das Oszilloskop hat 1 MΩ Eingangswiderstand.
@@ -82,13 +82,15 @@ eingebaut, im Webinterface „OLED um 180° drehen“ einschalten.
 - **Brummschleife vermeiden:** Die BNC-Masse des Oszilloskops liegt am Schutzleiter. Ein ebenfalls
   geerdeter PC am USB kann Brumm und Zittern ins Bild bringen. Für den Dauerbetrieb ein normales
   (ungeerdetes) USB-Steckernetzteil verwenden.
+- WLAN-Sendepulse ziehen kurzzeitig Strom. Leichtes Zittern im Bild lässt sich mit einem Elko
+  (z. B. 100 µF) zwischen 3V3 und GND nahe am DevKit reduzieren.
 
 ## Gehäuse (Abzweigdose 150 × 100 × 70 mm)
 - **Anschlussseite** (kurze Seite, 100 mm), von außen gesehen: Pigtail X bei 28 mm, **mittig die USB-C-Einbaubuchse** (Ø 16 mm bei 50 mm), Pigtail Y bei 72 mm. Kabelverschraubungen M6: Ø 5,0 bohren und M6-Gewinde schneiden (oder Ø 6,2 + Mutter).
 - **Gegenüberliegende Seite:** Antenne (SMA, Ø 6,5 mm, mittig).
 - DevKit um 180° gedreht im Breakout-Board (Modul zur Anschlussseite, USB-C zur Antennenseite); Antennenkabel und USB-Flachbandkabel laufen einmal unter dem Board durch zur jeweils gegenüberliegenden Seite.
 - Deckel: Fenster für das OLED (aktive Fläche ca. 55 × 28 mm), Modul mit M2,5-Abstandsbolzen befestigen.
-- Breakout-Board auf der Montageplatte; die Pigtails in die Klemmen P25/P26 (rot) und GND (braun).
+- Breakout-Board auf der Montageplatte; die Pigtails in die Klemmen P25/P26 (rot, über 220 Ω) und GND (braun).
 - Bohrplan 1:1 zum Ausdrucken auf DIN A4: `docs/Bohrplan_A4.pdf`.
 
 ## Oszilloskop-Einstellungen
