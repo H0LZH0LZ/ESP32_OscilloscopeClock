@@ -82,8 +82,6 @@ eingebaut, im Webinterface „OLED um 180° drehen“ einschalten.
 - **Brummschleife vermeiden:** Die BNC-Masse des Oszilloskops liegt am Schutzleiter. Ein ebenfalls
   geerdeter PC am USB kann Brumm und Zittern ins Bild bringen. Für den Dauerbetrieb ein normales
   (ungeerdetes) USB-Steckernetzteil verwenden.
-- WLAN-Sendepulse ziehen kurzzeitig Strom. Leichtes Zittern im Bild lässt sich mit einem Elko
-  (z. B. 100 µF) zwischen 3V3 und GND nahe am DevKit reduzieren.
 
 ## Gehäuse (Abzweigdose 150 × 100 × 70 mm)
 - **Anschlussseite** (kurze Seite, 100 mm), von außen gesehen: Pigtail X bei 28 mm, **mittig die USB-C-Einbaubuchse** (Ø 16 mm bei 50 mm), Pigtail Y bei 72 mm. Kabelverschraubungen M6: Ø 5,0 bohren und M6-Gewinde schneiden (oder Ø 6,2 + Mutter).
@@ -91,7 +89,7 @@ eingebaut, im Webinterface „OLED um 180° drehen“ einschalten.
 - DevKit um 180° gedreht im Breakout-Board (Modul zur Anschlussseite, USB-C zur Antennenseite); Antennenkabel und USB-Flachbandkabel laufen einmal unter dem Board durch zur jeweils gegenüberliegenden Seite.
 - Deckel: Fenster für das OLED (aktive Fläche ca. 55 × 28 mm), Modul mit M2,5-Abstandsbolzen befestigen.
 - Breakout-Board auf der Montageplatte; die Pigtails in die Klemmen P25/P26 (rot, über 220 Ω) und GND (braun).
-- Bohrplan 1:1 zum Ausdrucken auf DIN A4: `docs/Bohrplan_A4.pdf`.
+- Bohrplan 1:1 zum Ausdrucken auf DIN A4: letzte Seite von `docs/ESP32_Oscilloscope_Clock_Dokumentation.pdf`.
 
 ## Oszilloskop-Einstellungen
 

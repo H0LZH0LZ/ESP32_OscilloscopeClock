@@ -82,8 +82,6 @@ replace `NONAME0` with `NONAME2` in the `.ino`. If the display is mounted upside
 - **Avoid ground loops:** the BNC ground of the oscilloscope is connected to protective earth. An
   earthed PC on USB can add hum and jitter to the picture. For permanent use, take a normal
   (unearthed) USB power adapter.
-- Wi-Fi transmit bursts draw short current peaks. Slight jitter in the picture can be reduced with
-  an electrolytic capacitor (e.g. 100 µF) between 3V3 and GND close to the DevKit.
 
 ## Enclosure (junction box 150 × 100 × 70 mm)
 - **Connector side** (short side, 100 mm), seen from outside: pigtail X at 28 mm, **the USB-C panel socket in the middle** (Ø 16 mm at 50 mm), pigtail Y at 72 mm. M6 cable glands: drill Ø 5.0 and tap M6 (or Ø 6.2 + nut).
@@ -91,7 +89,7 @@ replace `NONAME0` with `NONAME2` in the `.ino`. If the display is mounted upside
 - DevKit rotated by 180° in the breakout board (module towards the connector side, USB-C towards the antenna side); the antenna cable and the USB flat cable run once underneath the board to the opposite side.
 - Lid: window for the OLED (active area approx. 55 × 28 mm), mount the module on M2.5 standoffs.
 - Breakout board on the mounting plate; pigtails into terminals P25/P26 (red, via 220 Ω) and GND (brown).
-- Drilling template 1:1 for printing on A4: `docs/Bohrplan_A4.pdf`.
+- Drilling template 1:1 for printing on A4: last page of `docs/ESP32_Oscilloscope_Clock_Dokumentation.pdf`.
 
 ## Oscilloscope settings
 

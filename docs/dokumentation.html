@@ -9,7 +9,7 @@
 *{box-sizing:border-box}
 body{font:400 10.2pt/1.5 Raleway,"Helvetica Neue",Helvetica,Arial,sans-serif;color:#111;margin:0}
 h1{font-size:22pt;font-weight:700;margin:0 0 4mm;color:#0a5c33}
-h2{font-size:15pt;font-weight:700;color:#0a5c33;border-bottom:1.5px solid #0a5c33;padding-bottom:1.5mm;margin:9mm 0 3mm;break-after:avoid}
+h2{break-before:page;font-size:15pt;font-weight:700;color:#0a5c33;border-bottom:1.5px solid #0a5c33;padding-bottom:1.5mm;margin:9mm 0 3mm;break-after:avoid}
 h3{font-size:11.5pt;font-weight:700;margin:5mm 0 1.5mm;break-after:avoid}
 p{margin:0 0 2.2mm}
 ul,ol{margin:0 0 2.5mm;padding-left:6mm}li{margin:0 0 1mm}
@@ -37,6 +37,11 @@ figcaption{font-size:8.8pt;color:#555;margin-top:1.2mm}
 .pb{break-before:page}
 .small{font-size:9pt;color:#555}
 b,strong,th{font-weight:700}
+h2+*,h3+*{break-before:avoid}
+/* Bohrplan-Seite: randlos, damit der Plan in Originalgröße (1:1) auf A4 passt */
+@page bohrplan{size:A4;margin:0}
+.bohrseite{page:bohrplan;break-before:page;break-after:page}
+.bohrseite img{display:block;width:210mm;height:297mm}
 </style></head><body>
 
 <section class="cover">
@@ -60,6 +65,7 @@ b,strong,th{font-weight:700}
   <li>Fehlersuche</li>
   <li>Technik: wie die Uhr arbeitet</li>
   <li>Anhang: Startwerte in <code>config.h</code>, Schnittstellen, Herkunft und Lizenzen</li>
+  <li>Bohrplan zum Ausdrucken (letzte Seite, Maßstab 1:1)</li>
  </ol>
  <div class="note"><b>Zu den Abbildungen:</b> Schaltplan, Bohrplan und Anordnung sind Zeichnungen. Die Bilder des
  Oszilloskops und des OLED-Displays wurden am PC aus den echten Daten der Firmware erzeugt (gleiche
@@ -88,7 +94,7 @@ Zifferblatt, Ziffern und Zeiger etwa 230-mal pro Sekunde nach.</p>
  <figure><img src="images/web_pc_dunkel.png"><figcaption>Abb. 3 – Webinterface am PC (dunkles Design)</figcaption></figure>
 </div>
 
-<h2 class="pb">2 Teileliste und Werkzeug</h2>
+<h2>2 Teileliste und Werkzeug</h2>
 <p>Die Liste entspricht dem Aufbau des Prototyps. Die Signale verlassen das Gehäuse nicht über Einbaubuchsen, sondern über
 <b>BNC-Pigtail-Leitungen</b>, die mit <b>Kabelverschraubungen</b> durch die Gehäusewand geführt werden. Der BNC-Stecker am Ende
 kommt direkt in den Eingang des Oszilloskops, ein zusätzliches BNC-Kabel ist nicht nötig.</p>
@@ -103,7 +109,6 @@ kommt direkt in den Eingang des Oszilloskops, ein zusätzliches BNC-Kabel ist ni
  <tr><td>1</td><td><b>Waveshare 2,42inch OLED Display Module</b>, weiß, 128 × 64 Pixel, SPI/I²C (SSD1309); Platine 61,5 × 39,5 mm, aktive Fläche 55,0 × 27,5 mm</td><td>Im Auslieferungszustand (4-Wire-SPI) verwenden, nichts umlöten. Stiftleiste von unten: VCC, GND, DIN, CLK, CS, DC, RST.</td></tr>
  <tr><td>1</td><td><b>WLAN-Antenne Bingfu</b> 2,4/5,8 GHz, 8 dBi, SMA-Stecker (Variante „SMA“), abwinkelbar</td><td>Pflicht: Das Modul -32U hat keine eingebaute Antenne. Sie wird auf die SMA-Buchse des IPEX-Pigtails aus dem Antennen-Kit geschraubt – SMA und RP-SMA nicht mischen (Stecker der Antenne muss zur Buchse des Pigtails passen).</td></tr>
  <tr><td>2</td><td>Widerstand <b>220 Ω</b>, 0,25 W (empfohlen)</td><td>In die rote Ader jedes Pigtails eingelötet; schützt die DAC-Ausgänge bei einem Kurzschluss am BNC-Stecker.</td></tr>
- <tr><td>(1)</td><td>Elko 100 µF / 10 V</td><td>Optional: gegen leichtes Zittern bei WLAN-Sendepulsen (in die Klemmen 3V3 und GND).</td></tr>
  <tr><td>–</td><td>Kleinteile</td><td>7 Leitungen für das OLED (DuPont-Kabel oder Litze), Schrumpfschlauch, Abstandsbolzen M2,5 (OLED) und M3 (Breakout-Board), ggf. 2–3 Muttern M6</td></tr>
  <tr><td>1</td><td>USB-Netzteil 5 V, ≥ 1 A, mit USB-C-Kabel</td><td>Ein normales, ungeerdetes Steckernetzteil vermeidet Brummschleifen.</td></tr>
 </table>
@@ -118,7 +123,8 @@ kommt direkt in den Eingang des Oszilloskops, ein zusätzliches BNC-Kabel ist ni
 </ul>
 <h3>Werkzeug</h3>
 <ul>
- <li>Lötkolben (feine Spitze), Lötzinn, Seitenschneider, Abisolierzange, kleiner Schraubendreher für die Schraubklemmen</li>
+ <li>Lötkolben (feine Spitze) und Lötzinn – nur für die beiden Widerstände in den Pigtails –, Schrumpfschlauch, Seitenschneider, Abisolierzange</li>
+ <li>Kleiner Schraubendreher für die Schraubklemmen, Schraubenschlüssel SW 9 für die Kabelverschraubungen</li>
  <li>Bohrmaschine mit Bohrern 3 mm, 5 mm, 6,5 mm, Stufenbohrer bis 16 mm, Gewindebohrer M6 (oder M6-Muttern), Feile, Cuttermesser (OLED-Fenster)</li>
  <li>Multimeter zum Prüfen vor dem ersten Einschalten</li>
  <li>PC mit Arduino IDE 2.x (oder PlatformIO) und USB-C-Kabel</li>
@@ -144,10 +150,9 @@ kommt direkt in den Eingang des Oszilloskops, ein zusätzliches BNC-Kabel ist ni
 <div class="warn"><b>Wichtig:</b> Klemme P0 (GPIO0) ist der BOOT-Taster – dort nichts anschließen. Das OLED an <b>3V3</b>,
 nicht an 5V. Das Modul -32U nie ohne Antenne im WLAN-Betrieb laufen lassen.</div>
 
-<div class="step"><b class="n">1</b><div><b>Bohrplan ausdrucken.</b> Die Datei <code>docs/Bohrplan_A4.pdf</code> auf <b>DIN A4 mit 100 % (ohne „An Seite anpassen“)</b>
+<div class="step"><b class="n">1</b><div><b>Bohrplan ausdrucken.</b> Die <b>letzte Seite dieser Dokumentation</b> (Bohrplan) auf <b>DIN A4 mit 100 % (ohne „An Seite anpassen“)</b>
 drucken und die Prüflinie nachmessen: Sie muss 50 mm lang sein. Schablonen ausschneiden und mit Klebeband auf den Deckel,
 die Anschlussseite und die gegenüberliegende Seite kleben.</div></div>
-<figure><img src="images/bohrplan.svg" style="width:62%;border:1px solid #ccc"><figcaption>Abb. 5 – Bohrplan (verkleinert; zum Bohren <code>docs/Bohrplan_A4.pdf</code> auf DIN A4 in Originalgröße drucken)</figcaption></figure>
 <div class="step"><b class="n">2</b><div><b>Gehäuse bohren.</b> Alle Löcher mit 3 mm vorbohren.
 <b>Anschlussseite</b> (eine kurze Seite, 100 mm): Pigtail X, <b>mittig dazwischen die USB-C-Buchse</b>, Pigtail Y.
 <b>Pigtails:</b> 2 Löcher bei 28 und 72 mm für die Kabelverschraubungen: <b>5,0 mm bohren und M6-Gewinde schneiden</b>
@@ -172,7 +177,7 @@ Antennenkabels vorsichtig senkrecht auf die Buchse am Modul drücken, bis er ein
 sind etwas zu lang: beide <b>einmal unter dem Breakout-Board hindurch</b> zur jeweils gegenüberliegenden Seite führen –
 das Antennenkabel zur Antenne, das Flachbandkabel zur USB-C-Einbaubuchse – und vor dem Festschrauben des Boards einlegen.
 Das Flachbandkabel nicht scharf knicken.</div></div>
-<div class="step"><b class="n">7</b><div><b>Pigtails anklemmen:</b> rote Ader (mit Widerstand) von X in die Klemme <b>P25</b>, von Y in <b>P26</b> Beide braunen Adern (Schirm) in <b>GND</b>. Optional den Elko 100 µF in 3V3 und GND (Plus an 3V3).</div></div>
+<div class="step"><b class="n">7</b><div><b>Pigtails anklemmen:</b> rote Ader (mit Widerstand) von X in die Klemme <b>P25</b>, von Y in <b>P26</b>, beide braunen Adern (Schirm) in <b>GND</b>.</div></div>
 <div class="step"><b class="n">8</b><div><b>OLED in den Deckel</b> setzen: mit Abstandsbolzen M2,5 hinter dem Fenster befestigen und die 7 Leitungen
 nach der Tabelle oben in die Klemmen legen. Die Leitungen so lang lassen, dass sich der Scharnierdeckel ganz öffnen lässt.</div></div>
 <figure><img src="images/aufbau.svg" style="width:56%"><figcaption>Abb. 6 – Anordnung in der Abzweigdose (maßstäblich): unten die Anschlussseite mit Pigtail X, USB-C und Pigtail Y, oben die Antenne; DevKit um 180° gedreht, Kabel gestrichelt unter dem Board</figcaption></figure>
@@ -217,7 +222,7 @@ Das Webinterface ist danach unter <b>http://scope-clock.local</b> oder der IP-Ad
 <div class="step"><b class="n">5</b><div><b>Profil wählen:</b> DIGITAL (ab Werk) für Speicher-Oszilloskope, ANALOG für Röhren-Oszilloskope –
 im Webinterface oder BOOT-Taster 3 s halten.</div></div>
 
-<h2 class="pb">6 Oszilloskop einstellen</h2>
+<h2>6 Oszilloskop einstellen</h2>
 <div class="two">
  <figure><img src="images/oszilloskop_testbild.png" style="width:78%"><figcaption>Abb. 9 – Testbild</figcaption></figure>
  <div style="flex:1.3">
@@ -315,7 +320,7 @@ vorher loslassen bricht ab. Die Einstellung wird gespeichert. <b>Nicht beim Eins
  <tr><td>Kleine „Haken“ an Linienanfängen</td><td>Rücklauf-Tempo verringern (z. B. 12)</td></tr>
  <tr><td>Rücklaufspuren sichtbar</td><td>Rücklauf-Tempo erhöhen oder Profil DIGITAL probieren</td></tr>
  <tr><td>Kreis im Testbild oval</td><td>Empfindlichkeit von X und Y gleich einstellen (beide 0,5 V/Div, Feinregler auf „kalibriert“)</td></tr>
- <tr><td>Brummen/Zittern im Bild</td><td>Ungeerdetes USB-Netzteil statt PC; Elko 100 µF an 3V3</td></tr>
+ <tr><td>Brummen/Zittern im Bild</td><td>Ungeerdetes USB-Netzteil statt PC verwenden</td></tr>
  <tr><td>„Keine NTP-Verbindung“</td><td>WLAN prüfen (Status); ohne Internet die Zeit unter Einstellungen → Uhrzeit stellen</td></tr>
  <tr><td>Zeit um ganze Stunden falsch</td><td>Zeitzone prüfen; Sommer-/Winterzeit beim Stellen von Hand</td></tr>
  <tr><td>http://scope-clock.local geht nicht</td><td>IP-Adresse aus dem Status oder dem Router verwenden (manche Android-Geräte unterstützen .local nicht)</td></tr>
@@ -349,7 +354,7 @@ unterwegs keine Abtastpunkte zeigt.</p>
 +10s [Scope] Start-Testbild beendet, Uhr laeuft
 21:15:06 [NTP] Sync 15.11.2026 21:15:06</pre>
 
-<h2 class="pb">11 Anhang</h2>
+<h2>11 Anhang</h2>
 <h3>Startwerte in <code>config.h</code></h3>
 <p class="small">Fast alles lässt sich im Webinterface ändern; <code>config.h</code> liefert nur die Startwerte bzw. feste Pins.</p>
 <table>
@@ -401,4 +406,5 @@ Webinterface und alle Vektorgrafiken sind neu. Die Schrift des Webinterfaces ist
 hier unter dem Namen „ScopeClock Sans“.</p>
 <div class="note"><b>Stand der Tests:</b> Die Firmware baut fehlerfrei und ohne Warnungen (Arduino-CLI, esp32 3.3.12). Strahlführung,
 OLED-Inhalt, BOOT-Taster und Webinterface wurden am PC simuliert bzw. im Browser getestet. Der Test an echter Hardware steht noch aus.</div>
+<section class="bohrseite"><img src="images/bohrplan.svg" alt="Bohrplan 1:1"></section>
 </body></html>
