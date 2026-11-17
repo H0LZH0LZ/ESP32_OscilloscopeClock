@@ -32,8 +32,10 @@
 // Hält Datum und Uhrzeit mit Knopfzelle auch ohne Strom und ohne Internet.
 // Anschluss: VCC → 3V3, GND → GND, SDA → RTC_SDA_PIN, SCL → RTC_SCL_PIN.
 // Ein-/ausschalten im Webinterface (Einstellungen → Uhrzeit → "Echtzeituhr (RTC)").
-// Hinweis ZS-042: Das Modul lädt die Knopfzelle über Diode + 200 Ω – mit einer
-// normalen CR2032 die Diode auslöten oder eine aufladbare LIR2032 verwenden.
+// Knopfzelle: normale CR2032. Die Ladeschaltung des ZS-042 (Diode + 200 Ω) ist für
+// 5 V gedacht; an 3V3 kommen nach der Diode nur ca. 2,7 V an – unter der Zellspannung,
+// es fließt praktisch kein Ladestrom. Daher Modul NUR an 3V3 anschließen (an 5 V würde
+// eine CR2032 geladen – dann die Diode auslöten). Eine LIR2032 würde an 3V3 nie geladen.
 #define RTC_ENABLE   0          // Startwert: 0 = aus (Standard), 1 = an
 #define RTC_SDA_PIN 21
 #define RTC_SCL_PIN 22

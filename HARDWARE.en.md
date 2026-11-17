@@ -91,8 +91,12 @@ Keeps date and time with its coin cell even after a power failure without intern
 
 - Switch on in the web interface: „Einstellungen“ → „Uhrzeit“ → „Echtzeituhr (RTC)“ (off by default). The status
   then shows “Running” with the chip temperature, “Not found” or “Time invalid”.
-- **Coin cell on the ZS-042:** the module charges the cell via a diode and 200 Ω. Either use a rechargeable
-  **LIR2032** or, with a normal **CR2032**, desolder the diode.
+- **Coin cell: normal CR2032**, no charger and no soldering needed. The ZS-042's charging circuit (diode
+  and 200 Ω) is meant for 5 V. At **3V3** only about 2.7 V reach the cell after the diode – less than the cell
+  voltage, so practically no charging current flows. The cell lasts 5 years and more, because it is only used
+  while the clock is unplugged (approx. 3 µA).
+- **Connect the module to 3V3 only, not to 5 V** – at 5 V the CR2032 would be charged (then desolder the
+  diode). A rechargeable LIR2032 is unsuitable here: at 3V3 it would never be charged.
 - The large chip should read **DS3231SN** – very cheap modules sometimes contain less accurate copies.
 - The RTC runs in UTC; time zone and daylight saving time are still handled by the firmware. It is updated
   at every NTP sync (hourly) and when the time is set by hand.

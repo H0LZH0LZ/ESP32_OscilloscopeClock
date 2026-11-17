@@ -91,8 +91,12 @@ Hält Datum und Uhrzeit mit Knopfzelle auch nach einem Stromausfall ohne Interne
 
 - Einschalten im Webinterface: „Einstellungen“ → „Uhrzeit“ → „Echtzeituhr (RTC)“ (ab Werk aus). Der Status
   zeigt dann „Läuft“ mit der Temperatur des Chips, „Nicht gefunden“ oder „Zeit ungültig“.
-- **Knopfzelle beim ZS-042:** Das Modul lädt die Zelle über eine Diode und 200 Ω. Entweder eine aufladbare
-  **LIR2032** einsetzen oder bei einer normalen **CR2032** die Diode auslöten.
+- **Knopfzelle: normale CR2032**, kein Ladegerät und kein Löten nötig. Die Ladeschaltung des ZS-042
+  (Diode und 200 Ω) ist für 5 V gedacht. An **3V3** kommen nach der Diode nur etwa 2,7 V an – weniger als
+  die Zellspannung, es fließt praktisch kein Ladestrom. Die Zelle hält 5 Jahre und mehr, denn sie wird nur
+  bei ausgesteckter Uhr genutzt (ca. 3 µA).
+- **Modul nur an 3V3 anschließen, nicht an 5 V** – an 5 V würde die CR2032 geladen (dann die Diode
+  auslöten). Eine aufladbare LIR2032 ist hier ungeeignet: An 3V3 würde sie nie geladen.
 - Auf dem großen Chip sollte **DS3231SN** stehen – sehr billige Module haben manchmal ungenauere Nachbauten.
 - Die RTC läuft in UTC; Zeitzone und Sommerzeit rechnet weiterhin die Firmware. Bei jedem NTP-Abgleich
   (stündlich) und beim Stellen von Hand wird sie nachgestellt.
