@@ -27,7 +27,7 @@ Hardware angepasst: **ESP32-WROOM-32U DevKitC V4**, **Waveshare 2.42" OLED (SPI)
   Zeitzone mit automatischer Sommer-/Winterzeit, stündliches Nachsynchronisieren.
 - Neue Zeichenroutine mit konstanter Strahlgeschwindigkeit: Alle Linien und Zeiger sind gleich hell, auch schräge. Die Geschwindigkeit ist für ältere Röhrenoszilloskope ausgelegt (ca. 230 Bilder/s, einstellbar).
 - Kaum sichtbare Rücklaufspuren: optimierte Zeichenreihenfolge, schnelle gebremste Sprünge, Sekundenzeiger als Hin- und Rückweg.
-- OLED als reine Textanzeige: Uhrzeit (24h) im 7-Segment-Stil, Kalenderwoche, Datum, Netzwerkname und Signalstärke (dBm), alles horizontal und vertikal zentriert, mit Pixel-Shift gegen Einbrennen.
+- OLED als reine Textanzeige: Uhrzeit (24h) im 7-Segment-Stil, Kalenderwoche und Datum mit kleinen 7-Segment-Ziffern, Netzwerkname und Signalstärke (dBm), alles horizontal und vertikal zentriert, mit Pixel-Shift gegen Einbrennen.
 - Jede NTP-Synchronisierung wird mit Datum und Uhrzeit auf der seriellen Konsole (115200 Baud) gemeldet, ebenso eine Warnung, falls sie ausbleibt.
 - Ohne Internet läuft die Uhr trotzdem: Die Uhrzeit lässt sich im Webinterface von Hand stellen
   (oder mit einem Fingertipp vom Handy übernehmen), wahlweise mit fester Sommer- oder Winterzeit.
@@ -98,7 +98,7 @@ stehen in `ESP32_OscilloscopeClock_v2.0/config.h`. Im Betrieb ändert man sie be
 
 | Board-Paket | Programmspeicher | Globale Variablen (RAM) |
 |---|---|---|
-| esp32 3.3.12 | 1.227.350 Byte (93 %) | 74.892 Byte (22 %) |
+| esp32 3.3.12 | 1.227.726 Byte (93 %) | 74.892 Byte (22 %) |
 | esp32 2.0.17 | 866.053 Byte (66 %) | 61.048 Byte (18 %) – Stand vor Menü und Zifferblatt-Umschaltung |
 
 Die Konfigurationsvarianten (Profil ANALOG/DIGITAL, Z-Dunkeltastung, Zifferblatt 0/1/2,

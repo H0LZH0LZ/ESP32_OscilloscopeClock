@@ -2031,6 +2031,41 @@ static void drawCentered(const char *txt, int baseline, int dx)
   u8g2.drawStr(x, baseline, txt);
 }
 
+// Zeichnet eine Textzeile horizontal zentriert, in der alle Ziffern als kleine
+// 7-Segment-Ziffern erscheinen (5x9 px, Segment 1 px, offene Ecken wie bei der
+// Uhrzeit). '.' und '-' werden passend dazu als Punkt bzw. Mittelsegment
+// gezeichnet, alle anderen Zeichen im aktuellen Font (hier 6x10).
+// Unterkante der Ziffern = Grundlinie des Fonts. Verwendet für KW/Datum.
+static const int SEG_SW = 5, SEG_SH = 9;   // kleine Ziffer: Breite, Höhe
+
+static int segTextWidth(const char *s)
+{
+  int w = 0;
+  char c[2] = { 0, 0 };
+  for (; *s; s++) {
+    if ((*s >= '0' && *s <= '9') || *s == '-') w += SEG_SW + 1;   // Ziffer + 1 px Abstand
+    else if (*s == '.')                        w += 2;            // Punkt 1 px + 1 px Abstand
+    else { c[0] = *s; w += u8g2.getStrWidth(c); }
+  }
+  return w;
+}
+
+static void drawSegTextCentered(const char *s, int baseline, int dx)
+{
+  const int w = segTextWidth(s);
+  int x = (128 - 3 - w) / 2 + dx;
+  if (x + w > 128) x = 128 - w;
+  if (x < 0) x = 0;
+  const int top = baseline - SEG_SH + 1;
+  char c[2] = { 0, 0 };
+  for (; *s; s++) {
+    if (*s >= '0' && *s <= '9') { drawSegDigit(x, top, *s - '0', SEG_SW, SEG_SH, 1); x += SEG_SW + 1; }
+    else if (*s == '-')         { u8g2.drawBox(x + 1, top + (SEG_SH - 1) / 2, SEG_SW - 2, 1); x += SEG_SW + 1; }
+    else if (*s == '.')         { u8g2.drawBox(x, baseline, 1, 1); x += 2; }
+    else { c[0] = *s; u8g2.drawStr(x, baseline, c); x += u8g2.getStrWidth(c); }
+  }
+}
+
 // ---- Kalenderwoche nach ISO 8601 (wie im deutschen Kalender) ----------------
 // Regeln: Die Woche beginnt am Montag; KW 1 ist die Woche mit dem 4. Januar
 // (= mit dem ersten Donnerstag). Tage Anfang Januar können daher zur letzten
@@ -2072,9 +2107,9 @@ static void fitText(char *buf, size_t maxChars)
 // Alle Zeilen horizontal zentriert, vertikal mit kleinen Abständen:
 //
 //   y  3…22   22:15:06               HH:MM:SS, 24h, 7-Segment (11x20 px/Ziffer)
-//             ~6 px Abstand
-//   y 29…35   KW 46 - 15.11.2026     Font 6x10
-//             ~7 px Abstand (trennt Zeit/Datum von WLAN)
+//             ~5 px Abstand
+//   y 28…36   KW 46 - 15.11.2026     Ziffern 7-Segment 5x9 px, "KW" Font 6x10
+//             ~6 px Abstand (trennt Zeit/Datum von WLAN)
 //   y 43…49   WLAN Gastzugang        Font 5x8, max. 25 Zeichen
 //   y 52…58   Signal -61 dBm         Font 5x8
 //
@@ -2206,12 +2241,13 @@ static void oledUpdate()
   u8g2.setFont(u8g2_font_6x10_tf);
   if (valid)
     if (s_lang) snprintf(buf, sizeof(buf), "Week %02d - %04d-%02d-%02d", isoWeek(t), t.tm_year + 1900,
-                         t.tm_mon + 1, t.tm_mday);       // 20 Zeichen = 120 px (ISO-Datum)
+                         t.tm_mon + 1, t.tm_mday);       // ca. 114 px (ISO-Datum)
     else        snprintf(buf, sizeof(buf), "KW %02d - %02d.%02d.%04d", isoWeek(t), t.tm_mday,
-                         t.tm_mon + 1, t.tm_year + 1900);   // 18 Zeichen = 108 px
+                         t.tm_mon + 1, t.tm_year + 1900);   // ca. 96 px
   else
     snprintf(buf, sizeof(buf), "%s", tr("Keine NTP-Verbindung", "No NTP connection"));   // ohne gültige Zeit (max. 21 Zeichen)
-  drawCentered(buf, Y_DATE + dy, dx);
+  if (valid) drawSegTextCentered(buf, Y_DATE + dy, dx);   // Ziffern als 7-Segment (5x9 px)
+  else       drawCentered(buf, Y_DATE + dy, dx);
 
   u8g2.setFont(u8g2_font_5x8_tf);
   const bool connected = wifiConfigured() && WiFi.status() == WL_CONNECTED;

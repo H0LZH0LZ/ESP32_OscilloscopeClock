@@ -344,7 +344,7 @@ Passwörter werden nie ausgegeben.
 
 ```
       22:15:06            7-Segment, Ziffern 11×20 px (selbst gezeichnet); 12 h: "10:15:06 PM" ohne führende Null, AM/PM klein (Font 5x8)
- KW 46 - 15.11.2026       Font 6x10, KW nach ISO 8601
+ KW 46 - 15.11.2026       Ziffern, Punkte, Bindestrich als kleine 7-Segment-Ziffern 5×9 px (offene Ecken), „KW“ Font 6x10; KW nach ISO 8601
 WLAN Gastzugang           Font 5x8, max. 25 Zeichen (sonst mit ".." gekürzt)
    Signal -61 dBm         Font 5x8
 ```
@@ -353,7 +353,9 @@ Im Setup-WLAN stehen in den beiden unteren Zeilen „WLAN ScopeClock-Setup“ un
 
 - **7-Segment-Ziffern:** Die fertigen 7-Segment-Fonts von U8g2 sind für `HH:MM:SS` auf 128 px zu
   breit. `drawSegDigit()` setzt jede Ziffer deshalb aus bis zu 7 Rechtecken zusammen. Welche
-  Segmente leuchten, steht in `SEG_MAP`.
+  Segmente leuchten, steht in `SEG_MAP`. Die Datumszeile nutzt dieselben Ziffern in klein
+  (5×9 px, Segment 1 px): `drawSegTextCentered()` zeichnet Ziffern, `.` und `-` als Segmente und
+  alle übrigen Zeichen („KW“, „Week“) im Font 6x10. Ohne NTP-Zeit steht dort normaler Text.
 - **Kalenderwoche:** `isoWeek()` berechnet sie nach ISO 8601: Die Woche beginnt am Montag,
   KW 1 enthält den 4. Januar. Gegen `strftime("%V")` geprüft für alle Tage von 2000 bis 2040.
 - **Pixel-Shift:** Alle `OLED_SHIFT_EVERY_S` Sekunden verschiebt sich das ganze Bild um 0–3 px

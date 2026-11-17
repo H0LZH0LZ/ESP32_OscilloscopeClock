@@ -33,7 +33,7 @@ This documentation quotes the German labels and adds the English label in parent
   diagonals. The speed is chosen for older CRT oscilloscopes (approx. 230 frames/s, adjustable).
 - Hardly visible retrace lines: optimised drawing order, fast braked jumps, second hand drawn out
   and back.
-- OLED as a pure text display: time (24 h) in 7-segment style, calendar week, date, network name
+- OLED as a pure text display: time (24 h) in 7-segment style, calendar week and date with small 7-segment digits, network name
   and signal strength (dBm), all centred, with pixel shifting against burn-in.
 - Every NTP sync is reported with date and time on the serial console (115200 baud), as is a
   warning if syncs stop.
@@ -108,7 +108,7 @@ interface.
 
 | Board package | Program memory | Global variables (RAM) |
 |---|---|---|
-| esp32 3.3.12 | 1,227,350 bytes (93 %) | 74,892 bytes (22 %) |
+| esp32 3.3.12 | 1,227,726 bytes (93 %) | 74,892 bytes (22 %) |
 | esp32 2.0.17 | 866,053 bytes (66 %) | 61,048 bytes (18 %) – state before the menu and dial switching |
 
 The configuration variants (profile ANALOG/DIGITAL, Z blanking, dial 0/1/2, `USE_FAST_DAC 0`,

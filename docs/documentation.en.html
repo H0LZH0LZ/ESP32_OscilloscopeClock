@@ -271,7 +271,7 @@ phones and can be added to the home screen like an app (“Add to home screen”
 </ul>
 <figure><img src="images/web_einstellungen_en.png" style="width:92%"><figcaption>Fig. 10 – Oscilloscope group, Wi-Fi group with network scan, debug section</figcaption></figure>
 <h3>OLED display</h3>
-<p>At the top the time in 7-segment style, below it the calendar week and date, then the Wi-Fi network and the signal strength.
+<p>At the top the time in 7-segment style, below it the calendar week and date with small 7-segment digits, then the Wi-Fi network and the signal strength.
 Without a valid time it shows “No NTP connection”; in the setup network it shows the network name “ScopeClock-Setup” and the address.
 Brightness 0–100 %, seconds, rotation by 180° and pixel shifting against burn-in can be set.</p>
 <figure><img src="images/oled_englisch_12h.png" style="width:48%"><figcaption>Fig. 11 – OLED in English in 12-hour format</figcaption></figure>
@@ -396,7 +396,7 @@ In profile ANALOG the beam jumps fast and brakes before the target; in profile D
 oscilloscope shows no sample points along the way.</p>
 <p><b>Vector data:</b> dial, numerals, hands and test pattern are original drawings generated with <code>tools/gen_vectors.py</code>
 (coordinates 0–255, 8 bits per axis).</p>
-<p><b>Memory:</b> program memory 1,227,350 bytes (93 % with the default partition scheme, approx. 39 % with “Huge APP”), global variables
+<p><b>Memory:</b> program memory 1,227,726 bytes (93 % with the default partition scheme, approx. 39 % with “Huge APP”), global variables
 74,892 bytes (22 %). The web page is stored gzip-compressed in flash (21 KB), the font (Raleway, reduced to the characters needed) as WOFF2 (30 KB).</p>
 <h3>Debug messages (example, language English)</h3>
 <pre>+0s ESP32 Oscilloscope Clock v2.0

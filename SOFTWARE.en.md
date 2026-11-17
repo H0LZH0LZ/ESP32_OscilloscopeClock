@@ -353,7 +353,7 @@ Passwords are never printed.
 
 ```
       22:15:06            7-segment, digits 11×20 px (drawn by the firmware); 12 h: "10:15:06 PM" without leading zero, AM/PM small (font 5x8)
- KW 46 - 15.11.2026       font 6x10, calendar week (KW) according to ISO 8601
+ KW 46 - 15.11.2026       digits, dots, hyphens as small 7-segment digits 5×9 px (open corners), "KW" font 6x10; calendar week (KW) according to ISO 8601
 WLAN Gastzugang           font 5x8, max. 25 characters (otherwise shortened with "..")
    Signal -61 dBm         font 5x8
 ```
@@ -362,7 +362,9 @@ In the setup network the two lower lines show “WiFi ScopeClock-Setup” and �
 
 - **7-segment digits:** the ready-made 7-segment fonts of U8g2 are too wide for `HH:MM:SS` on
   128 px. `drawSegDigit()` therefore assembles each digit from up to 7 rectangles. Which segments
-  are lit is defined in `SEG_MAP`.
+  are lit is defined in `SEG_MAP`. The date line uses the same digits in small size (5×9 px,
+  1 px segments): `drawSegTextCentered()` draws digits, `.` and `-` as segments and all other
+  characters (“KW”, “Week”) in font 6x10. Without NTP time the line shows normal text.
 - **Calendar week:** `isoWeek()` calculates it according to ISO 8601: the week starts on Monday,
   week 1 contains 4 January. Checked against `strftime("%V")` for every day from 2000 to 2040.
 - **Pixel shift:** every `OLED_SHIFT_EVERY_S` seconds the whole picture moves by 0–3 px
