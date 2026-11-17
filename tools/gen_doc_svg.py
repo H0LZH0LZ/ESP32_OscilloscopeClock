@@ -177,9 +177,11 @@ def bohrplan():
         a(f"<line x1='{x1}' y1='{y1}' x2='{x2}' y2='{y2}' stroke='#06c' stroke-width='0.2' marker-start='url(#m)' marker-end='url(#m)'/>")
         a(f"<text x='{(x1+x2)/2}' y='{(y1+y2)/2-1}' text-anchor='middle' font-size='2.8' fill='#06c'>{t}</text>")
     a("<defs><marker id='m' viewBox='0 0 4 4' refX='2' refY='2' markerWidth='3' markerHeight='3' orient='auto'><path d='M0,2 L4,0 L4,4 z' fill='#06c'/></marker></defs>")
-    a("<text x='10' y='8' font-size='5' font-weight='bold'>Bohrplan Abzweigdose 150 × 100 × 70 mm – Maßstab 1:1 (mit 100 % drucken)</text>")
+    # DIN A4 hochkant (210 × 297 mm), Maßstab 1:1
+    a("<text x='105' y='16' text-anchor='middle' font-size='4.6' font-weight='bold'>Bohrplan Abzweigdose 150 × 100 × 70 mm – Maßstab 1:1</text>")
+    a("<text x='105' y='22' text-anchor='middle' font-size='3.2' fill='#444'>DIN A4 mit 100 % drucken (nicht „an Seite anpassen“), dann das Prüfmaß nachmessen</text>")
     # Deckel 150 x 100
-    X, Y = 10, 20
+    X, Y = 30, 35
     panel(X, Y, 150, 100, 'Deckel (Draufsicht)')
     a(f"<rect x='{X+75-27.5}' y='{Y+22}' width='55' height='28' fill='#eef' stroke='#c00' stroke-width='0.35'/>")
     a(f"<text x='{X+75}' y='{Y+37}' text-anchor='middle' font-size='3'>Fenster OLED 55 × 28</text>")
@@ -187,28 +189,29 @@ def bohrplan():
     dim(X+75+31, Y+22, X+75+31, Y+50, '28')
     dim(X, Y+14, X+75-27.5, Y+14, '47,5')
     dim(X+4, Y, X+4, Y+22, '22')
-    a(f"<text x='{X+75}' y='{Y+62}' text-anchor='middle' font-size='2.8' fill='#444'>Befestigungslöcher des OLED-Moduls nach dem Modul anzeichnen (M2,5)</text>")
-    # Anschlussseite (kurze Seite, 100 mm), von außen gesehen: Pigtail X – USB-C – Pigtail Y
-    X2, Y2 = 10, 140
-    panel(X2, Y2, 100, 45, 'Anschlussseite (kurze Seite, von außen gesehen)')
-    for cx, lab in [(X2+28, 'X'), (X2+72, 'Y')]:
-        hole(cx, Y2+20, 5.0, lab)
-        a(f"<circle cx='{cx}' cy='{Y2+20}' r='3' fill='none' stroke='#c00' stroke-width='0.15' stroke-dasharray='0.6 0.6'/>")
-    hole(X2+50, Y2+20, 16, 'USB-C  Ø 16')
-    dim(X2, Y2+38, X2+28, Y2+38, '28'); dim(X2+28, Y2+38, X2+50, Y2+38, '22'); dim(X2+50, Y2+38, X2+72, Y2+38, '22')
-    a(f"<text x='{X2+50}' y='{Y2+52}' text-anchor='middle' font-size='2.8' fill='#444'>Pigtails: Ø 5,0 bohren + M6-Gewinde schneiden (gestrichelt: M6) – oder Ø 6,2 + M6-Mutter innen</text>")
-    a(f"<text x='{X2+50}' y='{Y2+56}' text-anchor='middle' font-size='2.8' fill='#444'>Alle drei Löcher auf gleicher Höhe, etwa Mitte des Unterteils</text>")
-    # Gegenüberliegende Seite: Antenne
-    X3, Y3 = 120, 140
-    panel(X3, Y3, 100, 45, 'Gegenüberliegende Seite – Antenne')
-    hole(X3+50, Y3+20, 6.5, 'SMA  Ø 6,5')
-    dim(X3, Y3+38, X3+50, Y3+38, '50')
-    a(f"<text x='{X3+50}' y='{Y3+52}' text-anchor='middle' font-size='2.8' fill='#444'>Mittig, gleiche Höhe wie die Anschlüsse</text>")
+    a(f"<text x='{X+75}' y='{Y+62}' text-anchor='middle' font-size='2.8' fill='#444'>Befestigungslöcher des OLED-Moduls (61,5 × 39,5 mm) nach dem Modul anzeichnen (M2,5)</text>")
     # Prüfmaß
-    a("<line x1='170' y1='30' x2='220' y2='30' stroke='#000' stroke-width='0.6'/><line x1='170' y1='27' x2='170' y2='33' stroke='#000' stroke-width='0.4'/><line x1='220' y1='27' x2='220' y2='33' stroke='#000' stroke-width='0.4'/>")
-    a("<text x='195' y='26' text-anchor='middle' font-size='3.2'>Prüfmaß 50 mm</text>")
-    a("<text x='170' y='42' font-size='2.8' fill='#444'>Nach dem Drucken nachmessen:</text><text x='170' y='46' font-size='2.8' fill='#444'>die Linie muss 50 mm lang sein.</text>")
-    save('bohrplan.svg', 230, 205, '\n'.join(s), "width='230mm' height='200mm'")
+    a("<line x1='30' y1='150' x2='80' y2='150' stroke='#000' stroke-width='0.6'/><line x1='30' y1='147' x2='30' y2='153' stroke='#000' stroke-width='0.4'/><line x1='80' y1='147' x2='80' y2='153' stroke='#000' stroke-width='0.4'/>")
+    a("<text x='55' y='145.5' text-anchor='middle' font-size='3.2'>Prüfmaß 50 mm</text>")
+    a("<text x='88' y='149' font-size='2.8' fill='#444'>Nach dem Drucken nachmessen: die Linie muss genau 50 mm lang sein.</text>")
+    a("<text x='88' y='153' font-size='2.8' fill='#444'>Schablonen ausschneiden und mit Klebeband auf Deckel und Seiten kleben.</text>")
+    # Anschlussseite (kurze Seite, 100 mm), von außen gesehen: Pigtail X – USB-C – Pigtail Y
+    X2, Y2 = 55, 172
+    panel(X2, Y2, 100, 42, 'Anschlussseite (kurze Seite, von außen gesehen)')
+    for cx, lab in [(X2+28, 'X'), (X2+72, 'Y')]:
+        hole(cx, Y2+18, 5.0, lab)
+        a(f"<circle cx='{cx}' cy='{Y2+18}' r='3' fill='none' stroke='#c00' stroke-width='0.15' stroke-dasharray='0.6 0.6'/>")
+    hole(X2+50, Y2+18, 16, 'USB-C  Ø 16')
+    dim(X2, Y2+36, X2+28, Y2+36, '28'); dim(X2+28, Y2+36, X2+50, Y2+36, '22'); dim(X2+50, Y2+36, X2+72, Y2+36, '22')
+    a(f"<text x='{X2+50}' y='{Y2+48}' text-anchor='middle' font-size='2.8' fill='#444'>Pigtails: Ø 5,0 bohren + M6-Gewinde schneiden (gestrichelt: M6) – oder Ø 6,2 + M6-Mutter innen</text>")
+    a(f"<text x='{X2+50}' y='{Y2+52}' text-anchor='middle' font-size='2.8' fill='#444'>Alle drei Löcher auf gleicher Höhe, etwa Mitte des Unterteils</text>")
+    # Gegenüberliegende Seite: Antenne
+    X3, Y3 = 55, 240
+    panel(X3, Y3, 100, 42, 'Gegenüberliegende Seite – Antenne')
+    hole(X3+50, Y3+18, 6.5, 'SMA  Ø 6,5')
+    dim(X3, Y3+36, X3+50, Y3+36, '50')
+    a(f"<text x='{X3+50}' y='{Y3+48}' text-anchor='middle' font-size='2.8' fill='#444'>Mittig, gleiche Höhe wie die Anschlüsse</text>")
+    save('bohrplan.svg', 210, 297, '\n'.join(s), "width='210mm' height='297mm'")
 
 # ---------------------------------------------------------------- Anordnung im Gehäuse
 def aufbau():

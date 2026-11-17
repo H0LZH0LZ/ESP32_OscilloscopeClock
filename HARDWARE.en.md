@@ -91,7 +91,7 @@ replace `NONAME0` with `NONAME2` in the `.ino`. If the display is mounted upside
 - DevKit rotated by 180° in the breakout board (module towards the connector side, USB-C towards the antenna side); the antenna cable and the USB flat cable run once underneath the board to the opposite side.
 - Lid: window for the OLED (active area approx. 55 × 28 mm), mount the module on M2.5 standoffs.
 - Breakout board on the mounting plate; pigtails into terminals P25/P26 (red, via 220 Ω) and GND (brown).
-- Drilling template 1:1: `docs/images/bohrplan.svg`.
+- Drilling template 1:1 for printing on A4: `docs/Bohrplan_A4.pdf`.
 
 ## Oscilloscope settings
 
