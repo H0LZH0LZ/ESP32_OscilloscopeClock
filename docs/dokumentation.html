@@ -102,9 +102,7 @@ kommt direkt in den Eingang des Oszilloskops, ein zusätzliches BNC-Kabel ist ni
  <tr><td>1</td><td><b>Abzweigdose ABS 150 × 100 × 70 mm</b>, IP67, mit Scharnierdeckel, Edelstahlverschlüssen und Montageplatte (Yunseity)</td><td>Kunststoff, damit das WLAN-Signal durchkommt. Das Breakout-Board wird auf die gelochte Montageplatte geschraubt.</td></tr>
  <tr><td>1</td><td><b>Waveshare 2,42inch OLED Display Module</b>, weiß, 128 × 64 Pixel, SPI/I²C (SSD1309); Platine 61,5 × 39,5 mm, aktive Fläche 55,0 × 27,5 mm</td><td>Im Auslieferungszustand (4-Wire-SPI) verwenden, nichts umlöten. Stiftleiste von unten: VCC, GND, DIN, CLK, CS, DC, RST.</td></tr>
  <tr><td>1</td><td><b>WLAN-Antenne Bingfu</b> 2,4/5,8 GHz, 8 dBi, SMA-Stecker (Variante „SMA“), abwinkelbar</td><td>Pflicht: Das Modul -32U hat keine eingebaute Antenne. Sie wird auf die SMA-Buchse des IPEX-Pigtails aus dem Antennen-Kit geschraubt – SMA und RP-SMA nicht mischen (Stecker der Antenne muss zur Buchse des Pigtails passen).</td></tr>
- <tr><td>2</td><td>Widerstand <b>220 Ω</b>, 0,25 W (empfohlen)</td><td>In die rote Ader jedes Pigtails eingelötet; schützt die DAC-Ausgänge bei einem Kurzschluss am BNC-Stecker.</td></tr>
- <tr><td>(1)</td><td>Elko 100 µF / 10 V</td><td>Optional: gegen leichtes Zittern bei WLAN-Sendepulsen (in die Klemmen 3V3 und GND).</td></tr>
- <tr><td>–</td><td>Kleinteile</td><td>7 Leitungen für das OLED (DuPont-Kabel oder Litze), Schrumpfschlauch, Abstandsbolzen M2,5 (OLED) und M3 (Breakout-Board), ggf. 2–3 Muttern M6</td></tr>
+ <tr><td>–</td><td>Kleinteile</td><td>7 DuPont-Kabel für das OLED (Buchse auf Stecker), Abstandsbolzen M2,5 (OLED) und M3 (Breakout-Board), ggf. 2–3 Muttern M6</td></tr>
  <tr><td>1</td><td>USB-Netzteil 5 V, ≥ 1 A, mit USB-C-Kabel</td><td>Ein normales, ungeerdetes Steckernetzteil vermeidet Brummschleifen.</td></tr>
 </table>
 <h3>Beim Bau des Prototyps verwendete Artikel</h3>
@@ -118,7 +116,7 @@ kommt direkt in den Eingang des Oszilloskops, ein zusätzliches BNC-Kabel ist ni
 </ul>
 <h3>Werkzeug</h3>
 <ul>
- <li>Lötkolben (feine Spitze), Lötzinn, Seitenschneider, Abisolierzange, kleiner Schraubendreher für die Schraubklemmen</li>
+ <li>Kleiner Schraubendreher für die Schraubklemmen, Schraubenschlüssel SW 9 für die Kabelverschraubungen – gelötet wird nichts</li>
  <li>Bohrmaschine mit Bohrern 3 mm, 5 mm, 6,5 mm, Stufenbohrer bis 16 mm, Gewindebohrer M6 (oder M6-Muttern), Feile, Cuttermesser (OLED-Fenster)</li>
  <li>Multimeter zum Prüfen vor dem ersten Einschalten</li>
  <li>PC mit Arduino IDE 2.x (oder PlatformIO) und USB-C-Kabel</li>
@@ -128,8 +126,8 @@ kommt direkt in den Eingang des Oszilloskops, ein zusätzliches BNC-Kabel ist ni
 <figure><img src="images/verdrahtung.svg" style="width:100%"><figcaption>Abb. 4 – Verdrahtung. Das DevKit steckt im Breakout-Board; alle Leitungen kommen in die gleichnamigen Schraubklemmen.</figcaption></figure>
 <table style="break-inside:avoid">
  <tr><th>Klemme am Breakout-Board</th><th>Anschluss</th><th>Ziel</th></tr>
- <tr><td>P25 (GPIO25, DAC1)</td><td>über 220 Ω</td><td>Pigtail „X“, rote Ader → Oszilloskop Kanal 1</td></tr>
- <tr><td>P26 (GPIO26, DAC2)</td><td>über 220 Ω</td><td>Pigtail „Y“, rote Ader → Oszilloskop Kanal 2</td></tr>
+ <tr><td>P25 (GPIO25, DAC1)</td><td>direkt</td><td>Pigtail „X“, rote Ader → Oszilloskop Kanal 1</td></tr>
+ <tr><td>P26 (GPIO26, DAC2)</td><td>direkt</td><td>Pigtail „Y“, rote Ader → Oszilloskop Kanal 2</td></tr>
  <tr><td>GND (linke Reihe)</td><td>direkt</td><td>braune Adern (Schirm) aller Pigtails</td></tr>
  <tr><td>3V3</td><td>direkt</td><td>OLED VCC</td></tr>
  <tr><td>GND (rechte Reihe)</td><td>direkt</td><td>OLED GND</td></tr>
@@ -155,9 +153,8 @@ die Anschlussseite und die gegenüberliegende Seite kleben.</div></div>
 <b>USB-C:</b> <b>16 mm</b> in der Mitte (50 mm, Stufenbohrer).
 <b>Gegenüberliegende Seite:</b> <b>6,5 mm</b> mittig für die SMA-Buchse der Antenne.
 <b>Deckel:</b> OLED-Fenster 55 × 28 mm mit Bohrungen in den Ecken vorbereiten, mit dem Cuttermesser ausschneiden und sauber feilen.</div></div>
-<div class="step"><b class="n">3</b><div><b>Widerstände in die Pigtails löten.</b> Bei jedem Pigtail die rote Ader (Innenleiter) etwa 5 cm vor dem
-DuPont-Stift durchtrennen, den 220-Ω-Widerstand dazwischenlöten und mit Schrumpfschlauch isolieren. Vorher mit dem
-Durchgangsprüfer bestätigen, dass Rot zum Mittelstift und Braun zum Außenkontakt des BNC-Steckers führt.</div></div>
+<div class="step"><b class="n">3</b><div><b>Pigtails prüfen.</b> Mit dem Durchgangsprüfer bestätigen, dass die rote Ader zum Mittelstift
+und die braune Ader zum Außenkontakt des BNC-Steckers führt.</div></div>
 <div class="step"><b class="n">4</b><div><b>Pigtails durch die Kabelverschraubungen führen.</b> Verschraubungen in die Anschlussseite schrauben, Hutmutter lösen
 und das Pigtail von außen mit dem DuPont-Ende voran durch Hutmutter, Dichteinsatz und Gehäuse schieben. Passt der DuPont-Stecker
 nicht durch die 3-mm-Öffnung, das kleine Kunststoffgehäuse des Stifts kurz abziehen und danach wieder aufstecken. Den
@@ -172,12 +169,12 @@ Antennenkabels vorsichtig senkrecht auf die Buchse am Modul drücken, bis er ein
 sind etwas zu lang: beide <b>einmal unter dem Breakout-Board hindurch</b> zur jeweils gegenüberliegenden Seite führen –
 das Antennenkabel zur Antenne, das Flachbandkabel zur USB-C-Einbaubuchse – und vor dem Festschrauben des Boards einlegen.
 Das Flachbandkabel nicht scharf knicken.</div></div>
-<div class="step"><b class="n">7</b><div><b>Pigtails anklemmen:</b> rote Ader (mit Widerstand) von X in die Klemme <b>P25</b>, von Y in <b>P26</b> Beide braunen Adern (Schirm) in <b>GND</b>. Optional den Elko 100 µF in 3V3 und GND (Plus an 3V3).</div></div>
+<div class="step"><b class="n">7</b><div><b>Pigtails anklemmen:</b> rote Ader von X in die Klemme <b>P25</b>, von Y in <b>P26</b>, beide braunen Adern (Schirm) in <b>GND</b>. Die DuPont-Stifte passen direkt in die Schraubklemmen. Die BNC-Stecker nicht kurzschließen (Mittelstift an Außenkontakt) – die DAC-Ausgänge sind nicht zusätzlich geschützt.</div></div>
 <div class="step"><b class="n">8</b><div><b>OLED in den Deckel</b> setzen: mit Abstandsbolzen M2,5 hinter dem Fenster befestigen und die 7 Leitungen
 nach der Tabelle oben in die Klemmen legen. Die Leitungen so lang lassen, dass sich der Scharnierdeckel ganz öffnen lässt.</div></div>
 <figure><img src="images/aufbau.svg" style="width:56%"><figcaption>Abb. 6 – Anordnung in der Abzweigdose (maßstäblich): unten die Anschlussseite mit Pigtail X, USB-C und Pigtail Y, oben die Antenne; DevKit um 180° gedreht, Kabel gestrichelt unter dem Board</figcaption></figure>
 <div class="step"><b class="n">9</b><div><b>Prüfen vor dem ersten Einschalten</b> (Multimeter): Kein Durchgang zwischen 3V3 und GND und zwischen 5V und GND.
-Zwischen dem Mittelstift jedes BNC-Steckers und der Klemme P25 bzw. P26 je ca. 220 Ω, zum Außenkontakt kein Durchgang.
+Mittelstift jedes BNC-Steckers hat Durchgang zur Klemme P25 bzw. P26, aber nicht zum Außenkontakt.
 Der Außenkontakt hat Durchgang zu GND. Alle Schraubklemmen leicht nachziehen.</div></div>
 <div class="step"><b class="n">10</b><div><b>Deckel schließen</b> erst nach der Inbetriebnahme (Kapitel 5), damit man bei Bedarf noch an alles herankommt.</div></div>
 
@@ -315,7 +312,7 @@ vorher loslassen bricht ab. Die Einstellung wird gespeichert. <b>Nicht beim Eins
  <tr><td>Kleine „Haken“ an Linienanfängen</td><td>Rücklauf-Tempo verringern (z. B. 12)</td></tr>
  <tr><td>Rücklaufspuren sichtbar</td><td>Rücklauf-Tempo erhöhen oder Profil DIGITAL probieren</td></tr>
  <tr><td>Kreis im Testbild oval</td><td>Empfindlichkeit von X und Y gleich einstellen (beide 0,5 V/Div, Feinregler auf „kalibriert“)</td></tr>
- <tr><td>Brummen/Zittern im Bild</td><td>Ungeerdetes USB-Netzteil statt PC; Elko 100 µF an 3V3</td></tr>
+ <tr><td>Brummen/Zittern im Bild</td><td>Ungeerdetes USB-Netzteil statt PC verwenden</td></tr>
  <tr><td>„Keine NTP-Verbindung“</td><td>WLAN prüfen (Status); ohne Internet die Zeit unter Einstellungen → Uhrzeit stellen</td></tr>
  <tr><td>Zeit um ganze Stunden falsch</td><td>Zeitzone prüfen; Sommer-/Winterzeit beim Stellen von Hand</td></tr>
  <tr><td>http://scope-clock.local geht nicht</td><td>IP-Adresse aus dem Status oder dem Router verwenden (manche Android-Geräte unterstützen .local nicht)</td></tr>

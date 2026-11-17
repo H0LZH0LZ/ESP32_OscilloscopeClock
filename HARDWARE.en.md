@@ -14,7 +14,7 @@
 | 2× cable gland Lapp SKINDICHT MINI M6×1 (52001860), clamping range 2–3 mm | leads the pigtails through the enclosure wall |
 | USB-C panel-mount extension (IP67, 0.2 m, 16 mm cut-out) | power and programming from outside |
 | ABS junction box 150 × 100 × 70 mm, IP67, hinged lid, mounting plate | Enclosure (RF-transparent) |
-| Small parts | 2× 220 Ω (in the red lead of the pigtails), standoffs M2.5/M3 |
+| Small parts | 7 DuPont cables for the OLED, standoffs M2.5/M3 – no soldering |
 
 Detailed assembly guide (German) with drilling template: [docs/ESP32_Oscilloscope_Clock_Dokumentation.pdf](docs/ESP32_Oscilloscope_Clock_Dokumentation.pdf).
 
@@ -23,8 +23,8 @@ Detailed assembly guide (German) with drilling template: [docs/ESP32_Oscilloscop
 ```
 Terminal (breakout board) Target
 ─────────────            ──────────────────────────────────────────────
-P25 (DAC1) ──[220Ω]── pigtail "X" red (core)   ──> BNC plug → oscilloscope channel 1
-P26 (DAC2) ──[220Ω]── pigtail "Y" red (core)   ──> BNC plug → oscilloscope channel 2
+P25 (DAC1) ─────────── pigtail "X" red (core)   ──> BNC plug → oscilloscope channel 1
+P26 (DAC2) ─────────── pigtail "Y" red (core)   ──> BNC plug → oscilloscope channel 2
 GND ─────────────────── pigtail "X" + "Y" brown (shield)
 
 3V3  ─────────────────── OLED VCC
@@ -46,8 +46,8 @@ DAC pins) and GPIO18/23 (hardware SPI for the display).
 | Header | Pos. | Pin | Connection |
 |---|---|---|---|
 | left | 1 | 3V3 | OLED VCC |
-| left | 9 | GPIO25 (DAC_1) | via 220 Ω → BNC “X” centre |
-| left | 10 | GPIO26 (DAC_2) | via 220 Ω → BNC “Y” centre |
+| left | 9 | GPIO25 (DAC_1) | pigtail “X” red |
+| left | 10 | GPIO26 (DAC_2) | pigtail “Y” red |
 | left | 14 | GND | brown leads (shield) of all pigtails |
 | right | 1 | GND | OLED GND |
 | right | 2 | GPIO23 | OLED DIN |
@@ -60,8 +60,8 @@ GPIO0 (right, pos. 14) is the BOOT button on the board – do not connect anythi
 
 ### Notes on the DAC outputs
 - Output range approx. 0 … 3.2 V, picture centre approx. 1.6 V.
-- **220 Ω in series** protect the DAC against a short on the BNC cable and dampen ringing caused
-  by the cable capacitance.
+- The pigtails are connected directly to the DAC outputs (no soldering). Do not short the BNC plugs.
+  If you want to solder, put a 220 Ω resistor in each red lead (short-circuit protection).
 - Optional **1 nF from the BNC centre pin to GND**: this forms an RC low-pass (≈ 720 kHz) that
   smooths the DAC steps. If digits look “rounded” as a result, leave the capacitor out.
 - No level shifter and no amplifier needed: the oscilloscope has 1 MΩ input resistance.
@@ -82,15 +82,13 @@ replace `NONAME0` with `NONAME2` in the `.ino`. If the display is mounted upside
 - **Avoid ground loops:** the BNC ground of the oscilloscope is connected to protective earth. An
   earthed PC on USB can add hum and jitter to the picture. For permanent use, take a normal
   (unearthed) USB power adapter.
-- Wi-Fi transmit bursts draw short current peaks. Slight jitter in the picture can be reduced with
-  an electrolytic capacitor (e.g. 100 µF) between 3V3 and GND close to the DevKit.
 
 ## Enclosure (junction box 150 × 100 × 70 mm)
 - **Connector side** (short side, 100 mm), seen from outside: pigtail X at 28 mm, **the USB-C panel socket in the middle** (Ø 16 mm at 50 mm), pigtail Y at 72 mm. M6 cable glands: drill Ø 5.0 and tap M6 (or Ø 6.2 + nut).
 - **Opposite side:** antenna (SMA, Ø 6.5 mm, centred).
 - DevKit rotated by 180° in the breakout board (module towards the connector side, USB-C towards the antenna side); the antenna cable and the USB flat cable run once underneath the board to the opposite side.
 - Lid: window for the OLED (active area approx. 55 × 28 mm), mount the module on M2.5 standoffs.
-- Breakout board on the mounting plate; pigtails into terminals P25/P26 (red, via 220 Ω) and GND (brown).
+- Breakout board on the mounting plate; pigtails into terminals P25/P26 (red) and GND (brown).
 - Drilling template 1:1 for printing on A4: `docs/Bohrplan_A4.pdf`.
 
 ## Oscilloscope settings

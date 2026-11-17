@@ -104,9 +104,7 @@ def verdrahtung():
         a(f"<text x='40' y='{by-22}' font-size='13' font-weight='bold'>{lab}</text>")
         a(f"<text x='10' y='{by+30}' font-size='11' fill='#444'>BNC-Stecker {sub}</text>")
         cx = 300 + (pin - 9) * 18
-        res(262, by, col)
-        wire([(212, by), (240, by)], '#d62828', dash)                                           # rote Ader
-        wire([(284, by), (cx, by), (cx, y(pin)), (X0 - 10, y(pin))], col, dash)
+        wire([(212, by), (cx, by), (cx, y(pin)), (X0 - 10, y(pin))], col, dash)                 # rote Ader direkt
         wire([(212, by), (212, by + 18)], '#7a4a2a', dash); gnd(212, by + 18)                  # braune Ader = Schirm
     a(f"<text x='{WX+10}' y='212' font-size='10' fill='#555'>Lapp SKINDICHT MINI M6</text>")
     # GND-Klemme
@@ -160,7 +158,7 @@ def verdrahtung():
         a(f"<line x1='{lx}' y1='{ly}' x2='{lx+26}' y2='{ly}' stroke='{c}' stroke-width='4'/><text x='{lx+32}' y='{ly+4}' font-size='11'>{t}</text>")
     a("<text x='760' y='545' font-size='11' fill='#444'>Beschriftung wie auf dem Breakout-Board (P25 = GPIO25 …).</text>")
     a("<text x='760' y='562' font-size='11' fill='#444'>P0 = BOOT-Taster – dort nichts anschließen.</text>")
-    a("<text x='760' y='579' font-size='11' fill='#444'>220 Ω in die rote Ader jedes Pigtails eingelötet.</text>")
+    a("<text x='760' y='579' font-size='11' fill='#444'>Alles geschraubt bzw. gesteckt – nichts gelötet.</text>")
     save('verdrahtung.svg', 1110, 680, '\n'.join(s))
 
 # ---------------------------------------------------------------- Bohrplan 1:1
