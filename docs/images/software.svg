@@ -1,0 +1,22 @@
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 840 320'  font-family='Helvetica,Arial,sans-serif'>
+<rect x='0' y='0' width='840' height='320' fill='#fff'/>
+<rect x='20' y='20' width='380' height='250' rx='12' fill='#e8f5ec' stroke='#555' stroke-width='1.5'/>
+<text x='210.0' y='46' text-anchor='middle' font-size='16' font-weight='bold'>Kern 1 – scopeTask</text>
+<text x='38' y='72' font-size='13'>• nur Strahlausgabe, ohne Pause</text>
+<text x='38' y='93' font-size='13'>• DAC X/Y an GPIO25/26 (Register)</text>
+<text x='38' y='114' font-size='13'>• Rundtour: Zifferblatt + Ziffern</text>
+<text x='38' y='135' font-size='13'>• Zeiger nach der Uhrzeit</text>
+<text x='38' y='156' font-size='13'>• gleich schnelle Linien = gleich hell</text>
+<text x='38' y='177' font-size='13'>• Profil ANALOG/DIGITAL, Testbild</text>
+<text x='38' y='198' font-size='13'>• ca. 230 Bilder pro Sekunde</text>
+<rect x='440' y='20' width='380' height='250' rx='12' fill='#e8eef8' stroke='#555' stroke-width='1.5'/>
+<text x='630.0' y='46' text-anchor='middle' font-size='16' font-weight='bold'>Kern 0 – uiTask + wifiTask</text>
+<text x='458' y='72' font-size='13'>• WLAN (stärkstes bekanntes Netz)</text>
+<text x='458' y='93' font-size='13'>• Zeit per NTP, stündlich</text>
+<text x='458' y='114' font-size='13'>• Webserver, Setup-WLAN, mDNS</text>
+<text x='458' y='135' font-size='13'>• OLED-Anzeige (SPI)</text>
+<text x='458' y='156' font-size='13'>• BOOT-Taster, Einstellungen (NVS)</text>
+<text x='458' y='177' font-size='13'>• Protokoll (Ringpuffer 8 KB)</text>
+<text x='458' y='198' font-size='13'>• CPU-Last-Messung</text>
+<line x1='400' y1='145' x2='440' y2='145' stroke='#555' stroke-width='2'/>
+<text x='420' y='300' text-anchor='middle' font-size='13' fill='#333'>Übergabe nur über wenige atomare Variablen (Uhrzeit, Zifferblatt, Helligkeit, Profil) – keine Sperren im Zeichenpfad</text></svg>

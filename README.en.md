@@ -6,6 +6,8 @@ A vector clock for an oscilloscope in X/Y mode, based on an idea by Mauro Pintus
 adapted for this hardware: **ESP32-WROOM-32U DevKitC V4**, **Waveshare 2.42" OLED (SPI)**, external
 2.4 GHz antenna, BNC outputs and an ABS enclosure.
 
+**Full documentation (German) with assembly guide, pictures and drilling template: [docs/ESP32_Oscilloscope_Clock_Dokumentation.pdf](docs/ESP32_Oscilloscope_Clock_Dokumentation.pdf)**
+
 **Build and wiring: [HARDWARE.en.md](HARDWARE.en.md)** · **Software design: [SOFTWARE.en.md](SOFTWARE.en.md)**
 
 Web interface, OLED and log can be switched between German and English („Sprache“ / “Language”).
@@ -60,7 +62,7 @@ This documentation quotes the German labels and adds the English label in parent
 ### Quick start (Arduino IDE 2.x)
 1. Boards manager: install **esp32 by Espressif** (2.0.x or 3.x), board **ESP32 Dev Module**.
    Under **Tools → Partition Scheme** choose “**Huge APP (3MB No OTA/1MB SPIFFS)**”. This gives the
-   program 3 MB instead of 1.25 MB (41 % used instead of 97 %). The clock uses neither OTA updates
+   program 3 MB instead of 1.25 MB (39 % used instead of 93 %). The clock uses neither OTA updates
    nor SPIFFS, and saved networks and settings survive the change.
 2. Library manager: install **U8g2** (by oliver).
 3. Open `ESP32_OscilloscopeClock_v2.0.ino` and upload. Set the serial monitor to 115200 baud.
@@ -104,13 +106,13 @@ interface.
 
 | Board package | Program memory | Global variables (RAM) |
 |---|---|---|
-| esp32 3.3.12 | 1,288,642 bytes (98 %) | 74,892 bytes (22 %) |
+| esp32 3.3.12 | 1,227,350 bytes (93 %) | 74,892 bytes (22 %) |
 | esp32 2.0.17 | 866,053 bytes (66 %) | 61,048 bytes (18 %) – state before the menu and dial switching |
 
 The configuration variants (profile ANALOG/DIGITAL, Z blanking, dial 0/1/2, `USE_FAST_DAC 0`,
 EXCEL mode) were also built without warnings before the web interface was added. With the
-recommended partition scheme **Huge APP** the same firmware uses approx. 1,290,000 of 3,145,728
-bytes (**41 %**), with “Minimal SPIFFS” 65 %.
+recommended partition scheme **Huge APP** the same firmware uses approx. 1,227,000 of 3,145,728
+bytes (**39 %**), with “Minimal SPIFFS” 62 %.
 
 Also simulated on a PC: beam path (brightness, retrace lines, frame rate), OLED content, BOOT
 button, calendar week, memory accesses (AddressSanitizer). The web page was tested in Chromium at

@@ -1,0 +1,24 @@
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 775'  font-family='Helvetica,Arial,sans-serif'>
+<rect x='0' y='0' width='640' height='775' fill='#fff'/>
+<text x='320.0' y='30' text-anchor='middle' font-size='17' font-weight='bold'>Anordnung im Gehäuse (Draufsicht, Deckel abgenommen)</text>
+<text x='320.0' y='52' text-anchor='middle' font-size='13' fill='#555'>Stirnseite (vorne)</text>
+<rect x='120' y='70' width='400' height='600' rx='16' fill='#f4f1ea' stroke='#777' stroke-width='3'/>
+<rect x='200' y='56' width='40' height='44' fill='#bbb' stroke='#555' /><circle cx='220' cy='78' r='12' fill='#ddd' stroke='#555'/>
+<text x='220' y='122' text-anchor='middle' font-size='13'>BNC X</text>
+<rect x='211' y='132' width='18' height='40' fill='#f3e3c3' stroke='#7a5a1d'/><text x='234' y='157' font-size='11'>220 Ω</text>
+<rect x='300' y='56' width='40' height='44' fill='#bbb' stroke='#555' /><circle cx='320' cy='78' r='12' fill='#ddd' stroke='#555'/>
+<text x='320' y='122' text-anchor='middle' font-size='13'>BNC Y</text>
+<rect x='311' y='132' width='18' height='40' fill='#f3e3c3' stroke='#7a5a1d'/><text x='334' y='157' font-size='11'>220 Ω</text>
+<rect x='400' y='56' width='40' height='44' fill='#bbb' stroke='#555' stroke-dasharray="5 4"/><circle cx='420' cy='78' r='12' fill='#ddd' stroke='#555'/>
+<text x='420' y='122' text-anchor='middle' font-size='13'>BNC Z (opt.)</text>
+<rect x='184.0' y='424' width='112' height='220' rx='6' fill='#1f3b63'/>
+<text x='240' y='534.0' text-anchor='middle' font-size='14' fill='#fff' transform='rotate(-90 240 534.0)'>ESP32 DevKitC</text>
+<rect x='218' y='644' width='44' height='16' rx='5' fill='#c9ccd1' stroke='#888'/>
+<circle cx='240' cy='436' r='6' fill='#d8b14a' stroke='#8a6d1d'/>
+<path d='M240,436 C320,384 420,510 420,662' fill='none' stroke='#777' stroke-width='4'/>
+<circle cx='420' cy='670' r='11' fill='#d8b14a' stroke='#8a6d1d'/><line x1='420' y1='670' x2='420' y2='714' stroke='#333' stroke-width='7' stroke-linecap='round'/>
+<rect x='208' y='262' width='280' height='168' rx='6' fill='none' stroke='#123' stroke-width='2' stroke-dasharray='8 5'/>
+<text x='348' y='334' text-anchor='middle' font-size='13'>OLED-Modul im Deckel</text><text x='348' y='352' text-anchor='middle' font-size='11' fill='#555'>(darunter frei lassen)</text>
+<text x='320.0' y='740' text-anchor='middle' font-size='13' fill='#555'>Rückseite: USB-C (links) · Antenne (rechts, weit weg von den BNC-Buchsen)</text>
+<text x='108' y='370.0' text-anchor='middle' font-size='12' fill='#06c' transform='rotate(-90 108 370.0)'>150 mm</text>
+<text x='320.0' y='762' text-anchor='middle' font-size='12' fill='#06c'>100 mm</text></svg>
