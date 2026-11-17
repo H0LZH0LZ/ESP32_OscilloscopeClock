@@ -88,6 +88,7 @@ replace `NONAME0` with `NONAME2` in the `.ino`. If the display is mounted upside
 ## Enclosure (junction box 150 × 100 × 70 mm)
 - **Connector side** (short side, 100 mm), seen from outside: pigtail X at 28 mm, **the USB-C panel socket in the middle** (Ø 16 mm at 50 mm), pigtail Y at 72 mm. M6 cable glands: drill Ø 5.0 and tap M6 (or Ø 6.2 + nut).
 - **Opposite side:** antenna (SMA, Ø 6.5 mm, centred).
+- DevKit rotated by 180° in the breakout board (module towards the connector side, USB-C towards the antenna side); the antenna cable and the USB flat cable run once underneath the board to the opposite side.
 - Lid: window for the OLED (active area approx. 55 × 28 mm), mount the module on M2.5 standoffs.
 - Breakout board on the mounting plate; pigtails into terminals P25/P26 (red, via 220 Ω) and GND (brown).
 - Drilling template 1:1: `docs/images/bohrplan.svg`.
