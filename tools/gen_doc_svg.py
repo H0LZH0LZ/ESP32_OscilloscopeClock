@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Zeichnet die Schaubilder der Dokumentation als SVG nach docs/images/:
-  verdrahtung.svg  – Schaltplan ESP32 DevKitC ↔ BNC, OLED, Antenne
+  verdrahtung.svg  – Schaltplan ESP32 DevKitC ↔ Pigtails, OLED, Antenne (OLED-Inhalt aus
+                     docs/images/oled_pixel.png, 128 × 64 Pixel aus der OLED-Simulation)
   bohrplan.svg     – Gehäuse-Bohrplan 1:1 (in mm, zum Ausdrucken mit 100 %)
   aufbau.svg       – Anordnung der Teile im Gehäuse (Draufsicht)
   software.svg     – Aufteilung der Firmware auf die beiden Kerne
@@ -23,30 +24,62 @@ def verdrahtung():
     y = lambda i: Y0 + (i - 1) * P
     s = []
     a = s.append
-    # Platine
-    a(f"<rect x='{X0-22}' y='{Y0-52}' width='{X1-X0+44}' height='{18*P+112}' rx='6' fill='#2f8f46' stroke='#1d5e2c' stroke-width='2'/>")
+    # --- Breakout-Board (grün) mit Schraubklemmen
+    a(f"<rect x='{X0-24}' y='{Y0-56}' width='{X1-X0+48}' height='{18*P+118}' rx='5' fill='#2f8f46' stroke='#1d5e2c' stroke-width='2'/>")
+    for hx, hy in ((X0-14, Y0-46), (X1+14, Y0-46), (X0-14, y(19)+52), (X1+14, y(19)+52)):
+        a(f"<circle cx='{hx}' cy='{hy}' r='5' fill='#fff' stroke='#c9a227' stroke-width='2'/>")
     a(f"<text x='{(X0+X1)/2}' y='{y(19)+94}' text-anchor='middle' font-size='12' fill='#1d5e2c' font-weight='bold'>ESP32-Breakout-Board (Schraubklemmen), DevKit aufgesteckt</text>")
-    a(f"<rect x='{X0+18}' y='{Y0-40}' width='{X1-X0-36}' height='{18*P+80}' rx='6' fill='#1f3b63' stroke='#13243d' stroke-width='2'/>")
-    a(f"<rect x='{X0+58}' y='{Y0-28}' width='{X1-X0-116}' height='110' rx='4' fill='#c9ccd1' stroke='#8a8f96'/>")
-    a(f"<text x='{(X0+X1)/2}' y='{Y0+18}' text-anchor='middle' font-size='11' fill='#333'>ESP32-</text>")
-    a(f"<text x='{(X0+X1)/2}' y='{Y0+32}' text-anchor='middle' font-size='11' fill='#333'>WROOM-32U</text>")
-    a(f"<circle cx='{X1-60}' cy='{Y0-14}' r='6' fill='#d8b14a' stroke='#8a6d1d'/>")
-    a(f"<text x='{X1-50}' y='{Y0-26}' font-size='11' fill='#fff'>IPEX</text>")
-    a(f"<text x='{(X0+X1)/2}' y='{Y0+230}' text-anchor='middle' font-size='15' font-weight='bold' fill='#fff'>DevKitC</text>")
-    a(f"<rect x='{(X0+X1)/2-22}' y='{y(19)+28}' width='44' height='18' rx='6' fill='#c9ccd1' stroke='#8a8f96'/>")
-    a(f"<text x='{(X0+X1)/2}' y='{y(19)+74}' text-anchor='middle' font-size='12' fill='#333'>USB-C ← Flachbandkabel ← USB-C-Einbaubuchse (Anschlussseite)</text>")
-    a(f"<rect x='{X1-90}' y='{y(14)-9}' width='26' height='18' rx='3' fill='#eee' stroke='#666'/>")
-    a(f"<text x='{X1-77}' y='{y(14)+4}' text-anchor='middle' font-size='8'>BOOT</text>")
+    # Buchsenleisten, in denen das DevKit steckt
+    for hx in (X0+16, X1-22):
+        a(f"<rect x='{hx}' y='{Y0-14}' width='6' height='{18*P+28}' fill='#111'/>")
+    # --- DevKitC V4 (schwarze Platine)
+    DX0, DX1 = X0+20, X1-20
+    a(f"<rect x='{DX0}' y='{Y0-44}' width='{DX1-DX0}' height='{18*P+92}' rx='5' fill='#161616' stroke='#000' stroke-width='1.5'/>")
+    # Modul ESP32-WROOM-32U: silbernes Schirmblech, IPEX-Buchse oben rechts
+    MX0, MX1 = DX0+34, DX1-34
+    a(f"<rect x='{MX0-4}' y='{Y0-38}' width='{MX1-MX0+8}' height='136' rx='2' fill='#2a2a2a'/>")
+    a(f"<rect x='{MX0}' y='{Y0-30}' width='{MX1-MX0}' height='118' rx='3' fill='#cfd2d6' stroke='#9aa0a6'/>")
+    a(f"<rect x='{MX0+5}' y='{Y0-25}' width='{MX1-MX0-10}' height='108' rx='2' fill='none' stroke='#b4b8bd' stroke-width='1'/>")
+    a(f"<text x='{(MX0+MX1)/2}' y='{Y0+8}' text-anchor='middle' font-size='9' fill='#555' font-weight='bold'>ESP32-WROOM-32U</text>")
+    a(f"<text x='{(MX0+MX1)/2}' y='{Y0+22}' text-anchor='middle' font-size='7' fill='#777'>CE · FCC · 211-16007</text>")
+    for qx in range(4):
+        for qy in range(4):
+            if (qx + qy) % 2 == 0:
+                a(f"<rect x='{MX1-30+qx*5}' y='{Y0+50+qy*5}' width='5' height='5' fill='#666'/>")
+    a(f"<circle cx='{MX1-10}' cy='{Y0-18}' r='6' fill='#d8b14a' stroke='#8a6d1d' stroke-width='1.5'/><circle cx='{MX1-10}' cy='{Y0-18}' r='2' fill='#8a6d1d'/>")
+    a(f"<text x='{MX1-20}' y='{Y0-30}' text-anchor='end' font-size='9' fill='#fff'>IPEX</text>")
+    for k in range(10):                                           # Lötpads unter dem Modul
+        a(f"<rect x='{MX0+6+k*((MX1-MX0-12)/10)}' y='{Y0+92}' width='6' height='5' fill='#c9a227'/>")
+    # Spannungsregler AMS1117 und USB-Seriell-Wandler CP2102
+    a(f"<rect x='{(DX0+DX1)/2-14}' y='{y(10)-8}' width='28' height='18' fill='#222' stroke='#444'/>")
+    for k in range(3):
+        a(f"<rect x='{(DX0+DX1)/2-12+k*10}' y='{y(10)+10}' width='4' height='6' fill='#bbb'/>")
+    a(f"<text x='{(DX0+DX1)/2}' y='{y(10)+3}' text-anchor='middle' font-size='6' fill='#aaa'>1117</text>")
+    cx_, cy_ = (DX0+DX1)/2, y(15)
+    a(f"<rect x='{cx_-16}' y='{cy_-16}' width='32' height='32' fill='#2b2b2b' stroke='#555'/>")
+    a(f"<text x='{cx_}' y='{cy_-2}' text-anchor='middle' font-size='6' fill='#aaa'>SILABS</text><text x='{cx_}' y='{cy_+7}' text-anchor='middle' font-size='6' fill='#aaa'>CP2102</text>")
+    a(f"<text x='{(DX0+DX1)/2}' y='{y(7)+6}' text-anchor='middle' font-size='10' fill='#ddd' transform='rotate(-90 {(DX0+DX1)/2} {y(7)+2})'>ESP32_DevKitc_V4</text>")
+    # Taster EN (links) und BOOT (rechts), USB-C-Buchse unten
+    for bxk, lab, tx, anc in ((DX0+22, 'EN', DX0+38, 'start'), (DX1-22, 'BOOT', DX1-38, 'end')):
+        by0 = y(19) + 24
+        a(f"<rect x='{bxk-11}' y='{by0}' width='22' height='22' rx='2' fill='#d9d9d9' stroke='#888'/><circle cx='{bxk}' cy='{by0+11}' r='6' fill='#3a3a3a'/>")
+        a(f"<text x='{bxk}' y='{by0-3}' text-anchor='middle' font-size='7' fill='#fff'>{lab}</text>")
+    a(f"<rect x='{(DX0+DX1)/2-20}' y='{y(19)+22}' width='40' height='26' rx='7' fill='#d6d8db' stroke='#888' stroke-width='1.5'/>")
+    a(f"<rect x='{(DX0+DX1)/2-14}' y='{y(19)+30}' width='28' height='10' rx='4' fill='#555'/>")
+    a(f"<text x='{(DX0+DX1)/2}' y='{y(19)+74}' text-anchor='middle' font-size='12' fill='#333'>USB-C ← Flachbandkabel ← USB-C-Einbaubuchse (Anschlussseite)</text>")
+    # Schraubklemmen links/rechts; benutzte Klemmen mit Farbmarke
     used = {('L',1):'#d62828',('L',9):'#e09f00',('L',10):'#1d6fd6',('L',14):'#111',
             ('R',1):'#111',('R',2):'#2a9d48',('R',9):'#7b3fb5',('R',10):'#d1495b',('R',11):'#00a6a6',('R',13):'#a0522d'}
+    def terminal(x, yy, c):
+        a(f"<rect x='{x-10}' y='{yy-11}' width='20' height='22' fill='#5cc06b' stroke='#2b7a38'/>")
+        a(f"<circle cx='{x}' cy='{yy}' r='6' fill='#c8ccd0' stroke='#777'/><line x1='{x-4}' y1='{yy}' x2='{x+4}' y2='{yy}' stroke='#555' stroke-width='1.5'/>")
+        if c: a(f"<circle cx='{x}' cy='{yy}' r='3' fill='{c}'/>")
     for i, n in enumerate(L, 1):
-        c = used.get(('L', i))
-        a(f"<rect x='{X0-7}' y='{y(i)-7}' width='14' height='14' rx='2' fill='{c or '#d9d9d9'}' stroke='#555'/>")
-        a(f"<text x='{X0+26}' y='{y(i)+4}' font-size='11' fill='{'#fff' if c else '#9fb3cf'}' {'font-weight=\"bold\"' if c else ''}>{n}</text>")
+        c = used.get(('L', i)); terminal(X0, y(i), c)
+        a(f"<text x='{DX0+6}' y='{y(i)+4}' font-size='10' fill='{'#fff' if c else '#9a9a9a'}' {'font-weight=\"bold\"' if c else ''}>{n}</text>")
     for i, n in enumerate(R, 1):
-        c = used.get(('R', i))
-        a(f"<rect x='{X1-7}' y='{y(i)-7}' width='14' height='14' rx='2' fill='{c or '#d9d9d9'}' stroke='#555'/>")
-        a(f"<text x='{X1-26}' y='{y(i)+4}' text-anchor='end' font-size='11' fill='{'#fff' if c else '#9fb3cf'}' {'font-weight=\"bold\"' if c else ''}>{n}</text>")
+        c = used.get(('R', i)); terminal(X1, y(i), c)
+        a(f"<text x='{DX1-6}' y='{y(i)+4}' text-anchor='end' font-size='10' fill='{'#fff' if c else '#9a9a9a'}' {'font-weight=\"bold\"' if c else ''}>{n}</text>")
     def wire(pts, col, dash=False):
         p = ' '.join(f'{x},{yy}' for x, yy in pts)
         a(f"<polyline points='{p}' fill='none' stroke='{col}' stroke-width='3' stroke-linejoin='round' {'stroke-dasharray=\"8 6\"' if dash else ''}/>")
@@ -73,41 +106,45 @@ def verdrahtung():
         cx = 300 + (pin - 9) * 18
         res(262, by, col)
         wire([(212, by), (240, by)], '#d62828', dash)                                           # rote Ader
-        wire([(284, by), (cx, by), (cx, y(pin)), (X0 - 7, y(pin))], col, dash)
+        wire([(284, by), (cx, by), (cx, y(pin)), (X0 - 10, y(pin))], col, dash)
         wire([(212, by), (212, by + 18)], '#7a4a2a', dash); gnd(212, by + 18)                  # braune Ader = Schirm
     a(f"<text x='{WX+10}' y='212' font-size='10' fill='#555'>Lapp SKINDICHT MINI M6</text>")
     # GND-Klemme
-    wire([(X0 - 7, y(14)), (372, y(14)), (372, y(14) + 16)], '#111'); gnd(372, y(14) + 16)
+    wire([(X0 - 10, y(14)), (372, y(14)), (372, y(14) + 16)], '#111'); gnd(372, y(14) + 16)
     a(f"<text x='10' y='590' font-size='11' fill='#111'>⏚ = Klemme GND</text>")
     a(f"<text x='10' y='606' font-size='11' fill='#111'>Pigtail: rot = Innenleiter (Signal),</text>")
     a(f"<text x='10' y='622' font-size='11' fill='#111'>braun = Schirm (Masse)</text>")
-    # OLED
+    # OLED: Waveshare 2,42" (blaue Platine 61,5 × 39,5 mm, schwarzes Glas, Flexkabel, Stiftleiste links)
     OX, OY = 800, 150
-    a(f"<rect x='{OX}' y='{OY-30}' width='190' height='210' rx='8' fill='#123' stroke='#0a1a26' stroke-width='2'/>")
-    a(f"<rect x='{OX+40}' y='{OY-12}' width='138' height='78' fill='#05080c' stroke='#335'/>")
-    a(f"<text x='{OX+109}' y='{OY+24}' text-anchor='middle' font-size='16' fill='#dfe8ff' font-family='monospace'>19:42:37</text>")
-    a(f"<text x='{OX+109}' y='{OY+44}' text-anchor='middle' font-size='9' fill='#dfe8ff' font-family='monospace'>KW 47 - 16.11.2026</text>")
-    a(f"<text x='{OX+109}' y='{OY+100}' text-anchor='middle' font-size='12' fill='#fff'>Waveshare 2.42\" OLED</text>")
-    a(f"<text x='{OX+109}' y='{OY+116}' text-anchor='middle' font-size='11' fill='#9fb3cf'>SSD1309 · SPI (4-Wire)</text>")
+    ow, oh = 288, 185                                             # Seitenverhältnis wie 61,5 × 39,5
+    oy0 = OY - 40
+    a(f"<rect x='{OX}' y='{oy0}' width='{ow}' height='{oh}' rx='6' fill='#1f4fa0' stroke='#163a78' stroke-width='2'/>")
+    for hx, hy in ((OX+12, oy0+12), (OX+ow-12, oy0+12), (OX+12, oy0+oh-12), (OX+ow-12, oy0+oh-12)):
+        a(f"<circle cx='{hx}' cy='{hy}' r='7' fill='#fff' stroke='#c9a227' stroke-width='2.5'/>")
+    gx0, gy0, gw, gh = OX+66, oy0+22, ow-96, oh-50               # Glas
+    a(f"<rect x='{gx0}' y='{gy0}' width='{gw}' height='{gh}' rx='3' fill='#0b0d12' stroke='#3a3f4a'/>")
+    aw, ah = gw-14, (gw-14)/2                                     # aktive Fläche 2:1 (128 × 64)
+    import base64
+    png = base64.b64encode(open(os.path.join(OUT, 'oled_pixel.png'), 'rb').read()).decode()
+    a(f"<image href='data:image/png;base64,{png}' x='{gx0+7}' y='{gy0+(gh-ah)/2-6}' width='{aw}' height='{ah}' style='image-rendering:pixelated'/>")
+    a(f"<path d='M{gx0+gw/2-28},{gy0+gh} L{gx0+gw/2+28},{gy0+gh} L{gx0+gw/2+20},{oy0+oh-4} L{gx0+gw/2-20},{oy0+oh-4} Z' fill='#d58a2a' stroke='#9a5e14'/>")
+    a(f"<text x='{gx0+2}' y='{oy0+14}' font-size='9' fill='#fff' font-weight='bold'>Waveshare · 2.42inch OLED Module</text>")
+    a(f"<text x='{OX+ow/2}' y='{oy0+oh+18}' text-anchor='middle' font-size='12' fill='#222'>Waveshare 2.42\" OLED · SSD1309 · SPI (4-Wire)</text>")
     names = ['VCC', 'GND', 'DIN', 'CLK', 'CS', 'DC', 'RST']
-    oy = lambda k: OY + 30 + k * 0  # Platzhalter
     pins = {}
-    for k, n in enumerate(names):
-        py = OY - 12 + k * 26 + 0
-        py = OY - 10 + k * 24 + 0
-        pins[n] = OY + 0 + k * 24 - 18 + 0
+    a(f"<rect x='{OX+4}' y='{OY-26}' width='14' height='{6*24+16}' fill='#111' rx='2'/>")
     for k, n in enumerate(names):
         py = OY - 18 + k * 24 + 6
         pins[n] = py
-        a(f"<circle cx='{OX}' cy='{py}' r='5' fill='#d9d9d9' stroke='#555'/>")
-        a(f"<text x='{OX+10}' y='{py+4}' font-size='11' fill='#fff' font-weight='bold'>{n}</text>")
+        a(f"<rect x='{OX-6}' y='{py-2}' width='20' height='4' fill='#d4af37'/><rect x='{OX+6}' y='{py-5}' width='10' height='10' fill='#222' stroke='#555'/>")
+        a(f"<text x='{OX+24}' y='{py+4}' font-size='10' fill='#fff' font-weight='bold'>{n}</text>")
     # Leitungen zum OLED (rechte Stiftleiste)
     conn = [('DIN', 2, '#2a9d48', 640), ('CLK', 9, '#7b3fb5', 656), ('CS', 10, '#d1495b', 672),
             ('DC', 11, '#00a6a6', 688), ('RST', 13, '#a0522d', 704), ('GND', 1, '#111', 720)]
     for n, rp, col, cx in conn:
-        wire([(X1, y(rp)), (cx, y(rp)), (cx, pins[n]), (OX, pins[n])], col)
+        wire([(X1 + 10, y(rp)), (cx, y(rp)), (cx, pins[n]), (OX - 6, pins[n])], col)
     # VCC von 3V3 (links oben) über die Platine
-    wire([(X0, y(1)), (372, y(1)), (372, 62), (750, 62), (750, pins['VCC']), (OX, pins['VCC'])], '#d62828')
+    wire([(X0 - 10, y(1)), (360, y(1)), (360, 62), (750, 62), (750, pins['VCC']), (OX - 6, pins['VCC'])], '#d62828')
     # Antenne
     a(f"<path d='M{X1-60},{Y0-14} C{X1-60},40 {X1+90},70 {X1+120},40' fill='none' stroke='#777' stroke-width='4'/>")
     a(f"<rect x='{X1+112}' y='24' width='22' height='22' rx='3' fill='#d8b14a' stroke='#8a6d1d'/>")
