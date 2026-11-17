@@ -266,7 +266,7 @@ Handy gemacht und lässt sich über „Zum Startbildschirm hinzufügen“ wie ei
 <ul>
  <li><b>Vorschau:</b> zeigt das Oszilloskop-Bild live. <b>Wischen nach links/rechts</b> (oder Punkte/Pfeile darunter, am PC Pfeiltasten) wechselt das Zifferblatt – auch am Oszilloskop.</li>
  <li><b>Beim Aufruf</b> ist nur <b>Status</b> aufgeklappt, alles andere ist eingeklappt. Ohne Zeitserver klappt „Uhrzeit“ von selbst auf, ohne WLAN-Verbindung die Gruppe „WLAN“; sobald alles wieder verbunden ist, klappen sie wieder zu.</li>
- <li><b>Status:</b> WLAN, Signalstärke, Netzwerkadresse, Zeitabgleich (NTP), Laufzeit, Grund des letzten Neustarts, Arbeitsspeicher, Auslastung beider Kerne, Firmware-Version. Orange = Warnung, Rot = Fehler.</li>
+ <li><b>Status:</b> WLAN, Signalstärke, Netzwerkadresse, Zeitabgleich (NTP), OLED-Anzeige (an/aus), Laufzeit, Grund des letzten Neustarts, Arbeitsspeicher, Auslastung beider Kerne, Firmware-Version. Orange = Warnung, Rot = Fehler.</li>
  <li><b>Einstellungen</b> in fünf Gruppen (Oszilloskop, Uhrzeit, Display, WLAN, System). Änderungen wirken sofort und werden gespeichert; „✓ Gespeichert“ erscheint direkt an der Einstellung. Jede Gruppe hat „Auf Standardwerte zurücksetzen“ mit 8 s „Rückgängig“.</li>
  <li><b>Debug:</b> Meldungen der Uhr mit Filter (WLAN, Zeit, Web, Oszilloskop, Warnungen), „Aktualisieren“, „Herunterladen“ (Textdatei) und „Leeren“.</li>
  <li><b>Seitenmenü (☰):</b> springt in die Bereiche, dazu Sprache (Deutsch/English) und Darstellung (automatisch/hell/dunkel). Der Bereich, in dem man gerade ist, ist im Menü grün markiert; der schmale grüne Balken am oberen Bildschirmrand zeigt, wie weit man gescrollt hat.</li>
@@ -386,7 +386,7 @@ beschrieben wird. Jede Gruppe hat „Auf Standardwerte zurücksetzen“; danach 
  <tr><td>„Keine NTP-Verbindung“</td><td>WLAN prüfen (Status); ohne Internet die Zeit unter Einstellungen → Uhrzeit stellen</td></tr>
  <tr><td>Zeit um ganze Stunden falsch</td><td>Zeitzone prüfen; Sommer-/Winterzeit beim Stellen von Hand</td></tr>
  <tr><td>http://scope-clock.local geht nicht</td><td>IP-Adresse aus dem Status oder dem Router verwenden (manche Android-Geräte unterstützen .local nicht)</td></tr>
- <tr><td>OLED bleibt dunkel</td><td>Verdrahtung: CLK GPIO18, DIN GPIO23, CS GPIO5, DC GPIO17, RST GPIO4, VCC an 3V3; OLED-Helligkeit nicht 0 %</td></tr>
+ <tr><td>OLED bleibt dunkel</td><td>Im Status „OLED-Anzeige“ ansehen: „Aus“ = Helligkeit 0 %, unter Einstellungen → Display erhöhen. Steht dort „An“, die Verdrahtung prüfen: CLK GPIO18, DIN GPIO23, CS GPIO5, DC GPIO17, RST GPIO4, VCC an 3V3 (ob ein Display angeschlossen ist, kann die Uhr nicht erkennen)</td></tr>
  <tr><td>OLED-Bild 2 Pixel versetzt</td><td>in der <code>.ino</code> <code>NONAME0</code> durch <code>NONAME2</code> ersetzen</td></tr>
  <tr><td>Hochladen schlägt fehl</td><td>Partitionsschema „Huge APP“; ggf. BOOT-Taster beim Start des Hochladens drücken</td></tr>
 </table>
@@ -404,7 +404,7 @@ Im Profil ANALOG springt der Strahl schnell und bremst vor dem Ziel, im Profil D
 unterwegs keine Abtastpunkte zeigt.</p>
 <p><b>Vektordaten:</b> Zifferblatt, Ziffern, Zeiger und Testbild sind eigene Zeichnungen, erzeugt mit <code>tools/gen_vectors.py</code>
 (Koordinaten 0–255, 8 Bit je Achse).</p>
-<p><b>Speicher:</b> Programmspeicher 1.228.462 Byte (93 % beim Standard-Partitionsschema, ca. 39 % mit „Huge APP“), globale Variablen
+<p><b>Speicher:</b> Programmspeicher 1.228.646 Byte (93 % beim Standard-Partitionsschema, ca. 39 % mit „Huge APP“), globale Variablen
 74.892 Byte (22 %). Die Webseite liegt gzip-komprimiert im Flash (21 KB), die Schrift (Raleway, auf die benötigten Zeichen reduziert) als WOFF2 (30 KB).</p>
 <h3>Debug-Meldungen (Beispiel)</h3>
 <pre>+0s ESP32 Oscilloscope Clock v2.0
@@ -441,7 +441,7 @@ unterwegs keine Abtastpunkte zeigt.</p>
 <table>
  <tr><th>Aufruf</th><th>Funktion</th></tr>
  <tr><td><code>GET /</code></td><td>Webseite (gzip)</td></tr>
- <tr><td><code>GET /api/status</code></td><td>Uhrzeit, NTP, WLAN, Setup-WLAN, Profil, Bildrate, Speicher, Last, Neustartgrund</td></tr>
+ <tr><td><code>GET /api/status</code></td><td>Uhrzeit, NTP, WLAN, Setup-WLAN, Profil, Bildrate, Speicher, Last, Neustartgrund, OLED-Helligkeit</td></tr>
  <tr><td><code>GET /api/settings</code>, <code>POST /api/settings</code></td><td>Einstellungen lesen bzw. ändern (beliebige Felder, sofort wirksam)</td></tr>
  <tr><td><code>POST /api/settings/reset</code></td><td>Gruppe (scope/time/display) oder alles auf config.h</td></tr>
  <tr><td><code>POST /api/dial</code>, <code>POST /api/time</code></td><td>Zifferblatt umschalten; Uhrzeit von Hand stellen</td></tr>

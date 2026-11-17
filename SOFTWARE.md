@@ -159,7 +159,7 @@ und berechnet die Rundtour neu. Das dauert einige zehn Millisekunden, so lange s
 Darunter folgen drei Bereiche. **Status** und **Protokoll** sind einklappbar (Pfeil V): Status ist anfangs offen, Protokoll zu
 (bei jedem Aufruf: Status offen, alles andere zu – nichts wird gespeichert; ein Sprung aus dem Menü klappt sie auf). Jede Einstellung und jede Schaltfläche hat eine kurze Beschreibung:
 - **Status:** große Uhrzeit, KW und Datum, WLAN, Signalstärke, Netzwerkadresse, darunter
-  Zeitabgleich (NTP) mit letztem Abgleich, Laufzeit, darunter Grund des letzten Neustarts, Arbeitsspeicher (frei/gesamt, darunter Tiefstwert seit
+  Zeitabgleich (NTP) mit letztem Abgleich, OLED-Anzeige (An mit Helligkeit oder Aus, orange), Laufzeit, darunter Grund des letzten Neustarts, Arbeitsspeicher (frei/gesamt, darunter Tiefstwert seit
   dem Neustart und größter freier Block), Prozessorauslastung Kern 0 und Kern 1 (je eine Zeile mit
   kurzer Erläuterung; Kern 1 zeichnet ständig und steht immer auf 100 %),
   Firmware-Version. Wird alle 2 s aktualisiert. Oszilloskop-Profil und Bildrate stehen nicht doppelt
@@ -214,7 +214,7 @@ eingesetzt (`textContent`), nie als HTML.
 |---|---|
 | `GET /` | die Seite |
 | `GET /manifest.json`, `/icon.svg`, `/icon.png` | App-Manifest und Symbol für den Startbildschirm |
-| `GET /api/status` | JSON: `time`, `date`, `kw`, `ntp{synced,overdue,manual,dst,last,server}`, `wifi{configured,connected,ssid,rssi,ip,host}`, `ap{active,ssid,ip}`, `profile`, `dial`, `fps`, `heap`, `heapTotal`, `heapMin`, `heapBlock`, `cpu0`, `reset`, `uptime`, `fw`, `lang`, `h12`, `test` (Testbild an) |
+| `GET /api/status` | JSON: `time`, `date`, `kw`, `ntp{synced,overdue,manual,dst,last,server}`, `wifi{configured,connected,ssid,rssi,ip,host}`, `ap{active,ssid,ip}`, `profile`, `dial`, `fps`, `heap`, `heapTotal`, `heapMin`, `heapBlock`, `cpu0`, `reset`, `uptime`, `fw`, `lang`, `h12`, `oled` (Helligkeit in %, 0 = aus), `test` (Testbild an) |
 | `GET /api/log` | Log als Text, älteste Zeile zuerst |
 | `POST /api/log/clear` | Log-Ringpuffer leeren (serielle Ausgabe unberührt) |
 | `GET /api/networks` | gespeicherte Netze `[{ssid, source:"web"}]`, nie Passwörter |
@@ -442,4 +442,4 @@ bei Bedarf `BEAM_NS_PER_UNIT` erhöhen (hellere Spur, weniger Bilder/s).
 | Zeit falsch um ganze Stunden | Zeitzone im Webinterface bzw. `TZ_INFO` prüfen |
 | Kein Internet, Uhrzeit läuft ab 10:08:37 (Startzeit `FALLBACK_H:M:S`) | Webinterface → Einstellungen → „Uhrzeit stellen“ |
 | OLED-Bild 2 px versetzt | in der `.ino` `NONAME0` → `NONAME2` |
-| OLED bleibt dunkel | Verdrahtung prüfen: CLK GPIO18, DIN GPIO23, CS GPIO5, DC GPIO17, RST GPIO4, VCC an 3V3 (siehe HARDWARE.md) |
+| OLED bleibt dunkel | Im Status „OLED-Anzeige“ prüfen: steht dort „Aus“, ist die Helligkeit 0 %. Steht dort „An“, Verdrahtung prüfen (die Uhr kann per SPI nicht erkennen, ob ein Display angeschlossen ist): CLK GPIO18, DIN GPIO23, CS GPIO5, DC GPIO17, RST GPIO4, VCC an 3V3 (siehe HARDWARE.md) |

@@ -160,7 +160,7 @@ value. All four digit sets are therefore kept in RAM (approx. 0.7 KB in total).
 
 Below follow three sections. Every setting and every button has a short description:
 - **Status:** large time, calendar week and date, Wi-Fi, signal
-  strength, network address, below it time sync (NTP) with last sync, uptime, below it the reason for the last restart, memory (free/total, below it the minimum since restart and the
+  strength, network address, below it time sync (NTP) with last sync, OLED display (on with brightness, or off in orange), uptime, below it the reason for the last restart, memory (free/total, below it the minimum since restart and the
   largest free block), CPU usage of core 0 and core 1 (one row each with a short note; core 1 draws
   all the time and always shows 100 %), firmware version. Updated every 2 s. Oscilloscope
   profile and frame rate are not duplicated in the status but only shown in the settings (profile
@@ -220,7 +220,7 @@ inserted as text (`textContent`), never as HTML.
 | `GET /` | the page |
 | `GET /manifest.json`, `/icon.svg`, `/icon.png` | app manifest and icon for the home screen |
 | `GET /font.woff2`, `GET /font-600.woff2` | font of the page, Light and SemiBold (from `font.h`), cached by the browser for one year. Two static styles instead of a variable font, because some Android browsers otherwise show bold text of a variable font in the system font |
-| `GET /api/status` | JSON: `time`, `date`, `kw`, `ntp{synced,overdue,manual,dst,last,server}`, `wifi{configured,connected,ssid,rssi,ip,host}`, `ap{active,ssid,ip}`, `profile`, `dial`, `fps`, `heap`, `heapTotal`, `heapMin`, `heapBlock`, `cpu0`, `reset`, `uptime`, `fw`, `lang`, `h12`, `test` (test pattern on) |
+| `GET /api/status` | JSON: `time`, `date`, `kw`, `ntp{synced,overdue,manual,dst,last,server}`, `wifi{configured,connected,ssid,rssi,ip,host}`, `ap{active,ssid,ip}`, `profile`, `dial`, `fps`, `heap`, `heapTotal`, `heapMin`, `heapBlock`, `cpu0`, `reset`, `uptime`, `fw`, `lang`, `h12`, `oled` (brightness in %, 0 = off), `test` (test pattern on) |
 | `GET /api/log` | log as text, oldest line first |
 | `POST /api/log/clear` | empty the log ring buffer (serial output unaffected) |
 | `GET /api/networks` | saved networks `[{ssid, source:"web"}]`, never passwords |
@@ -448,4 +448,4 @@ and if needed increase `BEAM_NS_PER_UNIT` (brighter trace, fewer frames/s).
 | Time wrong by whole hours | check the time zone in the web interface or `TZ_INFO` |
 | No internet, time runs from 10:08:37 (start time `FALLBACK_H:M:S`) | web interface → „Einstellungen“ → „Uhrzeit stellen“ (set time) |
 | OLED picture shifted by 2 px | in the `.ino` `NONAME0` → `NONAME2` |
-| OLED stays dark | check wiring: CLK GPIO18, DIN GPIO23, CS GPIO5, DC GPIO17, RST GPIO4, VCC to 3V3 (see HARDWARE.en.md) |
+| OLED stays dark | check “OLED display” in the status: “Off” means brightness 0 %. If it says “On”, check the wiring (the clock cannot detect over SPI whether a display is connected): CLK GPIO18, DIN GPIO23, CS GPIO5, DC GPIO17, RST GPIO4, VCC to 3V3 (see HARDWARE.en.md) |

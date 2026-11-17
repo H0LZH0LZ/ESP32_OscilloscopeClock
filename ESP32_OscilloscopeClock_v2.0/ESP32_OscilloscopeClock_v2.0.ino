@@ -1147,6 +1147,7 @@ static void handleStatus()
   o += ",\"reset\":";                jsonStr(o, resetReasonText());
   o += ",\"fw\":";                   jsonStr(o, FW_VERSION);
   o += ",\"test\":";                 o += g_testPattern ? "true" : "false";
+  o += ",\"oled\":";                 o += (int)s_oledPct;                     // OLED-Helligkeit in %, 0 = aus
   o += ",\"h12\":";                  o += s_h12 ? "true" : "false";
   o += ",\"lang\":";                 o += s_lang ? "\"en\"" : "\"de\"";
   o += '}';

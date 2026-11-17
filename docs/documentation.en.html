@@ -264,7 +264,7 @@ phones and can be added to the home screen like an app (“Add to home screen”
 <ul>
  <li><b>Preview:</b> shows the oscilloscope picture live. <b>Swiping left/right</b> (or the dots/arrows below it, arrow keys on a PC) changes the dial – on the oscilloscope as well.</li>
  <li><b>When the page opens</b> only <b>Status</b> is expanded, everything else is collapsed. Without a time server “Time” expands by itself, without a Wi-Fi connection the “Wi-Fi” group does; they collapse again once everything is connected.</li>
- <li><b>Status:</b> Wi-Fi, signal strength, network address, time sync (NTP), uptime, reason for the last restart, memory, load of both cores, firmware version. Orange = warning, red = error.</li>
+ <li><b>Status:</b> Wi-Fi, signal strength, network address, time sync (NTP), OLED display (on/off), uptime, reason for the last restart, memory, load of both cores, firmware version. Orange = warning, red = error.</li>
  <li><b>Settings</b> in five groups (Oscilloscope, Time, Display, Wi-Fi, System). Changes take effect immediately and are saved; “✓ Saved” appears right at the setting. Each group has “Reset to defaults” with 8 s “Undo”.</li>
  <li><b>Debug:</b> messages of the clock with a filter (Wi-Fi, time, web, oscilloscope, warnings), “Refresh”, “Download” (text file) and “Clear”.</li>
  <li><b>Side menu (☰):</b> jumps to the sections, plus language (Deutsch/English) and appearance (automatic/light/dark). The section you are currently in is highlighted in green; the thin green bar at the top edge of the screen shows how far you have scrolled.</li>
@@ -378,7 +378,7 @@ group has “Reset to defaults”; the change can then be undone with “Undo”
  <tr><td>“No NTP connection”</td><td>check Wi-Fi (status); without internet set the time under Settings → Time</td></tr>
  <tr><td>Time off by whole hours</td><td>check the time zone; summer/winter time when setting by hand</td></tr>
  <tr><td>http://scope-clock.local does not work</td><td>use the IP address from the status or the router (some Android devices do not support .local)</td></tr>
- <tr><td>OLED stays dark</td><td>wiring: CLK GPIO18, DIN GPIO23, CS GPIO5, DC GPIO17, RST GPIO4, VCC to 3V3; OLED brightness not 0 %</td></tr>
+ <tr><td>OLED stays dark</td><td>check “OLED display” in the status: “Off” = brightness 0 %, increase it under Settings → Display. If it says “On”, check the wiring: CLK GPIO18, DIN GPIO23, CS GPIO5, DC GPIO17, RST GPIO4, VCC to 3V3 (the clock cannot detect whether a display is connected)</td></tr>
  <tr><td>OLED picture shifted by 2 pixels</td><td>replace <code>NONAME0</code> with <code>NONAME2</code> in the <code>.ino</code></td></tr>
  <tr><td>Upload fails</td><td>partition scheme “Huge APP”; if necessary press the BOOT button when the upload starts</td></tr>
 </table>
@@ -396,7 +396,7 @@ In profile ANALOG the beam jumps fast and brakes before the target; in profile D
 oscilloscope shows no sample points along the way.</p>
 <p><b>Vector data:</b> dial, numerals, hands and test pattern are original drawings generated with <code>tools/gen_vectors.py</code>
 (coordinates 0–255, 8 bits per axis).</p>
-<p><b>Memory:</b> program memory 1,228,462 bytes (93 % with the default partition scheme, approx. 39 % with “Huge APP”), global variables
+<p><b>Memory:</b> program memory 1,228,646 bytes (93 % with the default partition scheme, approx. 39 % with “Huge APP”), global variables
 74,892 bytes (22 %). The web page is stored gzip-compressed in flash (21 KB), the font (Raleway, reduced to the characters needed) as WOFF2 (30 KB).</p>
 <h3>Debug messages (example, language English)</h3>
 <pre>+0s ESP32 Oscilloscope Clock v2.0
@@ -433,7 +433,7 @@ oscilloscope shows no sample points along the way.</p>
 <table>
  <tr><th>Request</th><th>Function</th></tr>
  <tr><td><code>GET /</code></td><td>Web page (gzip)</td></tr>
- <tr><td><code>GET /api/status</code></td><td>Time, NTP, Wi-Fi, setup network, profile, frame rate, memory, load, restart reason</td></tr>
+ <tr><td><code>GET /api/status</code></td><td>Time, NTP, Wi-Fi, setup network, profile, frame rate, memory, load, restart reason, OLED brightness</td></tr>
  <tr><td><code>GET /api/settings</code>, <code>POST /api/settings</code></td><td>Read or change settings (any fields, effective immediately)</td></tr>
  <tr><td><code>POST /api/settings/reset</code></td><td>Group (scope/time/display) or everything to config.h</td></tr>
  <tr><td><code>POST /api/dial</code>, <code>POST /api/time</code></td><td>Change the dial; set the time by hand</td></tr>
