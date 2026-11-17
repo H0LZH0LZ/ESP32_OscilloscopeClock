@@ -9,18 +9,23 @@
 | ESP32-WROOM-32U DevKitC V4 (USB-C, IPEX/U.FL) | Klassischer Dual-Core-ESP32 mit zwei 8-Bit-DACs (GPIO25/26) |
 | Waveshare 2.42" OLED (SSD1309, 128×64) | Lokale Textanzeige: Uhrzeit 24h (7-Segment-Stil), Datum, KW, SSID, Signal |
 | 2,4-GHz-Stabantenne + IPEX→SMA-Pigtail | Pflicht beim *-32U*: das Modul hat **keine** PCB-Antenne |
-| 2× BNC-Einbaubuchse (Lötanschluss) | X- und Y-Ausgang zum Oszilloskop |
-| ABS-Abzweigdose 100 × 150 mm | Gehäuse (funkdurchlässig) |
-| Kleinteile | 2× 220 Ω (Serienwiderstand DAC), optional 2× 1 nF, Litze, Abstandsbolzen |
+| ESP32-Breakout-Board mit Schraubklemmen | DevKit aufstecken, alle Leitungen in Schraubklemmen (Beschriftung P25, P26 …) – nichts am DevKit löten |
+| 2× BNC-Pigtail, BNC-Stecker auf 2,54-mm-DuPont-Stift, RG316 | X- und Y-Ausgang; der BNC-Stecker kommt direkt ins Oszilloskop (rot = Signal, braun = Schirm) |
+| 2× Kabelverschraubung Lapp SKINDICHT MINI M6×1 (52001860), Klemmbereich 2–3 mm | führt die Pigtails durch die Gehäusewand |
+| USB-C-Einbauverlängerung (IP67, 0,2 m, Einbauöffnung 16 mm) | Versorgung und Programmierung von außen |
+| ABS-Abzweigdose 150 × 100 × 70 mm, IP67, Scharnierdeckel, Montageplatte | Gehäuse (funkdurchlässig) |
+| Kleinteile | 2× 220 Ω (in die rote Ader der Pigtails), Abstandsbolzen M2,5/M3 |
+
+Ausführliche Aufbauanleitung mit Bohrplan: [docs/ESP32_Oscilloscope_Clock_Dokumentation.pdf](docs/ESP32_Oscilloscope_Clock_Dokumentation.pdf).
 
 ## Verdrahtung
 
 ```
-ESP32 DevKitC            Ziel
+Klemme (Breakout-Board)  Ziel
 ─────────────            ──────────────────────────────────────────────
-GPIO25 (DAC1) ──[220Ω]── BNC "X"  Mittelkontakt   ──> Oszilloskop Kanal 1
-GPIO26 (DAC2) ──[220Ω]── BNC "Y"  Mittelkontakt   ──> Oszilloskop Kanal 2
-GND ──────────────────── BNC "X" + "Y" Masse (Gehäuse der Buchse)
+P25 (DAC1) ──[220Ω]── Pigtail "X" rot (Innenleiter) ──> BNC-Stecker → Oszilloskop Kanal 1
+P26 (DAC2) ──[220Ω]── Pigtail "Y" rot (Innenleiter) ──> BNC-Stecker → Oszilloskop Kanal 2
+GND ─────────────────── Pigtail "X" + "Y" braun (Schirm)
 
 3V3  ─────────────────── OLED VCC
 GND  ─────────────────── OLED GND
@@ -33,8 +38,8 @@ GPIO4  ───────────────── OLED RST
 IPEX/U.FL ── Pigtail ── SMA-Buchse in der Gehäusewand ── Stabantenne
 
 Optional, Dunkeltastung:
-GPIO27 ──[220Ω]──────── BNC "Z"  Mittelkontakt   ──> Z-Eingang des Oszilloskops (Rückseite)
-GND ──────────────────── BNC "Z" Masse
+P27    ──[220Ω]──────── Pigtail "Z" rot (Innenleiter) ──> Z-Eingang des Oszilloskops (Rückseite)
+GND ─────────────────── Pigtail "Z" braun (Schirm)
 ```
 
 Die Pins stehen zentral in `ESP32_OscilloscopeClock_v2.0/config.h`. Fest vorgegeben sind GPIO25/26
@@ -48,7 +53,7 @@ Die Pins stehen zentral in `ESP32_OscilloscopeClock_v2.0/config.h`. Fest vorgege
 | links | 9 | GPIO25 (DAC_1) | über 220 Ω → BNC „X“ Mitte |
 | links | 10 | GPIO26 (DAC_2) | über 220 Ω → BNC „Y“ Mitte |
 | links | 11 | GPIO27 | optional über 220 Ω → BNC „Z“ Mitte |
-| links | 14 | GND | Masse aller BNC-Buchsen |
+| links | 14 | GND | braune Adern (Schirm) aller Pigtails |
 | rechts | 1 | GND | OLED GND |
 | rechts | 2 | GPIO23 | OLED DIN |
 | rechts | 9 | GPIO18 | OLED CLK |
@@ -63,7 +68,7 @@ Der ESP32 kann den Strahl nicht selbst abschalten. Zwischen zwei Linien bleibt d
 schwache Rücklaufspur (die Firmware hält sie mit ca. 1/24 der Linienhelligkeit so klein wie möglich).
 Viele Röhrenoszilloskope haben auf der Rückseite eine BNC-Buchse **„Z“, „Z-Mod“, „Z-Input“** oder
 **„Intensity“**. Mit einem dritten Ausgang lässt sich der Strahl während der Sprünge ganz ausschalten:
-1. Dritte BNC-Buchse ins Gehäuse, Verdrahtung wie oben (GPIO27 über 220 Ω).
+1. Drittes Pigtail mit Kabelverschraubung, Verdrahtung wie oben (P27 über 220 Ω).
 2. Im Handbuch des Oszilloskops nachsehen, welcher Pegel **dunkel** schaltet. Bei vielen Geräten macht
    High (TTL) dunkel. Bei manchen ist es umgekehrt, oder der Eingang braucht mehr als 3,3 V.
 3. In `config.h` `ZBLANK_PIN 27` setzen, bei Bedarf `ZBLANK_ACTIVE_HIGH 0`.
@@ -97,12 +102,12 @@ eingebaut, im Webinterface „OLED um 180° drehen“ einschalten.
 - WLAN-Sendepulse ziehen kurzzeitig Strom. Leichtes Zittern im Bild lässt sich mit einem Elko
   (z. B. 100 µF) zwischen 3V3 und GND nahe am DevKit reduzieren.
 
-## Gehäuse (ABS 100 × 150 mm) – Vorschlag
-- Stirnseite: 2× BNC (X, Y), Abstand ≥ 20 mm, beschriften.
-- Rückseite: USB-C-Ausschnitt für das DevKit **oder** eine USB-C-Einbaubuchse mit kurzem Kabel.
-- Deckel: Fenster für das OLED (aktive Fläche ca. 55 × 28 mm), Modul mit M2/M2,5-Abstandsbolzen befestigen.
-- Seite/Deckel: SMA-Bohrung (6,5 mm) für die Antenne.
-- DevKit auf Abstandsbolzen oder Lochrasterplatine. Die Leitungen GPIO25/26 → BNC kurz halten.
+## Gehäuse (Abzweigdose 150 × 100 × 70 mm)
+- Stirnseite: 2 (3) Kabelverschraubungen M6 für die Pigtails, Abstand 20 mm – Ø 5,0 bohren und M6-Gewinde schneiden (oder Ø 6,2 + Mutter).
+- Rückseite: USB-C-Einbaubuchse (Ø 16 mm) und SMA-Antennenbuchse (Ø 6,5 mm).
+- Deckel: Fenster für das OLED (aktive Fläche ca. 55 × 28 mm), Modul mit M2,5-Abstandsbolzen befestigen.
+- Breakout-Board auf der Montageplatte; die Pigtails in die Klemmen P25/P26 (rot, über 220 Ω) und GND (braun).
+- Bohrplan 1:1: `docs/images/bohrplan.svg`.
 
 ## Oszilloskop-Einstellungen
 

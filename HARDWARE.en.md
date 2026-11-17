@@ -9,18 +9,23 @@
 | ESP32-WROOM-32U DevKitC V4 (USB-C, IPEX/U.FL) | Classic dual-core ESP32 with two 8-bit DACs (GPIO25/26) |
 | Waveshare 2.42" OLED (SSD1309, 128×64) | Local text display: time 24 h (7-segment style), date, calendar week, SSID, signal |
 | 2.4 GHz rod antenna + IPEX→SMA pigtail | Mandatory with the *-32U*: the module has **no** PCB antenna |
-| 2× panel-mount BNC socket (solder terminal) | X and Y outputs to the oscilloscope |
-| ABS junction box 100 × 150 mm | Enclosure (RF-transparent) |
-| Small parts | 2× 220 Ω (DAC series resistor), optional 2× 1 nF, wire, standoffs |
+| ESP32 breakout board with screw terminals | plug in the DevKit, all wires go into screw terminals (labelled P25, P26 …) – no soldering on the DevKit |
+| 2× BNC pigtail, BNC plug to 2.54 mm DuPont pin, RG316 | X and Y outputs; the BNC plug goes straight into the oscilloscope (red = signal, brown = shield) |
+| 2× cable gland Lapp SKINDICHT MINI M6×1 (52001860), clamping range 2–3 mm | leads the pigtails through the enclosure wall |
+| USB-C panel-mount extension (IP67, 0.2 m, 16 mm cut-out) | power and programming from outside |
+| ABS junction box 150 × 100 × 70 mm, IP67, hinged lid, mounting plate | Enclosure (RF-transparent) |
+| Small parts | 2× 220 Ω (in the red lead of the pigtails), standoffs M2.5/M3 |
+
+Detailed assembly guide (German) with drilling template: [docs/ESP32_Oscilloscope_Clock_Dokumentation.pdf](docs/ESP32_Oscilloscope_Clock_Dokumentation.pdf).
 
 ## Wiring
 
 ```
-ESP32 DevKitC            Target
+Terminal (breakout board) Target
 ─────────────            ──────────────────────────────────────────────
-GPIO25 (DAC1) ──[220Ω]── BNC "X"  centre pin      ──> oscilloscope channel 1
-GPIO26 (DAC2) ──[220Ω]── BNC "Y"  centre pin      ──> oscilloscope channel 2
-GND ──────────────────── BNC "X" + "Y" ground (socket body)
+P25 (DAC1) ──[220Ω]── pigtail "X" red (core)   ──> BNC plug → oscilloscope channel 1
+P26 (DAC2) ──[220Ω]── pigtail "Y" red (core)   ──> BNC plug → oscilloscope channel 2
+GND ─────────────────── pigtail "X" + "Y" brown (shield)
 
 3V3  ─────────────────── OLED VCC
 GND  ─────────────────── OLED GND
@@ -33,8 +38,8 @@ GPIO4  ───────────────── OLED RST
 IPEX/U.FL ── pigtail ── SMA socket in the enclosure wall ── rod antenna
 
 Optional, blanking:
-GPIO27 ──[220Ω]──────── BNC "Z"  centre pin      ──> Z input of the oscilloscope (rear panel)
-GND ──────────────────── BNC "Z" ground
+P27    ──[220Ω]──────── pigtail "Z" red (core)   ──> Z input of the oscilloscope (rear panel)
+GND ─────────────────── pigtail "Z" brown (shield)
 ```
 
 All pins are defined in `ESP32_OscilloscopeClock_v2.0/config.h`. Fixed are GPIO25/26 (the only
@@ -48,7 +53,7 @@ DAC pins) and GPIO18/23 (hardware SPI for the display).
 | left | 9 | GPIO25 (DAC_1) | via 220 Ω → BNC “X” centre |
 | left | 10 | GPIO26 (DAC_2) | via 220 Ω → BNC “Y” centre |
 | left | 11 | GPIO27 | optional via 220 Ω → BNC “Z” centre |
-| left | 14 | GND | ground of all BNC sockets |
+| left | 14 | GND | brown leads (shield) of all pigtails |
 | right | 1 | GND | OLED GND |
 | right | 2 | GPIO23 | OLED DIN |
 | right | 9 | GPIO18 | OLED CLK |
@@ -64,7 +69,7 @@ between two lines (the firmware keeps it as small as possible, approx. 1/24 of t
 brightness). Many CRT oscilloscopes have a BNC socket **“Z”, “Z-Mod”, “Z-Input”** or
 **“Intensity”** on the rear. With a third output the beam can be switched off completely during
 jumps:
-1. Add a third BNC socket to the enclosure, wiring as above (GPIO27 via 220 Ω).
+1. Add a third pigtail with cable gland, wiring as above (P27 via 220 Ω).
 2. Check in the oscilloscope manual which level makes the beam **dark**. On many devices high
    (TTL) blanks. On some it is the other way round, or the input needs more than 3.3 V.
 3. Set `ZBLANK_PIN 27` in `config.h`, and `ZBLANK_ACTIVE_HIGH 0` if needed.
@@ -98,12 +103,12 @@ replace `NONAME0` with `NONAME2` in the `.ino`. If the display is mounted upside
 - Wi-Fi transmit bursts draw short current peaks. Slight jitter in the picture can be reduced with
   an electrolytic capacitor (e.g. 100 µF) between 3V3 and GND close to the DevKit.
 
-## Enclosure (ABS 100 × 150 mm) – suggestion
-- Front: 2× BNC (X, Y), spacing ≥ 20 mm, labelled.
-- Rear: USB-C cut-out for the DevKit **or** a panel-mount USB-C socket with a short cable.
-- Lid: window for the OLED (active area approx. 55 × 28 mm), mount the module on M2/M2.5 standoffs.
-- Side/lid: SMA hole (6.5 mm) for the antenna.
-- DevKit on standoffs or perfboard. Keep the GPIO25/26 → BNC wires short.
+## Enclosure (junction box 150 × 100 × 70 mm)
+- Front: 2 (3) M6 cable glands for the pigtails, spacing 20 mm – drill Ø 5.0 and tap M6 (or Ø 6.2 + nut).
+- Rear: USB-C panel socket (Ø 16 mm) and SMA antenna socket (Ø 6.5 mm).
+- Lid: window for the OLED (active area approx. 55 × 28 mm), mount the module on M2.5 standoffs.
+- Breakout board on the mounting plate; pigtails into terminals P25/P26 (red, via 220 Ω) and GND (brown).
+- Drilling template 1:1: `docs/images/bohrplan.svg`.
 
 ## Oscilloscope settings
 

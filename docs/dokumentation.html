@@ -89,81 +89,93 @@ Zifferblatt, Ziffern und Zeiger etwa 230-mal pro Sekunde nach.</p>
 </div>
 
 <h2 class="pb">2 Teileliste und Werkzeug</h2>
+<p>Die Liste entspricht dem Aufbau des Prototyps. Die Signale verlassen das Gehäuse nicht über Einbaubuchsen, sondern über
+<b>BNC-Pigtail-Leitungen</b>, die mit <b>Kabelverschraubungen</b> durch die Gehäusewand geführt werden. Der BNC-Stecker am Ende
+kommt direkt in den Eingang des Oszilloskops, ein zusätzliches BNC-Kabel ist nicht nötig.</p>
 <table>
  <tr><th>Anz.</th><th>Teil</th><th>Hinweis</th></tr>
  <tr><td>1</td><td><b>ESP32-WROOM-32U DevKitC V4</b> (USB-C, IPEX/U.FL-Antennenbuchse)</td><td>Klassischer ESP32 mit zwei 8-Bit-DACs an GPIO25/26. Andere ESP32-Varianten (S2, S3, C3) haben keinen bzw. andere DACs und passen nicht.</td></tr>
+ <tr><td>1</td><td><b>ESP32-Breakout-Board mit Schraubklemmen</b> (XTVTX, „ESP32 Breakout Board Erweiterungskarte GPIO 1 in 2“, 2er-Pack)</td><td>Das DevKit wird aufgesteckt, alle Leitungen kommen in Schraubklemmen – am DevKit wird nichts gelötet. Die Klemmen sind wie die Stifte beschriftet (3V3, GND, P25, P26, P23 …).</td></tr>
+ <tr><td>2 (3)</td><td><b>BNC-Pigtail-Leitung</b> BNC-Stecker auf 2,54-mm-DuPont-Stift, RG316 (TEJIATE, „SMA to DuPont BNC/Q9/N … RG316“, Variante <b>BNC-J to J</b>)</td><td>X und Y; die dritte nur für die optionale Dunkeltastung (Z). Länge passend zum Abstand zum Oszilloskop wählen (30–80 cm erhältlich; 50 cm ist ein guter Wert). Rot = Innenleiter (Signal), braun = Schirm (Masse) – mit dem Durchgangsprüfer bestätigen.</td></tr>
+ <tr><td>2 (3)</td><td><b>Kabelverschraubung Lapp SKINDICHT MINI</b> M6×1, Messing vernickelt, Klemmbereich 2–3 mm, IP68 (Lapp 52001860, RS 458-3953)</td><td>Je Pigtail eine; hält und dichtet das RG316 (Ø ca. 2,5 mm) in der Gehäusewand.</td></tr>
+ <tr><td>1</td><td><b>USB-C-Einbauverlängerung</b> USB 3.1, IP67, 0,2 m, Stecker auf Buchse, FPC-Flachbandkabel, Einbauöffnung 16 mm (Plinkwirekb)</td><td>USB-C-Buchse in der Gehäusewand; das Flachbandkabel steckt innen im DevKit. Darüber wird die Uhr versorgt und programmiert.</td></tr>
+ <tr><td>1</td><td><b>Abzweigdose ABS 150 × 100 × 70 mm</b>, IP67, mit Scharnierdeckel, Edelstahlverschlüssen und Montageplatte (Yunseity)</td><td>Kunststoff, damit das WLAN-Signal durchkommt. Das Breakout-Board wird auf die gelochte Montageplatte geschraubt.</td></tr>
  <tr><td>1</td><td><b>Waveshare 2,42" OLED</b>, SSD1309, 128 × 64 Pixel</td><td>Im Auslieferungszustand (4-Wire-SPI) verwenden, nichts umlöten.</td></tr>
  <tr><td>1</td><td><b>2,4-GHz-Stabantenne</b> mit SMA-Stecker + <b>IPEX→SMA-Pigtail</b></td><td>Pflicht: Das Modul -32U hat keine eingebaute Antenne.</td></tr>
- <tr><td>2 (3)</td><td><b>BNC-Einbaubuchse</b>, 50 Ω, zum Löten, für Bohrung Ø 9,6 mm</td><td>X und Y; die dritte nur für die optionale Dunkeltastung (Z).</td></tr>
- <tr><td>2 (3)</td><td>Widerstand <b>220 Ω</b>, 0,25 W</td><td>Schutz der DAC-Ausgänge, einer je BNC-Buchse.</td></tr>
- <tr><td>(2)</td><td>Keramikkondensator 1 nF</td><td>Optional: glättet die DAC-Stufen.</td></tr>
- <tr><td>(1)</td><td>Elko 100 µF / 10 V</td><td>Optional: gegen leichtes Zittern bei WLAN-Sendepulsen (3V3–GND).</td></tr>
- <tr><td>1</td><td><b>ABS-Gehäuse</b> (Abzweigdose) 150 × 100 mm</td><td>Kunststoff, damit das WLAN-Signal durchkommt.</td></tr>
- <tr><td>1</td><td><b>Kabelverschraubung</b> (RS 458-3953)</td><td>Für das USB-Kabel durch die Gehäusewand, als Alternative zum USB-C-Ausschnitt.</td></tr>
- <tr><td>–</td><td>Kleinteile</td><td>Litze (0,14–0,25 mm²), Abstandsbolzen M2,5 mit Schrauben, Schrumpfschlauch</td></tr>
+ <tr><td>2 (3)</td><td>Widerstand <b>220 Ω</b>, 0,25 W (empfohlen)</td><td>In die rote Ader jedes Pigtails eingelötet; schützt die DAC-Ausgänge bei einem Kurzschluss am BNC-Stecker.</td></tr>
+ <tr><td>(1)</td><td>Elko 100 µF / 10 V</td><td>Optional: gegen leichtes Zittern bei WLAN-Sendepulsen (in die Klemmen 3V3 und GND).</td></tr>
+ <tr><td>–</td><td>Kleinteile</td><td>7 Leitungen für das OLED (DuPont-Kabel oder Litze), Schrumpfschlauch, Abstandsbolzen M2,5 (OLED) und M3 (Breakout-Board), ggf. 2–3 Muttern M6</td></tr>
  <tr><td>1</td><td>USB-Netzteil 5 V, ≥ 1 A, mit USB-C-Kabel</td><td>Ein normales, ungeerdetes Steckernetzteil vermeidet Brummschleifen.</td></tr>
- <tr><td>2</td><td>BNC-Kabel (BNC–BNC)</td><td>Zum Oszilloskop.</td></tr>
 </table>
 <h3>Beim Bau des Prototyps verwendete Artikel</h3>
 <ul class="small">
- <li><a href="https://www.amazon.de/dp/B0FM7RLQTF">Amazon B0FM7RLQTF</a> (amazon.de/dp/B0FM7RLQTF)</li>
- <li><a href="https://www.amazon.de/dp/B0BCWBW4SR">Amazon B0BCWBW4SR</a> (amazon.de/dp/B0BCWBW4SR)</li>
- <li><a href="https://www.amazon.de/dp/B0B5RGNNXV">Amazon B0B5RGNNXV</a> (amazon.de/dp/B0B5RGNNXV)</li>
- <li><a href="https://de.aliexpress.com/item/1005006318978533.html">de.aliexpress.com/item/1005006318978533.html</a></li>
- <li><a href="https://de.rs-online.com/web/p/kabelverschraubungen/4583953">de.rs-online.com – Kabelverschraubung 458-3953</a></li>
+ <li>Amazon: Abzweigdose ABS 150 × 100 × 70 mm (Yunseity), ESP32-Breakout-Board (XTVTX) und USB-C-Einbauverlängerung (Plinkwirekb) –
+  <a href="https://www.amazon.de/dp/B0FM7RLQTF">amazon.de/dp/B0FM7RLQTF</a>,
+  <a href="https://www.amazon.de/dp/B0BCWBW4SR">amazon.de/dp/B0BCWBW4SR</a>,
+  <a href="https://www.amazon.de/dp/B0B5RGNNXV">amazon.de/dp/B0B5RGNNXV</a></li>
+ <li>AliExpress: BNC-Pigtail RG316, BNC-Stecker auf DuPont – <a href="https://de.aliexpress.com/item/1005006318978533.html">de.aliexpress.com/item/1005006318978533.html</a></li>
+ <li>RS: Lapp SKINDICHT MINI M6 – <a href="https://de.rs-online.com/web/p/kabelverschraubungen/4583953">de.rs-online.com/web/p/kabelverschraubungen/4583953</a></li>
 </ul>
 <h3>Werkzeug</h3>
 <ul>
- <li>Lötkolben (feine Spitze), Lötzinn, Seitenschneider, Abisolierzange</li>
- <li>Bohrmaschine mit Bohrern 3 mm, 6,5 mm und Stufenbohrer bis 10 mm, Feile, Cuttermesser (OLED-Fenster)</li>
+ <li>Lötkolben (feine Spitze), Lötzinn, Seitenschneider, Abisolierzange, kleiner Schraubendreher für die Schraubklemmen</li>
+ <li>Bohrmaschine mit Bohrern 3 mm, 5 mm, 6,5 mm, Stufenbohrer bis 16 mm, Gewindebohrer M6 (oder M6-Muttern), Feile, Cuttermesser (OLED-Fenster)</li>
  <li>Multimeter zum Prüfen vor dem ersten Einschalten</li>
  <li>PC mit Arduino IDE 2.x (oder PlatformIO) und USB-C-Kabel</li>
 </ul>
 
-<h2 class="pb">3 Aufbauanleitung Schritt für Schritt</h2>
-<figure><img src="images/verdrahtung.svg" style="width:100%"><figcaption>Abb. 4 – Verdrahtung. Die Stiftleisten des DevKits sind von oben gezählt (Antennenbuchse oben, USB-C unten).</figcaption></figure>
-<table>
- <tr><th>ESP32 (Leiste, Pos.)</th><th>Anschluss</th><th>Ziel</th></tr>
- <tr><td>links 1 – 3V3</td><td>direkt</td><td>OLED VCC</td></tr>
- <tr><td>links 9 – GPIO25 (DAC1)</td><td>über 220 Ω</td><td>BNC „X“ Mittelkontakt → Oszilloskop Kanal 1</td></tr>
- <tr><td>links 10 – GPIO26 (DAC2)</td><td>über 220 Ω</td><td>BNC „Y“ Mittelkontakt → Oszilloskop Kanal 2</td></tr>
- <tr><td>links 11 – GPIO27</td><td>über 220 Ω (optional)</td><td>BNC „Z“ Mittelkontakt → Z-Eingang</td></tr>
- <tr><td>links 14 – GND</td><td>direkt</td><td>Masse aller BNC-Buchsen (Gehäuse der Buchse)</td></tr>
- <tr><td>rechts 1 – GND</td><td>direkt</td><td>OLED GND</td></tr>
- <tr><td>rechts 2 – GPIO23</td><td>direkt</td><td>OLED DIN</td></tr>
- <tr><td>rechts 9 – GPIO18</td><td>direkt</td><td>OLED CLK</td></tr>
- <tr><td>rechts 10 – GPIO5</td><td>direkt</td><td>OLED CS</td></tr>
- <tr><td>rechts 11 – GPIO17</td><td>direkt</td><td>OLED DC</td></tr>
- <tr><td>rechts 13 – GPIO4</td><td>direkt</td><td>OLED RST</td></tr>
- <tr><td>IPEX-Buchse am Modul</td><td>Pigtail</td><td>SMA-Buchse in der Rückwand → Antenne</td></tr>
+<h2>3 Aufbauanleitung Schritt für Schritt</h2>
+<figure><img src="images/verdrahtung.svg" style="width:100%"><figcaption>Abb. 4 – Verdrahtung. Das DevKit steckt im Breakout-Board; alle Leitungen kommen in die gleichnamigen Schraubklemmen.</figcaption></figure>
+<table style="break-inside:avoid">
+ <tr><th>Klemme am Breakout-Board</th><th>Anschluss</th><th>Ziel</th></tr>
+ <tr><td>P25 (GPIO25, DAC1)</td><td>über 220 Ω</td><td>Pigtail „X“, rote Ader → Oszilloskop Kanal 1</td></tr>
+ <tr><td>P26 (GPIO26, DAC2)</td><td>über 220 Ω</td><td>Pigtail „Y“, rote Ader → Oszilloskop Kanal 2</td></tr>
+ <tr><td>P27 (GPIO27)</td><td>über 220 Ω (optional)</td><td>Pigtail „Z“, rote Ader → Z-Eingang</td></tr>
+ <tr><td>GND (linke Reihe)</td><td>direkt</td><td>braune Adern (Schirm) aller Pigtails</td></tr>
+ <tr><td>3V3</td><td>direkt</td><td>OLED VCC</td></tr>
+ <tr><td>GND (rechte Reihe)</td><td>direkt</td><td>OLED GND</td></tr>
+ <tr><td>P23</td><td>direkt</td><td>OLED DIN</td></tr>
+ <tr><td>P18</td><td>direkt</td><td>OLED CLK</td></tr>
+ <tr><td>P5</td><td>direkt</td><td>OLED CS</td></tr>
+ <tr><td>P17</td><td>direkt</td><td>OLED DC</td></tr>
+ <tr><td>P4</td><td>direkt</td><td>OLED RST</td></tr>
+ <tr><td>IPEX-Buchse am Modul</td><td>Antennen-Pigtail</td><td>SMA-Buchse in der Rückwand → Antenne</td></tr>
+ <tr><td>USB-C des DevKits</td><td>Flachbandkabel</td><td>USB-C-Einbaubuchse in der Rückwand</td></tr>
 </table>
-<div class="warn"><b>Wichtig:</b> GPIO0 (rechts, Pos. 14) ist der BOOT-Taster – dort nichts anschließen. Das OLED an
-<b>3V3</b>, nicht an 5V. Das Modul -32U nie ohne Antenne im WLAN-Betrieb laufen lassen.</div>
+<div class="warn"><b>Wichtig:</b> Klemme P0 (GPIO0) ist der BOOT-Taster – dort nichts anschließen. Das OLED an <b>3V3</b>,
+nicht an 5V. Das Modul -32U nie ohne Antenne im WLAN-Betrieb laufen lassen.</div>
 
 <div class="step"><b class="n">1</b><div><b>Bohrplan ausdrucken.</b> Die Datei <code>docs/images/bohrplan.svg</code> mit <b>100 % (ohne Anpassen)</b>
 drucken und die Prüflinie nachmessen: Sie muss 50 mm lang sein. Schablonen ausschneiden und mit Klebeband auf Deckel,
 Stirnseite und Rückseite kleben.</div></div>
 <figure><img src="images/bohrplan.svg" style="width:100%"><figcaption>Abb. 5 – Bohrplan (verkleinert; zum Bohren die SVG-Datei 1:1 drucken)</figcaption></figure>
-<div class="step"><b class="n">2</b><div><b>Gehäuse bohren.</b> Alle Löcher mit 3 mm vorbohren. Stirnseite: BNC-Löcher mit dem Stufenbohrer auf
-Ø 9,6 mm aufweiten (Abstand 25 mm). Rückseite: SMA Ø 6,5 mm und den USB-C-Ausschnitt (12 × 5 mm) bzw. das Loch für die
-Kabelverschraubung. Deckel: OLED-Fenster 55 × 28 mm mit Bohrungen in den Ecken vorbereiten, mit Cuttermesser
-ausschneiden und sauber feilen.</div></div>
-<div class="step"><b class="n">3</b><div><b>BNC-Buchsen einbauen</b> und festziehen. Mit Edding „X“ und „Y“ (und ggf. „Z“) beschriften.</div></div>
-<div class="step"><b class="n">4</b><div><b>Widerstände anlöten.</b> Je einen 220-Ω-Widerstand direkt an den Mittelkontakt von X und Y löten,
-Schrumpfschlauch darüber. Optional 1 nF vom Mittelkontakt zur Masse-Lötfahne. Die Masse-Lötfahnen aller Buchsen
-mit einer Litze verbinden.</div></div>
-<div class="step"><b class="n">5</b><div><b>Antenne:</b> SMA-Buchse des Pigtails in die Rückwand schrauben, den kleinen IPEX-Stecker vorsichtig
-senkrecht auf die Buchse am Modul drücken, bis er hörbar einrastet. Antenne außen aufschrauben.</div></div>
-<div class="step"><b class="n">6</b><div><b>OLED in den Deckel</b> setzen: mit Abstandsbolzen M2,5 hinter dem Fenster befestigen. 7 Litzen
-(ca. 15 cm) an die Stiftleiste VCC, GND, DIN, CLK, CS, DC, RST löten oder das mitgelieferte Kabel verwenden.</div></div>
-<div class="step"><b class="n">7</b><div><b>DevKit einsetzen</b> (Abstandsbolzen oder doppelseitiges Klebepad, USB-C zur Rückwand) und nach
-Abb. 4 verdrahten. Die Leitungen GPIO25/26 → BNC so kurz wie möglich halten. Optional den Elko 100 µF nahe am
-DevKit zwischen 3V3 und GND.</div></div>
-<figure><img src="images/aufbau.svg" style="width:62%"><figcaption>Abb. 6 – Anordnung im Gehäuse (maßstäblich, gleiche Lage wie im Bohrplan)</figcaption></figure>
-<div class="step"><b class="n">8</b><div><b>Prüfen vor dem ersten Einschalten</b> (Multimeter, Durchgang): Kein Kurzschluss zwischen 3V3 und GND
-und zwischen 5V und GND. X- und Y-Mittelkontakt haben je ca. 220 Ω zu GPIO25 bzw. GPIO26 und keinen Durchgang zur Masse.
-OLED-Leitungen einzeln durchklingeln.</div></div>
-<div class="step"><b class="n">9</b><div><b>Deckel schließen</b> erst nach der Inbetriebnahme (Kapitel 5), damit man bei Bedarf noch an alles herankommt.</div></div>
+<div class="step"><b class="n">2</b><div><b>Gehäuse bohren.</b> Alle Löcher mit 3 mm vorbohren.
+<b>Stirnseite:</b> 2 (3) Löcher für die Kabelverschraubungen, Abstand 20 mm: <b>5,0 mm bohren und M6-Gewinde schneiden</b>
+(ABS hält das Gewinde gut) – oder 6,2 mm bohren und innen eine M6-Mutter aufschrauben.
+<b>Rückseite:</b> <b>16 mm</b> für die USB-C-Einbaubuchse (Stufenbohrer) und <b>6,5 mm</b> für die SMA-Antennenbuchse.
+<b>Deckel:</b> OLED-Fenster 55 × 28 mm mit Bohrungen in den Ecken vorbereiten, mit dem Cuttermesser ausschneiden und sauber feilen.</div></div>
+<div class="step"><b class="n">3</b><div><b>Widerstände in die Pigtails löten.</b> Bei jedem Pigtail die rote Ader (Innenleiter) etwa 5 cm vor dem
+DuPont-Stift durchtrennen, den 220-Ω-Widerstand dazwischenlöten und mit Schrumpfschlauch isolieren. Vorher mit dem
+Durchgangsprüfer bestätigen, dass Rot zum Mittelstift und Braun zum Außenkontakt des BNC-Steckers führt.</div></div>
+<div class="step"><b class="n">4</b><div><b>Pigtails durch die Kabelverschraubungen führen.</b> Verschraubung in die Stirnseite schrauben, Hutmutter lösen
+und das Pigtail von außen mit dem DuPont-Ende voran durch Hutmutter, Dichteinsatz und Gehäuse schieben. Passt der DuPont-Stecker
+nicht durch die 3-mm-Öffnung, das kleine Kunststoffgehäuse des Stifts kurz abziehen und danach wieder aufstecken. Den
+BNC-Stecker außen so weit herausziehen wie nötig, Hutmutter festziehen. Pigtails mit „X“ und „Y“ (ggf. „Z“) beschriften.</div></div>
+<div class="step"><b class="n">5</b><div><b>USB-C-Einbaubuchse und Antenne einbauen.</b> USB-C-Buchse in das 16-mm-Loch der Rückwand setzen und von innen
+verschrauben. SMA-Buchse des Antennen-Pigtails in die Rückwand schrauben, Antenne außen aufschrauben.</div></div>
+<div class="step"><b class="n">6</b><div><b>Breakout-Board montieren.</b> Board mit Abstandsbolzen M3 auf die gelochte Montageplatte der Abzweigdose
+schrauben, so dass die USB-C-Buchse des DevKits zur Rückwand zeigt. DevKit aufstecken. Den kleinen IPEX-Stecker der
+Antenne vorsichtig senkrecht auf die Buchse am Modul drücken, bis er einrastet. Das FPC-Flachbandkabel der USB-Einbaubuchse
+in das DevKit stecken – das Flachbandkabel nicht scharf knicken.</div></div>
+<div class="step"><b class="n">7</b><div><b>Pigtails anklemmen:</b> rote Ader (mit Widerstand) von X in die Klemme <b>P25</b>, von Y in <b>P26</b>
+(von Z in P27). Alle braunen Adern (Schirm) in <b>GND</b>. Optional den Elko 100 µF in 3V3 und GND (Plus an 3V3).</div></div>
+<div class="step"><b class="n">8</b><div><b>OLED in den Deckel</b> setzen: mit Abstandsbolzen M2,5 hinter dem Fenster befestigen und die 7 Leitungen
+nach der Tabelle oben in die Klemmen legen. Die Leitungen so lang lassen, dass sich der Scharnierdeckel ganz öffnen lässt.</div></div>
+<figure><img src="images/aufbau.svg" style="width:56%"><figcaption>Abb. 6 – Anordnung in der Abzweigdose (maßstäblich, gleiche Lage wie im Bohrplan)</figcaption></figure>
+<div class="step"><b class="n">9</b><div><b>Prüfen vor dem ersten Einschalten</b> (Multimeter): Kein Durchgang zwischen 3V3 und GND und zwischen 5V und GND.
+Zwischen dem Mittelstift jedes BNC-Steckers und der Klemme P25 bzw. P26 je ca. 220 Ω, zum Außenkontakt kein Durchgang.
+Der Außenkontakt hat Durchgang zu GND. Alle Schraubklemmen leicht nachziehen.</div></div>
+<div class="step"><b class="n">10</b><div><b>Deckel schließen</b> erst nach der Inbetriebnahme (Kapitel 5), damit man bei Bedarf noch an alles herankommt.</div></div>
 
 <h2 class="pb">4 Firmware installieren</h2>
 <h3>Mit der Arduino IDE 2.x</h3>
@@ -233,9 +245,9 @@ im Webinterface oder BOOT-Taster 3 s halten.</div></div>
  <li><b>Digilent Analog Discovery 2:</b> Eingänge sind differenziell – 1+ an X, 1− an GND, 2+ an Y, 2− an GND, zusätzlich GND
  verbinden. WaveForms: 500 mV/Div, Offset −1,6 V, 1 ms/Div, Trigger Auto, View → XY.</li>
  <li><b>Röhren-Oszilloskop:</b> Profil ANALOG, Intensität eher gering. Rücklaufspuren lassen sich mit der Z-Dunkeltastung ganz entfernen
- (dritte BNC-Buchse, <code>ZBLANK_PIN 27</code>, Polarität laut Handbuch).</li>
+ (drittes Pigtail an Klemme P27, <code>ZBLANK_PIN 27</code>, Polarität laut Handbuch).</li>
 </ul>
-<div class="warn"><b>Brummschleife vermeiden:</b> Die BNC-Masse des Oszilloskops liegt am Schutzleiter. Ein ebenfalls geerdeter PC am
+<div class="warn"><b>Brummschleife vermeiden:</b> Die Masse der BNC-Eingänge des Oszilloskops liegt am Schutzleiter. Ein ebenfalls geerdeter PC am
 USB kann Brumm ins Bild bringen. Im Dauerbetrieb ein normales USB-Steckernetzteil verwenden.</div>
 
 <h2>7 Bedienung</h2>
@@ -292,11 +304,11 @@ vorher loslassen bricht ab. Die Einstellung wird gespeichert. <b>Nicht beim Eins
 <h2>9 Fehlersuche</h2>
 <table>
  <tr><th>Beobachtung</th><th>Abhilfe</th></tr>
- <tr><td>Kein Bild auf dem Oszilloskop</td><td>X/Y-Betrieb, DC-Kopplung, 0,5 V/Div; Position auf Bildmitte; Kabel X an Kanal 1, Y an Kanal 2; Testbild einschalten</td></tr>
+ <tr><td>Kein Bild auf dem Oszilloskop</td><td>X/Y-Betrieb, DC-Kopplung, 0,5 V/Div; Position auf Bildmitte; Pigtail X an Kanal 1, Y an Kanal 2; Testbild einschalten</td></tr>
  <tr><td>Bild gespiegelt oder gedreht</td><td>X und Y vertauscht, oder Kanal invertiert (Invert-Funktion ausschalten)</td></tr>
  <tr><td>Bild flimmert</td><td>Verweilzeit verringern (z. B. 2,00 µs); am digitalen Oszilloskop Zeitbasis 1 ms/Div, Nachleuchten</td></tr>
  <tr><td>Linien zu dunkel</td><td>Verweilzeit erhöhen (z. B. 5,00 µs) oder Intensität am Oszilloskop</td></tr>
- <tr><td>Ecken verrundet, Ziffern verwaschen</td><td>Verweilzeit erhöhen; ggf. 1-nF-Kondensatoren entfernen</td></tr>
+ <tr><td>Ecken verrundet, Ziffern verwaschen</td><td>Verweilzeit erhöhen</td></tr>
  <tr><td>Kleine „Haken“ an Linienanfängen</td><td>Rücklauf-Tempo verringern (z. B. 12)</td></tr>
  <tr><td>Rücklaufspuren sichtbar</td><td>Rücklauf-Tempo erhöhen, Profil DIGITAL probieren oder Z-Dunkeltastung</td></tr>
  <tr><td>Kreis im Testbild oval</td><td>Empfindlichkeit von X und Y gleich einstellen (beide 0,5 V/Div, Feinregler auf „kalibriert“)</td></tr>
