@@ -1,0 +1,22 @@
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 840 320'  font-family='Helvetica,Arial,sans-serif'>
+<rect x='0' y='0' width='840' height='320' fill='#fff'/>
+<rect x='20' y='20' width='380' height='250' rx='12' fill='#e8f5ec' stroke='#555' stroke-width='1.5'/>
+<text x='210.0' y='46' text-anchor='middle' font-size='16' font-weight='bold'>Core 1 – scopeTask</text>
+<text x='38' y='72' font-size='13'>• beam output only, without pause</text>
+<text x='38' y='93' font-size='13'>• DAC X/Y on GPIO25/26 (registers)</text>
+<text x='38' y='114' font-size='13'>• round trip: dial + numerals</text>
+<text x='38' y='135' font-size='13'>• hands according to the time</text>
+<text x='38' y='156' font-size='13'>• equally fast lines = equally bright</text>
+<text x='38' y='177' font-size='13'>• profile ANALOG/DIGITAL, test pattern</text>
+<text x='38' y='198' font-size='13'>• approx. 230 frames per second</text>
+<rect x='440' y='20' width='380' height='250' rx='12' fill='#e8eef8' stroke='#555' stroke-width='1.5'/>
+<text x='630.0' y='46' text-anchor='middle' font-size='16' font-weight='bold'>Core 0 – uiTask + wifiTask</text>
+<text x='458' y='72' font-size='13'>• WiFi (strongest known network)</text>
+<text x='458' y='93' font-size='13'>• time via NTP, hourly</text>
+<text x='458' y='114' font-size='13'>• web server, setup network, mDNS</text>
+<text x='458' y='135' font-size='13'>• OLED display (SPI)</text>
+<text x='458' y='156' font-size='13'>• BOOT button, settings (NVS)</text>
+<text x='458' y='177' font-size='13'>• log (ring buffer 8 KB)</text>
+<text x='458' y='198' font-size='13'>• CPU load measurement</text>
+<line x1='400' y1='145' x2='440' y2='145' stroke='#555' stroke-width='2'/>
+<text x='420' y='300' text-anchor='middle' font-size='13' fill='#333'>Hand-over only via a few atomic variables (time, dial, brightness, profile) – no locks in the drawing path</text></svg>

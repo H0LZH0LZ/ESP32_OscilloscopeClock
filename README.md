@@ -6,7 +6,7 @@ Vektoruhr für das Oszilloskop im X/Y-Modus, nach einer Idee von Mauro Pintus (s
 Hardware angepasst: **ESP32-WROOM-32U DevKitC V4**, **Waveshare 2.42" OLED (SPI)**, externe
 2,4-GHz-Antenne, BNC-Ausgänge und ein ABS-Gehäuse.
 
-**Ausführliche Dokumentation mit Aufbauanleitung, Bildern und Bohrplan: [docs/ESP32_Oscilloscope_Clock_Dokumentation.pdf](docs/ESP32_Oscilloscope_Clock_Dokumentation.pdf)**
+**Ausführliche Dokumentation mit Aufbauanleitung, Bildern und Bohrplan: [docs/ESP32_Oscilloscope_Clock_Dokumentation.pdf](docs/ESP32_Oscilloscope_Clock_Dokumentation.pdf) (English: [docs/ESP32_Oscilloscope_Clock_Documentation.pdf](docs/ESP32_Oscilloscope_Clock_Documentation.pdf))**
 
 **Aufbau und Verdrahtung: [HARDWARE.md](HARDWARE.md)** · **Aufbau der Software: [SOFTWARE.md](SOFTWARE.md)**
 

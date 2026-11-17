@@ -1,0 +1,51 @@
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 210 297' width='210mm' height='297mm' font-family='Helvetica,Arial,sans-serif'>
+<rect x='0' y='0' width='210' height='297' fill='#fff'/>
+<defs><marker id='m' viewBox='0 0 4 4' refX='2' refY='2' markerWidth='3' markerHeight='3' orient='auto'><path d='M0,2 L4,0 L4,4 z' fill='#06c'/></marker></defs>
+<text x='105' y='16' text-anchor='middle' font-size='4.6' font-weight='bold'>Drilling template, junction box 150 × 100 × 70 mm – scale 1:1</text>
+<text x='105' y='22' text-anchor='middle' font-size='3.2' fill='#444'>Print on A4 at 100 % (not “fit to page”), then measure the test line</text>
+<rect x='30' y='35' width='150' height='100' fill='none' stroke='#000' stroke-width='0.4'/>
+<text x='30' y='32' font-size='4.2' font-weight='bold'>Lid (top view)</text>
+<rect x='77.5' y='57' width='55' height='28' fill='#eef' stroke='#c00' stroke-width='0.35'/>
+<text x='105' y='72' text-anchor='middle' font-size='3'>OLED window 55 × 28</text>
+<line x1='77.5' y1='53' x2='132.5' y2='53' stroke='#06c' stroke-width='0.2' marker-start='url(#m)' marker-end='url(#m)'/>
+<text x='105.0' y='52.0' text-anchor='middle' font-size='2.8' fill='#06c'>55</text>
+<line x1='136' y1='57' x2='136' y2='85' stroke='#06c' stroke-width='0.2' marker-start='url(#m)' marker-end='url(#m)'/>
+<text x='136.0' y='70.0' text-anchor='middle' font-size='2.8' fill='#06c'>28</text>
+<line x1='30' y1='49' x2='77.5' y2='49' stroke='#06c' stroke-width='0.2' marker-start='url(#m)' marker-end='url(#m)'/>
+<text x='53.75' y='48.0' text-anchor='middle' font-size='2.8' fill='#06c'>47.5</text>
+<line x1='34' y1='35' x2='34' y2='57' stroke='#06c' stroke-width='0.2' marker-start='url(#m)' marker-end='url(#m)'/>
+<text x='34.0' y='45.0' text-anchor='middle' font-size='2.8' fill='#06c'>22</text>
+<text x='105' y='97' text-anchor='middle' font-size='2.8' fill='#444'>Mark the mounting holes of the OLED module (61.5 × 39.5 mm) from the module itself (M2.5)</text>
+<line x1='30' y1='150' x2='80' y2='150' stroke='#000' stroke-width='0.6'/><line x1='30' y1='147' x2='30' y2='153' stroke='#000' stroke-width='0.4'/><line x1='80' y1='147' x2='80' y2='153' stroke='#000' stroke-width='0.4'/>
+<text x='55' y='145.5' text-anchor='middle' font-size='3.2'>Test line 50 mm</text>
+<text x='88' y='149' font-size='2.8' fill='#444'>Measure after printing: the line must be exactly 50 mm long.</text>
+<text x='88' y='153' font-size='2.8' fill='#444'>Cut out the templates and tape them onto the lid and the sides.</text>
+<rect x='55' y='172' width='100' height='42' fill='none' stroke='#000' stroke-width='0.4'/>
+<text x='55' y='169' font-size='4.2' font-weight='bold'>Connector side (short side, seen from outside)</text>
+<circle cx='83' cy='190' r='2.5' fill='none' stroke='#c00' stroke-width='0.35'/>
+<line x1='78.5' y1='190' x2='87.5' y2='190' stroke='#c00' stroke-width='0.15'/><line x1='83' y1='185.5' x2='83' y2='194.5' stroke='#c00' stroke-width='0.15'/>
+<text x='83' y='197.0' text-anchor='middle' font-size='3'>X</text>
+<circle cx='83' cy='190' r='3' fill='none' stroke='#c00' stroke-width='0.15' stroke-dasharray='0.6 0.6'/>
+<circle cx='127' cy='190' r='2.5' fill='none' stroke='#c00' stroke-width='0.35'/>
+<line x1='122.5' y1='190' x2='131.5' y2='190' stroke='#c00' stroke-width='0.15'/><line x1='127' y1='185.5' x2='127' y2='194.5' stroke='#c00' stroke-width='0.15'/>
+<text x='127' y='197.0' text-anchor='middle' font-size='3'>Y</text>
+<circle cx='127' cy='190' r='3' fill='none' stroke='#c00' stroke-width='0.15' stroke-dasharray='0.6 0.6'/>
+<circle cx='105' cy='190' r='8.0' fill='none' stroke='#c00' stroke-width='0.35'/>
+<line x1='95.0' y1='190' x2='115.0' y2='190' stroke='#c00' stroke-width='0.15'/><line x1='105' y1='180.0' x2='105' y2='200.0' stroke='#c00' stroke-width='0.15'/>
+<text x='105' y='202.5' text-anchor='middle' font-size='3'>USB-C  Ø 16</text>
+<line x1='55' y1='208' x2='83' y2='208' stroke='#06c' stroke-width='0.2' marker-start='url(#m)' marker-end='url(#m)'/>
+<text x='69.0' y='207.0' text-anchor='middle' font-size='2.8' fill='#06c'>28</text>
+<line x1='83' y1='208' x2='105' y2='208' stroke='#06c' stroke-width='0.2' marker-start='url(#m)' marker-end='url(#m)'/>
+<text x='94.0' y='207.0' text-anchor='middle' font-size='2.8' fill='#06c'>22</text>
+<line x1='105' y1='208' x2='127' y2='208' stroke='#06c' stroke-width='0.2' marker-start='url(#m)' marker-end='url(#m)'/>
+<text x='116.0' y='207.0' text-anchor='middle' font-size='2.8' fill='#06c'>22</text>
+<text x='105' y='220' text-anchor='middle' font-size='2.8' fill='#444'>Pigtails: drill Ø 5.0 + tap M6 (dashed: M6) – or Ø 6.2 + M6 nut inside</text>
+<text x='105' y='224' text-anchor='middle' font-size='2.8' fill='#444'>All three holes at the same height, about the middle of the base</text>
+<rect x='55' y='240' width='100' height='42' fill='none' stroke='#000' stroke-width='0.4'/>
+<text x='55' y='237' font-size='4.2' font-weight='bold'>Opposite side – antenna</text>
+<circle cx='105' cy='258' r='3.25' fill='none' stroke='#c00' stroke-width='0.35'/>
+<line x1='99.75' y1='258' x2='110.25' y2='258' stroke='#c00' stroke-width='0.15'/><line x1='105' y1='252.75' x2='105' y2='263.25' stroke='#c00' stroke-width='0.15'/>
+<text x='105' y='265.75' text-anchor='middle' font-size='3'>SMA  Ø 6.5</text>
+<line x1='55' y1='276' x2='105' y2='276' stroke='#06c' stroke-width='0.2' marker-start='url(#m)' marker-end='url(#m)'/>
+<text x='80.0' y='275.0' text-anchor='middle' font-size='2.8' fill='#06c'>50</text>
+<text x='105' y='288' text-anchor='middle' font-size='2.8' fill='#444'>Centred, same height as the connectors</text></svg>

@@ -1,19 +1,33 @@
-// Erzeugt docs/ESP32_Oscilloscope_Clock_Dokumentation.pdf aus docs/dokumentation.html.
-// Aufruf: node tools/gen_pdf.js   (benötigt Playwright mit Chromium)
+// Erzeugt die Dokumentation als PDF (A4) aus den HTML-Quellen in docs/.
+// Aufruf: node tools/gen_pdf.js        -> deutsch und englisch
+//         node tools/gen_pdf.js de|en  -> nur eine Sprache
+// Benötigt Playwright mit Chromium.
 const path = require('path');
 const { chromium } = require('playwright');
+const DOCS = {
+  de: { src: 'dokumentation.html', out: 'ESP32_Oscilloscope_Clock_Dokumentation.pdf',
+        title: 'ESP32 Oscilloscope Clock v2.0 – Dokumentation', page: 'Seite', of: 'von' },
+  en: { src: 'documentation.en.html', out: 'ESP32_Oscilloscope_Clock_Documentation.pdf',
+        title: 'ESP32 Oscilloscope Clock v2.0 – Documentation', page: 'Page', of: 'of' },
+};
 (async () => {
   const root = path.resolve(__dirname, '..');
+  const langs = process.argv[2] ? [process.argv[2]] : Object.keys(DOCS);
   const b = await chromium.launch();
-  const p = await b.newPage();
-  await p.goto('file://' + path.join(root, 'docs', 'dokumentation.html'), { waitUntil: 'networkidle' });
-  await p.pdf({
-    path: path.join(root, 'docs', 'ESP32_Oscilloscope_Clock_Dokumentation.pdf'),
-    format: 'A4', printBackground: true, preferCSSPageSize: true,
-    displayHeaderFooter: true,
-    headerTemplate: '<div></div>',
-    footerTemplate: '<div style="width:100%;font:8px Helvetica,Arial,sans-serif;color:#777;padding:0 17mm;display:flex;justify-content:space-between">' +
-      '<span>ESP32 Oscilloscope Clock v2.0 – Dokumentation</span><span>Seite <span class="pageNumber"></span> von <span class="totalPages"></span></span></div>',
-  });
+  for (const l of langs) {
+    const d = DOCS[l];
+    const p = await b.newPage();
+    await p.goto('file://' + path.join(root, 'docs', d.src), { waitUntil: 'networkidle' });
+    await p.pdf({
+      path: path.join(root, 'docs', d.out),
+      format: 'A4', printBackground: true, preferCSSPageSize: true,
+      displayHeaderFooter: true,
+      headerTemplate: '<div></div>',
+      footerTemplate: '<div style="width:100%;font:8px Helvetica,Arial,sans-serif;color:#777;padding:0 17mm;display:flex;justify-content:space-between">' +
+        `<span>${d.title}</span><span>${d.page} <span class="pageNumber"></span> ${d.of} <span class="totalPages"></span></span></div>`,
+    });
+    await p.close();
+    console.log(d.out);
+  }
   await b.close();
 })();

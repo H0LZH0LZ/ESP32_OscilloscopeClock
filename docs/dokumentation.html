@@ -180,7 +180,7 @@ Das Flachbandkabel nicht scharf knicken.</div></div>
 <div class="step"><b class="n">7</b><div><b>Pigtails anklemmen:</b> rote Ader (mit Widerstand) von X in die Klemme <b>P25</b>, von Y in <b>P26</b>, beide braunen Adern (Schirm) in <b>GND</b>.</div></div>
 <div class="step"><b class="n">8</b><div><b>OLED in den Deckel</b> setzen: mit Abstandsbolzen M2,5 hinter dem Fenster befestigen und die 7 Leitungen
 nach der Tabelle oben in die Klemmen legen. Die Leitungen so lang lassen, dass sich der Scharnierdeckel ganz öffnen lässt.</div></div>
-<figure><img src="images/aufbau.svg" style="width:56%"><figcaption>Abb. 6 – Anordnung in der Abzweigdose (maßstäblich): unten die Anschlussseite mit Pigtail X, USB-C und Pigtail Y, oben die Antenne; DevKit um 180° gedreht, Kabel gestrichelt unter dem Board</figcaption></figure>
+<figure><img src="images/aufbau.svg" style="width:56%"><figcaption>Abb. 5 – Anordnung in der Abzweigdose (maßstäblich): unten die Anschlussseite mit Pigtail X, USB-C und Pigtail Y, oben die Antenne; DevKit um 180° gedreht, Kabel gestrichelt unter dem Board</figcaption></figure>
 <div class="step"><b class="n">9</b><div><b>Prüfen vor dem ersten Einschalten</b> (Multimeter): Kein Durchgang zwischen 3V3 und GND und zwischen 5V und GND.
 Zwischen dem Mittelstift jedes BNC-Steckers und der Klemme P25 bzw. P26 je ca. 220 Ω, zum Außenkontakt kein Durchgang.
 Der Außenkontakt hat Durchgang zu GND. Alle Schraubklemmen leicht nachziehen.</div></div>
@@ -212,8 +212,8 @@ Das OLED zeigt die Uhrzeit (zunächst ab 10:08:37) und „Keine NTP-Verbindung�
 automatisch, sonst <code>http://192.168.4.1</code> aufrufen. Die Gruppe <b>WLAN</b> ist dann bereits aufgeklappt:
 „Netze in Reichweite suchen“, eigenes Netz antippen, Passwort eingeben, „Netz speichern“.</div></div>
 <div class="two">
- <figure><img src="images/oled_setup.png"><figcaption>Abb. 7 – OLED im Setup-WLAN</figcaption></figure>
- <figure><img src="images/oled_profil.png"><figcaption>Abb. 8 – OLED beim Umschalten des Profils (BOOT-Taster)</figcaption></figure>
+ <figure><img src="images/oled_setup.png"><figcaption>Abb. 6 – OLED im Setup-WLAN</figcaption></figure>
+ <figure><img src="images/oled_profil.png"><figcaption>Abb. 7 – OLED beim Umschalten des Profils (BOOT-Taster)</figcaption></figure>
 </div>
 <div class="step"><b class="n">3</b><div><b>Verbinden.</b> Die Uhr verbindet sich mit dem stärksten bekannten Netz, holt die Zeit und schließt das Setup-WLAN.
 Das Webinterface ist danach unter <b>http://scope-clock.local</b> oder der IP-Adresse aus dem Status erreichbar.</div></div>
@@ -224,7 +224,7 @@ im Webinterface oder BOOT-Taster 3 s halten.</div></div>
 
 <h2>6 Oszilloskop einstellen</h2>
 <div class="two">
- <figure><img src="images/oszilloskop_testbild.png" style="width:78%"><figcaption>Abb. 9 – Testbild</figcaption></figure>
+ <figure><img src="images/oszilloskop_testbild.png" style="width:78%"><figcaption>Abb. 8 – Testbild</figcaption></figure>
  <div style="flex:1.3">
  <p><b>So wird das Testbild genutzt:</b></p>
  <ul>
@@ -262,7 +262,7 @@ USB kann Brumm ins Bild bringen. Im Dauerbetrieb ein normales USB-Steckernetztei
 <h3>Webinterface</h3>
 <p>Aufruf über <b>http://scope-clock.local</b> (Name unter Einstellungen → System änderbar) oder die IP-Adresse. Die Seite ist für das
 Handy gemacht und lässt sich über „Zum Startbildschirm hinzufügen“ wie eine App ablegen.</p>
-<figure><img src="images/web_uebersicht.png" style="width:92%"><figcaption>Abb. 10 – Webinterface: Startansicht hell und dunkel, Seitenmenü</figcaption></figure>
+<figure><img src="images/web_uebersicht.png" style="width:92%"><figcaption>Abb. 9 – Webinterface: Startansicht hell und dunkel, Seitenmenü</figcaption></figure>
 <ul>
  <li><b>Vorschau:</b> zeigt das Oszilloskop-Bild live. <b>Wischen nach links/rechts</b> (oder Punkte/Pfeile darunter, am PC Pfeiltasten) wechselt das Zifferblatt – auch am Oszilloskop.</li>
  <li><b>Beim Aufruf</b> ist nur <b>Status</b> aufgeklappt, alles andere ist eingeklappt. Ohne Zeitserver klappt „Uhrzeit“ von selbst auf, ohne WLAN-Verbindung die Gruppe „WLAN“; sobald alles wieder verbunden ist, klappen sie wieder zu.</li>
@@ -271,12 +271,12 @@ Handy gemacht und lässt sich über „Zum Startbildschirm hinzufügen“ wie ei
  <li><b>Debug:</b> Meldungen der Uhr mit Filter (WLAN, Zeit, Web, Oszilloskop, Warnungen), „Aktualisieren“, „Herunterladen“ (Textdatei) und „Leeren“.</li>
  <li><b>Seitenmenü (☰):</b> springt in die Bereiche, dazu Sprache (Deutsch/English) und Darstellung (automatisch/hell/dunkel).</li>
 </ul>
-<figure><img src="images/web_einstellungen.png" style="width:92%"><figcaption>Abb. 11 – Gruppe Oszilloskop, Gruppe WLAN mit Netzsuche, Debug-Bereich</figcaption></figure>
+<figure><img src="images/web_einstellungen.png" style="width:92%"><figcaption>Abb. 10 – Gruppe Oszilloskop, Gruppe WLAN mit Netzsuche, Debug-Bereich</figcaption></figure>
 <h3>OLED-Anzeige</h3>
 <p>Oben die Uhrzeit im 7-Segment-Stil, darunter Kalenderwoche und Datum, dann das WLAN und die Signalstärke. Ohne gültige Zeit steht
 dort „Keine NTP-Verbindung“, im Setup-WLAN der Netzname „ScopeClock-Setup“ und die Adresse. Helligkeit 0–100 %, Sekunden,
 Drehung um 180° und Pixelverschiebung gegen Einbrennen sind einstellbar.</p>
-<figure><img src="images/oled_englisch_12h.png" style="width:48%"><figcaption>Abb. 12 – OLED auf Englisch im 12-Stunden-Format</figcaption></figure>
+<figure><img src="images/oled_englisch_12h.png" style="width:48%"><figcaption>Abb. 11 – OLED auf Englisch im 12-Stunden-Format</figcaption></figure>
 <h3>BOOT-Taster</h3>
 <p><b>3 Sekunden halten</b> schaltet das Oszilloskop-Profil um (DIGITAL ↔ ANALOG). Das OLED zeigt den Wechsel mit Countdown 3, 2, 1;
 vorher loslassen bricht ab. Die Einstellung wird gespeichert. <b>Nicht beim Einschalten drücken</b> – sonst startet der ESP32 im Download-Modus.</p>
@@ -393,7 +393,7 @@ beschrieben wird. Jede Gruppe hat „Auf Standardwerte zurücksetzen“; danach 
 <p>Für eine Fehlermeldung im Debug-Bereich „Herunterladen“ antippen und die Textdatei weitergeben.</p>
 
 <h2>10 Technik: wie die Uhr arbeitet</h2>
-<figure><img src="images/software.svg" style="width:96%"><figcaption>Abb. 13 – Aufteilung der Firmware auf die beiden Prozessorkerne</figcaption></figure>
+<figure><img src="images/software.svg" style="width:96%"><figcaption>Abb. 12 – Aufteilung der Firmware auf die beiden Prozessorkerne</figcaption></figure>
 <p><b>Kern 1</b> tut nichts anderes, als den Strahl zu führen: ohne Pause, ohne Sperren, ohne WLAN-Unterbrechungen. WLAN und
 Display werden auf <b>Kern 0</b> gestartet, damit ihre Interrupts den Zeichenpfad nicht stören.</p>
 <p><b>Gleiche Helligkeit:</b> Die Helligkeit einer Linie hängt davon ab, wie lange der Strahl auf jedem Stück Weg verweilt. Die Firmware
@@ -457,7 +457,7 @@ unterwegs keine Abtastpunkte zeigt.</p>
  <tr><td><code>config.h</code></td><td>Startwerte und Pins</td></tr>
  <tr><td><code>DataTable.h</code></td><td>Vektordaten (aus <code>tools/gen_vectors.py</code>)</td></tr>
  <tr><td><code>webpage.h</code>, <code>font.h</code>, <code>icon.h</code></td><td>Webseite (aus <code>web/index.html</code> mit <code>tools/gen_webpage.py</code>), Schrift, App-Symbol</td></tr>
- <tr><td><code>docs/</code></td><td>diese Dokumentation (Quelle <code>dokumentation.html</code>), Bilder, Bohrplan</td></tr>
+ <tr><td><code>docs/</code></td><td>diese Dokumentation auf Deutsch und Englisch (Quellen <code>dokumentation.html</code>, <code>documentation.en.html</code>), Bilder</td></tr>
  <tr><td><code>README.md</code>, <code>HARDWARE.md</code>, <code>SOFTWARE.md</code></td><td>Kurzfassung auf GitHub (Deutsch und Englisch)</td></tr>
 </table>
 <h3>Herkunft und Lizenzen</h3>

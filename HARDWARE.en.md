@@ -16,7 +16,7 @@
 | ABS junction box 150 × 100 × 70 mm, IP67, hinged lid, mounting plate | Enclosure (RF-transparent) |
 | Small parts | 2× 220 Ω (in the red lead of the pigtails), standoffs M2.5/M3 |
 
-Detailed assembly guide (German) with drilling template: [docs/ESP32_Oscilloscope_Clock_Dokumentation.pdf](docs/ESP32_Oscilloscope_Clock_Dokumentation.pdf).
+Detailed assembly guide with drilling template: [docs/ESP32_Oscilloscope_Clock_Documentation.pdf](docs/ESP32_Oscilloscope_Clock_Documentation.pdf).
 
 ## Wiring
 
@@ -89,7 +89,7 @@ replace `NONAME0` with `NONAME2` in the `.ino`. If the display is mounted upside
 - DevKit rotated by 180° in the breakout board (module towards the connector side, USB-C towards the antenna side); the antenna cable and the USB flat cable run once underneath the board to the opposite side.
 - Lid: window for the OLED (active area approx. 55 × 28 mm), mount the module on M2.5 standoffs.
 - Breakout board on the mounting plate; pigtails into terminals P25/P26 (red, via 220 Ω) and GND (brown).
-- Drilling template 1:1 for printing on A4: last page of `docs/ESP32_Oscilloscope_Clock_Dokumentation.pdf`.
+- Drilling template 1:1 for printing on A4: last page of `docs/ESP32_Oscilloscope_Clock_Documentation.pdf`.
 
 ## Oscilloscope settings
 

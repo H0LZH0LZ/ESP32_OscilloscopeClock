@@ -6,7 +6,7 @@ A vector clock for an oscilloscope in X/Y mode, based on an idea by Mauro Pintus
 adapted for this hardware: **ESP32-WROOM-32U DevKitC V4**, **Waveshare 2.42" OLED (SPI)**, external
 2.4 GHz antenna, BNC outputs and an ABS enclosure.
 
-**Full documentation (German) with assembly guide, pictures and drilling template: [docs/ESP32_Oscilloscope_Clock_Dokumentation.pdf](docs/ESP32_Oscilloscope_Clock_Dokumentation.pdf)**
+**Full documentation with assembly guide, pictures and drilling template: [docs/ESP32_Oscilloscope_Clock_Documentation.pdf](docs/ESP32_Oscilloscope_Clock_Documentation.pdf)** (German version: [docs/ESP32_Oscilloscope_Clock_Dokumentation.pdf](docs/ESP32_Oscilloscope_Clock_Dokumentation.pdf))
 
 **Build and wiring: [HARDWARE.en.md](HARDWARE.en.md)** · **Software design: [SOFTWARE.en.md](SOFTWARE.en.md)**
 
