@@ -34,10 +34,10 @@ def verdrahtung():
     a(f"<text x='{X1-50}' y='{Y0-26}' font-size='11' fill='#fff'>IPEX</text>")
     a(f"<text x='{(X0+X1)/2}' y='{Y0+230}' text-anchor='middle' font-size='15' font-weight='bold' fill='#fff'>DevKitC</text>")
     a(f"<rect x='{(X0+X1)/2-22}' y='{y(19)+28}' width='44' height='18' rx='6' fill='#c9ccd1' stroke='#8a8f96'/>")
-    a(f"<text x='{(X0+X1)/2}' y='{y(19)+74}' text-anchor='middle' font-size='12' fill='#333'>USB-C ← Flachbandkabel ← USB-C-Einbaubuchse (Rückwand)</text>")
+    a(f"<text x='{(X0+X1)/2}' y='{y(19)+74}' text-anchor='middle' font-size='12' fill='#333'>USB-C ← Flachbandkabel ← USB-C-Einbaubuchse (Anschlussseite)</text>")
     a(f"<rect x='{X1-90}' y='{y(14)-9}' width='26' height='18' rx='3' fill='#eee' stroke='#666'/>")
     a(f"<text x='{X1-77}' y='{y(14)+4}' text-anchor='middle' font-size='8'>BOOT</text>")
-    used = {('L',1):'#d62828',('L',9):'#e09f00',('L',10):'#1d6fd6',('L',11):'#8a8a8a',('L',14):'#111',
+    used = {('L',1):'#d62828',('L',9):'#e09f00',('L',10):'#1d6fd6',('L',14):'#111',
             ('R',1):'#111',('R',2):'#2a9d48',('R',9):'#7b3fb5',('R',10):'#d1495b',('R',11):'#00a6a6',('R',13):'#a0522d'}
     for i, n in enumerate(L, 1):
         c = used.get(('L', i))
@@ -59,11 +59,10 @@ def verdrahtung():
             a(f"<line x1='{x-w}' y1='{yy+8+k*4}' x2='{x+w}' y2='{yy+8+k*4}' stroke='#111' stroke-width='2'/>")
     # Gehäusewand mit Kabelverschraubungen, außen die BNC-Stecker der Pigtails
     WX = 175
-    a(f"<line x1='{WX}' y1='190' x2='{WX}' y2='560' stroke='#999' stroke-width='6' stroke-dasharray='14 6'/>")
+    a(f"<line x1='{WX}' y1='190' x2='{WX}' y2='440' stroke='#999' stroke-width='6' stroke-dasharray='14 6'/>")
     a(f"<text x='{WX}' y='182' text-anchor='middle' font-size='11' fill='#555'>Gehäusewand</text>")
     for lab, sub, by, pin, col, dash in [('Pigtail X', '→ Oszilloskop Kanal 1', 250, 9, '#e09f00', False),
-                                        ('Pigtail Y', '→ Oszilloskop Kanal 2', 370, 10, '#1d6fd6', False),
-                                        ('Pigtail Z (optional)', '→ Z-Eingang', 490, 11, '#8a8a8a', True)]:
+                                        ('Pigtail Y', '→ Oszilloskop Kanal 2', 370, 10, '#1d6fd6', False)]:
         d = 'stroke-dasharray="6 4"' if dash else ''
         a(f"<line x1='60' y1='{by}' x2='212' y2='{by}' stroke='#c98d6b' stroke-width='7' {d}/>")         # RG316
         a(f"<rect x='18' y='{by-12}' width='44' height='24' rx='4' fill='#d9d9d9' stroke='#555' stroke-width='2'/>")  # BNC-Stecker
@@ -113,14 +112,14 @@ def verdrahtung():
     a(f"<path d='M{X1-60},{Y0-14} C{X1-60},40 {X1+90},70 {X1+120},40' fill='none' stroke='#777' stroke-width='4'/>")
     a(f"<rect x='{X1+112}' y='24' width='22' height='22' rx='3' fill='#d8b14a' stroke='#8a6d1d'/>")
     a(f"<line x1='{X1+123}' y1='24' x2='{X1+123}' y2='-0' stroke='#333' stroke-width='6' stroke-linecap='round'/>")
-    a(f"<text x='{X1+142}' y='30' font-size='12'>SMA-Buchse + 2,4-GHz-Antenne</text>")
-    a(f"<text x='{X1+142}' y='46' font-size='11' fill='#444'>(IPEX→SMA-Pigtail, Pflicht beim -32U)</text>")
+    a(f"<text x='{X1+142}' y='30' font-size='12'>SMA-Buchse + WLAN-Antenne (Bingfu, SMA)</text>")
+    a(f"<text x='{X1+142}' y='46' font-size='11' fill='#444'>(IPEX→SMA-Pigtail aus dem Antennen-Kit)</text>")
     # Legende
     leg = [('#d62828', '3V3 → OLED VCC'), ('#111', 'GND (Masse)'), ('#e09f00', 'P25 (DAC1) → X'),
-           ('#1d6fd6', 'P26 (DAC2) → Y'), ('#8a8a8a', 'P27 → Z (optional)'), ('#2a9d48', 'P23 → DIN'),
+           ('#1d6fd6', 'P26 (DAC2) → Y'), ('#2a9d48', 'P23 → DIN'),
            ('#7b3fb5', 'P18 → CLK'), ('#d1495b', 'P5 → CS'), ('#00a6a6', 'P17 → DC'), ('#a0522d', 'P4 → RST')]
     for k, (c, t) in enumerate(leg):
-        lx, ly = 760 + (k // 5) * 170, 420 + (k % 5) * 22
+        lx, ly = 760 + (k // 5) * 170, 420 + (k % 5) * 22 if k < 5 else 420 + (k - 5) * 22
         a(f"<line x1='{lx}' y1='{ly}' x2='{lx+26}' y2='{ly}' stroke='{c}' stroke-width='4'/><text x='{lx+32}' y='{ly+4}' font-size='11'>{t}</text>")
     a("<text x='760' y='545' font-size='11' fill='#444'>Beschriftung wie auf dem Breakout-Board (P25 = GPIO25 …).</text>")
     a("<text x='760' y='562' font-size='11' fill='#444'>P0 = BOOT-Taster – dort nichts anschließen.</text>")
@@ -152,22 +151,20 @@ def bohrplan():
     dim(X, Y+14, X+75-27.5, Y+14, '47,5')
     dim(X+4, Y, X+4, Y+22, '22')
     a(f"<text x='{X+75}' y='{Y+62}' text-anchor='middle' font-size='2.8' fill='#444'>Befestigungslöcher des OLED-Moduls nach dem Modul anzeichnen (M2,5)</text>")
-    # Stirnseite 100 breit: Kabelverschraubungen M6 für die BNC-Pigtails
+    # Anschlussseite (kurze Seite, 100 mm), von außen gesehen:
+    # links die beiden Pigtails (M6), mittig USB-C (16 mm), rechts die Antenne (SMA 6,5 mm)
     X2, Y2 = 10, 140
-    panel(X2, Y2, 100, 45, 'Stirnseite (vorne) – Kabelverschraubungen M6')
-    for cx, lab in [(X2+30, 'X'), (X2+50, 'Y'), (X2+70, 'Z (opt.)')]:
+    panel(X2, Y2, 100, 45, 'Anschlussseite (kurze Seite, von außen gesehen)')
+    for cx, lab in [(X2+14, 'X'), (X2+28, 'Y')]:
         hole(cx, Y2+20, 5.0, lab)
         a(f"<circle cx='{cx}' cy='{Y2+20}' r='3' fill='none' stroke='#c00' stroke-width='0.15' stroke-dasharray='0.6 0.6'/>")
-    dim(X2, Y2+36, X2+30, Y2+36, '30'); dim(X2+30, Y2+36, X2+50, Y2+36, '20'); dim(X2+50, Y2+36, X2+70, Y2+36, '20')
-    a(f"<text x='{X2+50}' y='{Y2+52}' text-anchor='middle' font-size='2.8' fill='#444'>Ø 5,0 bohren und M6-Gewinde schneiden (gestrichelt: M6) – oder Ø 6,2 + M6-Mutter innen</text>")
-    a(f"<text x='{X2+50}' y='{Y2+56}' text-anchor='middle' font-size='2.8' fill='#444'>Höhe: etwa Mitte des Unterteils, innen Platz für die Pigtails lassen</text>")
-    # Rückseite: USB-C-Einbaubuchse 16 mm und SMA 6,5 mm
-    X3, Y3 = 120, 140
-    panel(X3, Y3, 100, 45, 'Rückseite – USB-C-Einbaubuchse und Antenne')
-    hole(X3+50, Y3+20, 16, 'USB-C  Ø 16')
-    hole(X3+82, Y3+20, 6.5, 'SMA  Ø 6,5')
-    dim(X3, Y3+38, X3+50, Y3+38, '50'); dim(X3+50, Y3+38, X3+82, Y3+38, '32')
-    a(f"<text x='{X3+50}' y='{Y3+52}' text-anchor='middle' font-size='2.8' fill='#444'>USB-C mittig hinter dem DevKit; Antenne möglichst weit weg von den Pigtails</text>")
+    hole(X2+50, Y2+20, 16, 'USB-C  Ø 16')
+    hole(X2+80, Y2+20, 6.5, 'Antenne  Ø 6,5')
+    dim(X2, Y2+38, X2+14, Y2+38, '14'); dim(X2+14, Y2+38, X2+28, Y2+38, '14')
+    dim(X2+28, Y2+38, X2+50, Y2+38, '22'); dim(X2+50, Y2+38, X2+80, Y2+38, '30')
+    a(f"<text x='{X2+50}' y='{Y2+52}' text-anchor='middle' font-size='2.8' fill='#444'>Pigtails: Ø 5,0 bohren + M6-Gewinde schneiden (gestrichelt: M6) – oder Ø 6,2 + M6-Mutter innen</text>")
+    a(f"<text x='{X2+50}' y='{Y2+56}' text-anchor='middle' font-size='2.8' fill='#444'>Alle Löcher auf gleicher Höhe, etwa Mitte des Unterteils</text>")
+    a(f"<text x='{X2+160}' y='{Y2+18}' font-size='3' fill='#444'>Pigtails links, Antenne rechts,</text><text x='{X2+160}' y='{Y2+22}' font-size='3' fill='#444'>USB-C mittig dazwischen.</text>")
     # Prüfmaß
     a("<line x1='170' y1='30' x2='220' y2='30' stroke='#000' stroke-width='0.6'/><line x1='170' y1='27' x2='170' y2='33' stroke='#000' stroke-width='0.4'/><line x1='220' y1='27' x2='220' y2='33' stroke='#000' stroke-width='0.4'/>")
     a("<text x='195' y='26' text-anchor='middle' font-size='3.2'>Prüfmaß 50 mm</text>")
@@ -176,53 +173,52 @@ def bohrplan():
 
 # ---------------------------------------------------------------- Anordnung im Gehäuse
 def aufbau():
-    """Draufsicht, maßstäblich (4 px = 1 mm), gleiche Lage wie im Bohrplan:
-    Stirnseite (100 mm) oben mit den Kabelverschraubungen bei 30/50/70 mm, Rückseite unten mit
-    USB-C-Einbaubuchse bei 50 mm und Antenne bei 82 mm."""
-    k = 4; X, Y = 150, 175; W, H = 100 * k, 150 * k
+    """Draufsicht, maßstäblich (4 px = 1 mm), Anschlussseite (100 mm) unten wie im Bohrplan:
+    Pigtails bei 14/28 mm, USB-C bei 50 mm, Antenne bei 80 mm."""
+    k = 4; X, Y = 150, 70; W, H = 100 * k, 150 * k
     s = []; a = s.append
     mm = lambda v: v * k
-    a(f"<text x='{X+W/2}' y='28' text-anchor='middle' font-size='17' font-weight='bold'>Anordnung in der Abzweigdose (Draufsicht, Deckel offen)</text>")
+    a(f"<text x='{X+W/2}' y='30' text-anchor='middle' font-size='17' font-weight='bold'>Anordnung in der Abzweigdose (Draufsicht, Deckel offen)</text>")
     a(f"<rect x='{X}' y='{Y}' width='{W}' height='{H}' rx='16' fill='#f2f2f0' stroke='#888' stroke-width='3'/>")
-    a(f"<text x='{X+W/2}' y='{Y-128}' text-anchor='middle' font-size='13' fill='#555'>Stirnseite (vorne): BNC-Stecker der Pigtails zum Oszilloskop</text>")
-    # Pigtails mit Kabelverschraubungen
-    for n, (lab, d, opt) in enumerate([('X', 30, False), ('Y', 50, False), ('Z', 70, True)]):
-        cx = X + mm(d); ds = "stroke-dasharray='6 4'" if opt else ''
-        a(f"<line x1='{cx}' y1='{Y-80}' x2='{cx}' y2='{Y+60}' stroke='#c98d6b' stroke-width='6' {ds}/>")
-        a(f"<rect x='{cx-11}' y='{Y-92}' width='22' height='30' rx='4' fill='#d9d9d9' stroke='#555' stroke-width='2'/>")
-        a(f"<text x='{cx}' y='{Y-98}' text-anchor='middle' font-size='12'>{lab}{' (opt.)' if opt else ''}</text>")
-        a(f"<rect x='{cx-10}' y='{Y-12}' width='20' height='24' rx='2' fill='#b5b5b5' stroke='#444'/>")
-        ty = Y + mm(36) + mm(75) * 0.42 + n * 10                     # Klemmen P25/P26/P27 links
-        lx = X + mm(6) + n * 8                                        # links am Board vorbei
-        a(f"<path d='M{cx},{Y+60} C{cx},{Y+110} {lx},{Y+90} {lx},{Y+135} L{lx},{ty}' fill='none' stroke='#c98d6b' stroke-width='3' {ds}/>")
-        a(f"<line x1='{lx}' y1='{ty}' x2='{X+mm(20)+17}' y2='{ty}' stroke='#d62828' stroke-width='3' {ds}/>")
-    a(f"<text x='{X+W+12}' y='{Y+5}' font-size='11' fill='#555'>Lapp SKINDICHT MINI M6</text>")
-    # Breakout-Board mit DevKit
-    bx, by_, bw, bh = X + mm(20), Y + mm(36), mm(60), mm(75)
+    yb = Y + H                                                   # Anschlussseite
+    # Breakout-Board (ca. 60 × 75 mm) mit DevKitC (28,5 × 48,5 mm), USB-C zur Anschlussseite
+    bx, by_, bw, bh = X + mm(20), Y + mm(40), mm(60), mm(75)
     a(f"<rect x='{bx}' y='{by_}' width='{bw}' height='{bh}' rx='5' fill='#2f8f46' stroke='#1d5e2c' stroke-width='2'/>")
     for xx in (bx + 8, bx + bw - 26):
         a(f"<rect x='{xx}' y='{by_+10}' width='18' height='{bh-20}' fill='#7fd18f' stroke='#1d5e2c'/>")
-    dx, dw, dh = X + mm(50), mm(28), mm(55); dy = by_ + mm(8)
-    a(f"<rect x='{dx-dw/2}' y='{dy}' width='{dw}' height='{dh}' rx='5' fill='#1f3b63'/>")
-    a(f"<text x='{dx}' y='{dy+dh/2}' text-anchor='middle' font-size='13' fill='#fff' transform='rotate(-90 {dx} {dy+dh/2})'>DevKitC</text>")
-    a(f"<text x='{bx+bw/2}' y='{by_+bh+18}' text-anchor='middle' font-size='12' fill='#1d5e2c'>Breakout-Board auf der Montageplatte</text>")
-    a(f"<circle cx='{dx}' cy='{dy+12}' r='5' fill='#d8b14a' stroke='#8a6d1d'/>")
-    # USB-C: Flachbandkabel zur Einbaubuchse
+    dx, dw, dh = X + mm(50), mm(28.5), mm(48.5); dy = by_ + mm(13)
+    a(f"<rect x='{dx-dw/2}' y='{dy}' width='{dw}' height='{dh}' rx='5' fill='#1b1b1b'/>")
+    a(f"<rect x='{dx-dw/2+8}' y='{dy+6}' width='{dw-16}' height='{mm(17)}' rx='2' fill='#c9ccd1'/>")
+    a(f"<text x='{dx}' y='{dy+dh/2+30}' text-anchor='middle' font-size='13' fill='#fff' transform='rotate(-90 {dx} {dy+dh/2+30})'>DevKitC V4</text>")
+    a(f"<circle cx='{dx+dw/2-14}' cy='{dy+14}' r='5' fill='#d8b14a' stroke='#8a6d1d'/>")
+    a(f"<text x='{bx+bw/2}' y='{by_-10}' text-anchor='middle' font-size='12' fill='#1d5e2c'>Breakout-Board auf der Montageplatte</text>")
+    # USB-C: Flachbandkabel zur Einbaubuchse in der Mitte
     a(f"<rect x='{dx-12}' y='{dy+dh-4}' width='24' height='10' rx='3' fill='#c9ccd1' stroke='#888'/>")
-    a(f"<path d='M{dx},{dy+dh+6} C{dx},{dy+dh+60} {dx-40},{Y+H-70} {X+mm(50)},{Y+H-10}' fill='none' stroke='#d08a3a' stroke-width='9' stroke-opacity='.8'/>")
-    a(f"<rect x='{X+mm(50)-18}' y='{Y+H-10}' width='36' height='20' rx='4' fill='#333'/>")
-    a(f"<text x='{X+mm(50)}' y='{Y+H+32}' text-anchor='middle' font-size='12'>USB-C-Einbaubuchse</text>")
-    # Antenne
-    sx = X + mm(82)
-    a(f"<path d='M{dx},{dy+12} C{dx+90},{dy-30} {sx},{Y+H-200} {sx},{Y+H-8}' fill='none' stroke='#777' stroke-width='3'/>")
-    a(f"<circle cx='{sx}' cy='{Y+H}' r='10' fill='#d8b14a' stroke='#8a6d1d'/><line x1='{sx}' y1='{Y+H}' x2='{sx}' y2='{Y+H+44}' stroke='#333' stroke-width='7' stroke-linecap='round'/>")
-    a(f"<text x='{sx+14}' y='{Y+H+40}' font-size='12'>Antenne</text>")
-    a(f"<text x='{X+W/2}' y='{Y+H+62}' text-anchor='middle' font-size='13' fill='#555'>Rückseite</text>")
+    a(f"<path d='M{dx},{dy+dh+6} C{dx-30},{yb-110} {dx+30},{yb-60} {dx},{yb-10}' fill='none' stroke='#d08a3a' stroke-width='9' stroke-opacity='.85'/>")
+    a(f"<rect x='{dx-32}' y='{yb-10}' width='64' height='20' rx='5' fill='#333'/>")
+    a(f"<text x='{dx}' y='{yb+36}' text-anchor='middle' font-size='12'>USB-C</text>")
+    # Pigtails links (14/28 mm) zu den Klemmen P25/P26
+    for n, (lab, d) in enumerate([('X', 14), ('Y', 28)]):
+        cx = X + mm(d); ty = by_ + bh * 0.42 + n * 10; lx = X + mm(6) + n * 8
+        a(f"<line x1='{cx}' y1='{yb+70}' x2='{cx}' y2='{yb-40}' stroke='#c98d6b' stroke-width='6'/>")
+        a(f"<rect x='{cx-11}' y='{yb+62}' width='22' height='30' rx='4' fill='#d9d9d9' stroke='#555' stroke-width='2'/>")
+        a(f"<text x='{cx}' y='{yb+110}' text-anchor='middle' font-size='12'>{lab}</text>")
+        a(f"<rect x='{cx-10}' y='{yb-12}' width='20' height='24' rx='2' fill='#b5b5b5' stroke='#444'/>")
+        a(f"<path d='M{cx},{yb-40} C{cx},{yb-90} {lx},{yb-90} {lx},{yb-140} L{lx},{ty}' fill='none' stroke='#c98d6b' stroke-width='3'/>")
+        a(f"<line x1='{lx}' y1='{ty}' x2='{bx+17}' y2='{ty}' stroke='#d62828' stroke-width='3'/>")
+    a(f"<text x='{X+mm(21)}' y='{yb+128}' text-anchor='middle' font-size='12'>BNC-Pigtails (SKINDICHT MINI M6)</text>")
+    # Antenne rechts (80 mm)
+    sx = X + mm(80)
+    a(f"<path d='M{dx+dw/2-14},{dy+14} C{X+W-30},{dy} {sx},{yb-200} {sx},{yb-8}' fill='none' stroke='#777' stroke-width='3'/>")
+    a(f"<circle cx='{sx}' cy='{yb}' r='10' fill='#d8b14a' stroke='#8a6d1d'/><line x1='{sx}' y1='{yb}' x2='{sx}' y2='{yb+60}' stroke='#333' stroke-width='8' stroke-linecap='round'/>")
+    a(f"<text x='{sx}' y='{yb+80}' text-anchor='middle' font-size='12'>Antenne (SMA)</text>")
     # OLED im Deckel
-    a(f"<text x='{X+10}' y='{Y+mm(126)}' font-size='11' fill='#555'>OLED sitzt im Scharnierdeckel –</text><text x='{X+10}' y='{Y+mm(126)+14}' font-size='11' fill='#555'>Leitungen lang genug lassen</text>")
+    a(f"<text x='{X+W/2}' y='{Y+mm(16)}' text-anchor='middle' font-size='11' fill='#555'>OLED (61,5 × 39,5 mm) sitzt im Scharnierdeckel –</text>")
+    a(f"<text x='{X+W/2}' y='{Y+mm(16)+15}' text-anchor='middle' font-size='11' fill='#555'>Leitungen lang genug lassen</text>")
+    a(f"<text x='{X+W/2}' y='{yb+150}' text-anchor='middle' font-size='13' fill='#555'>Anschlussseite (kurze Seite)</text>")
     a(f"<text x='{X-14}' y='{Y+H/2}' text-anchor='middle' font-size='12' fill='#06c' transform='rotate(-90 {X-14} {Y+H/2})'>150 mm</text>")
-    a(f"<text x='{X+W/2}' y='{Y+H+84}' text-anchor='middle' font-size='12' fill='#06c'>100 mm</text>")
-    save('aufbau.svg', X * 2 + W, Y + H + 100, '\n'.join(s))
+    a(f"<text x='{X+W/2}' y='{yb+170}' text-anchor='middle' font-size='12' fill='#06c'>100 mm</text>")
+    save('aufbau.svg', X * 2 + W, yb + 182, '\n'.join(s))
 
 # ---------------------------------------------------------------- Software-Aufteilung
 def software():

@@ -30,7 +30,7 @@ This documentation quotes the German labels and adds the English label in parent
 - New drawing engine with constant beam speed: all lines and hands are equally bright, including
   diagonals. The speed is chosen for older CRT oscilloscopes (approx. 230 frames/s, adjustable).
 - Hardly visible retrace lines: optimised drawing order, fast braked jumps, second hand drawn out
-  and back. With an optional third cable to the Z input they disappear completely.
+  and back.
 - OLED as a pure text display: time (24 h) in 7-segment style, calendar week, date, network name
   and signal strength (dBm), all centred, with pixel shifting against burn-in.
 - Every NTP sync is reported with date and time on the serial console (115200 baud), as is a

@@ -6,9 +6,9 @@
 
 | Part | Purpose |
 |---|---|
-| ESP32-WROOM-32U DevKitC V4 (USB-C, IPEX/U.FL) | Classic dual-core ESP32 with two 8-bit DACs (GPIO25/26) |
-| Waveshare 2.42" OLED (SSD1309, 128×64) | Local text display: time 24 h (7-segment style), date, calendar week, SSID, signal |
-| 2.4 GHz rod antenna + IPEX→SMA pigtail | Mandatory with the *-32U*: the module has **no** PCB antenna |
+| ESP32-WROOM-32U DevKitC V4, USB-C, with antenna kit (DUBEUYEW), 48.5 × 28.5 mm | Classic dual-core ESP32 with two 8-bit DACs (GPIO25/26); the kit contains the IPEX→SMA pigtail |
+| Waveshare 2.42inch OLED display module, white (SSD1309, 128×64, SPI/I²C), 61.5 × 39.5 mm | Local text display: time 24 h (7-segment style), date, calendar week, SSID, signal |
+| WiFi antenna Bingfu 2.4/5.8 GHz, 8 dBi, SMA plug | Mandatory with the *-32U*: the module has **no** PCB antenna; do not mix SMA and RP-SMA |
 | ESP32 breakout board with screw terminals | plug in the DevKit, all wires go into screw terminals (labelled P25, P26 …) – no soldering on the DevKit |
 | 2× BNC pigtail, BNC plug to 2.54 mm DuPont pin, RG316 | X and Y outputs; the BNC plug goes straight into the oscilloscope (red = signal, brown = shield) |
 | 2× cable gland Lapp SKINDICHT MINI M6×1 (52001860), clamping range 2–3 mm | leads the pigtails through the enclosure wall |
@@ -35,11 +35,7 @@ GPIO5  ───────────────── OLED CS
 GPIO17 ───────────────── OLED DC
 GPIO4  ───────────────── OLED RST
 
-IPEX/U.FL ── pigtail ── SMA socket in the enclosure wall ── rod antenna
-
-Optional, blanking:
-P27    ──[220Ω]──────── pigtail "Z" red (core)   ──> Z input of the oscilloscope (rear panel)
-GND ─────────────────── pigtail "Z" brown (shield)
+IPEX/U.FL ── pigtail (antenna kit) ── SMA socket in the connector side ── Bingfu antenna (SMA)
 ```
 
 All pins are defined in `ESP32_OscilloscopeClock_v2.0/config.h`. Fixed are GPIO25/26 (the only
@@ -52,7 +48,6 @@ DAC pins) and GPIO18/23 (hardware SPI for the display).
 | left | 1 | 3V3 | OLED VCC |
 | left | 9 | GPIO25 (DAC_1) | via 220 Ω → BNC “X” centre |
 | left | 10 | GPIO26 (DAC_2) | via 220 Ω → BNC “Y” centre |
-| left | 11 | GPIO27 | optional via 220 Ω → BNC “Z” centre |
 | left | 14 | GND | brown leads (shield) of all pigtails |
 | right | 1 | GND | OLED GND |
 | right | 2 | GPIO23 | OLED DIN |
@@ -62,19 +57,6 @@ DAC pins) and GPIO18/23 (hardware SPI for the display).
 | right | 13 | GPIO4 | OLED RST |
 
 GPIO0 (right, pos. 14) is the BOOT button on the board – do not connect anything there.
-
-### Optional: blanking via the Z input
-The ESP32 cannot switch the beam off by itself. A very faint retrace line therefore remains
-between two lines (the firmware keeps it as small as possible, approx. 1/24 of the line
-brightness). Many CRT oscilloscopes have a BNC socket **“Z”, “Z-Mod”, “Z-Input”** or
-**“Intensity”** on the rear. With a third output the beam can be switched off completely during
-jumps:
-1. Add a third pigtail with cable gland, wiring as above (P27 via 220 Ω).
-2. Check in the oscilloscope manual which level makes the beam **dark**. On many devices high
-   (TTL) blanks. On some it is the other way round, or the input needs more than 3.3 V.
-3. Set `ZBLANK_PIN 27` in `config.h`, and `ZBLANK_ACTIVE_HIGH 0` if needed.
-4. If the picture stays completely dark, the polarity is wrong. If bright dots appear at the start
-   of lines, increase `ZBLANK_SETTLE_NS`.
 
 ### Notes on the DAC outputs
 - Output range approx. 0 … 3.2 V, picture centre approx. 1.6 V.
@@ -104,8 +86,7 @@ replace `NONAME0` with `NONAME2` in the `.ino`. If the display is mounted upside
   an electrolytic capacitor (e.g. 100 µF) between 3V3 and GND close to the DevKit.
 
 ## Enclosure (junction box 150 × 100 × 70 mm)
-- Front: 2 (3) M6 cable glands for the pigtails, spacing 20 mm – drill Ø 5.0 and tap M6 (or Ø 6.2 + nut).
-- Rear: USB-C panel socket (Ø 16 mm) and SMA antenna socket (Ø 6.5 mm).
+- All connections on **one short side** (connector side, 100 mm), seen from outside: the two pigtails on the left (M6 cable glands at 14 and 28 mm – drill Ø 5.0 and tap M6, or Ø 6.2 + nut), **the USB-C panel socket in the middle** (Ø 16 mm at 50 mm), the antenna on the right (SMA, Ø 6.5 mm at 80 mm).
 - Lid: window for the OLED (active area approx. 55 × 28 mm), mount the module on M2.5 standoffs.
 - Breakout board on the mounting plate; pigtails into terminals P25/P26 (red, via 220 Ω) and GND (brown).
 - Drilling template 1:1: `docs/images/bohrplan.svg`.
@@ -190,7 +171,7 @@ the oscilloscope. The values in `config.h` are then only the start values.
 | `BUTTON_LONG_MS` | Hold time of the BOOT button for switching (default 3000 ms) |
 | `JUMP_SPEED` | Speed of the jumps between lines in profile ANALOG (default 24; DIGITAL always jumps instantly). Larger = fainter retrace line, smaller (12) for very old oscilloscopes, 0 = instant jump |
 | `JUMP_LANDING`, `JUMP_RAMP` | Braking before the start of a line (default 8 and 4). Smaller `JUMP_LANDING` if lines start with small “hooks” |
-| `ZBLANK_PIN` | optional output for blanking (Z input), -1 = off |
+| `ZBLANK_PIN` | blanking via the Z input – not used in the described build, leave at -1 |
 | `HAND_BRIGHT_PCT` | Brightness of hour and minute hand relative to the rest (default 67 %, then they look equally bright) |
 | `TICK_BRIGHT_PCT`, `DIGIT_BRIGHT_PCT` | Brightness of tick marks and numerals, 0–100 % (default 100 %, 0 = hidden). Adjustable in the web interface |
 | `OLED_BRIGHT_PCT` | OLED brightness 0–100 % (default 50 %, 0 = off) |

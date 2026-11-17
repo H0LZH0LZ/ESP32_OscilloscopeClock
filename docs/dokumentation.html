@@ -77,7 +77,7 @@ Zifferblatt, Ziffern und Zeiger etwa 230-mal pro Sekunde nach.</p>
 <ul>
  <li><b>Genaue Zeit</b> aus dem Internet (NTP), stündlich abgeglichen, Sommer-/Winterzeit automatisch. Ohne Internet lässt sich die Zeit im Webinterface stellen.</li>
  <li><b>Fünf Zifferblätter:</b> Ziffern 1–12, nur 12·3·6·9, nur Striche, römisch XII·III·VI·IX, römisch I–XII. Umschalten durch Wischen über die Vorschau im Webinterface.</li>
- <li><b>Gleich helle Linien</b> durch konstante Strahlgeschwindigkeit, kaum sichtbare Rücklaufspuren, optional Dunkeltastung über den Z-Eingang.</li>
+ <li><b>Gleich helle Linien</b> durch konstante Strahlgeschwindigkeit, kaum sichtbare Rücklaufspuren.</li>
  <li><b>Ein Gerät für alle Oszilloskope:</b> Profil DIGITAL (Speicher-Oszilloskope) oder ANALOG (Röhre), umschaltbar per BOOT-Taster oder Webinterface.</li>
  <li><b>OLED-Anzeige</b> am Gerät: Uhrzeit, Kalenderwoche, Datum, WLAN und Signalstärke.</li>
  <li><b>Webinterface</b> für Handy und PC: Live-Vorschau, Status, alle Einstellungen, WLAN-Verwaltung, Debug-Protokoll. Deutsch und Englisch, hell und dunkel, als App auf dem Startbildschirm.</li>
@@ -94,22 +94,22 @@ Zifferblatt, Ziffern und Zeiger etwa 230-mal pro Sekunde nach.</p>
 kommt direkt in den Eingang des Oszilloskops, ein zusätzliches BNC-Kabel ist nicht nötig.</p>
 <table>
  <tr><th>Anz.</th><th>Teil</th><th>Hinweis</th></tr>
- <tr><td>1</td><td><b>ESP32-WROOM-32U DevKitC V4</b> (USB-C, IPEX/U.FL-Antennenbuchse)</td><td>Klassischer ESP32 mit zwei 8-Bit-DACs an GPIO25/26. Andere ESP32-Varianten (S2, S3, C3) haben keinen bzw. andere DACs und passen nicht.</td></tr>
+ <tr><td>1</td><td><b>ESP32-WROOM-32U DevKitC V4</b> mit USB-C und Antennen-Kit (DUBEUYEW, „2 Stück ESP32-WROOM-32U ESP32 DevKitC V4 USB-C mit Antennen-Kit“), 48,5 × 28,5 mm</td><td>Klassischer ESP32 mit zwei 8-Bit-DACs an GPIO25/26, USB-Seriell-Wandler CP2102. Das Antennen-Kit enthält das IPEX→SMA-Pigtail. Andere ESP32-Varianten (S2, S3, C3) haben keine bzw. andere DACs und passen nicht.</td></tr>
  <tr><td>1</td><td><b>ESP32-Breakout-Board mit Schraubklemmen</b> (XTVTX, „ESP32 Breakout Board Erweiterungskarte GPIO 1 in 2“, 2er-Pack)</td><td>Das DevKit wird aufgesteckt, alle Leitungen kommen in Schraubklemmen – am DevKit wird nichts gelötet. Die Klemmen sind wie die Stifte beschriftet (3V3, GND, P25, P26, P23 …).</td></tr>
- <tr><td>2 (3)</td><td><b>BNC-Pigtail-Leitung</b> BNC-Stecker auf 2,54-mm-DuPont-Stift, RG316 (TEJIATE, „SMA to DuPont BNC/Q9/N … RG316“, Variante <b>BNC-J to J</b>)</td><td>X und Y; die dritte nur für die optionale Dunkeltastung (Z). Länge passend zum Abstand zum Oszilloskop wählen (30–80 cm erhältlich; 50 cm ist ein guter Wert). Rot = Innenleiter (Signal), braun = Schirm (Masse) – mit dem Durchgangsprüfer bestätigen.</td></tr>
- <tr><td>2 (3)</td><td><b>Kabelverschraubung Lapp SKINDICHT MINI</b> M6×1, Messing vernickelt, Klemmbereich 2–3 mm, IP68 (Lapp 52001860, RS 458-3953)</td><td>Je Pigtail eine; hält und dichtet das RG316 (Ø ca. 2,5 mm) in der Gehäusewand.</td></tr>
+ <tr><td>2</td><td><b>BNC-Pigtail-Leitung</b> BNC-Stecker auf 2,54-mm-DuPont-Stift, RG316 (TEJIATE, „SMA to DuPont BNC/Q9/N … RG316“, Variante <b>BNC-J to J</b>)</td><td>X und Y. Länge passend zum Abstand zum Oszilloskop wählen (30–80 cm erhältlich; 50 cm ist ein guter Wert). Rot = Innenleiter (Signal), braun = Schirm (Masse) – mit dem Durchgangsprüfer bestätigen.</td></tr>
+ <tr><td>2</td><td><b>Kabelverschraubung Lapp SKINDICHT MINI</b> M6×1, Messing vernickelt, Klemmbereich 2–3 mm, IP68 (Lapp 52001860, RS 458-3953)</td><td>Je Pigtail eine; hält und dichtet das RG316 (Ø ca. 2,5 mm) in der Gehäusewand.</td></tr>
  <tr><td>1</td><td><b>USB-C-Einbauverlängerung</b> USB 3.1, IP67, 0,2 m, Stecker auf Buchse, FPC-Flachbandkabel, Einbauöffnung 16 mm (Plinkwirekb)</td><td>USB-C-Buchse in der Gehäusewand; das Flachbandkabel steckt innen im DevKit. Darüber wird die Uhr versorgt und programmiert.</td></tr>
  <tr><td>1</td><td><b>Abzweigdose ABS 150 × 100 × 70 mm</b>, IP67, mit Scharnierdeckel, Edelstahlverschlüssen und Montageplatte (Yunseity)</td><td>Kunststoff, damit das WLAN-Signal durchkommt. Das Breakout-Board wird auf die gelochte Montageplatte geschraubt.</td></tr>
- <tr><td>1</td><td><b>Waveshare 2,42" OLED</b>, SSD1309, 128 × 64 Pixel</td><td>Im Auslieferungszustand (4-Wire-SPI) verwenden, nichts umlöten.</td></tr>
- <tr><td>1</td><td><b>2,4-GHz-Stabantenne</b> mit SMA-Stecker + <b>IPEX→SMA-Pigtail</b></td><td>Pflicht: Das Modul -32U hat keine eingebaute Antenne.</td></tr>
- <tr><td>2 (3)</td><td>Widerstand <b>220 Ω</b>, 0,25 W (empfohlen)</td><td>In die rote Ader jedes Pigtails eingelötet; schützt die DAC-Ausgänge bei einem Kurzschluss am BNC-Stecker.</td></tr>
+ <tr><td>1</td><td><b>Waveshare 2,42inch OLED Display Module</b>, weiß, 128 × 64 Pixel, SPI/I²C (SSD1309); Platine 61,5 × 39,5 mm, aktive Fläche 55,0 × 27,5 mm</td><td>Im Auslieferungszustand (4-Wire-SPI) verwenden, nichts umlöten. Stiftleiste von unten: VCC, GND, DIN, CLK, CS, DC, RST.</td></tr>
+ <tr><td>1</td><td><b>WLAN-Antenne Bingfu</b> 2,4/5,8 GHz, 8 dBi, SMA-Stecker (Variante „SMA“), abwinkelbar</td><td>Pflicht: Das Modul -32U hat keine eingebaute Antenne. Sie wird auf die SMA-Buchse des IPEX-Pigtails aus dem Antennen-Kit geschraubt – SMA und RP-SMA nicht mischen (Stecker der Antenne muss zur Buchse des Pigtails passen).</td></tr>
+ <tr><td>2</td><td>Widerstand <b>220 Ω</b>, 0,25 W (empfohlen)</td><td>In die rote Ader jedes Pigtails eingelötet; schützt die DAC-Ausgänge bei einem Kurzschluss am BNC-Stecker.</td></tr>
  <tr><td>(1)</td><td>Elko 100 µF / 10 V</td><td>Optional: gegen leichtes Zittern bei WLAN-Sendepulsen (in die Klemmen 3V3 und GND).</td></tr>
  <tr><td>–</td><td>Kleinteile</td><td>7 Leitungen für das OLED (DuPont-Kabel oder Litze), Schrumpfschlauch, Abstandsbolzen M2,5 (OLED) und M3 (Breakout-Board), ggf. 2–3 Muttern M6</td></tr>
  <tr><td>1</td><td>USB-Netzteil 5 V, ≥ 1 A, mit USB-C-Kabel</td><td>Ein normales, ungeerdetes Steckernetzteil vermeidet Brummschleifen.</td></tr>
 </table>
 <h3>Beim Bau des Prototyps verwendete Artikel</h3>
 <ul class="small">
- <li>Amazon: Abzweigdose ABS 150 × 100 × 70 mm (Yunseity), ESP32-Breakout-Board (XTVTX) und USB-C-Einbauverlängerung (Plinkwirekb) –
+ <li>Amazon: Abzweigdose (Yunseity), ESP32-Breakout-Board (XTVTX), USB-C-Einbauverlängerung (Plinkwirekb); außerdem dort gekauft: ESP32 DevKitC V4 mit Antennen-Kit (DUBEUYEW), Waveshare 2,42" OLED, Bingfu-Antenne –
   <a href="https://www.amazon.de/dp/B0FM7RLQTF">amazon.de/dp/B0FM7RLQTF</a>,
   <a href="https://www.amazon.de/dp/B0BCWBW4SR">amazon.de/dp/B0BCWBW4SR</a>,
   <a href="https://www.amazon.de/dp/B0B5RGNNXV">amazon.de/dp/B0B5RGNNXV</a></li>
@@ -130,7 +130,6 @@ kommt direkt in den Eingang des Oszilloskops, ein zusätzliches BNC-Kabel ist ni
  <tr><th>Klemme am Breakout-Board</th><th>Anschluss</th><th>Ziel</th></tr>
  <tr><td>P25 (GPIO25, DAC1)</td><td>über 220 Ω</td><td>Pigtail „X“, rote Ader → Oszilloskop Kanal 1</td></tr>
  <tr><td>P26 (GPIO26, DAC2)</td><td>über 220 Ω</td><td>Pigtail „Y“, rote Ader → Oszilloskop Kanal 2</td></tr>
- <tr><td>P27 (GPIO27)</td><td>über 220 Ω (optional)</td><td>Pigtail „Z“, rote Ader → Z-Eingang</td></tr>
  <tr><td>GND (linke Reihe)</td><td>direkt</td><td>braune Adern (Schirm) aller Pigtails</td></tr>
  <tr><td>3V3</td><td>direkt</td><td>OLED VCC</td></tr>
  <tr><td>GND (rechte Reihe)</td><td>direkt</td><td>OLED GND</td></tr>
@@ -139,45 +138,47 @@ kommt direkt in den Eingang des Oszilloskops, ein zusätzliches BNC-Kabel ist ni
  <tr><td>P5</td><td>direkt</td><td>OLED CS</td></tr>
  <tr><td>P17</td><td>direkt</td><td>OLED DC</td></tr>
  <tr><td>P4</td><td>direkt</td><td>OLED RST</td></tr>
- <tr><td>IPEX-Buchse am Modul</td><td>Antennen-Pigtail</td><td>SMA-Buchse in der Rückwand → Antenne</td></tr>
- <tr><td>USB-C des DevKits</td><td>Flachbandkabel</td><td>USB-C-Einbaubuchse in der Rückwand</td></tr>
+ <tr><td>IPEX-Buchse am Modul</td><td>Antennen-Pigtail</td><td>SMA-Buchse in der Anschlussseite → Antenne</td></tr>
+ <tr><td>USB-C des DevKits</td><td>Flachbandkabel</td><td>USB-C-Einbaubuchse in der Anschlussseite</td></tr>
 </table>
 <div class="warn"><b>Wichtig:</b> Klemme P0 (GPIO0) ist der BOOT-Taster – dort nichts anschließen. Das OLED an <b>3V3</b>,
 nicht an 5V. Das Modul -32U nie ohne Antenne im WLAN-Betrieb laufen lassen.</div>
 
 <div class="step"><b class="n">1</b><div><b>Bohrplan ausdrucken.</b> Die Datei <code>docs/images/bohrplan.svg</code> mit <b>100 % (ohne Anpassen)</b>
-drucken und die Prüflinie nachmessen: Sie muss 50 mm lang sein. Schablonen ausschneiden und mit Klebeband auf Deckel,
-Stirnseite und Rückseite kleben.</div></div>
+drucken und die Prüflinie nachmessen: Sie muss 50 mm lang sein. Schablonen ausschneiden und mit Klebeband auf den Deckel
+und die Anschlussseite kleben.</div></div>
 <figure><img src="images/bohrplan.svg" style="width:100%"><figcaption>Abb. 5 – Bohrplan (verkleinert; zum Bohren die SVG-Datei 1:1 drucken)</figcaption></figure>
 <div class="step"><b class="n">2</b><div><b>Gehäuse bohren.</b> Alle Löcher mit 3 mm vorbohren.
-<b>Stirnseite:</b> 2 (3) Löcher für die Kabelverschraubungen, Abstand 20 mm: <b>5,0 mm bohren und M6-Gewinde schneiden</b>
+Alle Anschlüsse sitzen auf <b>einer kurzen Seite</b> (Anschlussseite, 100 mm): auf der einen Seite die beiden
+Pigtails, auf der anderen die Antenne, <b>mittig dazwischen die USB-C-Buchse</b>.
+<b>Pigtails:</b> 2 Löcher für die Kabelverschraubungen, Abstand 14 mm: <b>5,0 mm bohren und M6-Gewinde schneiden</b>
 (ABS hält das Gewinde gut) – oder 6,2 mm bohren und innen eine M6-Mutter aufschrauben.
-<b>Rückseite:</b> <b>16 mm</b> für die USB-C-Einbaubuchse (Stufenbohrer) und <b>6,5 mm</b> für die SMA-Antennenbuchse.
+<b>USB-C:</b> <b>16 mm</b> in der Mitte (Stufenbohrer). <b>Antenne:</b> <b>6,5 mm</b> für die SMA-Buchse.
 <b>Deckel:</b> OLED-Fenster 55 × 28 mm mit Bohrungen in den Ecken vorbereiten, mit dem Cuttermesser ausschneiden und sauber feilen.</div></div>
 <div class="step"><b class="n">3</b><div><b>Widerstände in die Pigtails löten.</b> Bei jedem Pigtail die rote Ader (Innenleiter) etwa 5 cm vor dem
 DuPont-Stift durchtrennen, den 220-Ω-Widerstand dazwischenlöten und mit Schrumpfschlauch isolieren. Vorher mit dem
 Durchgangsprüfer bestätigen, dass Rot zum Mittelstift und Braun zum Außenkontakt des BNC-Steckers führt.</div></div>
-<div class="step"><b class="n">4</b><div><b>Pigtails durch die Kabelverschraubungen führen.</b> Verschraubung in die Stirnseite schrauben, Hutmutter lösen
+<div class="step"><b class="n">4</b><div><b>Pigtails durch die Kabelverschraubungen führen.</b> Verschraubungen in die Anschlussseite schrauben, Hutmutter lösen
 und das Pigtail von außen mit dem DuPont-Ende voran durch Hutmutter, Dichteinsatz und Gehäuse schieben. Passt der DuPont-Stecker
 nicht durch die 3-mm-Öffnung, das kleine Kunststoffgehäuse des Stifts kurz abziehen und danach wieder aufstecken. Den
-BNC-Stecker außen so weit herausziehen wie nötig, Hutmutter festziehen. Pigtails mit „X“ und „Y“ (ggf. „Z“) beschriften.</div></div>
-<div class="step"><b class="n">5</b><div><b>USB-C-Einbaubuchse und Antenne einbauen.</b> USB-C-Buchse in das 16-mm-Loch der Rückwand setzen und von innen
-verschrauben. SMA-Buchse des Antennen-Pigtails in die Rückwand schrauben, Antenne außen aufschrauben.</div></div>
+BNC-Stecker außen so weit herausziehen wie nötig, Hutmutter festziehen. Pigtails mit „X“ und „Y“ beschriften.</div></div>
+<div class="step"><b class="n">5</b><div><b>USB-C-Einbaubuchse und Antenne einbauen.</b> USB-C-Buchse in das mittlere 16-mm-Loch setzen und von innen
+verschrauben. SMA-Buchse des Antennen-Pigtails (aus dem Antennen-Kit des DevKits) in das 6,5-mm-Loch schrauben, die Bingfu-Antenne
+außen aufschrauben.</div></div>
 <div class="step"><b class="n">6</b><div><b>Breakout-Board montieren.</b> Board mit Abstandsbolzen M3 auf die gelochte Montageplatte der Abzweigdose
-schrauben, so dass die USB-C-Buchse des DevKits zur Rückwand zeigt. DevKit aufstecken. Den kleinen IPEX-Stecker der
+schrauben, so dass die USB-C-Buchse des DevKits zur Anschlussseite zeigt. DevKit aufstecken. Den kleinen IPEX-Stecker der
 Antenne vorsichtig senkrecht auf die Buchse am Modul drücken, bis er einrastet. Das FPC-Flachbandkabel der USB-Einbaubuchse
 in das DevKit stecken – das Flachbandkabel nicht scharf knicken.</div></div>
-<div class="step"><b class="n">7</b><div><b>Pigtails anklemmen:</b> rote Ader (mit Widerstand) von X in die Klemme <b>P25</b>, von Y in <b>P26</b>
-(von Z in P27). Alle braunen Adern (Schirm) in <b>GND</b>. Optional den Elko 100 µF in 3V3 und GND (Plus an 3V3).</div></div>
+<div class="step"><b class="n">7</b><div><b>Pigtails anklemmen:</b> rote Ader (mit Widerstand) von X in die Klemme <b>P25</b>, von Y in <b>P26</b> Beide braunen Adern (Schirm) in <b>GND</b>. Optional den Elko 100 µF in 3V3 und GND (Plus an 3V3).</div></div>
 <div class="step"><b class="n">8</b><div><b>OLED in den Deckel</b> setzen: mit Abstandsbolzen M2,5 hinter dem Fenster befestigen und die 7 Leitungen
 nach der Tabelle oben in die Klemmen legen. Die Leitungen so lang lassen, dass sich der Scharnierdeckel ganz öffnen lässt.</div></div>
-<figure><img src="images/aufbau.svg" style="width:56%"><figcaption>Abb. 6 – Anordnung in der Abzweigdose (maßstäblich, gleiche Lage wie im Bohrplan)</figcaption></figure>
+<figure><img src="images/aufbau.svg" style="width:56%"><figcaption>Abb. 6 – Anordnung in der Abzweigdose (maßstäblich; Anschlussseite unten, gleiche Lage wie im Bohrplan)</figcaption></figure>
 <div class="step"><b class="n">9</b><div><b>Prüfen vor dem ersten Einschalten</b> (Multimeter): Kein Durchgang zwischen 3V3 und GND und zwischen 5V und GND.
 Zwischen dem Mittelstift jedes BNC-Steckers und der Klemme P25 bzw. P26 je ca. 220 Ω, zum Außenkontakt kein Durchgang.
 Der Außenkontakt hat Durchgang zu GND. Alle Schraubklemmen leicht nachziehen.</div></div>
 <div class="step"><b class="n">10</b><div><b>Deckel schließen</b> erst nach der Inbetriebnahme (Kapitel 5), damit man bei Bedarf noch an alles herankommt.</div></div>
 
-<h2 class="pb">4 Firmware installieren</h2>
+<h2>4 Firmware installieren</h2>
 <h3>Mit der Arduino IDE 2.x</h3>
 <ol>
  <li>Boardverwalter: <b>esp32 by Espressif</b> installieren (Version 3.x, auch 2.0.x geht), Board <b>ESP32 Dev Module</b> wählen.</li>
@@ -244,8 +245,7 @@ im Webinterface oder BOOT-Taster 3 s halten.</div></div>
  <li><b>HP 54200A:</b> X/Y-Möglichkeiten im Handbuch prüfen; unendliches Nachleuchten sammelt das Bild über mehrere Aufnahmen.</li>
  <li><b>Digilent Analog Discovery 2:</b> Eingänge sind differenziell – 1+ an X, 1− an GND, 2+ an Y, 2− an GND, zusätzlich GND
  verbinden. WaveForms: 500 mV/Div, Offset −1,6 V, 1 ms/Div, Trigger Auto, View → XY.</li>
- <li><b>Röhren-Oszilloskop:</b> Profil ANALOG, Intensität eher gering. Rücklaufspuren lassen sich mit der Z-Dunkeltastung ganz entfernen
- (drittes Pigtail an Klemme P27, <code>ZBLANK_PIN 27</code>, Polarität laut Handbuch).</li>
+ <li><b>Röhren-Oszilloskop:</b> Profil ANALOG, Intensität eher gering; sichtbare Rücklaufspuren mit dem Rücklauf-Tempo verringern.</li>
 </ul>
 <div class="warn"><b>Brummschleife vermeiden:</b> Die Masse der BNC-Eingänge des Oszilloskops liegt am Schutzleiter. Ein ebenfalls geerdeter PC am
 USB kann Brumm ins Bild bringen. Im Dauerbetrieb ein normales USB-Steckernetzteil verwenden.</div>
@@ -310,7 +310,7 @@ vorher loslassen bricht ab. Die Einstellung wird gespeichert. <b>Nicht beim Eins
  <tr><td>Linien zu dunkel</td><td>Verweilzeit erhöhen (z. B. 5,00 µs) oder Intensität am Oszilloskop</td></tr>
  <tr><td>Ecken verrundet, Ziffern verwaschen</td><td>Verweilzeit erhöhen</td></tr>
  <tr><td>Kleine „Haken“ an Linienanfängen</td><td>Rücklauf-Tempo verringern (z. B. 12)</td></tr>
- <tr><td>Rücklaufspuren sichtbar</td><td>Rücklauf-Tempo erhöhen, Profil DIGITAL probieren oder Z-Dunkeltastung</td></tr>
+ <tr><td>Rücklaufspuren sichtbar</td><td>Rücklauf-Tempo erhöhen oder Profil DIGITAL probieren</td></tr>
  <tr><td>Kreis im Testbild oval</td><td>Empfindlichkeit von X und Y gleich einstellen (beide 0,5 V/Div, Feinregler auf „kalibriert“)</td></tr>
  <tr><td>Brummen/Zittern im Bild</td><td>Ungeerdetes USB-Netzteil statt PC; Elko 100 µF an 3V3</td></tr>
  <tr><td>„Keine NTP-Verbindung“</td><td>WLAN prüfen (Status); ohne Internet die Zeit unter Einstellungen → Uhrzeit stellen</td></tr>
@@ -356,7 +356,6 @@ unterwegs keine Abtastpunkte zeigt.</p>
  <tr><td><code>SCOPE_PROFILE</code></td><td>1</td><td>0 = ANALOG, 1 = DIGITAL</td></tr>
  <tr><td><code>BEAM_NS_PER_UNIT</code></td><td>3000</td><td>Verweilzeit pro Schritt in ns (≈ 230 Bilder/s)</td></tr>
  <tr><td><code>JUMP_SPEED</code>, <code>JUMP_LANDING</code>, <code>JUMP_RAMP</code></td><td>24, 8, 4</td><td>Sprünge im Profil ANALOG</td></tr>
- <tr><td><code>ZBLANK_PIN</code></td><td>−1</td><td>Dunkeltastung (27 = an), <code>ZBLANK_ACTIVE_HIGH</code>, <code>ZBLANK_SETTLE_NS</code></td></tr>
  <tr><td><code>HAND/TICK/DIGIT_BRIGHT_PCT</code></td><td>67, 100, 100</td><td>Helligkeiten</td></tr>
  <tr><td><code>DIAL_STYLE</code></td><td>0</td><td>0 = 1–12, 1 = 12/3/6/9, 2 = I–XII, 3 = XII/III/VI/IX, 4 = nur Striche</td></tr>
  <tr><td><code>TZ_INFO</code>, <code>NTP_SERVER_1…3</code></td><td>Mitteleuropa, de.pool.ntp.org …</td><td>Zeitzone und Zeitserver</td></tr>
