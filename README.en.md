@@ -49,7 +49,7 @@ This documentation quotes the German labels and adds the English label in parent
   At the top it shows a live preview of the oscilloscope picture (transparent background in the
   light theme), below that the status (time sync, Wi-Fi, signal strength, profile, frame rate,
   uptime, memory, CPU load, reason for the last restart) and the log („Protokoll“). It is also used
-  to add Wi-Fi networks. A collapsible side menu (☰) jumps to the sections. **Swiping left or right
+  to add Wi-Fi networks. A collapsible side menu (☰) jumps to the sections and highlights the current one in green; a thin bar at the top shows the scroll position. **Swiping left or right
   over the preview changes the dial**: 1–12, only 12/3/6/9, ticks only (no numbers), only Roman XII/III/VI/IX or Roman I–XII. This
   also applies to the oscilloscope and is saved. Under „Einstellungen“ (settings) you can change
   the oscilloscope profile, dial, beam dwell time, brightness of hands, tick marks and numerals, retrace speed, time zone, time
@@ -108,7 +108,7 @@ interface.
 
 | Board package | Program memory | Global variables (RAM) |
 |---|---|---|
-| esp32 3.3.12 | 1,227,726 bytes (93 %) | 74,892 bytes (22 %) |
+| esp32 3.3.12 | 1,228,174 bytes (93 %) | 74,892 bytes (22 %) |
 | esp32 2.0.17 | 866,053 bytes (66 %) | 61,048 bytes (18 %) – state before the menu and dial switching |
 
 The configuration variants (profile ANALOG/DIGITAL, Z blanking, dial 0/1/2, `USE_FAST_DAC 0`,

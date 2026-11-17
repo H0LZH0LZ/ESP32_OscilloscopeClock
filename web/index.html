@@ -191,6 +191,12 @@ html{scroll-behavior:smooth}
 #nav h3{font-size:13px;color:var(--mute);text-transform:uppercase;letter-spacing:.06em;margin:4px 8px 12px}
 #nav a{display:flex;align-items:center;min-height:48px;padding:0 12px;border-radius:10px;color:var(--fg);text-decoration:none;font-weight:600}
 #nav a:active,#nav a:hover{background:var(--bg)}
+/* Aktueller Abschnitt (Scroll-Spy): grüner Balken links, Text in Akzentfarbe;
+   bei einer Einstellungsgruppe ist zusätzlich "Einstellungen" grün */
+#nav a.cur{background:var(--bg);color:var(--acc);box-shadow:inset 3px 0 0 var(--acc)}
+#nav a.par{color:var(--acc)}
+/* Fortschrittsbalken ganz oben: zeigt, wie weit die Seite gescrollt ist */
+#prog{position:fixed;top:0;left:0;right:0;height:3px;z-index:35;background:var(--acc);transform:scaleX(0);transform-origin:0 0;pointer-events:none}
 #nav a.subnav{min-height:40px;padding-left:28px;font-size:15px;font-weight:400;color:var(--mute)}   /* Gruppen der Einstellungen */
 #nav .navlang{margin:16px 12px 0;padding-top:12px;border-top:1px solid var(--line)}
 #nav .navlang label{margin:0 0 6px}
@@ -258,6 +264,7 @@ h2.coll::after{content:"";width:8px;height:8px;margin:0 10px 4px 0;border:solid 
   <div class="desc">Hell, dunkel oder wie im System eingestellt. Wird nur in diesem Browser gespeichert.</div></div>
 </nav>
 <div id="shade"></div>
+<div id="prog" aria-hidden="true"></div>
 <main>
 <h1>ESP32 Oscilloscope Clock</h1>
 <header id="uhr">
@@ -584,6 +591,19 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')menu(false)});
 document.querySelectorAll('#nav a').forEach(a=>a.addEventListener('click',()=>{menu(false);
  const h=document.querySelector(a.getAttribute('href'));if(h&&h.classList.contains('grouphead'))openGroup(h.parentNode,true);
  if(h&&h.classList.contains('coll'))openSec(h.parentNode,true)}));
+// Scroll-Spy: markiert im Seitenmenü den Abschnitt, in dem man gerade ist, und
+// setzt den Fortschrittsbalken oben. Aktuell = letzter Abschnitt, dessen Überschrift
+// über der Linie knapp unter den festen Überschriften liegt; ganz unten der letzte sichtbare.
+const navA=[...document.querySelectorAll('#nav a')],navT=navA.map(a=>document.querySelector(a.getAttribute('href')));
+const navSet=navA.findIndex(a=>a.getAttribute('href')==='#set-h');
+function spy(){const se=document.scrollingElement,max=se.scrollHeight-innerHeight,bottom=max>0&&se.scrollTop>=max-2;
+ let k=0;navT.forEach((t,i)=>{if(!t)return;const y=t.getBoundingClientRect().top;if(y<=140||(bottom&&y<innerHeight))k=i});
+ navA.forEach((a,i)=>{a.classList.toggle('cur',i===k);a.classList.toggle('par',i===navSet&&navA[k].classList.contains('subnav'));
+  if(i===k)a.setAttribute('aria-current','location');else a.removeAttribute('aria-current')});
+ $('prog').style.transform='scaleX('+(max>0?Math.min(1,se.scrollTop/max):0)+')'}
+addEventListener('scroll',spy,{passive:true});addEventListener('resize',spy);
+document.addEventListener('click',()=>setTimeout(spy,350));   // Auf-/Zuklappen ändert die Seitenlänge
+spy();
 // Uhrzeit der Uhr (hh:mm:ss) übernehmen; die Seite zählt danach selbst weiter
 function setTime(t){const a=t.split(':').map(Number);if(a.length===3&&!a.some(isNaN)){tBase=a[0]*3600+a[1]*60+a[2];tAt=performance.now()}}
 drawScope();                                           // Schirm/Raster sofort zeichnen, noch vor den Daten
