@@ -10,6 +10,8 @@ Hardware angepasst: **ESP32-WROOM-32U DevKitC V4**, **Waveshare 2.42" OLED (SPI)
 
 **Aufbau und Verdrahtung: [HARDWARE.md](HARDWARE.md)** · **Aufbau der Software: [SOFTWARE.md](SOFTWARE.md)**
 
+**Testseite des Webinterfaces ohne Uhr: [web/demo/scope-clock-demo.html](web/demo/scope-clock-demo.html)** – herunterladen und im Browser öffnen; alle Werte sind simuliert.
+
 ### Inhalt
 - [Was ist neu](#was-ist-neu)
 - [Schnellstart (Arduino IDE 2.x)](#schnellstart-arduino-ide-2x)

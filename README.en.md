@@ -10,6 +10,8 @@ adapted for this hardware: **ESP32-WROOM-32U DevKitC V4**, **Waveshare 2.42" OLE
 
 **Build and wiring: [HARDWARE.en.md](HARDWARE.en.md)** · **Software design: [SOFTWARE.en.md](SOFTWARE.en.md)**
 
+**Test page of the web interface without a clock: [web/demo/scope-clock-demo.html](web/demo/scope-clock-demo.html)** – download it and open it in a browser; all values are simulated.
+
 Web interface, OLED and log can be switched between German and English („Sprache“ / “Language”).
 This documentation quotes the German labels and adds the English label in parentheses, e.g.
 „Einstellungen“ (Settings).
