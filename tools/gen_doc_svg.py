@@ -170,7 +170,7 @@ def verdrahtung():
     a(f"<text x='{RX-18}' y='{RY-28}' font-size='12' font-weight='bold' fill='#444'>Optional: Echtzeituhr DS3231 (ZS-042)</text>")
     a(f"<text x='{RX-18}' y='{RY-12}' font-size='11' fill='#444'>Knopfzelle CR2032 auf der Rückseite</text>")
     a(f"<rect x='{RX}' y='{RY}' width='{rw}' height='{rh}' rx='5' fill='#1f5fbf' stroke='#163a78' stroke-width='2'/>")
-    for hx, hy in ((RX+rw-14, RY+14), (RX+rw-14, RY+rh-14)):
+    for hx, hy in ((RX+rw-62, RY+14), (RX+rw-62, RY+rh-12)):
         a(f"<circle cx='{hx}' cy='{hy}' r='6' fill='#fff' stroke='#c9a227' stroke-width='2'/>")
     a(f"<rect x='{RX+70}' y='{RY+28}' width='84' height='44' rx='2' fill='#1a1a1a'/>")
     for k in range(8):
@@ -192,8 +192,14 @@ def verdrahtung():
     for n, rp, col, vx, hy, dx2 in (('SCL', 3, SCL, 634, 450, 748), ('SDA', 6, SDA, 626, 462, 740), ('GND', 7, '#111', 618, 474, 732)):
         terminal(X1, y(rp), col)
         wire([(X1 + 10, y(rp)), (vx, y(rp)), (vx, hy), (dx2, hy), (dx2, rpins[n]), (RX - 6, rpins[n])], col, True)
-    # VCC von 3V3: rote Leitung oben verlängert, rechts außen herum, von unten an VCC
-    wire([(750, 62), (1100, 62), (1100, RY + rh + 24), (812, RY + rh + 24), (812, rpins['VCC']), (RX - 6, rpins['VCC'])], '#d62828', True)
+    # 4-polige Stiftleiste auf der anderen Seite (SCL, SDA, VCC, GND – durchverbunden)
+    a(f"<rect x='{RX+rw-18}' y='{rpins['SCL']-10}' width='14' height='{rpins['GND']-rpins['SCL']+20}' fill='#111' rx='2'/>")
+    for n in ('SCL', 'SDA', 'VCC', 'GND'):
+        py = rpins[n]
+        a(f"<rect x='{RX+rw-16}' y='{py-5}' width='10' height='10' fill='#222' stroke='#555'/><rect x='{RX+rw-6}' y='{py-2}' width='20' height='4' fill='#d4af37'/>")
+        a(f"<text x='{RX+rw-22}' y='{py+4}' text-anchor='end' font-size='9' fill='#cfe0ff'>{n}</text>")
+    # VCC von 3V3: rote Leitung oben verlängert, rechts gerade nach unten an VCC der 4-poligen Leiste
+    wire([(750, 62), (1096, 62), (1096, rpins['VCC']), (RX + rw + 14, rpins['VCC'])], '#d62828', True)
     leg = [('#d62828', '3V3 → OLED VCC'), ('#111', 'GND (Masse)'), ('#e09f00', 'P25 (DAC1) → X'),
            ('#1d6fd6', 'P26 (DAC2) → Y'), ('#2a9d48', 'P23 → DIN'), ('#7b3fb5', 'P18 → CLK'),
            ('#d1495b', 'P5 → CS'), ('#00a6a6', 'P17 → DC'), ('#a0522d', 'P4 → RST'),

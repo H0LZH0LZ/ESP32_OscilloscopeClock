@@ -98,6 +98,9 @@ Hält Datum und Uhrzeit mit Knopfzelle auch nach einem Stromausfall ohne Interne
 | SCL | P22 |
 | 32K, SQW | nicht anschließen |
 
+Die 6-polige und die 4-polige Stiftleiste des Moduls sind durchverbunden – jede Leitung kann an
+der Leiste angeschlossen werden, die besser passt (im Schaltbild VCC an der 4-poligen).
+
 - Einschalten im Webinterface: „Einstellungen“ → „Uhrzeit“ → „Echtzeituhr (RTC)“ (ab Werk aus). Der Status
   zeigt dann „Läuft“, „Nicht gefunden“ oder „Zeit ungültig“.
 - **Knopfzelle: normale CR2032**, kein Ladegerät und kein Löten nötig. Die Ladeschaltung des ZS-042
