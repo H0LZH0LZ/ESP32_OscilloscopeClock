@@ -85,10 +85,6 @@ h2.coll::after{content:"";width:8px;height:8px;margin:0 10px 4px 0;border:solid 
  .doc td.qty{display:none}
  .doc td[data-qty]{font-size:13.5px}
  .doc td[data-qty]::before{content:attr(data-qty);display:inline;margin:0 4px 0 0;font-size:13.5px;font-weight:600;letter-spacing:0;text-transform:none;color:var(--fg)}
- .doc .shop td:not(:first-child){display:inline;font-size:13.5px}
- .doc .shop td:not(:first-child)::before{content:none}
- .doc .shop td:nth-child(2){color:var(--mute)}.doc .shop td:nth-child(2)::after{content:" · "}
- .doc .shop tr{padding:7px 0}
  .doc pre{white-space:pre-wrap;overflow-wrap:anywhere}}
 /* Überblick oben: Bild + Kurzbeschreibung, darunter Schnellzugriff */
 .intro{padding:14px 16px}
@@ -169,7 +165,7 @@ html[lang="de"] [data-l="en"],html[lang="en"] [data-l="de"]{display:none!importa
  <a class="row" data-l="en" href="ESP32_Oscilloscope_Clock_Documentation.pdf"><span>Documentation (PDF)<small class="note">Assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
  <a class="row" href="demo/"><span><span data-l="de">Testseite</span><span data-l="en">Test page</span><small class="note" data-l="de">Das Webinterface der Uhr ausprobieren – läuft im Browser, alle Werte sind simuliert</small><small class="note" data-l="en">Try the clock's web interface – runs in the browser, all values are simulated</small></span><span>›</span></a>
  <a class="row" href="https://github.com/maurohh/ESP32_OscilloscopeClock"><span><span data-l="de">GitHub – Original</span><span data-l="en">GitHub – original</span><small class="note" data-l="de">Die ursprüngliche ESP32 Oscilloscope Clock von Mauro Pintus (2018), nach deren Idee diese Version entstand</small><small class="note" data-l="en">The original ESP32 Oscilloscope Clock by Mauro Pintus (2018) that inspired this version</small></span><span>›</span></a>
- <a class="row" href="fonts/OFL.txt"><span><span data-l="de">Schriftart Raleway</span><span data-l="en">Font Raleway</span><small class="note" data-l="de">SIL Open Font License 1.1 – Lizenztext</small><small class="note" data-l="en">SIL Open Font License 1.1 – licence text</small></span><span>›</span></a>
+ <a class="row" href="https://fonts.google.com/specimen/Raleway"><span><span data-l="de">Schriftart Raleway</span><span data-l="en">Font Raleway</span><small class="note" data-l="de">Google Fonts – frei unter der SIL Open Font License 1.1</small><small class="note" data-l="en">Google Fonts – free under the SIL Open Font License 1.1</small></span><span>›</span></a>
 </section></div>
 
 <!-- KAPITEL -->
@@ -236,15 +232,14 @@ kommt direkt in den Eingang des Oszilloskops, ein zusätzliches BNC-Kabel ist ni
  <tr><td class="qty" data-th="Anz.">1</td><td data-qty="1 ×" data-th="Teil">USB-Netzteil 5 V, ≥ 1 A, mit USB-C-Kabel</td><td data-th="Hinweis">Ein normales, ungeerdetes Steckernetzteil vermeidet Brummschleifen.</td></tr>
 </table></div>
 <h3>Beim Bau des Prototyps verwendete Artikel</h3>
-<div class="tw"><table class="shop">
- <tr><th>Artikel</th><th>Händler</th><th>Link</th></tr>
- <tr><td data-th="Artikel">Abzweigdose IP67, 150 × 100 × 70 mm (Yunseity)</td><td data-th="Händler">Amazon</td><td data-th="Link"><a href="https://www.amazon.de/dp/B0B5RGNNXV">amazon.de/dp/B0B5RGNNXV</a></td></tr>
- <tr><td data-th="Artikel">ESP32-Breakout-Board mit Schraubklemmen (XTVTX, 2er-Pack)</td><td data-th="Händler">Amazon</td><td data-th="Link"><a href="https://www.amazon.de/dp/B0BCWBW4SR">amazon.de/dp/B0BCWBW4SR</a></td></tr>
- <tr><td data-th="Artikel">USB-C-Einbauverlängerung, 16-mm-Einbauöffnung (Plinkwirekb)</td><td data-th="Händler">Amazon</td><td data-th="Link"><a href="https://www.amazon.de/dp/B0FM7RLQTF">amazon.de/dp/B0FM7RLQTF</a></td></tr>
- <tr><td data-th="Artikel">BNC-Pigtail RG316, BNC-Stecker auf DuPont</td><td data-th="Händler">AliExpress</td><td data-th="Link"><a href="https://de.aliexpress.com/item/1005006318978533.html">de.aliexpress.com/item/1005006318978533.html</a></td></tr>
- <tr><td data-th="Artikel">Kabelverschraubung Lapp SKINDICHT MINI M6</td><td data-th="Händler">RS</td><td data-th="Link"><a href="https://de.rs-online.com/web/p/kabelverschraubungen/4583953">de.rs-online.com/…/4583953</a></td></tr>
- <tr><td data-th="Artikel">ESP32 DevKitC V4 mit Antennen-Kit (DUBEUYEW), Waveshare 2,42" OLED, Bingfu-Antenne</td><td data-th="Händler">Amazon</td><td data-th="Link">– (über die Bezeichnung suchen)</td></tr>
-</table></div>
+<ul class="small">
+ <li>Abzweigdose IP67, 150 × 100 × 70 mm (Yunseity) – Amazon: <a href="https://www.amazon.de/dp/B0B5RGNNXV">amazon.de/dp/B0B5RGNNXV</a></li>
+ <li>ESP32-Breakout-Board mit Schraubklemmen (XTVTX, 2er-Pack) – Amazon: <a href="https://www.amazon.de/dp/B0BCWBW4SR">amazon.de/dp/B0BCWBW4SR</a></li>
+ <li>USB-C-Einbauverlängerung, 16-mm-Einbauöffnung (Plinkwirekb) – Amazon: <a href="https://www.amazon.de/dp/B0FM7RLQTF">amazon.de/dp/B0FM7RLQTF</a></li>
+ <li>BNC-Pigtail RG316, BNC-Stecker auf DuPont – AliExpress: <a href="https://de.aliexpress.com/item/1005006318978533.html">de.aliexpress.com/item/1005006318978533.html</a></li>
+ <li>Kabelverschraubung Lapp SKINDICHT MINI M6 – RS: <a href="https://de.rs-online.com/web/p/kabelverschraubungen/4583953">de.rs-online.com/…/4583953</a></li>
+ <li>ESP32 DevKitC V4 mit Antennen-Kit (DUBEUYEW), Waveshare 2,42" OLED, Bingfu-Antenne – ebenfalls von Amazon (ohne Link, über die Bezeichnung zu finden)</li>
+</ul>
 <h3>Werkzeug</h3>
 <ul>
  <li>Lötkolben (feine Spitze) und Lötzinn – nur für die beiden Widerstände in den Pigtails –, Schrumpfschlauch, Seitenschneider, Abisolierzange</li>
@@ -273,15 +268,14 @@ oscilloscope input; no additional BNC cable is needed.</p>
  <tr><td class="qty" data-th="Qty">1</td><td data-qty="1 ×" data-th="Part">USB power supply 5 V, ≥ 1 A, with USB-C cable</td><td data-th="Note">A normal, unearthed plug-in power supply avoids ground loops.</td></tr>
 </table></div>
 <h3>Articles used to build the prototype</h3>
-<div class="tw"><table class="shop">
- <tr><th>Article</th><th>Shop</th><th>Link</th></tr>
- <tr><td data-th="Article">Junction box IP67, 150 × 100 × 70 mm (Yunseity)</td><td data-th="Shop">Amazon</td><td data-th="Link"><a href="https://www.amazon.de/dp/B0B5RGNNXV">amazon.de/dp/B0B5RGNNXV</a></td></tr>
- <tr><td data-th="Article">ESP32 breakout board with screw terminals (XTVTX, pack of 2)</td><td data-th="Shop">Amazon</td><td data-th="Link"><a href="https://www.amazon.de/dp/B0BCWBW4SR">amazon.de/dp/B0BCWBW4SR</a></td></tr>
- <tr><td data-th="Article">USB-C panel extension, 16 mm mounting hole (Plinkwirekb)</td><td data-th="Shop">Amazon</td><td data-th="Link"><a href="https://www.amazon.de/dp/B0FM7RLQTF">amazon.de/dp/B0FM7RLQTF</a></td></tr>
- <tr><td data-th="Article">BNC pigtail RG316, BNC plug to DuPont</td><td data-th="Shop">AliExpress</td><td data-th="Link"><a href="https://de.aliexpress.com/item/1005006318978533.html">de.aliexpress.com/item/1005006318978533.html</a></td></tr>
- <tr><td data-th="Article">Cable gland Lapp SKINDICHT MINI M6</td><td data-th="Shop">RS</td><td data-th="Link"><a href="https://de.rs-online.com/web/p/kabelverschraubungen/4583953">de.rs-online.com/…/4583953</a></td></tr>
- <tr><td data-th="Article">ESP32 DevKitC V4 with antenna kit (DUBEUYEW), Waveshare 2.42" OLED, Bingfu antenna</td><td data-th="Shop">Amazon</td><td data-th="Link">– (search by name)</td></tr>
-</table></div>
+<ul class="small">
+ <li>Junction box IP67, 150 × 100 × 70 mm (Yunseity) – Amazon: <a href="https://www.amazon.de/dp/B0B5RGNNXV">amazon.de/dp/B0B5RGNNXV</a></li>
+ <li>ESP32 breakout board with screw terminals (XTVTX, pack of 2) – Amazon: <a href="https://www.amazon.de/dp/B0BCWBW4SR">amazon.de/dp/B0BCWBW4SR</a></li>
+ <li>USB-C panel extension, 16 mm mounting hole (Plinkwirekb) – Amazon: <a href="https://www.amazon.de/dp/B0FM7RLQTF">amazon.de/dp/B0FM7RLQTF</a></li>
+ <li>BNC pigtail RG316, BNC plug to DuPont – AliExpress: <a href="https://de.aliexpress.com/item/1005006318978533.html">de.aliexpress.com/item/1005006318978533.html</a></li>
+ <li>Cable gland Lapp SKINDICHT MINI M6 – RS: <a href="https://de.rs-online.com/web/p/kabelverschraubungen/4583953">de.rs-online.com/…/4583953</a></li>
+ <li>ESP32 DevKitC V4 with antenna kit (DUBEUYEW), Waveshare 2.42" OLED, Bingfu antenna – also from Amazon (no link, search by name)</li>
+</ul>
 <h3>Tools</h3>
 <ul>
  <li>Soldering iron (fine tip) and solder – only for the two resistors in the pigtails –, heat-shrink tubing, side cutters, wire stripper</li>
