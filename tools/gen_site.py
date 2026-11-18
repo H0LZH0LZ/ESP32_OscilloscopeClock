@@ -72,6 +72,8 @@ def chapters(path):
         content = content.replace('</table>', '</table></div>')
         content = re.sub(r'(<img [^>]*?) style="width:\d+%"', r'\1', content)
         content = re.sub(r'<img (?![^>]*loading=)', '<img loading="lazy" ', content)
+        # externe Links (Händler, GitHub …) in einem neuen Tab öffnen
+        content = re.sub(r'<a href="(https?://[^"]*)"', r'<a href="\1" target="_blank" rel="noopener"', content)
         out.append((title, content))
     return out
 
