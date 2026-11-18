@@ -91,9 +91,15 @@ pictures are screenshots of the page. Photos of the finished device will follow 
 
 ### Quick start (Arduino IDE 2.x)
 1. Boards manager: install **esp32 by Espressif** (2.0.x or 3.x), board **ESP32 Dev Module**.
-   Under **Tools → Partition Scheme** choose “**Huge APP (3MB No OTA/1MB SPIFFS)**”. This gives the
-   program 3 MB instead of 1.25 MB (39 % used instead of 94 %). The clock uses neither OTA updates
-   nor SPIFFS, and saved networks and settings survive the change.
+   Under **Tools → Partition Scheme** choose one of the two variants:
+
+   | Variant | Partition Scheme | Program memory |
+   |---|---|---|
+   | **A – Huge APP** (recommended) | “Huge APP (3MB No OTA/1MB SPIFFS)” | 39 %, about 1.9 MB spare |
+   | **B – Standard** | “Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)” (the default) | 94 %, only about 70 KB spare |
+
+   Both work the same; the clock uses neither OTA updates nor SPIFFS. Saved networks and settings are
+   kept when switching. If the IDE reports “Sketch too big”, switch to variant A.
 2. Library manager: install **U8g2** (by oliver).
 3. Open `ESP32_OscilloscopeClock_v2.0.ino` and upload. Set the serial monitor to 115200 baud.
 4. Enter your Wi-Fi: select the network **“ScopeClock-Setup”** on your phone. The setup page opens
@@ -107,8 +113,7 @@ pictures are screenshots of the page. Photos of the finished device will follow 
    OLED shows “DIGITAL > ANALOG” with a countdown 3, 2, 1. The setting is saved, no new upload is
    needed. (Do not press the button while powering up, otherwise the ESP32 starts in download mode.)
 
-Alternatively with PlatformIO: `pio run -t upload` (see `platformio.ini`, Huge APP is already set
-there).
+Alternatively with PlatformIO: `pio run -t upload` (variant A, Huge APP) or `pio run -e standard -t upload` (variant B).
 
 The start values of all settings (time zone, pins, dial, beam dwell time, oscilloscope profile)
 are in `ESP32_OscilloscopeClock_v2.0/config.h`. At run time it is easier to change them in the web

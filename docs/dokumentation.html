@@ -196,14 +196,21 @@ Der Außenkontakt hat Durchgang zu GND. Alle Schraubklemmen leicht nachziehen.</
 <h3>Mit der Arduino IDE 2.x</h3>
 <ol>
  <li>Boardverwalter: <b>esp32 by Espressif</b> installieren (Version 3.x, auch 2.0.x geht), Board <b>ESP32 Dev Module</b> wählen.</li>
- <li>Unter <b>Werkzeuge → Partition Scheme</b> „<b>Huge APP (3MB No OTA/1MB SPIFFS)</b>“ wählen. Die Firmware belegt dann rund
- 39 % statt 94 % des Programmspeichers. Gespeicherte Netze und Einstellungen bleiben beim Wechsel erhalten.</li>
+ <li>Unter <b>Werkzeuge → Partition Scheme</b> eine der beiden Varianten aus der Tabelle unten wählen.</li>
  <li>Bibliotheksverwalter: <b>U8g2</b> (von oliver) installieren.</li>
  <li><code>ESP32_OscilloscopeClock_v2.0/ESP32_OscilloscopeClock_v2.0.ino</code> öffnen und hochladen.</li>
  <li>Seriellen Monitor auf <b>115200 Baud</b> stellen – dort erscheinen dieselben Meldungen wie im Debug-Bereich des Webinterfaces.</li>
 </ol>
-<h3>Mit PlatformIO</h3>
-<p>Im Projektordner <code>pio run -t upload</code> ausführen; das Partitionsschema ist in <code>platformio.ini</code> bereits eingestellt.</p>
+<h3>Partitionsschema: zwei Varianten</h3>
+<table style="break-inside:avoid">
+ <tr><th>Variante</th><th>Arduino IDE: Partition Scheme</th><th>PlatformIO</th><th>Programmspeicher</th></tr>
+ <tr><td><b>A – Huge APP</b> (empfohlen)</td><td>„Huge APP (3MB No OTA/1MB SPIFFS)“</td><td><code>pio run -t upload</code></td><td>1.238.186 von 3.145.728 Byte (<b>39 %</b>)</td></tr>
+ <tr><td><b>B – Standard</b></td><td>„Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)“ – Voreinstellung, nichts umstellen</td><td><code>pio run -e standard -t upload</code></td><td>1.238.170 von 1.310.720 Byte (<b>94 %</b>)</td></tr>
+</table>
+<p>Beide Varianten laufen gleich. <b>A</b> lässt rund 1,9 MB Platz für Erweiterungen; die Uhr nutzt weder OTA-Updates noch
+SPIFFS, deshalb fehlt dabei nichts. <b>B</b> funktioniert ohne Umstellen, hat aber nur noch etwa 70 KB Reserve. Ein Wechsel
+ist jederzeit möglich (Schema wählen, neu hochladen) – gespeicherte WLANs und Einstellungen liegen bei beiden an derselben
+Stelle und bleiben erhalten. Meldet die IDE beim Hochladen „Sketch too big“, ist Variante B eingestellt: auf A wechseln.</p>
 <div class="note"><b>Zugangsdaten stehen nie im Quelltext.</b> WLANs werden nach dem Hochladen über das Webinterface eingetragen
 (bis zu 10 Netze). Die Startwerte aller Einstellungen stehen in <code>config.h</code>; im Betrieb ist das Webinterface bequemer.</div>
 <h3>Wenn das Webinterface geändert wird</h3>

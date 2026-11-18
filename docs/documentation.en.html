@@ -194,14 +194,21 @@ The outer contact has continuity to GND. Retighten all screw terminals slightly.
 <h3>With the Arduino IDE 2.x</h3>
 <ol>
  <li>Boards manager: install <b>esp32 by Espressif</b> (version 3.x, 2.0.x also works) and select the board <b>ESP32 Dev Module</b>.</li>
- <li>Under <b>Tools → Partition Scheme</b> choose “<b>Huge APP (3MB No OTA/1MB SPIFFS)</b>”. The firmware then uses about
- 39 % instead of 94 % of the program memory. Saved networks and settings are kept when switching.</li>
+ <li>Under <b>Tools → Partition Scheme</b> choose one of the two variants from the table below.</li>
  <li>Library manager: install <b>U8g2</b> (by oliver).</li>
  <li>Open <code>ESP32_OscilloscopeClock_v2.0/ESP32_OscilloscopeClock_v2.0.ino</code> and upload it.</li>
  <li>Set the serial monitor to <b>115200 baud</b> – it shows the same messages as the debug section of the web interface.</li>
 </ol>
-<h3>With PlatformIO</h3>
-<p>Run <code>pio run -t upload</code> in the project folder; the partition scheme is already set in <code>platformio.ini</code>.</p>
+<h3>Partition scheme: two variants</h3>
+<table style="break-inside:avoid">
+ <tr><th>Variant</th><th>Arduino IDE: Partition Scheme</th><th>PlatformIO</th><th>Program memory</th></tr>
+ <tr><td><b>A – Huge APP</b> (recommended)</td><td>“Huge APP (3MB No OTA/1MB SPIFFS)”</td><td><code>pio run -t upload</code></td><td>1,238,186 of 3,145,728 bytes (<b>39 %</b>)</td></tr>
+ <tr><td><b>B – Standard</b></td><td>“Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)” – the default, nothing to change</td><td><code>pio run -e standard -t upload</code></td><td>1,238,170 of 1,310,720 bytes (<b>94 %</b>)</td></tr>
+</table>
+<p>Both variants work the same. <b>A</b> leaves about 1.9 MB for extensions; the clock uses neither OTA updates nor SPIFFS,
+so nothing is lost. <b>B</b> works without changing anything but leaves only about 70 KB. You can switch at any time (choose
+the scheme, upload again) – saved networks and settings are stored at the same place in both and are kept. If the IDE reports
+“Sketch too big” when uploading, variant B is selected: switch to A.</p>
 <div class="note"><b>Credentials are never stored in the source code.</b> Wi-Fi networks are entered in the web interface after
 uploading (up to 10 networks). The defaults of all settings are in <code>config.h</code>; during operation the web interface is more convenient.</div>
 <h3>If the web interface is changed</h3>

@@ -82,9 +82,15 @@ sind Screenshots der Seite. Fotos des fertigen Geräts folgen nach dem Bau des P
 
 ### Schnellstart (Arduino IDE 2.x)
 1. Boardverwalter: **esp32 by Espressif** (2.0.x oder 3.x) installieren, Board **ESP32 Dev Module**.
-   Unter **Werkzeuge → Partition Scheme** „**Huge APP (3MB No OTA/1MB SPIFFS)**“ wählen. Dann stehen
-   3 MB statt 1,25 MB für das Programm zur Verfügung (Belegung 39 % statt 94 %). Die Uhr nutzt weder
-   OTA-Updates noch SPIFFS, und gespeicherte WLANs und Einstellungen bleiben beim Umstellen erhalten.
+   Unter **Werkzeuge → Partition Scheme** eine der beiden Varianten wählen:
+
+   | Variante | Partition Scheme | Programmspeicher |
+   |---|---|---|
+   | **A – Huge APP** (empfohlen) | „Huge APP (3MB No OTA/1MB SPIFFS)“ | 39 %, rund 1,9 MB Reserve |
+   | **B – Standard** | „Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)“ (Voreinstellung) | 94 %, nur etwa 70 KB Reserve |
+
+   Beide laufen gleich; die Uhr nutzt weder OTA-Updates noch SPIFFS. Gespeicherte WLANs und Einstellungen
+   bleiben beim Wechsel erhalten. Meldet die IDE „Sketch too big“, auf Variante A umstellen.
 2. Bibliotheksverwalter: **U8g2** (by oliver) installieren.
 3. `ESP32_OscilloscopeClock_v2.0.ino` öffnen und hochladen. Seriellen Monitor auf 115200 Baud stellen.
 4. WLAN eintragen: Mit dem Handy das WLAN **„ScopeClock-Setup“** wählen. Die Einrichtungsseite
@@ -99,7 +105,7 @@ sind Screenshots der Seite. Fotos des fertigen Geräts folgen nach dem Bau des P
    es ist kein neues Hochladen nötig.
    (Den Taster nicht beim Einschalten drücken, sonst startet der ESP32 im Download-Modus.)
 
-Alternativ mit PlatformIO: `pio run -t upload` (siehe `platformio.ini`, Huge APP ist dort schon eingestellt).
+Alternativ mit PlatformIO: `pio run -t upload` (Variante A, Huge APP) oder `pio run -e standard -t upload` (Variante B).
 
 Die Startwerte aller Einstellungen (Zeitzone, Pins, Zifferblatt, Verweilzeit des Strahls, Oszilloskop-Profil)
 stehen in `ESP32_OscilloscopeClock_v2.0/config.h`. Im Betrieb ändert man sie bequemer im Webinterface.

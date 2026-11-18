@@ -411,14 +411,21 @@ The outer contact has continuity to GND. Retighten all screw terminals slightly.
 <h3>Mit der Arduino IDE 2.x</h3>
 <ol>
  <li>Boardverwalter: <b>esp32 by Espressif</b> installieren (Version 3.x, auch 2.0.x geht), Board <b>ESP32 Dev Module</b> wählen.</li>
- <li>Unter <b>Werkzeuge → Partition Scheme</b> „<b>Huge APP (3MB No OTA/1MB SPIFFS)</b>“ wählen. Die Firmware belegt dann rund
- 39 % statt 94 % des Programmspeichers. Gespeicherte Netze und Einstellungen bleiben beim Wechsel erhalten.</li>
+ <li>Unter <b>Werkzeuge → Partition Scheme</b> eine der beiden Varianten aus der Tabelle unten wählen.</li>
  <li>Bibliotheksverwalter: <b>U8g2</b> (von oliver) installieren.</li>
  <li><code>ESP32_OscilloscopeClock_v2.0/ESP32_OscilloscopeClock_v2.0.ino</code> öffnen und hochladen.</li>
  <li>Seriellen Monitor auf <b>115200 Baud</b> stellen – dort erscheinen dieselben Meldungen wie im Debug-Bereich des Webinterfaces.</li>
 </ol>
-<h3>Mit PlatformIO</h3>
-<p>Im Projektordner <code>pio run -t upload</code> ausführen; das Partitionsschema ist in <code>platformio.ini</code> bereits eingestellt.</p>
+<h3>Partitionsschema: zwei Varianten</h3>
+<div class="tw"><table style="break-inside:avoid">
+ <tr><th>Variante</th><th>Arduino IDE: Partition Scheme</th><th>PlatformIO</th><th>Programmspeicher</th></tr>
+ <tr><td data-th="Variante"><b>A – Huge APP</b> (empfohlen)</td><td data-th="Arduino IDE: Partition Scheme">„Huge APP (3MB No OTA/1MB SPIFFS)“</td><td data-th="PlatformIO"><code>pio run -t upload</code></td><td data-th="Programmspeicher">1.238.186 von 3.145.728 Byte (<b>39 %</b>)</td></tr>
+ <tr><td data-th="Variante"><b>B – Standard</b></td><td data-th="Arduino IDE: Partition Scheme">„Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)“ – Voreinstellung, nichts umstellen</td><td data-th="PlatformIO"><code>pio run -e standard -t upload</code></td><td data-th="Programmspeicher">1.238.170 von 1.310.720 Byte (<b>94 %</b>)</td></tr>
+</table></div>
+<p>Beide Varianten laufen gleich. <b>A</b> lässt rund 1,9 MB Platz für Erweiterungen; die Uhr nutzt weder OTA-Updates noch
+SPIFFS, deshalb fehlt dabei nichts. <b>B</b> funktioniert ohne Umstellen, hat aber nur noch etwa 70 KB Reserve. Ein Wechsel
+ist jederzeit möglich (Schema wählen, neu hochladen) – gespeicherte WLANs und Einstellungen liegen bei beiden an derselben
+Stelle und bleiben erhalten. Meldet die IDE beim Hochladen „Sketch too big“, ist Variante B eingestellt: auf A wechseln.</p>
 <div class="note"><b>Zugangsdaten stehen nie im Quelltext.</b> WLANs werden nach dem Hochladen über das Webinterface eingetragen
 (bis zu 10 Netze). Die Startwerte aller Einstellungen stehen in <code>config.h</code>; im Betrieb ist das Webinterface bequemer.</div>
 <h3>Wenn das Webinterface geändert wird</h3>
@@ -428,14 +435,21 @@ Das Skript entfernt Kommentare, komprimiert die Seite mit gzip und schreibt <cod
 <h3>With the Arduino IDE 2.x</h3>
 <ol>
  <li>Boards manager: install <b>esp32 by Espressif</b> (version 3.x, 2.0.x also works) and select the board <b>ESP32 Dev Module</b>.</li>
- <li>Under <b>Tools → Partition Scheme</b> choose “<b>Huge APP (3MB No OTA/1MB SPIFFS)</b>”. The firmware then uses about
- 39 % instead of 94 % of the program memory. Saved networks and settings are kept when switching.</li>
+ <li>Under <b>Tools → Partition Scheme</b> choose one of the two variants from the table below.</li>
  <li>Library manager: install <b>U8g2</b> (by oliver).</li>
  <li>Open <code>ESP32_OscilloscopeClock_v2.0/ESP32_OscilloscopeClock_v2.0.ino</code> and upload it.</li>
  <li>Set the serial monitor to <b>115200 baud</b> – it shows the same messages as the debug section of the web interface.</li>
 </ol>
-<h3>With PlatformIO</h3>
-<p>Run <code>pio run -t upload</code> in the project folder; the partition scheme is already set in <code>platformio.ini</code>.</p>
+<h3>Partition scheme: two variants</h3>
+<div class="tw"><table style="break-inside:avoid">
+ <tr><th>Variant</th><th>Arduino IDE: Partition Scheme</th><th>PlatformIO</th><th>Program memory</th></tr>
+ <tr><td data-th="Variant"><b>A – Huge APP</b> (recommended)</td><td data-th="Arduino IDE: Partition Scheme">“Huge APP (3MB No OTA/1MB SPIFFS)”</td><td data-th="PlatformIO"><code>pio run -t upload</code></td><td data-th="Program memory">1,238,186 of 3,145,728 bytes (<b>39 %</b>)</td></tr>
+ <tr><td data-th="Variant"><b>B – Standard</b></td><td data-th="Arduino IDE: Partition Scheme">“Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)” – the default, nothing to change</td><td data-th="PlatformIO"><code>pio run -e standard -t upload</code></td><td data-th="Program memory">1,238,170 of 1,310,720 bytes (<b>94 %</b>)</td></tr>
+</table></div>
+<p>Both variants work the same. <b>A</b> leaves about 1.9 MB for extensions; the clock uses neither OTA updates nor SPIFFS,
+so nothing is lost. <b>B</b> works without changing anything but leaves only about 70 KB. You can switch at any time (choose
+the scheme, upload again) – saved networks and settings are stored at the same place in both and are kept. If the IDE reports
+“Sketch too big” when uploading, variant B is selected: switch to A.</p>
 <div class="note"><b>Credentials are never stored in the source code.</b> Wi-Fi networks are entered in the web interface after
 uploading (up to 10 networks). The defaults of all settings are in <code>config.h</code>; during operation the web interface is more convenient.</div>
 <h3>If the web interface is changed</h3>
