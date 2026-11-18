@@ -7,7 +7,7 @@
 | Part | Purpose |
 |---|---|
 | ESP32-WROOM-32U DevKitC V4, USB-C, with antenna kit (DUBEUYEW), 48.5 × 28.5 mm | Classic dual-core ESP32 with two 8-bit DACs (GPIO25/26); the kit contains the IPEX→SMA pigtail |
-| Waveshare 2.42inch OLED display module, white (SSD1309, 128×64, SPI/I²C), 61.5 × 39.5 mm | Local text display: time 24 h and date/calendar week (7-segment style), SSID, signal |
+| Waveshare 2.42inch OLED display module, white (SSD1309, 128×64, SPI/I²C), 61.5 × 39.5 mm – **optional**, fitted in the prototype | Local text display (the clock also runs without it): time 24 h and date/calendar week (7-segment style), SSID, signal |
 | WiFi antenna Bingfu 2.4/5.8 GHz, 8 dBi, SMA plug | Mandatory with the *-32U*: the module has **no** PCB antenna; do not mix SMA and RP-SMA |
 | ESP32 breakout board with screw terminals | plug in the DevKit, all wires go into screw terminals (labelled P25, P26 …) – no soldering on the DevKit |
 | 2× BNC pigtail, BNC plug to 2.54 mm DuPont pin, RG316 | X and Y outputs; the BNC plug goes straight into the oscilloscope (red = signal, brown = shield) |
@@ -75,7 +75,7 @@ GPIO0 (right, pos. 14) is the BOOT button on the board – do not connect anythi
   smooths the DAC steps. If digits look “rounded” as a result, leave the capacitor out.
 - No level shifter and no amplifier needed: the oscilloscope has 1 MΩ input resistance.
 
-### OLED connection (Waveshare 2.42")
+### OLED connection (Waveshare 2.42", optional)
 The module is used **as delivered (4-wire SPI)**, no resoldering needed. Wire the 7-pin
 connector as above (VCC to 3V3, not 5V0). If the picture is shifted horizontally by 2 pixels,
 replace `NONAME0` with `NONAME2` in the `.ino`. If the display is mounted upside down, enable

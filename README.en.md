@@ -5,7 +5,7 @@
 <p align="center"><img src="docs/images/oszilloskop_uhr.png" alt="The clock on the oscilloscope" width="380"></p>
 
 A vector clock for an oscilloscope in X/Y mode, based on an idea by Mauro Pintus (see [Origin](#origin)),
-adapted for this hardware: **ESP32-WROOM-32U DevKitC V4**, **Waveshare 2.42" OLED (SPI)**, external
+adapted for this hardware: **ESP32-WROOM-32U DevKitC V4**, **Waveshare 2.42" OLED (SPI, optional)**, external
 2.4 GHz antenna, BNC outputs and an ABS enclosure.
 
 **Full documentation with assembly guide, pictures and drilling template: [docs/ESP32_Oscilloscope_Clock_Documentation.pdf](docs/ESP32_Oscilloscope_Clock_Documentation.pdf)** (German version: [docs/ESP32_Oscilloscope_Clock_Dokumentation.pdf](docs/ESP32_Oscilloscope_Clock_Dokumentation.pdf))
@@ -57,7 +57,7 @@ pictures are screenshots of the page. Photos of the finished device will follow 
   diagonals. The speed is chosen for older CRT oscilloscopes (approx. 230 frames/s, adjustable).
 - Hardly visible retrace lines: optimised drawing order, fast braked jumps, second hand drawn out
   and back.
-- OLED as a pure text display: time (24 h) in 7-segment style, calendar week and date with small 7-segment digits, network name
+- Optional OLED (fitted in the prototype; the clock also runs without it) as a pure text display: time (24 h) in 7-segment style, calendar week and date with small 7-segment digits, network name
   and signal strength (dBm), all centred, with pixel shifting against burn-in.
 - Every NTP sync is reported with date and time on the serial console (115200 baud), as is a
   warning if syncs stop.

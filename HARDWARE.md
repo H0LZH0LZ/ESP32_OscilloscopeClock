@@ -7,7 +7,7 @@
 | Teil | Zweck |
 |---|---|
 | ESP32-WROOM-32U DevKitC V4, USB-C, mit Antennen-Kit (DUBEUYEW), 48,5 × 28,5 mm | Klassischer Dual-Core-ESP32 mit zwei 8-Bit-DACs (GPIO25/26); das Kit enthält das IPEX→SMA-Pigtail |
-| Waveshare 2,42inch OLED Display Module, weiß (SSD1309, 128×64, SPI/I²C), 61,5 × 39,5 mm | Lokale Textanzeige: Uhrzeit 24h und Datum/KW (7-Segment-Stil), SSID, Signal |
+| Waveshare 2,42inch OLED Display Module, weiß (SSD1309, 128×64, SPI/I²C), 61,5 × 39,5 mm – **optional**, im Prototyp verbaut | Lokale Textanzeige (die Uhr läuft auch ohne): Uhrzeit 24h und Datum/KW (7-Segment-Stil), SSID, Signal |
 | WLAN-Antenne Bingfu 2,4/5,8 GHz, 8 dBi, SMA-Stecker | Pflicht beim *-32U*: das Modul hat **keine** PCB-Antenne; SMA und RP-SMA nicht mischen |
 | ESP32-Breakout-Board mit Schraubklemmen | DevKit aufstecken, alle Leitungen in Schraubklemmen (Beschriftung P25, P26 …) – nichts am DevKit löten |
 | 2× BNC-Pigtail, BNC-Stecker auf 2,54-mm-DuPont-Stift, RG316 | X- und Y-Ausgang; der BNC-Stecker kommt direkt ins Oszilloskop (rot = Signal, braun = Schirm) |
@@ -75,7 +75,7 @@ GPIO0 (rechts, Pos. 14) ist der BOOT-Taster auf dem Board – dort nichts anschl
   der die DAC-Stufen glättet. Wenn Ziffern dadurch „verrundet“ aussehen, den Kondensator weglassen.
 - Kein Pegelwandler und kein Verstärker nötig: das Oszilloskop hat 1 MΩ Eingangswiderstand.
 
-### OLED-Anschluss (Waveshare 2.42")
+### OLED-Anschluss (Waveshare 2.42", optional)
 Das Modul wird im **Auslieferungszustand (4-Wire-SPI)** betrieben, es muss nichts umgelötet werden.
 Der 7-polige Stecker wird wie oben verdrahtet (VCC an 3V3, nicht an 5V0). Ist das Bild um 2 Pixel
 horizontal verschoben, in der `.ino` `NONAME0` durch `NONAME2` ersetzen. Ist das Display kopfüber

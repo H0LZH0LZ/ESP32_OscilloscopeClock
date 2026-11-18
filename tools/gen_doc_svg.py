@@ -140,7 +140,7 @@ def verdrahtung():
     a(f"<image href='data:image/png;base64,{png}' x='{gx0+7}' y='{gy0+(gh-ah)/2-6}' width='{aw}' height='{ah}' style='image-rendering:pixelated'/>")
     a(f"<path d='M{gx0+gw/2-28},{gy0+gh} L{gx0+gw/2+28},{gy0+gh} L{gx0+gw/2+20},{oy0+oh-4} L{gx0+gw/2-20},{oy0+oh-4} Z' fill='#d58a2a' stroke='#9a5e14'/>")
     a(f"<text x='{gx0+2}' y='{oy0+14}' font-size='9' fill='#fff' font-weight='bold'>Waveshare · 2.42inch OLED Module</text>")
-    a(f"<text x='{OX+ow/2}' y='{oy0+oh+18}' text-anchor='middle' font-size='12' fill='#222'>Waveshare 2.42\" OLED · SSD1309 · SPI (4-Wire)</text>")
+    a(f"<text x='{OX+ow/2}' y='{oy0+oh+18}' text-anchor='middle' font-size='12' fill='#222'>Waveshare 2.42\" OLED · SSD1309 · SPI (4-Wire) – optional</text>")
     names = ['VCC', 'GND', 'DIN', 'CLK', 'CS', 'DC', 'RST']
     pins = {}
     a(f"<rect x='{OX+4}' y='{OY-26}' width='14' height='{6*24+16}' fill='#111' rx='2'/>")

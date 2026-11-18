@@ -85,7 +85,7 @@ Zifferblatt, Ziffern und Zeiger etwa 230-mal pro Sekunde nach.</p>
  <li><b>Fünf Zifferblätter:</b> Ziffern 1–12, nur 12·3·6·9, nur Striche, römisch XII·III·VI·IX, römisch I–XII. Umschalten durch Wischen über die Vorschau im Webinterface.</li>
  <li><b>Gleich helle Linien</b> durch konstante Strahlgeschwindigkeit, kaum sichtbare Rücklaufspuren.</li>
  <li><b>Ein Gerät für alle Oszilloskope:</b> Profil DIGITAL (Speicher-Oszilloskope) oder ANALOG (Röhre), umschaltbar per BOOT-Taster oder Webinterface.</li>
- <li><b>OLED-Anzeige</b> am Gerät: Uhrzeit, Kalenderwoche, Datum, WLAN und Signalstärke.</li>
+ <li><b>OLED-Anzeige</b> am Gerät (optional, im Prototyp verbaut): Uhrzeit, Kalenderwoche, Datum, WLAN und Signalstärke.</li>
  <li><b>Webinterface</b> für Handy und PC: Live-Vorschau, Status, alle Einstellungen, WLAN-Verwaltung, Debug-Protokoll. Deutsch und Englisch, hell und dunkel, als App auf dem Startbildschirm.</li>
  <li><b>Testbild</b> zum Einstellen des Oszilloskops, nach jedem Einschalten automatisch 10 Sekunden lang.</li>
 </ul>
@@ -106,7 +106,7 @@ kommt direkt in den Eingang des Oszilloskops, ein zusätzliches BNC-Kabel ist ni
  <tr><td>2</td><td><b>Kabelverschraubung Lapp SKINDICHT MINI</b> M6×1, Messing vernickelt, Klemmbereich 2–3 mm, IP68 (Lapp 52001860, RS 458-3953)</td><td>Je Pigtail eine; hält und dichtet das RG316 (Ø ca. 2,5 mm) in der Gehäusewand.</td></tr>
  <tr><td>1</td><td><b>USB-C-Einbauverlängerung</b> USB 3.1, IP67, 0,2 m, Stecker auf Buchse, FPC-Flachbandkabel, Einbauöffnung 16 mm (Plinkwirekb)</td><td>USB-C-Buchse in der Gehäusewand; das Flachbandkabel steckt innen im DevKit. Darüber wird die Uhr versorgt und programmiert.</td></tr>
  <tr><td>1</td><td><b>Abzweigdose ABS 150 × 100 × 70 mm</b>, IP67, mit Scharnierdeckel, Edelstahlverschlüssen und Montageplatte (Yunseity)</td><td>Kunststoff, damit das WLAN-Signal durchkommt. Das Breakout-Board wird auf die gelochte Montageplatte geschraubt.</td></tr>
- <tr><td>1</td><td><b>Waveshare 2,42inch OLED Display Module</b>, weiß, 128 × 64 Pixel, SPI/I²C (SSD1309); Platine 61,5 × 39,5 mm, aktive Fläche 55,0 × 27,5 mm</td><td>Im Auslieferungszustand (4-Wire-SPI) verwenden, nichts umlöten. Stiftleiste von unten: VCC, GND, DIN, CLK, CS, DC, RST.</td></tr>
+ <tr><td>1</td><td><b>Waveshare 2,42inch OLED Display Module</b>, weiß, 128 × 64 Pixel, SPI/I²C (SSD1309); Platine 61,5 × 39,5 mm, aktive Fläche 55,0 × 27,5 mm</td><td><b>Optional</b> – die Uhr läuft auch ohne Display. Im Auslieferungszustand (4-Wire-SPI) verwenden, nichts umlöten. Stiftleiste von unten: VCC, GND, DIN, CLK, CS, DC, RST.</td></tr>
  <tr><td>1</td><td><b>WLAN-Antenne Bingfu</b> 2,4/5,8 GHz, 8 dBi, SMA-Stecker (Variante „SMA“), abwinkelbar</td><td>Pflicht: Das Modul -32U hat keine eingebaute Antenne. Sie wird auf die SMA-Buchse des IPEX-Pigtails aus dem Antennen-Kit geschraubt – SMA und RP-SMA nicht mischen (Stecker der Antenne muss zur Buchse des Pigtails passen).</td></tr>
  <tr><td>2</td><td>Widerstand <b>220 Ω</b>, 0,25 W (empfohlen)</td><td>In die rote Ader jedes Pigtails eingelötet; schützt die DAC-Ausgänge bei einem Kurzschluss am BNC-Stecker.</td></tr>
  <tr><td>(1)</td><td><i>Optional:</i> Echtzeituhr <b>DS3231</b>, Modul ZS-042 (z. B. WINGONEER „Tiny DS3231 AT24C32“)</td><td>Hält die Uhrzeit nach einem Stromausfall ohne Internet. VCC → 3V3, GND → GND, SDA → P21, SCL → P22. Knopfzelle: normale CR2032 – Modul nur an 3V3 (an 5 V würde die Ladeschaltung sie laden). Im Webinterface einschalten.</td></tr>

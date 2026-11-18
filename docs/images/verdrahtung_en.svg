@@ -223,7 +223,7 @@
 <image href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAABACAAAAAD3vSCjAAAB0klEQVR4nO1YW5LDIAxTd/rRS+j+B9NF9sOQ8AxO0y3dDp4pBcxDsY1wcntgrvxM3n8+gPtwhOyPJ/RZ12D+dAvcDoJQIBShb5VWV9nw6QF8gAX+GQDpmv4ygD+Q8TFMpXsWnfqGTLfA0TE0eYJoRtyVykdbwEM0PX7xzAewjuE6hgvAk0Q00n8NEb1FpltgAZgOwEfF6pwp66/LE6vdHgBE+8UBedWa6qwrpmPKUfXccswnuUAAN/P0HvjlElwgyjwYim3/2qdpT13vRUJvVgoglYzZuybZNdGzRTR1Y2Dvucde21SheJsHQhASBCVZAYDnk7sn5dpl9CoemCnTeWABWAAGAGQprgAZQyhXxHpjnlN8+QARj27rkF9iTReA/KKKfalCYKRza4qQC9soBrQtw90Msan9+rb7lGFnggDpsc25t+MKXveKdN9oIwuQAJTEXhpeDBFa91GEXN8r1l0wHcBhEGrPklqKvYXie9mWYV0DEAK5sVAjgyyj3pvWHQGgmGXK3ZRHINjgKKF6U6nkMAYYWUikEHgmW1GSwKAIZrEhNqPMtms5dkF8gO4y119ijl1gNhcDvWxQlG3K3AXcrwmHOInIu9x5WUy4AEwH8Av0l9LFM5F8YQAAAABJRU5ErkJggg==' x='873' y='149.0' width='178' height='89.0' style='image-rendering:pixelated'/>
 <path d='M934.0,267 L990.0,267 L982.0,291 L942.0,291 Z' fill='#d58a2a' stroke='#9a5e14'/>
 <text x='868' y='124' font-size='9' fill='#fff' font-weight='bold'>Waveshare · 2.42inch OLED Module</text>
-<text x='944.0' y='313' text-anchor='middle' font-size='12' fill='#222'>Waveshare 2.42" OLED · SSD1309 · SPI (4-Wire)</text>
+<text x='944.0' y='313' text-anchor='middle' font-size='12' fill='#222'>Waveshare 2.42" OLED · SSD1309 · SPI (4-Wire) – optional</text>
 <rect x='804' y='124' width='14' height='160' fill='#111' rx='2'/>
 <rect x='794' y='136' width='20' height='4' fill='#d4af37'/><rect x='806' y='133' width='10' height='10' fill='#222' stroke='#555'/>
 <text x='824' y='142' font-size='10' fill='#fff' font-weight='bold'>VCC</text>
