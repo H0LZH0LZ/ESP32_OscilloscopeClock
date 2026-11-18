@@ -44,8 +44,10 @@ def label_cells(m):
         if heads and heads[0] in ('Anz.', 'Qty'):
             q = re.search(r'<td[^>]*>(.*?)</td>', nr, flags=re.S)
             nr = nr.replace('<td data-th="%s"' % heads[0], '<td class="qty" data-th="%s"' % heads[0], 1)
-            nr = nr.replace('<td data-th="%s"' % heads[1], '<td data-qty="%s ×" data-th="%s"'
-                            % (html.escape(re.sub(r'<[^>]+>', '', q.group(1)).strip(), quote=True), heads[1]), 1)
+            n = re.sub(r'<[^>]+>', '', q.group(1)).strip()
+            if n not in ('', '–', '-'):
+                nr = nr.replace('<td data-th="%s"' % heads[1], '<td data-qty="%s ×" data-th="%s"'
+                                % (html.escape(n, quote=True), heads[1]), 1)
         t = t.replace(r, nr, 1)
     return t
 
