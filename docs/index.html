@@ -32,8 +32,6 @@ h1{position:sticky;top:env(safe-area-inset-top);z-index:22;display:flex;align-it
  min-height:64px;margin:0;padding:0 46px;background:var(--bg);text-align:center;
  font-size:15px;font-weight:600;color:var(--mute);text-transform:uppercase;letter-spacing:.06em}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top);background:var(--bg);z-index:25}
-.btn{display:flex;align-items:center;justify-content:center;min-height:44px;border-radius:10px;padding:0 16px;margin:12px 0 6px;
- background:var(--acc);color:var(--accfg);font-weight:600;text-decoration:none}
 /* Abschnitte: Überschrift in Großbuchstaben (bleibt unter der Titelleiste stehen), Inhalt als Karte */
 h2{display:flex;align-items:center;min-height:44px;margin:0;padding:0 4px;scroll-margin-top:calc(env(safe-area-inset-top) + 64px);
  font-size:13px;font-weight:600;color:var(--mute);text-transform:uppercase;letter-spacing:.06em}
@@ -94,11 +92,8 @@ html[lang="de"] [data-l="en"],html[lang="en"] [data-l="de"]{display:none!importa
 
 <div class="grp"><h2 id="projekt-h"><span data-l="de">Projekt</span><span data-l="en">Project</span></h2>
 <section>
- <p data-l="de">Eine analoge Uhr, gezeichnet vom Elektronenstrahl: Ein ESP32 erzeugt mit seinen beiden DACs die Spannungen für X und Y und fährt Zifferblatt, Ziffern und Zeiger etwa 230-mal pro Sekunde ab – mit Zeit aus dem Internet, OLED-Anzeige am Gerät und einem Webinterface fürs Handy.</p>
- <p data-l="en">An analogue clock drawn by the electron beam: an ESP32 generates the X and Y voltages with its two DACs and traces dial, numerals and hands about 230 times per second – with time from the internet, an OLED display on the device and a web interface for your phone.</p>
- <a class="btn" href="demo/"><span data-l="de">Webinterface ausprobieren</span><span data-l="en">Try the web interface</span></a>
- <a class="row" href="demo/"><span><span data-l="de">Testseite</span><span data-l="en">Test page</span><small class="note" data-l="de">Läuft ohne Uhr im Browser, alle Werte sind simuliert</small><small class="note" data-l="en">Runs in the browser without a clock, all values are simulated</small></span><span>›</span></a>
- <a class="row" href="https://github.com/HolzHolz123/ESP32_OscilloscopeClock"><span>GitHub<small class="note" data-l="de">Quellcode, Anleitung und Werkzeuge</small><small class="note" data-l="en">Source code, guide and tools</small></span><span>›</span></a>
+ <div class="row"><span>ESP32 Oscilloscope Clock v2.0<small class="note" data-l="de">Eine analoge Uhr, gezeichnet vom Elektronenstrahl: Ein ESP32 erzeugt mit seinen beiden DACs die Spannungen für X und Y und fährt Zifferblatt, Ziffern und Zeiger etwa 230-mal pro Sekunde ab – mit Zeit aus dem Internet, optionaler OLED-Anzeige am Gerät und einem Webinterface fürs Handy.</small><small class="note" data-l="en">An analogue clock drawn by the electron beam: an ESP32 generates the X and Y voltages with its two DACs and traces dial, numerals and hands about 230 times per second – with time from the internet, an optional OLED display on the device and a web interface for your phone.</small></span></div>
+ <a class="row" href="demo/"><span><span data-l="de">Testseite</span><span data-l="en">Test page</span><small class="note" data-l="de">Das Webinterface der Uhr ausprobieren – läuft im Browser, alle Werte sind simuliert</small><small class="note" data-l="en">Try the clock's web interface – runs in the browser, all values are simulated</small></span><span>›</span></a>
 </section></div>
 
 <div class="grp"><h2 id="funktionen-h"><span data-l="de">Funktionen</span><span data-l="en">Features</span></h2>
@@ -137,7 +132,7 @@ html[lang="de"] [data-l="en"],html[lang="en"] [data-l="de"]{display:none!importa
 <section>
  <a class="row" href="ESP32_Oscilloscope_Clock_Dokumentation.pdf"><span><span data-l="de">Dokumentation</span><span data-l="en">Documentation (German)</span><small class="note" data-l="de">PDF, Deutsch – Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small><small class="note" data-l="en">PDF – assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
  <a class="row" href="ESP32_Oscilloscope_Clock_Documentation.pdf"><span><span data-l="de">Dokumentation (Englisch)</span><span data-l="en">Documentation</span><small class="note" data-l="de">PDF, English</small><small class="note" data-l="en">PDF, English – assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
- <a class="row" href="https://github.com/HolzHolz123/ESP32_OscilloscopeClock"><span><span data-l="de">Firmware und Quellcode</span><span data-l="en">Firmware and source code</span><small class="note" data-l="de">Arduino IDE 2.x oder PlatformIO</small><small class="note" data-l="en">Arduino IDE 2.x or PlatformIO</small></span><span>›</span></a>
+ <a class="row" href="https://github.com/HolzHolz123/ESP32_OscilloscopeClock"><span><span data-l="de">Firmware und Quellcode auf GitHub</span><span data-l="en">Firmware and source code on GitHub</span><small class="note" data-l="de">Für Arduino IDE 2.x oder PlatformIO, mit Anleitung und Werkzeugen</small><small class="note" data-l="en">For Arduino IDE 2.x or PlatformIO, with guide and tools</small></span><span>›</span></a>
 </section></div>
 
 <footer>
@@ -155,8 +150,9 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')menu(false)});
 // Abschnitte: Klick springt (Überschrift landet unter der Titelzeile), Menü schließt
 const navA=[...document.querySelectorAll('#nav a[href^="#"]')],navT=navA.map(a=>document.querySelector(a.getAttribute('href')));
 document.querySelectorAll('#nav a').forEach(a=>a.addEventListener('click',()=>menu(false)));
-// Aktuellen Abschnitt markieren: der Abschnitt, dessen Karte die Bildschirmmitte enthält
-function spy(){const mid=innerHeight/2;let k=0;navT.forEach((t,i)=>{if(t.getBoundingClientRect().top<=mid)k=i});
+// Aktuellen Abschnitt markieren: der letzte, dessen Überschrift den oberen Bereich unter der
+// Titelzeile erreicht hat (so stimmt es auch bei kurzen Abschnitten und nach einem Sprung)
+function spy(){const lim=document.querySelector('h1').getBoundingClientRect().bottom+100;let k=0;navT.forEach((t,i)=>{if(t.getBoundingClientRect().top<=lim)k=i});
  const se=document.scrollingElement;if(se.scrollTop+innerHeight>=se.scrollHeight-2)k=navT.length-1;   // ganz unten: letzter Abschnitt
  navA.forEach((a,i)=>a.classList.toggle('cur',i===k))}
 addEventListener('scroll',spy,{passive:true});addEventListener('resize',spy);spy();
