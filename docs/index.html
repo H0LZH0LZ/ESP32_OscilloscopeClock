@@ -50,7 +50,6 @@ figure:first-child{border-top:0}
 figure img{width:100%;height:auto;display:block;border-radius:8px}
 .svg img{background:#fff}
 figcaption{font-size:13px;color:var(--mute);margin-top:8px}
-footer{font-size:13px;color:var(--mute);padding:8px 4px}
 /* Seitenmenü wie im Webinterface */
 #menuBtn{position:fixed;top:calc(env(safe-area-inset-top) + 10px);left:calc(env(safe-area-inset-left) + 10px);z-index:30;
  width:44px;height:44px;padding:0;margin:0;border-radius:12px;background:var(--card);color:var(--fg);
@@ -62,8 +61,6 @@ footer{font-size:13px;color:var(--mute);padding:8px 4px}
 #nav h3{font-size:13px;color:var(--mute);text-transform:uppercase;letter-spacing:.06em;margin:4px 8px 12px}
 #nav a{display:flex;align-items:center;min-height:48px;padding:0 12px;border-radius:10px;color:var(--fg);text-decoration:none;font-weight:600}
 #nav a:hover,#nav a.cur{background:var(--bg)}#nav a.cur{color:var(--acc)}
-#nav a.sub{min-height:48px;padding:6px 12px 6px 28px;font-weight:600;font-size:15px;line-height:1.3}
-#nav a.sub small{display:block;font-weight:300;font-size:13px;color:var(--mute);margin-top:1px}
 #nav .navopt{margin:16px 12px 0;padding-top:12px;border-top:1px solid var(--line)}
 #nav label{display:block;color:var(--mute);font-size:14px;margin:0 0 6px}
 #nav select{font:inherit;font-size:16px;width:100%;min-height:44px;padding:0 10px;margin-bottom:6px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--fg)}
@@ -82,10 +79,7 @@ html[lang="de"] [data-l="en"],html[lang="en"] [data-l="de"]{display:none!importa
  <a href="#hardware-h">Hardware</a>
  <a href="#bilder-h"><span data-l="de">Bilder</span><span data-l="en">Pictures</span></a>
  <a href="#downloads-h">Downloads</a>
- <h3 style="margin-top:20px"><span data-l="de">Links</span><span data-l="en">Links</span></h3>
- <a class="sub" href="demo/"><span data-l="de">Testseite<small>Webinterface ausprobieren</small></span><span data-l="en">Test page<small>Try the web interface</small></span></a>
- <a class="sub" href="https://github.com/HolzHolz123/ESP32_OscilloscopeClock"><span data-l="de">GitHub – Version 2.0<small>Diese Firmware, Quellcode und Anleitung</small></span><span data-l="en">GitHub – version 2.0<small>This firmware, source code and guide</small></span></a>
- <a class="sub" href="https://github.com/maurohh/ESP32_OscilloscopeClock"><span data-l="de">GitHub – Original (Mauro Pintus)<small>Ursprüngliche Oscilloscope Clock von 2018</small></span><span data-l="en">GitHub – original (Mauro Pintus)<small>The original Oscilloscope Clock from 2018</small></span></a>
+ <a href="#links-h">Links</a>
  <div class="navopt"><label for="sLang"><span data-l="de">Sprache</span><span data-l="en">Language</span></label>
   <select id="sLang"><option value="de">Deutsch</option><option value="en">English</option></select></div>
  <div class="navopt"><label for="sTheme"><span data-l="de">Darstellung</span><span data-l="en">Appearance</span></label>
@@ -98,7 +92,6 @@ html[lang="de"] [data-l="en"],html[lang="en"] [data-l="de"]{display:none!importa
 <div class="grp"><h2 id="projekt-h"><span data-l="de">Projekt</span><span data-l="en">Project</span></h2>
 <section>
  <div class="row"><span>ESP32 Oscilloscope Clock v2.0<small class="note" data-l="de">Eine analoge Uhr, gezeichnet vom Elektronenstrahl: Ein ESP32 erzeugt mit seinen beiden DACs die Spannungen für X und Y und fährt Zifferblatt, Ziffern und Zeiger etwa 230-mal pro Sekunde ab – mit Zeit aus dem Internet, optionaler OLED-Anzeige am Gerät und einem Webinterface fürs Handy.</small><small class="note" data-l="en">An analogue clock drawn by the electron beam: an ESP32 generates the X and Y voltages with its two DACs and traces dial, numerals and hands about 230 times per second – with time from the internet, an optional OLED display on the device and a web interface for your phone.</small></span></div>
- <a class="row" href="demo/"><span><span data-l="de">Testseite</span><span data-l="en">Test page</span><small class="note" data-l="de">Das Webinterface der Uhr ausprobieren – läuft im Browser, alle Werte sind simuliert</small><small class="note" data-l="en">Try the clock's web interface – runs in the browser, all values are simulated</small></span><span>›</span></a>
 </section></div>
 
 <div class="grp"><h2 id="funktionen-h"><span data-l="de">Funktionen</span><span data-l="en">Features</span></h2>
@@ -140,10 +133,12 @@ html[lang="de"] [data-l="en"],html[lang="en"] [data-l="de"]{display:none!importa
  <a class="row" href="fonts/OFL.txt"><span><span data-l="de">Schriftart Raleway</span><span data-l="en">Font Raleway</span><small class="note" data-l="de">SIL Open Font License 1.1 – Lizenztext</small><small class="note" data-l="en">SIL Open Font License 1.1 – licence text</small></span><span>›</span></a>
 </section></div>
 
-<footer>
- <p data-l="de">Idee nach der ESP32 Oscilloscope Clock von Mauro Pintus (2018); Firmware, Webinterface und Grafiken sind neu geschrieben. Bilder von Oszilloskop und OLED sind aus den Firmware-Daten erzeugt, Fotos des fertigen Geräts folgen.</p>
- <p data-l="en">Based on an idea by Mauro Pintus (ESP32 Oscilloscope Clock, 2018); firmware, web interface and graphics are rewritten. Oscilloscope and OLED pictures are rendered from the firmware data, photos of the finished device will follow.</p>
-</footer>
+<div class="grp"><h2 id="links-h">Links</h2>
+<section>
+ <a class="row" href="demo/"><span><span data-l="de">Testseite</span><span data-l="en">Test page</span><small class="note" data-l="de">Das Webinterface der Uhr ausprobieren – läuft im Browser, alle Werte sind simuliert</small><small class="note" data-l="en">Try the clock's web interface – runs in the browser, all values are simulated</small></span><span>›</span></a>
+ <a class="row" href="https://github.com/HolzHolz123/ESP32_OscilloscopeClock"><span><span data-l="de">GitHub – Version 2.0</span><span data-l="en">GitHub – version 2.0</span><small class="note" data-l="de">Diese Firmware mit Quellcode, Anleitung und Werkzeugen</small><small class="note" data-l="en">This firmware with source code, guide and tools</small></span><span>›</span></a>
+ <a class="row" href="https://github.com/maurohh/ESP32_OscilloscopeClock"><span><span data-l="de">GitHub – Original</span><span data-l="en">GitHub – original</span><small class="note" data-l="de">Die ursprüngliche ESP32 Oscilloscope Clock von Mauro Pintus (2018), nach deren Idee diese Version entstand</small><small class="note" data-l="en">The original ESP32 Oscilloscope Clock by Mauro Pintus (2018) that inspired this version</small></span><span>›</span></a>
+</section></div>
 </main>
 <script>
 const $=id=>document.getElementById(id),root=document.documentElement;
@@ -154,11 +149,13 @@ $('menuBtn').onclick=()=>menu(!$('nav').classList.contains('open'));$('shade').o
 document.addEventListener('keydown',e=>{if(e.key==='Escape')menu(false)});
 // Abschnitte: Klick springt (Überschrift landet unter der Titelzeile), Menü schließt
 const navA=[...document.querySelectorAll('#nav a[href^="#"]')],navT=navA.map(a=>document.querySelector(a.getAttribute('href')));
-document.querySelectorAll('#nav a').forEach(a=>a.addEventListener('click',()=>menu(false)));
+let jumped=-1,jumpAt=0;   // nach einem Sprung aus dem Menü den angesprungenen Abschnitt markieren
+document.querySelectorAll('#nav a').forEach(a=>a.addEventListener('click',()=>{menu(false);jumped=navA.indexOf(a);jumpAt=Date.now();setTimeout(spy,50)}));
 // Aktuellen Abschnitt markieren: der letzte, dessen Überschrift den oberen Bereich unter der
 // Titelzeile erreicht hat (so stimmt es auch bei kurzen Abschnitten und nach einem Sprung)
 function spy(){const lim=document.querySelector('h1').getBoundingClientRect().bottom+100;let k=0;navT.forEach((t,i)=>{if(t.getBoundingClientRect().top<=lim)k=i});
  const se=document.scrollingElement;if(se.scrollTop+innerHeight>=se.scrollHeight-2)k=navT.length-1;   // ganz unten: letzter Abschnitt
+ if(jumped>=0&&Date.now()-jumpAt<800)k=jumped;
  navA.forEach((a,i)=>a.classList.toggle('cur',i===k))}
 addEventListener('scroll',spy,{passive:true});addEventListener('resize',spy);spy();
 // Sprache und Darstellung (im Browser gemerkt)
