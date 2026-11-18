@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Erzeugt die Testseite (Demo) des Webinterfaces: web/demo/scope-clock-demo.html
+"""Erzeugt die Testseite (Demo) des Webinterfaces: docs/demo/index.html
+(veröffentlicht über GitHub Pages: https://holzholz123.github.io/ESP32_OscilloscopeClock/demo/)
 
 Die Testseite ist genau die Webseite, die auf der Uhr liegt (aus webpage.h entpackt),
 ergänzt um eine Demo-Schicht, die die Schnittstellen der Uhr im Browser simuliert.
@@ -24,7 +25,7 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FW = os.path.join(ROOT, 'ESP32_OscilloscopeClock_v2.0')
 DEMO = os.path.join(ROOT, 'web', 'demo')
-OUT = os.path.join(DEMO, 'scope-clock-demo.html')
+OUT = os.path.join(ROOT, 'docs', 'demo', 'index.html')
 sys.path.insert(0, os.path.join(ROOT, 'tools'))
 import gen_webpage  # noqa: E402
 

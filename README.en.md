@@ -12,7 +12,7 @@ adapted for this hardware: **ESP32-WROOM-32U DevKitC V4**, **Waveshare 2.42" OLE
 
 **Build and wiring: [HARDWARE.en.md](HARDWARE.en.md)** · **Software design: [SOFTWARE.en.md](SOFTWARE.en.md)**
 
-**Test page of the web interface without a clock: [web/demo/scope-clock-demo.html](web/demo/scope-clock-demo.html)** – download it and open it in a browser; all values are simulated.
+**Test page of the web interface without a clock: [https://holzholz123.github.io/ESP32_OscilloscopeClock/demo/](https://holzholz123.github.io/ESP32_OscilloscopeClock/demo/)** – runs right in the browser, all values are simulated (file: [docs/demo/index.html](docs/demo/index.html)). Project page: [https://holzholz123.github.io/ESP32_OscilloscopeClock/](https://holzholz123.github.io/ESP32_OscilloscopeClock/)
 
 Web interface, OLED and log can be switched between German and English („Sprache“ / “Language”).
 This documentation quotes the German labels and adds the English label in parentheses, e.g.

@@ -12,7 +12,7 @@ Hardware angepasst: **ESP32-WROOM-32U DevKitC V4**, **Waveshare 2.42" OLED (SPI)
 
 **Aufbau und Verdrahtung: [HARDWARE.md](HARDWARE.md)** · **Aufbau der Software: [SOFTWARE.md](SOFTWARE.md)**
 
-**Testseite des Webinterfaces ohne Uhr: [web/demo/scope-clock-demo.html](web/demo/scope-clock-demo.html)** – herunterladen und im Browser öffnen; alle Werte sind simuliert.
+**Testseite des Webinterfaces ohne Uhr: [https://holzholz123.github.io/ESP32_OscilloscopeClock/demo/](https://holzholz123.github.io/ESP32_OscilloscopeClock/demo/)** – läuft direkt im Browser, alle Werte sind simuliert (Datei: [docs/demo/index.html](docs/demo/index.html)). Projektseite: [https://holzholz123.github.io/ESP32_OscilloscopeClock/](https://holzholz123.github.io/ESP32_OscilloscopeClock/)
 
 ### Inhalt
 - [Bilder](#bilder)
