@@ -5,21 +5,18 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>ESP32 Oscilloscope Clock v2.0</title>
 <meta name="description" content="Vektoruhr für das Oszilloskop im X/Y-Modus mit ESP32, NTP, OLED und Webinterface – Testseite, Dokumentation und Bilder.">
-<!-- Projektseite für GitHub Pages (Quelle: Ordner docs/), aufgebaut wie das Webinterface der Uhr:
-     feste Titelzeile, Seitenmenü, Oszilloskop-Vorschau (Vektordaten aus vectors.json, erzeugt von
-     tools/gen_demo.py), Abschnitte als Karten. Deutsch/Englisch: Texte stehen doppelt (data-l). -->
-<script>try{const m=localStorage.getItem('theme');if(m==='light'||m==='dark'){document.documentElement.dataset.theme=m;document.documentElement.style.colorScheme=m}
- const l=localStorage.getItem('lang');document.documentElement.lang=l==='de'||l==='en'?l:((navigator.language||'de').slice(0,2)==='de'?'de':'en')}catch(e){}</script>
+<!-- Projektseite für GitHub Pages (Quelle: Ordner docs/) im Stil des Webinterfaces: feste Titelzeile
+     mit Sprachumschalter, Abschnitte als Karten. Die interaktive Vorschau gibt es auf der Testseite (demo/).
+     Deutsch/Englisch: Texte stehen doppelt (data-l). Hell/dunkel nach Systemeinstellung. -->
+<script>try{const l=localStorage.getItem('lang');document.documentElement.lang=l==='de'||l==='en'?l:((navigator.language||'de').slice(0,2)==='de'?'de':'en')}catch(e){}</script>
 <style>
 /* Schrift: Raleway (SIL OFL 1.1), verkleinert wie im Webinterface als "ScopeClock Sans";
    selbst gehostet in fonts/ (aus font.h, tools/gen_demo.py) – kein Abruf von Google Fonts */
 @font-face{font-family:'ScopeClock Sans';src:url(fonts/scopeclock-sans-300.woff2) format('woff2');font-weight:300 500;font-display:swap}
 @font-face{font-family:'ScopeClock Sans';src:url(fonts/scopeclock-sans-600.woff2) format('woff2');font-weight:600 700;font-display:swap}
-:root{--scope-bg:transparent;--scope-trace:#0b7a3e;--scope-glow:rgba(11,122,62,.12);--scope-halo:rgba(11,122,62,.35);--scope-grid:rgba(0,0,0,.07);
- --bg:#f2f2f5;--card:#fff;--fg:#000;--mute:#38383d;--line:#e3e3e8;--acc:#0a7d44;--accfg:#fff;
+:root{--bg:#f2f2f5;--card:#fff;--fg:#000;--mute:#38383d;--line:#e3e3e8;--acc:#0a7d44;--accfg:#fff;
  --sans:'ScopeClock Sans',system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--scope-bg:#050805;--scope-trace:#b6ffc4;--scope-glow:rgba(80,255,120,.18);--scope-halo:#3dff6a;--scope-grid:rgba(120,255,140,.08);--bg:#000;--card:#1c1c1e;--fg:#fff;--mute:#d0d0d6;--line:#2c2c2e;--acc:#30d158;--accfg:#04130a}}
-:root[data-theme="dark"]{--scope-bg:#050805;--scope-trace:#b6ffc4;--scope-glow:rgba(80,255,120,.18);--scope-halo:#3dff6a;--scope-grid:rgba(120,255,140,.08);--bg:#000;--card:#1c1c1e;--fg:#fff;--mute:#d0d0d6;--line:#2c2c2e;--acc:#30d158;--accfg:#04130a}
+@media (prefers-color-scheme:dark){:root{--bg:#000;--card:#1c1c1e;--fg:#fff;--mute:#d0d0d6;--line:#2c2c2e;--acc:#30d158;--accfg:#04130a}}
 *{box-sizing:border-box}
 b,strong{font-weight:600}
 body{margin:0;background:var(--bg);color:var(--fg);font:300 16px/1.45 var(--sans);letter-spacing:.01em;
@@ -29,33 +26,14 @@ a{color:var(--acc)}
 main{max-width:640px;margin:0 auto;padding:0 16px 32px}
 @media (min-width:1000px){main{max-width:760px}}
 /* Titelleiste: bleibt oben stehen */
-h1{position:sticky;top:env(safe-area-inset-top);z-index:22;display:flex;align-items:center;justify-content:center;
- min-height:64px;margin:0;padding:0 46px;background:var(--bg);text-align:center;
+h1{position:sticky;top:env(safe-area-inset-top);z-index:22;display:flex;align-items:center;justify-content:flex-start;
+ min-height:64px;margin:0;padding:0 96px 0 4px;background:var(--bg);text-align:left;
  font-size:15px;font-weight:600;color:var(--mute);text-transform:uppercase;letter-spacing:.06em}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top);background:var(--bg);z-index:25}
-/* Oben: Oszilloskop-Vorschau, Punkte, Uhrzeit */
-header{padding:0 0 4px;text-align:center;scroll-margin-top:calc(env(safe-area-inset-top) + 64px)}
-.scope{position:relative}
-.scope canvas{display:block;width:100%;max-width:420px;height:auto;margin:4px auto 0;border-radius:14px;touch-action:pan-y;cursor:grab}
-@media (min-width:700px){.scope canvas{max-width:460px}}
-.dialtag{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);background:var(--card);color:var(--fg);font-size:13px;
- padding:4px 10px;border-radius:8px;border:1px solid var(--line);opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
-.dialtag.show{opacity:1}
-.dots{display:flex;align-items:center;justify-content:center;gap:2px;margin:0 0 4px}
-.dots button{font:inherit;border:0;background:transparent;color:var(--mute);min-height:36px;padding:0 12px;font-size:22px;font-weight:300;cursor:pointer}
-.dots .dot{width:30px;padding:0;display:flex;align-items:center;justify-content:center}
-.dots .dot::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--mute);opacity:.3}
-.dots .dot[aria-current="true"]::before{background:var(--acc);opacity:1;width:10px;height:10px}
-#clock{font:300 50px/1.1 var(--sans);letter-spacing:.02em;margin:4px 0 0}
-#clock i{display:inline-block;width:.62em;font-style:normal;text-align:center}
-#date{color:var(--mute);font-size:21px;margin-top:2px}
-.lead{color:var(--mute);margin:14px 4px 4px}
 .btn{display:flex;align-items:center;justify-content:center;min-height:44px;border-radius:10px;padding:0 16px;margin:12px 0 6px;
  background:var(--acc);color:var(--accfg);font-weight:600;text-decoration:none}
 /* Abschnitte: Überschrift in Großbuchstaben (bleibt unter der Titelleiste stehen), Inhalt als Karte */
-.grp{position:relative}
-h2{position:sticky;top:calc(env(safe-area-inset-top) + 64px);scroll-margin-top:calc(env(safe-area-inset-top) + 64px);
- z-index:20;display:flex;align-items:center;min-height:44px;margin:0;padding:0 4px;background:var(--bg);
+h2{display:flex;align-items:center;min-height:44px;margin:0;padding:0 4px;
  font-size:13px;font-weight:600;color:var(--mute);text-transform:uppercase;letter-spacing:.06em}
 section{background:var(--card);border-radius:14px;margin:0 0 14px;padding:6px 16px}
 .row{display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:44px;border-top:1px solid var(--line);padding:8px 0;color:var(--fg);text-decoration:none}
@@ -70,54 +48,19 @@ figure img{width:100%;height:auto;display:block;border-radius:8px}
 .svg img{background:#fff}
 figcaption{font-size:13px;color:var(--mute);margin-top:8px}
 footer{font-size:13px;color:var(--mute);padding:8px 4px}
-/* Seitenmenü */
-#menuBtn{position:fixed;top:calc(env(safe-area-inset-top) + 10px);left:calc(env(safe-area-inset-left) + 10px);z-index:30;
- width:44px;height:44px;padding:0;margin:0;border-radius:12px;background:var(--card);color:var(--fg);
- border:1px solid var(--line);font:22px/1 var(--sans);box-shadow:0 2px 8px rgba(0,0,0,.15);cursor:pointer}
-#nav{position:fixed;top:0;bottom:0;left:0;z-index:40;width:min(78vw,280px);background:var(--card);
- padding:calc(env(safe-area-inset-top) + 16px) 12px 16px calc(env(safe-area-inset-left) + 12px);
- transform:translateX(-105%);transition:transform .25s ease;box-shadow:2px 0 16px rgba(0,0,0,.25);overflow-y:auto}
-#nav.open{transform:none}
-#nav h3{font-size:13px;color:var(--mute);text-transform:uppercase;letter-spacing:.06em;margin:4px 8px 12px}
-#nav a{display:flex;align-items:center;min-height:48px;padding:0 12px;border-radius:10px;color:var(--fg);text-decoration:none;font-weight:600}
-#nav a:hover,#nav a.cur{background:var(--bg)}#nav a.cur{color:var(--acc)}
-#nav .navlang{margin:16px 12px 0;padding-top:12px;border-top:1px solid var(--line)}
-#nav label{display:block;color:var(--mute);font-size:14px;margin:0 0 6px}
-#nav select{font:inherit;font-size:16px;width:100%;min-height:44px;padding:0 10px;margin-bottom:6px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--fg)}
-#shade{position:fixed;inset:0;z-index:35;background:rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .25s}
-#shade.open{opacity:1;pointer-events:auto}
-#prog{position:fixed;top:0;left:0;right:0;height:3px;z-index:35;background:var(--acc);transform:scaleX(0);transform-origin:0 0;pointer-events:none}
+/* Sprachumschalter rechts in der Titelleiste */
+.lang{position:fixed;top:calc(env(safe-area-inset-top) + 14px);right:calc(env(safe-area-inset-right) + 12px);z-index:30;display:flex}
+.lang button{font:600 13px/1 var(--sans);letter-spacing:.04em;min-height:36px;padding:0 10px;border:1px solid var(--line);background:var(--card);color:var(--mute);cursor:pointer}
+.lang button:first-child{border-radius:10px 0 0 10px}.lang button:last-child{border-radius:0 10px 10px 0;border-left:0}
+.lang button[aria-pressed="true"]{background:var(--acc);border-color:var(--acc);color:var(--accfg)}
 /* Sprache: jeweils die andere ausblenden */
 html[lang="de"] [data-l="en"],html[lang="en"] [data-l="de"]{display:none!important}
 </style>
 </head>
 <body>
-<button id="menuBtn" aria-label="Menü" aria-controls="nav" aria-expanded="false">☰</button>
-<nav id="nav" aria-hidden="true">
- <h3><span data-l="de">Abschnitte</span><span data-l="en">Sections</span></h3>
- <a href="#uhr"><span data-l="de">Uhr</span><span data-l="en">Clock</span></a>
- <a href="#projekt-h"><span data-l="de">Projekt</span><span data-l="en">Project</span></a>
- <a href="#funktionen-h"><span data-l="de">Funktionen</span><span data-l="en">Features</span></a>
- <a href="#hardware-h">Hardware</a>
- <a href="#bilder-h"><span data-l="de">Bilder</span><span data-l="en">Pictures</span></a>
- <a href="#downloads-h">Downloads</a>
- <div class="navlang"><label for="sLang"><span data-l="de">Sprache</span><span data-l="en">Language</span></label>
-  <select id="sLang"><option value="de">Deutsch</option><option value="en">English</option></select></div>
- <div class="navlang"><label for="sTheme"><span data-l="de">Darstellung</span><span data-l="en">Appearance</span></label>
-  <select id="sTheme"><option value="auto">Automatisch / Automatic</option><option value="light">Hell / Light</option><option value="dark">Dunkel / Dark</option></select></div>
-</nav>
-<div id="shade"></div>
-<div id="prog" aria-hidden="true"></div>
+<div class="lang" role="group" aria-label="Sprache / Language"><button type="button" data-set="de">DE</button><button type="button" data-set="en">EN</button></div>
 <main>
 <h1>ESP32 Oscilloscope Clock</h1>
-
-<header id="uhr">
- <div class="scope"><canvas id="scope" width="512" height="512" role="img" tabindex="0" aria-label="Oszilloskop-Vorschau"></canvas><div class="dialtag" id="dialTag"></div></div>
- <div class="dots"><button type="button" id="dPrev" aria-label="‹">‹</button><span id="dotList" style="display:flex"></span><button type="button" id="dNext" aria-label="›">›</button></div>
- <div id="clock">--:--:--</div><div id="date">&nbsp;</div>
- <p class="lead" data-l="de">So zeichnet die Uhr auf dem Oszilloskop – mit der Uhrzeit dieses Geräts. Über die Vorschau wischen wechselt das Zifferblatt.</p>
- <p class="lead" data-l="en">This is how the clock draws on the oscilloscope – with this device's time. Swipe over the preview to change the dial.</p>
-</header>
 
 <div class="grp"><h2 id="projekt-h"><span data-l="de">Projekt</span><span data-l="en">Project</span></h2>
 <section>
@@ -173,63 +116,10 @@ html[lang="de"] [data-l="en"],html[lang="en"] [data-l="de"]{display:none!importa
 </footer>
 </main>
 <script>
-const $=id=>document.getElementById(id),root=document.documentElement;
-const de=()=>root.lang==='de';
-// ---- Sprache und Darstellung (Seitenmenü) ----
-function setLang(l){root.lang=l;$('sLang').value=l;try{localStorage.setItem('lang',l)}catch(e){}tick(true)}
-$('sLang').value=root.lang;$('sLang').onchange=e=>setLang(e.target.value);
-$('sTheme').value=root.dataset.theme||'auto';
-$('sTheme').onchange=e=>{const m=e.target.value;if(m==='auto'){delete root.dataset.theme;root.style.colorScheme=''}else{root.dataset.theme=m;root.style.colorScheme=m}
- try{localStorage.setItem('theme',m)}catch(x){}draw()};
-matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>draw());
-// ---- Seitenmenü ----
-function menu(o){$('nav').classList.toggle('open',o);$('shade').classList.toggle('open',o);$('menuBtn').setAttribute('aria-expanded',o);
- $('nav').setAttribute('aria-hidden',!o);$('menuBtn').textContent=o?'✕':'☰'}
-$('menuBtn').onclick=()=>menu(!$('nav').classList.contains('open'));$('shade').onclick=()=>menu(false);
-document.addEventListener('keydown',e=>{if(e.key==='Escape')menu(false)});
-const navA=[...document.querySelectorAll('#nav a')],navT=navA.map(a=>document.querySelector(a.getAttribute('href')));
-navA.forEach(a=>a.addEventListener('click',()=>menu(false)));
-// Abschnitt in der Bildschirmmitte im Menü markieren, Fortschrittsbalken oben
-function spy(){const top=document.querySelector('h1').getBoundingClientRect().bottom,mid=(top+innerHeight)/2;let k=0;
- navT.forEach((t,i)=>{const b=t.tagName==='H2'?t.parentNode:t;if(b.getBoundingClientRect().top<=mid)k=i});
- navA.forEach((a,i)=>a.classList.toggle('cur',i===k));
- const se=document.scrollingElement,max=se.scrollHeight-se.clientHeight;$('prog').style.transform='scaleX('+(max>0?Math.min(1,se.scrollTop/max):0)+')'}
-addEventListener('scroll',spy,{passive:true});addEventListener('resize',spy);
-// ---- Oszilloskop-Vorschau: dieselben Vektordaten wie die Uhr (vectors.json) ----
-const DIALS=[['Ziffern 1–12','Numbers 1–12'],['Ziffern 12 · 3 · 6 · 9','Numbers 12 · 3 · 6 · 9'],['Römisch I–XII','Roman I–XII'],['Römisch XII · III · VI · IX','Roman XII · III · VI · IX'],['Nur Striche','Ticks only']];
-const ORDER=[0,1,4,3,2];let V=null,dial=0;
-function colors(){const c=getComputedStyle(root),v=n=>c.getPropertyValue(n).trim();return {bg:v('--scope-bg'),trace:v('--scope-trace'),glow:v('--scope-glow'),halo:v('--scope-halo'),grid:v('--scope-grid')}}
-function draw(){const c=$('scope'),g=c.getContext('2d'),W=c.width,k=W/256,S=colors();
- g.clearRect(0,0,W,W);if(S.bg&&S.bg!=='transparent'){g.fillStyle=S.bg;g.fillRect(0,0,W,W)}
- g.strokeStyle=S.grid;g.lineWidth=1;for(let i=1;i<8;i++){const p=Math.round(i*W/8)+.5;g.beginPath();g.moveTo(p,0);g.lineTo(p,W);g.moveTo(0,p);g.lineTo(W,p);g.stroke()}
- dots();if(!V)return;
- const d=new Date(),h=d.getHours(),m=d.getMinutes(),s=d.getSeconds();
- const groups=[V.dial,V.digits[dial]||[],[V.hr[(h%12)*5+Math.floor(m/12)],V.min[m]],[V.sec[s]]];
- g.lineCap='round';g.lineJoin='round';
- for(const polys of groups)
-  for(const [w,col,blur] of [[5,S.glow,10],[1.8,S.trace,3]]){g.lineWidth=w*k/2;g.strokeStyle=col;g.shadowColor=S.halo;g.shadowBlur=blur;g.beginPath();
-   for(const p of polys){if(!p||p.length<4)continue;g.moveTo(p[0]*k,(255-p[1])*k);for(let i=2;i<p.length;i+=2)g.lineTo(p[i]*k,(255-p[i+1])*k)}g.stroke()}
- g.shadowBlur=0}
-function dots(){const l=$('dotList');if(!l.children.length)for(const st of ORDER){const b=document.createElement('button');b.type='button';b.className='dot';b.dataset.dial=st;b.onclick=()=>setDial(st);l.append(b)}
- for(const b of l.children){b.setAttribute('aria-current',String(+b.dataset.dial===dial));b.setAttribute('aria-label',DIALS[+b.dataset.dial][de()?0:1])}}
-let tagT=0;function setDial(st){dial=st;draw();const e=$('dialTag');e.textContent=DIALS[st][de()?0:1];e.classList.add('show');clearTimeout(tagT);tagT=setTimeout(()=>e.classList.remove('show'),1600)}
-function step(n){setDial(ORDER[(ORDER.indexOf(dial)+n+ORDER.length)%ORDER.length])}
-$('dPrev').onclick=()=>step(-1);$('dNext').onclick=()=>step(1);
-let sx=null,sy=0;const sc=$('scope');
-sc.addEventListener('pointerdown',e=>{sx=e.clientX;sy=e.clientY});
-sc.addEventListener('pointerup',e=>{if(sx===null)return;const dx=e.clientX-sx,dy=e.clientY-sy;sx=null;if(Math.abs(dx)>=40&&Math.abs(dx)>Math.abs(dy)*1.5)step(dx<0?1:-1)});
-sc.addEventListener('pointercancel',()=>{sx=null});
-sc.addEventListener('keydown',e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();step(e.key==='ArrowRight'?1:-1)}});
-// ---- Uhrzeit und Datum (Uhrzeit dieses Geräts), Kalenderwoche nach ISO 8601 ----
-function isoWeek(d){const t=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));const n=t.getUTCDay()||7;t.setUTCDate(t.getUTCDate()+4-n);
- const y=new Date(Date.UTC(t.getUTCFullYear(),0,1));return Math.ceil(((t-y)/864e5+1)/7)}
-let last=-1;
-function tick(force){const d=new Date(),s=d.getSeconds();if(!force&&s===last)return;last=s;const z=v=>String(v).padStart(2,'0');
- $('clock').innerHTML=(z(d.getHours())+':'+z(d.getMinutes())+':'+z(s)).replace(/[0-9]/g,'<i>$&</i>');
- const w=z(isoWeek(d));$('date').textContent=de()?'KW '+w+' – '+z(d.getDate())+'.'+z(d.getMonth()+1)+'.'+d.getFullYear():'Week '+w+' – '+d.getFullYear()+'-'+z(d.getMonth()+1)+'-'+z(d.getDate());
- draw()}
-setInterval(tick,200);tick(true);spy();
-fetch('vectors.json').then(r=>r.json()).then(v=>{V=v;draw()}).catch(()=>{});
+// Sprache umschalten (wird im Browser gemerkt)
+(function(){const root=document.documentElement,btns=document.querySelectorAll('[data-set]');
+ function show(){btns.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.set===root.lang)))}
+ btns.forEach(b=>b.onclick=()=>{root.lang=b.dataset.set;try{localStorage.setItem('lang',root.lang)}catch(e){}show()});show()})();
 </script>
 </body>
 </html>
