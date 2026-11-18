@@ -35,10 +35,6 @@ pictures are screenshots of the page. Photos of the finished device will follow 
 
 <img src="docs/images/oszilloskop_zifferblaetter_en.png" alt="Dials" width="100%">
 
-| OLED in operation | OLED in the setup network | Web interface on a PC |
-|---|---|---|
-| <img src="docs/images/oled_normal_en.png" alt="OLED in operation" width="260"> | <img src="docs/images/oled_setup_en.png" alt="OLED in the setup network" width="260"> | <img src="docs/images/web_pc_dunkel_en.png" alt="Web interface on a PC" width="260"> |
-
 **Web interface on a phone** – start view light and dark, side menu
 
 <img src="docs/images/web_uebersicht_en.png" alt="Web interface on a phone" width="100%">
@@ -47,9 +43,9 @@ pictures are screenshots of the page. Photos of the finished device will follow 
 
 <img src="docs/images/verdrahtung_en.svg" alt="Wiring" width="100%">
 
-| Layout in the enclosure | Division between the two cores |
-|---|---|
-| <img src="docs/images/aufbau_en.svg" alt="Layout in the enclosure" width="330"> | <img src="docs/images/software_en.svg" alt="Software" width="420"> |
+**Division of the firmware between the two cores**
+
+<img src="docs/images/software_en.svg" alt="Software" width="560">
 
 ### Features
 - **Core 1** does nothing but generate the X/Y signals (GPIO25/26) – no pauses, no locks.

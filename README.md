@@ -31,10 +31,6 @@ sind Screenshots der Seite. Fotos des fertigen Geräts folgen nach dem Bau des P
 
 <img src="docs/images/oszilloskop_zifferblaetter.png" alt="Zifferblätter" width="100%">
 
-| OLED im Betrieb | OLED im Setup-WLAN | Webinterface am PC |
-|---|---|---|
-| <img src="docs/images/oled_normal.png" alt="OLED im Betrieb" width="260"> | <img src="docs/images/oled_setup.png" alt="OLED im Setup-WLAN" width="260"> | <img src="docs/images/web_pc_dunkel.png" alt="Webinterface am PC" width="260"> |
-
 **Webinterface auf dem Handy** – Startansicht hell und dunkel, Seitenmenü
 
 <img src="docs/images/web_uebersicht.png" alt="Webinterface auf dem Handy" width="100%">
@@ -43,9 +39,9 @@ sind Screenshots der Seite. Fotos des fertigen Geräts folgen nach dem Bau des P
 
 <img src="docs/images/verdrahtung.svg" alt="Verdrahtung" width="100%">
 
-| Anordnung im Gehäuse | Aufteilung auf die beiden Kerne |
-|---|---|
-| <img src="docs/images/aufbau.svg" alt="Anordnung im Gehäuse" width="330"> | <img src="docs/images/software.svg" alt="Software" width="420"> |
+**Aufteilung der Firmware auf die beiden Kerne**
+
+<img src="docs/images/software.svg" alt="Software" width="560">
 
 ### Was ist neu
 - **Core 1** erzeugt ausschließlich die X/Y-Signale (GPIO25/26) – ohne Pausen, ohne Locks.

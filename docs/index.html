@@ -33,14 +33,11 @@ h2{font-size:22px;margin:44px 0 14px}
 figure{margin:0;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;overflow:hidden}
 figure img{width:100%;height:auto;display:block;border-radius:6px}
 figcaption{font-size:14px;color:var(--mute);margin-top:8px}
-.grid{display:grid;gap:12px}
-.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
-.g2{grid-template-columns:minmax(0,1fr) minmax(0,1.3fr)}
 .wide{margin-bottom:12px}
 .svgbg{background:#fff}
 .note{font-size:14px;color:var(--mute)}
 footer{margin-top:48px;padding-top:16px;border-top:1px solid var(--line);font-size:14px;color:var(--mute)}
-@media (max-width:760px){.hero,.g2,.g3{grid-template-columns:minmax(0,1fr)}.hero{gap:20px}}
+@media (max-width:760px){.hero{grid-template-columns:minmax(0,1fr);gap:20px}}
 html[lang="de"] [data-l="en"],html[lang="en"] [data-l="de"]{display:none!important}
 </style>
 </head>
@@ -89,14 +86,6 @@ html[lang="de"] [data-l="en"],html[lang="en"] [data-l="de"]{display:none!importa
  <figcaption data-l="de">Die fünf Zifferblätter und das Testbild – erzeugt aus den Vektordaten der Firmware</figcaption>
  <figcaption data-l="en">The five dials and the test pattern – rendered from the firmware's vector data</figcaption>
 </figure>
-<div class="grid g3 wide">
- <figure><img src="images/oled_normal.png" alt="OLED" data-l="de"><img src="images/oled_normal_en.png" alt="OLED" data-l="en">
-  <figcaption data-l="de">OLED im Betrieb</figcaption><figcaption data-l="en">OLED in operation</figcaption></figure>
- <figure><img src="images/oled_setup.png" alt="OLED Setup" data-l="de"><img src="images/oled_setup_en.png" alt="OLED setup" data-l="en">
-  <figcaption data-l="de">OLED im Setup-WLAN</figcaption><figcaption data-l="en">OLED in the setup network</figcaption></figure>
- <figure><img src="images/web_pc_dunkel.png" alt="Webinterface" data-l="de"><img src="images/web_pc_dunkel_en.png" alt="Web interface" data-l="en">
-  <figcaption data-l="de">Webinterface am PC</figcaption><figcaption data-l="en">Web interface on a PC</figcaption></figure>
-</div>
 <figure class="wide">
  <img src="images/web_uebersicht.png" alt="Webinterface Handy" data-l="de"><img src="images/web_uebersicht_en.png" alt="Web interface phone" data-l="en">
  <figcaption data-l="de">Webinterface auf dem Handy: hell, dunkel, Seitenmenü</figcaption>
@@ -107,12 +96,10 @@ html[lang="de"] [data-l="en"],html[lang="en"] [data-l="de"]{display:none!importa
  <figcaption data-l="de">Verdrahtung – alle Leitungen in die Schraubklemmen des Breakout-Boards, die Echtzeituhr ist optional</figcaption>
  <figcaption data-l="en">Wiring – all wires into the screw terminals of the breakout board, the real-time clock is optional</figcaption>
 </figure>
-<div class="grid g2">
- <figure class="svgbg"><img src="images/aufbau.svg" alt="Aufbau" data-l="de"><img src="images/aufbau_en.svg" alt="Layout" data-l="en">
-  <figcaption data-l="de">Anordnung im Gehäuse</figcaption><figcaption data-l="en">Layout in the enclosure</figcaption></figure>
- <figure class="svgbg"><img src="images/software.svg" alt="Software" data-l="de"><img src="images/software_en.svg" alt="Software" data-l="en">
-  <figcaption data-l="de">Aufteilung der Firmware auf die beiden Kerne</figcaption><figcaption data-l="en">Division of the firmware between the two cores</figcaption></figure>
-</div>
+<figure class="svgbg" style="max-width:640px">
+ <img src="images/software.svg" alt="Software" data-l="de"><img src="images/software_en.svg" alt="Software" data-l="en">
+ <figcaption data-l="de">Aufteilung der Firmware auf die beiden Kerne</figcaption><figcaption data-l="en">Division of the firmware between the two cores</figcaption>
+</figure>
 <p class="note" data-l="de">Oszilloskop- und OLED-Bilder sind am PC aus den echten Firmware-Daten erzeugt, die Webinterface-Bilder sind Screenshots. Fotos des fertigen Geräts folgen.</p>
 <p class="note" data-l="en">Oscilloscope and OLED pictures were generated on a PC from the real firmware data, the web interface pictures are screenshots. Photos of the finished device will follow.</p>
 
