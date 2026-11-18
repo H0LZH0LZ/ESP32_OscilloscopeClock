@@ -99,7 +99,7 @@ Keeps date and time with its coin cell even after a power failure without intern
 | 32K, SQW | do not connect |
 
 The module's 6-pin and 4-pin headers are connected through – each wire can go to whichever header
-fits better (in the wiring diagram VCC goes to the 4-pin one).
+fits better.
 
 - Switch on in the web interface: „Einstellungen“ → „Uhrzeit“ → „Echtzeituhr (RTC)“ (off by default). The status
   then shows “Running”, “Not found” or “Time invalid”.

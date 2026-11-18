@@ -99,7 +99,7 @@ Hält Datum und Uhrzeit mit Knopfzelle auch nach einem Stromausfall ohne Interne
 | 32K, SQW | nicht anschließen |
 
 Die 6-polige und die 4-polige Stiftleiste des Moduls sind durchverbunden – jede Leitung kann an
-der Leiste angeschlossen werden, die besser passt (im Schaltbild VCC an der 4-poligen).
+der Leiste angeschlossen werden, die besser passt.
 
 - Einschalten im Webinterface: „Einstellungen“ → „Uhrzeit“ → „Echtzeituhr (RTC)“ (ab Werk aus). Der Status
   zeigt dann „Läuft“, „Nicht gefunden“ oder „Zeit ungültig“.

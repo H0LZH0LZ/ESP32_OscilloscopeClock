@@ -156,6 +156,7 @@ def verdrahtung():
         wire([(X1 + 10, y(rp)), (cx, y(rp)), (cx, pins[n]), (OX - 6, pins[n])], col)
     # VCC von 3V3 (links oben) über die Platine
     wire([(X0 - 10, y(1)), (360, y(1)), (360, 62), (750, 62), (750, pins['VCC']), (OX - 6, pins['VCC'])], '#d62828')
+    a("<circle cx='750' cy='62' r='4' fill='#d62828'/>")                     # Abzweig 3V3 → RTC VCC
     # Antenne
     a(f"<path d='M{X1-60},{Y0-14} C{X1-60},40 {X1+90},70 {X1+120},40' fill='none' stroke='#777' stroke-width='4'/>")
     a(f"<rect x='{X1+112}' y='24' width='22' height='22' rx='3' fill='#d8b14a' stroke='#8a6d1d'/>")
@@ -170,7 +171,7 @@ def verdrahtung():
     a(f"<text x='{RX-18}' y='{RY-28}' font-size='12' font-weight='bold' fill='#444'>Optional: Echtzeituhr DS3231 (ZS-042)</text>")
     a(f"<text x='{RX-18}' y='{RY-12}' font-size='11' fill='#444'>Knopfzelle CR2032 auf der Rückseite</text>")
     a(f"<rect x='{RX}' y='{RY}' width='{rw}' height='{rh}' rx='5' fill='#1f5fbf' stroke='#163a78' stroke-width='2'/>")
-    for hx, hy in ((RX+rw-62, RY+14), (RX+rw-62, RY+rh-12)):
+    for hx, hy in ((RX+rw-14, RY+14), (RX+rw-14, RY+rh-14)):
         a(f"<circle cx='{hx}' cy='{hy}' r='6' fill='#fff' stroke='#c9a227' stroke-width='2'/>")
     a(f"<rect x='{RX+70}' y='{RY+28}' width='84' height='44' rx='2' fill='#1a1a1a'/>")
     for k in range(8):
@@ -192,25 +193,20 @@ def verdrahtung():
     for n, rp, col, vx, hy, dx2 in (('SCL', 3, SCL, 634, 450, 748), ('SDA', 6, SDA, 626, 462, 740), ('GND', 7, '#111', 618, 474, 732)):
         terminal(X1, y(rp), col)
         wire([(X1 + 10, y(rp)), (vx, y(rp)), (vx, hy), (dx2, hy), (dx2, rpins[n]), (RX - 6, rpins[n])], col, True)
-    # 4-polige Stiftleiste auf der anderen Seite (SCL, SDA, VCC, GND – durchverbunden)
-    a(f"<rect x='{RX+rw-18}' y='{rpins['SCL']-10}' width='14' height='{rpins['GND']-rpins['SCL']+20}' fill='#111' rx='2'/>")
-    for n in ('SCL', 'SDA', 'VCC', 'GND'):
-        py = rpins[n]
-        a(f"<rect x='{RX+rw-16}' y='{py-5}' width='10' height='10' fill='#222' stroke='#555'/><rect x='{RX+rw-6}' y='{py-2}' width='20' height='4' fill='#d4af37'/>")
-        a(f"<text x='{RX+rw-22}' y='{py+4}' text-anchor='end' font-size='9' fill='#cfe0ff'>{n}</text>")
-    # VCC von 3V3: rote Leitung oben verlängert, rechts gerade nach unten an VCC der 4-poligen Leiste
-    wire([(750, 62), (1096, 62), (1096, rpins['VCC']), (RX + rw + 14, rpins['VCC'])], '#d62828', True)
+    # VCC von 3V3: von der roten Leitung oben gerade nach unten (zwischen Board und OLED),
+    # dann von links an VCC – wie die übrigen RTC-Leitungen
+    wire([(750, 62), (756, 62), (756, rpins['VCC']), (RX - 6, rpins['VCC'])], '#d62828', True)
     leg = [('#d62828', '3V3 → OLED VCC'), ('#111', 'GND (Masse)'), ('#e09f00', 'P25 (DAC1) → X'),
            ('#1d6fd6', 'P26 (DAC2) → Y'), ('#2a9d48', 'P23 → DIN'), ('#7b3fb5', 'P18 → CLK'),
            ('#d1495b', 'P5 → CS'), ('#00a6a6', 'P17 → DC'), ('#a0522d', 'P4 → RST'),
            (SDA, 'P21 → SDA (RTC)'), (SCL, 'P22 → SCL (RTC)')]
     for k, (c, t) in enumerate(leg):
-        lx, ly = 760 + (k // 6) * 170, 420 + (k % 6) * 22
+        lx, ly = 772 + (k // 6) * 166, 420 + (k % 6) * 22
         a(f"<line x1='{lx}' y1='{ly}' x2='{lx+26}' y2='{ly}' stroke='{c}' stroke-width='4'/><text x='{lx+32}' y='{ly+4}' font-size='11'>{t}</text>")
-    a("<line x1='930' y1='552' x2='956' y2='552' stroke='#555' stroke-width='3' stroke-dasharray='6 4'/><text x='962' y='556' font-size='11'>optional</text>")
-    a("<text x='760' y='576' font-size='11' fill='#444'>Beschriftung wie auf dem Breakout-Board (P25 = GPIO25 …).</text>")
-    a("<text x='760' y='592' font-size='11' fill='#444'>P0 = BOOT-Taster – dort nichts anschließen.</text>")
-    a("<text x='760' y='608' font-size='11' fill='#444'>220 Ω in die rote Ader jedes Pigtails eingelötet.</text>")
+    a("<line x1='938' y1='552' x2='964' y2='552' stroke='#555' stroke-width='3' stroke-dasharray='6 4'/><text x='970' y='556' font-size='11'>optional</text>")
+    a("<text x='772' y='576' font-size='11' fill='#444'>Beschriftung wie auf dem Breakout-Board (P25 = GPIO25 …).</text>")
+    a("<text x='772' y='592' font-size='11' fill='#444'>P0 = BOOT-Taster – dort nichts anschließen.</text>")
+    a("<text x='772' y='608' font-size='11' fill='#444'>220 Ω in die rote Ader jedes Pigtails eingelötet.</text>")
     save('verdrahtung.svg', 1110, 860, '\n'.join(s))
 
 # ---------------------------------------------------------------- Bohrplan 1:1
