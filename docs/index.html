@@ -5,10 +5,11 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>ESP32 Oscilloscope Clock v2.0</title>
 <meta name="description" content="Vektoruhr für das Oszilloskop im X/Y-Modus mit ESP32, NTP, OLED und Webinterface – Testseite, Dokumentation und Bilder.">
-<!-- Projektseite für GitHub Pages (Quelle: Ordner docs/) im Stil des Webinterfaces: feste Titelzeile
-     mit Sprachumschalter, Abschnitte als Karten. Die interaktive Vorschau gibt es auf der Testseite (demo/).
-     Deutsch/Englisch: Texte stehen doppelt (data-l). Hell/dunkel nach Systemeinstellung. -->
-<script>try{const l=localStorage.getItem('lang');document.documentElement.lang=l==='de'||l==='en'?l:((navigator.language||'de').slice(0,2)==='de'?'de':'en')}catch(e){}</script>
+<!-- Projektseite für GitHub Pages (Quelle: Ordner docs/) im Stil des Webinterfaces: feste Titelzeile,
+     Seitenmenü (Abschnitte, Sprache, Darstellung), Abschnitte als Karten. Die interaktive Vorschau gibt es
+     auf der Testseite (demo/). Deutsch/Englisch: Texte stehen doppelt (data-l). -->
+<script>try{const m=localStorage.getItem('theme');if(m==='light'||m==='dark'){document.documentElement.dataset.theme=m;document.documentElement.style.colorScheme=m}
+ const l=localStorage.getItem('lang');document.documentElement.lang=l==='de'||l==='en'?l:((navigator.language||'de').slice(0,2)==='de'?'de':'en')}catch(e){}</script>
 <style>
 /* Schrift: Raleway (SIL OFL 1.1), verkleinert wie im Webinterface als "ScopeClock Sans";
    selbst gehostet in fonts/ (aus font.h, tools/gen_demo.py) – kein Abruf von Google Fonts */
@@ -16,7 +17,8 @@
 @font-face{font-family:'ScopeClock Sans';src:url(fonts/scopeclock-sans-600.woff2) format('woff2');font-weight:600 700;font-display:swap}
 :root{--bg:#f2f2f5;--card:#fff;--fg:#000;--mute:#38383d;--line:#e3e3e8;--acc:#0a7d44;--accfg:#fff;
  --sans:'ScopeClock Sans',system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
-@media (prefers-color-scheme:dark){:root{--bg:#000;--card:#1c1c1e;--fg:#fff;--mute:#d0d0d6;--line:#2c2c2e;--acc:#30d158;--accfg:#04130a}}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#000;--card:#1c1c1e;--fg:#fff;--mute:#d0d0d6;--line:#2c2c2e;--acc:#30d158;--accfg:#04130a}}
+:root[data-theme="dark"]{--bg:#000;--card:#1c1c1e;--fg:#fff;--mute:#d0d0d6;--line:#2c2c2e;--acc:#30d158;--accfg:#04130a}
 *{box-sizing:border-box}
 b,strong{font-weight:600}
 body{margin:0;background:var(--bg);color:var(--fg);font:300 16px/1.45 var(--sans);letter-spacing:.01em;
@@ -26,14 +28,14 @@ a{color:var(--acc)}
 main{max-width:640px;margin:0 auto;padding:0 16px 32px}
 @media (min-width:1000px){main{max-width:760px}}
 /* Titelleiste: bleibt oben stehen */
-h1{position:sticky;top:env(safe-area-inset-top);z-index:22;display:flex;align-items:center;justify-content:flex-start;
- min-height:64px;margin:0;padding:0 96px 0 4px;background:var(--bg);text-align:left;
+h1{position:sticky;top:env(safe-area-inset-top);z-index:22;display:flex;align-items:center;justify-content:center;
+ min-height:64px;margin:0;padding:0 46px;background:var(--bg);text-align:center;
  font-size:15px;font-weight:600;color:var(--mute);text-transform:uppercase;letter-spacing:.06em}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top);background:var(--bg);z-index:25}
 .btn{display:flex;align-items:center;justify-content:center;min-height:44px;border-radius:10px;padding:0 16px;margin:12px 0 6px;
  background:var(--acc);color:var(--accfg);font-weight:600;text-decoration:none}
 /* Abschnitte: Überschrift in Großbuchstaben (bleibt unter der Titelleiste stehen), Inhalt als Karte */
-h2{display:flex;align-items:center;min-height:44px;margin:0;padding:0 4px;
+h2{display:flex;align-items:center;min-height:44px;margin:0;padding:0 4px;scroll-margin-top:calc(env(safe-area-inset-top) + 64px);
  font-size:13px;font-weight:600;color:var(--mute);text-transform:uppercase;letter-spacing:.06em}
 section{background:var(--card);border-radius:14px;margin:0 0 14px;padding:6px 16px}
 .row{display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:44px;border-top:1px solid var(--line);padding:8px 0;color:var(--fg);text-decoration:none}
@@ -48,17 +50,45 @@ figure img{width:100%;height:auto;display:block;border-radius:8px}
 .svg img{background:#fff}
 figcaption{font-size:13px;color:var(--mute);margin-top:8px}
 footer{font-size:13px;color:var(--mute);padding:8px 4px}
-/* Sprachumschalter rechts in der Titelleiste */
-.lang{position:fixed;top:calc(env(safe-area-inset-top) + 14px);right:calc(env(safe-area-inset-right) + 12px);z-index:30;display:flex}
-.lang button{font:600 13px/1 var(--sans);letter-spacing:.04em;min-height:36px;padding:0 10px;border:1px solid var(--line);background:var(--card);color:var(--mute);cursor:pointer}
-.lang button:first-child{border-radius:10px 0 0 10px}.lang button:last-child{border-radius:0 10px 10px 0;border-left:0}
-.lang button[aria-pressed="true"]{background:var(--acc);border-color:var(--acc);color:var(--accfg)}
+/* Seitenmenü wie im Webinterface */
+#menuBtn{position:fixed;top:calc(env(safe-area-inset-top) + 10px);left:calc(env(safe-area-inset-left) + 10px);z-index:30;
+ width:44px;height:44px;padding:0;margin:0;border-radius:12px;background:var(--card);color:var(--fg);
+ border:1px solid var(--line);font:22px/1 var(--sans);box-shadow:0 2px 8px rgba(0,0,0,.15);cursor:pointer}
+#nav{position:fixed;top:0;bottom:0;left:0;z-index:40;width:min(78vw,280px);background:var(--card);
+ padding:calc(env(safe-area-inset-top) + 16px) 12px 16px calc(env(safe-area-inset-left) + 12px);
+ transform:translateX(-105%);transition:transform .25s ease;box-shadow:2px 0 16px rgba(0,0,0,.25);overflow-y:auto}
+#nav.open{transform:none}
+#nav h3{font-size:13px;color:var(--mute);text-transform:uppercase;letter-spacing:.06em;margin:4px 8px 12px}
+#nav a{display:flex;align-items:center;min-height:48px;padding:0 12px;border-radius:10px;color:var(--fg);text-decoration:none;font-weight:600}
+#nav a:hover,#nav a.cur{background:var(--bg)}#nav a.cur{color:var(--acc)}
+#nav a.sub{min-height:40px;padding-left:28px;font-weight:400;font-size:15px;color:var(--mute)}
+#nav .navopt{margin:16px 12px 0;padding-top:12px;border-top:1px solid var(--line)}
+#nav label{display:block;color:var(--mute);font-size:14px;margin:0 0 6px}
+#nav select{font:inherit;font-size:16px;width:100%;min-height:44px;padding:0 10px;margin-bottom:6px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--fg)}
+#shade{position:fixed;inset:0;z-index:35;background:rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .25s}
+#shade.open{opacity:1;pointer-events:auto}
 /* Sprache: jeweils die andere ausblenden */
 html[lang="de"] [data-l="en"],html[lang="en"] [data-l="de"]{display:none!important}
 </style>
 </head>
 <body>
-<div class="lang" role="group" aria-label="Sprache / Language"><button type="button" data-set="de">DE</button><button type="button" data-set="en">EN</button></div>
+<button id="menuBtn" aria-label="Menü / Menu" aria-controls="nav" aria-expanded="false">☰</button>
+<nav id="nav" aria-hidden="true">
+ <h3><span data-l="de">Abschnitte</span><span data-l="en">Sections</span></h3>
+ <a href="#projekt-h"><span data-l="de">Projekt</span><span data-l="en">Project</span></a>
+ <a href="#funktionen-h"><span data-l="de">Funktionen</span><span data-l="en">Features</span></a>
+ <a href="#hardware-h">Hardware</a>
+ <a href="#bilder-h"><span data-l="de">Bilder</span><span data-l="en">Pictures</span></a>
+ <a href="#downloads-h">Downloads</a>
+ <h3 style="margin-top:20px"><span data-l="de">Links</span><span data-l="en">Links</span></h3>
+ <a class="sub" href="demo/"><span data-l="de">Testseite (Webinterface)</span><span data-l="en">Test page (web interface)</span></a>
+ <a class="sub" href="https://github.com/HolzHolz123/ESP32_OscilloscopeClock">GitHub</a>
+ <div class="navopt"><label for="sLang"><span data-l="de">Sprache</span><span data-l="en">Language</span></label>
+  <select id="sLang"><option value="de">Deutsch</option><option value="en">English</option></select></div>
+ <div class="navopt"><label for="sTheme"><span data-l="de">Darstellung</span><span data-l="en">Appearance</span></label>
+  <select id="sTheme"><option value="auto">Automatisch / Automatic</option><option value="light">Hell / Light</option><option value="dark">Dunkel / Dark</option></select></div>
+</nav>
+<div id="shade"></div>
 <main>
 <h1>ESP32 Oscilloscope Clock</h1>
 
@@ -116,10 +146,25 @@ html[lang="de"] [data-l="en"],html[lang="en"] [data-l="de"]{display:none!importa
 </footer>
 </main>
 <script>
-// Sprache umschalten (wird im Browser gemerkt)
-(function(){const root=document.documentElement,btns=document.querySelectorAll('[data-set]');
- function show(){btns.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.set===root.lang)))}
- btns.forEach(b=>b.onclick=()=>{root.lang=b.dataset.set;try{localStorage.setItem('lang',root.lang)}catch(e){}show()});show()})();
+const $=id=>document.getElementById(id),root=document.documentElement;
+// Seitenmenü öffnen/schließen
+function menu(o){$('nav').classList.toggle('open',o);$('shade').classList.toggle('open',o);$('menuBtn').setAttribute('aria-expanded',o);
+ $('nav').setAttribute('aria-hidden',!o);$('menuBtn').textContent=o?'✕':'☰'}
+$('menuBtn').onclick=()=>menu(!$('nav').classList.contains('open'));$('shade').onclick=()=>menu(false);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')menu(false)});
+// Abschnitte: Klick springt (Überschrift landet unter der Titelzeile), Menü schließt
+const navA=[...document.querySelectorAll('#nav a[href^="#"]')],navT=navA.map(a=>document.querySelector(a.getAttribute('href')));
+document.querySelectorAll('#nav a').forEach(a=>a.addEventListener('click',()=>menu(false)));
+// Aktuellen Abschnitt markieren: der Abschnitt, dessen Karte die Bildschirmmitte enthält
+function spy(){const mid=innerHeight/2;let k=0;navT.forEach((t,i)=>{if(t.getBoundingClientRect().top<=mid)k=i});
+ const se=document.scrollingElement;if(se.scrollTop+innerHeight>=se.scrollHeight-2)k=navT.length-1;   // ganz unten: letzter Abschnitt
+ navA.forEach((a,i)=>a.classList.toggle('cur',i===k))}
+addEventListener('scroll',spy,{passive:true});addEventListener('resize',spy);spy();
+// Sprache und Darstellung (im Browser gemerkt)
+$('sLang').value=root.lang;$('sLang').onchange=e=>{root.lang=e.target.value;try{localStorage.setItem('lang',root.lang)}catch(x){}};
+$('sTheme').value=root.dataset.theme||'auto';
+$('sTheme').onchange=e=>{const m=e.target.value;if(m==='auto'){delete root.dataset.theme;root.style.colorScheme=''}else{root.dataset.theme=m;root.style.colorScheme=m}
+ try{localStorage.setItem('theme',m)}catch(x){}};
 </script>
 </body>
 </html>
