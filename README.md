@@ -4,15 +4,17 @@
 
 <p align="center"><img src="docs/images/oszilloskop_uhr.png" alt="Die Uhr auf dem Oszilloskop" width="380"></p>
 
-Vektoruhr für das Oszilloskop im X/Y-Modus, nach einer Idee von Mauro Pintus (siehe [Herkunft](#herkunft)), für folgende
-Hardware angepasst: **[ESP32-WROOM-32U DevKitC V4](https://www.amazon.de/dp/B0F65G3V81)**, **[Waveshare 2.42" OLED](https://www.amazon.de/dp/B0CL6WMHJN) (SPI, optional)**, externe
-[2,4-GHz-Antenne](https://www.amazon.de/dp/B086JCJMSN), [BNC-Ausgänge](https://de.aliexpress.com/item/1005006318978533.html) und ein [ABS-Gehäuse](https://www.amazon.de/dp/B0B5RGNNXV). Alle Teile mit Links: [HARDWARE.md](HARDWARE.md).
+Vektoruhr für das Oszilloskop im X/Y-Modus, nach einer Idee von Mauro Pintus (siehe [Herkunft](#herkunft)).
+Angepasst für einen ESP32-WROOM-32U DevKitC V4 mit externer Antenne, BNC-Ausgängen, ABS-Gehäuse und
+optionalem 2,42"-OLED.
 
-**Ausführliche Dokumentation mit Aufbauanleitung, Bildern und Bohrplan: [docs/ESP32_Oscilloscope_Clock_Dokumentation.pdf](docs/ESP32_Oscilloscope_Clock_Dokumentation.pdf) (English: [docs/ESP32_Oscilloscope_Clock_Documentation.pdf](docs/ESP32_Oscilloscope_Clock_Documentation.pdf))**
-
-**Aufbau und Verdrahtung: [HARDWARE.md](HARDWARE.md)** · **Aufbau der Software: [SOFTWARE.md](SOFTWARE.md)**
-
-**Testseite des Webinterfaces ohne Uhr: [https://holzholz123.github.io/ESP32_OscilloscopeClock/demo/](https://holzholz123.github.io/ESP32_OscilloscopeClock/demo/)** – läuft direkt im Browser, alle Werte sind simuliert (Datei: [docs/demo/index.html](docs/demo/index.html)). Projektseite: [https://holzholz123.github.io/ESP32_OscilloscopeClock/](https://holzholz123.github.io/ESP32_OscilloscopeClock/)
+### Links & Dokumente
+- **[Projektseite](https://holzholz123.github.io/ESP32_OscilloscopeClock/)** – Überblick und komplette Dokumentation im Browser
+- **[Testseite](https://holzholz123.github.io/ESP32_OscilloscopeClock/demo/)** – das Webinterface ausprobieren, alle Werte sind simuliert
+- **[Dokumentation (PDF)](docs/ESP32_Oscilloscope_Clock_Dokumentation.pdf)** – Aufbauanleitung, Bohrplan 1:1, Bedienung · [English](docs/ESP32_Oscilloscope_Clock_Documentation.pdf)
+- **[Hardware](HARDWARE.md)** – Teileliste mit Links, Verdrahtung, Gehäuse
+- **[Software](SOFTWARE.md)** – Aufbau der Firmware
+- **[Original](https://github.com/maurohh/ESP32_OscilloscopeClock)** – ESP32 Oscilloscope Clock von Mauro Pintus
 
 ### Inhalt
 - [Bilder](#bilder)

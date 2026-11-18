@@ -4,15 +4,17 @@
 
 <p align="center"><img src="docs/images/oszilloskop_uhr.png" alt="The clock on the oscilloscope" width="380"></p>
 
-A vector clock for an oscilloscope in X/Y mode, based on an idea by Mauro Pintus (see [Origin](#origin)),
-adapted for this hardware: **[ESP32-WROOM-32U DevKitC V4](https://www.amazon.de/dp/B0F65G3V81)**, **[Waveshare 2.42" OLED](https://www.amazon.de/dp/B0CL6WMHJN) (SPI, optional)**, external
-[2.4 GHz antenna](https://www.amazon.de/dp/B086JCJMSN), [BNC outputs](https://de.aliexpress.com/item/1005006318978533.html) and an [ABS enclosure](https://www.amazon.de/dp/B0B5RGNNXV). All parts with links: [HARDWARE.en.md](HARDWARE.en.md).
+A vector clock for an oscilloscope in X/Y mode, based on an idea by Mauro Pintus (see [Origin](#origin)).
+Adapted for an ESP32-WROOM-32U DevKitC V4 with external antenna, BNC outputs, ABS enclosure and an
+optional 2.42" OLED.
 
-**Full documentation with assembly guide, pictures and drilling template: [docs/ESP32_Oscilloscope_Clock_Documentation.pdf](docs/ESP32_Oscilloscope_Clock_Documentation.pdf)** (German version: [docs/ESP32_Oscilloscope_Clock_Dokumentation.pdf](docs/ESP32_Oscilloscope_Clock_Dokumentation.pdf))
-
-**Build and wiring: [HARDWARE.en.md](HARDWARE.en.md)** · **Software design: [SOFTWARE.en.md](SOFTWARE.en.md)**
-
-**Test page of the web interface without a clock: [https://holzholz123.github.io/ESP32_OscilloscopeClock/demo/](https://holzholz123.github.io/ESP32_OscilloscopeClock/demo/)** – runs right in the browser, all values are simulated (file: [docs/demo/index.html](docs/demo/index.html)). Project page: [https://holzholz123.github.io/ESP32_OscilloscopeClock/](https://holzholz123.github.io/ESP32_OscilloscopeClock/)
+### Links & documents
+- **[Project page](https://holzholz123.github.io/ESP32_OscilloscopeClock/)** – overview and full documentation in the browser
+- **[Test page](https://holzholz123.github.io/ESP32_OscilloscopeClock/demo/)** – try the web interface, all values are simulated
+- **[Documentation (PDF)](docs/ESP32_Oscilloscope_Clock_Documentation.pdf)** – assembly guide, 1:1 drilling template, operation · [German](docs/ESP32_Oscilloscope_Clock_Dokumentation.pdf)
+- **[Hardware](HARDWARE.en.md)** – parts list with links, wiring, enclosure
+- **[Software](SOFTWARE.en.md)** – firmware design
+- **[Original](https://github.com/maurohh/ESP32_OscilloscopeClock)** – ESP32 Oscilloscope Clock by Mauro Pintus
 
 Web interface, OLED and log can be switched between German and English („Sprache“ / “Language”).
 This documentation quotes the German labels and adds the English label in parentheses, e.g.
