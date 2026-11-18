@@ -11,7 +11,8 @@ Bestandteile:
   web/demo/mock-api.js       simuliert /api/status, /api/log, /api/wifi, /api/time, /api/vectors …
   web/demo/mock-settings.js  simuliert /api/settings und /api/settings/reset
   web/demo/demo-ui.js        Knopf "Setup-WLAN simulieren" im Demo-Hinweis
-Die Vektordaten kommen aus tools/gen_vectors.py (wie vectors.h), die Schriften aus font.h.
+Die Vektordaten kommen aus tools/gen_vectors.py (wie vectors.h), die Schriften aus font.h
+(zusätzlich als docs/fonts/scopeclock-sans-300/600.woff2 für die Projektseite).
 
 Aufruf (nach tools/gen_webpage.py):  python3 tools/gen_demo.py
 """
@@ -69,6 +70,11 @@ def main():
 
     # 3. Schriften aus font.h einbetten (auf der Uhr: /font.woff2, /font-600.woff2)
     parts = read(os.path.join(FW, 'font.h')).split('PROGMEM = {')
+    # dieselben beiden Schnitte auch für die Projektseite docs/index.html (GitHub Pages)
+    fdir = os.path.join(ROOT, 'docs', 'fonts'); os.makedirs(fdir, exist_ok=True)
+    for i, name in ((1, 'scopeclock-sans-300.woff2'), (2, 'scopeclock-sans-600.woff2')):
+        with open(os.path.join(fdir, name), 'wb') as f:
+            f.write(c_bytes(parts[i].split('};')[0]))
     for i, url in ((1, '/font.woff2'), (2, '/font-600.woff2')):
         data = c_bytes(parts[i].split('};')[0])
         style = style.replace('url(' + url + ')', 'url(data:font/woff2;base64,' + base64.b64encode(data).decode() + ')')
