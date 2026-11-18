@@ -144,6 +144,7 @@ oscilloscope input; no additional BNC cable is needed.</p>
  <tr><td>P5</td><td>direct</td><td>OLED CS</td></tr>
  <tr><td>P17</td><td>direct</td><td>OLED DC</td></tr>
  <tr><td>P4</td><td>direct</td><td>OLED RST</td></tr>
+ <tr><td>P21 / P22 · 3V3 · GND</td><td>direct</td><td><i>optional:</i> DS3231 real-time clock – SDA / SCL · VCC · GND</td></tr>
  <tr><td>IPEX socket on the module</td><td>antenna pigtail</td><td>SMA socket in the opposite side → antenna</td></tr>
  <tr><td>USB-C of the DevKit</td><td>flat cable</td><td>USB-C panel socket in the connector side</td></tr>
 </table>
@@ -179,7 +180,7 @@ panel socket – and lay them in place before screwing the board down. Do not ki
 <div class="step"><b class="n">7</b><div><b>Connect the pigtails:</b> red lead (with resistor) of X into terminal <b>P25</b>, of Y into <b>P26</b>, both brown leads (shield) into <b>GND</b>.</div></div>
 <div class="step"><b class="n">8</b><div><b>Fit the OLED in the lid:</b> mount it behind the window with M2.5 standoffs and put the 7 wires into the terminals
 according to the table above. Leave the wires long enough for the hinged lid to open fully.</div></div>
-<figure><img src="images/aufbau_en.svg" style="width:56%"><figcaption>Fig. 5 – Layout in the junction box (to scale): connector side at the bottom with pigtail X, USB-C and pigtail Y, antenna at the top; DevKit rotated by 180°, cables under the board shown dashed</figcaption></figure>
+<figure><img src="images/aufbau_en.svg" style="width:46%"><figcaption>Fig. 5 – Layout in the junction box (to scale); dashed: cables under the board and the optional RTC</figcaption></figure>
 <div class="step"><b class="n">9</b><div><b>Check before the first power-on</b> (multimeter): no continuity between 3V3 and GND and between 5V and GND.
 Approx. 220 Ω between the centre pin of each BNC plug and terminal P25 or P26, no continuity to the outer contact.
 The outer contact has continuity to GND. Retighten all screw terminals slightly.</div></div>

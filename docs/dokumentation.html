@@ -145,6 +145,7 @@ kommt direkt in den Eingang des Oszilloskops, ein zusätzliches BNC-Kabel ist ni
  <tr><td>P5</td><td>direkt</td><td>OLED CS</td></tr>
  <tr><td>P17</td><td>direkt</td><td>OLED DC</td></tr>
  <tr><td>P4</td><td>direkt</td><td>OLED RST</td></tr>
+ <tr><td>P21 / P22 · 3V3 · GND</td><td>direkt</td><td><i>optional:</i> Echtzeituhr DS3231 – SDA / SCL · VCC · GND</td></tr>
  <tr><td>IPEX-Buchse am Modul</td><td>Antennen-Pigtail</td><td>SMA-Buchse in der gegenüberliegenden Seite → Antenne</td></tr>
  <tr><td>USB-C des DevKits</td><td>Flachbandkabel</td><td>USB-C-Einbaubuchse in der Anschlussseite</td></tr>
 </table>
@@ -181,11 +182,11 @@ Das Flachbandkabel nicht scharf knicken.</div></div>
 <div class="step"><b class="n">7</b><div><b>Pigtails anklemmen:</b> rote Ader (mit Widerstand) von X in die Klemme <b>P25</b>, von Y in <b>P26</b>, beide braunen Adern (Schirm) in <b>GND</b>.</div></div>
 <div class="step"><b class="n">8</b><div><b>OLED in den Deckel</b> setzen: mit Abstandsbolzen M2,5 hinter dem Fenster befestigen und die 7 Leitungen
 nach der Tabelle oben in die Klemmen legen. Die Leitungen so lang lassen, dass sich der Scharnierdeckel ganz öffnen lässt.</div></div>
-<figure><img src="images/aufbau.svg" style="width:56%"><figcaption>Abb. 5 – Anordnung in der Abzweigdose (maßstäblich): unten die Anschlussseite mit Pigtail X, USB-C und Pigtail Y, oben die Antenne; DevKit um 180° gedreht, Kabel gestrichelt unter dem Board</figcaption></figure>
+<figure><img src="images/aufbau.svg" style="width:46%"><figcaption>Abb. 5 – Anordnung in der Abzweigdose (maßstäblich); gestrichelt: Kabel unter dem Board und die optionale RTC</figcaption></figure>
 <div class="step"><b class="n">9</b><div><b>Prüfen vor dem ersten Einschalten</b> (Multimeter): Kein Durchgang zwischen 3V3 und GND und zwischen 5V und GND.
 Zwischen dem Mittelstift jedes BNC-Steckers und der Klemme P25 bzw. P26 je ca. 220 Ω, zum Außenkontakt kein Durchgang.
 Der Außenkontakt hat Durchgang zu GND. Alle Schraubklemmen leicht nachziehen.</div></div>
-<div class="step"><b class="n">10</b><div><b>Deckel schließen</b> erst nach der Inbetriebnahme (Kapitel 5), damit man bei Bedarf noch an alles herankommt.</div></div>
+<div class="step"><b class="n">10</b><div><b>Deckel schließen</b> erst nach der Inbetriebnahme (Kapitel 5).</div></div>
 
 <h2>4 Firmware installieren</h2>
 <h3>Mit der Arduino IDE 2.x</h3>

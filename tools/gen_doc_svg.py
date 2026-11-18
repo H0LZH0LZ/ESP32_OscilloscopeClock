@@ -12,7 +12,7 @@ OUT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 
 FONT = "font-family='Helvetica,Arial,sans-serif'"
 
 # Englische Fassung: gleiche Zeichnung, Texte übersetzt (Datei *_en.svg)
-EN = {'47,5': '47.5', 'ESP32-Breakout-Board (Schraubklemmen), DevKit aufgesteckt': 'ESP32 breakout board (screw terminals), DevKit plugged in', 'USB-C ← Flachbandkabel ← USB-C-Einbaubuchse (Anschlussseite)': 'USB-C ← flat cable ← USB-C panel socket (connector side)', 'Gehäusewand': 'Enclosure wall', 'BNC-Stecker → Oszilloskop Kanal 1': 'BNC plug → oscilloscope channel 1', 'BNC-Stecker → Oszilloskop Kanal 2': 'BNC plug → oscilloscope channel 2', '⏚ = Klemme GND': '⏚ = GND terminal', 'Pigtail: rot = Innenleiter (Signal),': 'Pigtail: red = core (signal),', 'braun = Schirm (Masse)': 'brown = shield (ground)', 'SMA-Buchse + WLAN-Antenne (Bingfu, SMA)': 'SMA socket + WiFi antenna (Bingfu, SMA)', '(IPEX→SMA-Pigtail aus dem Antennen-Kit)': '(IPEX→SMA pigtail from the antenna kit)', 'GND (Masse)': 'GND (ground)', 'Beschriftung wie auf dem Breakout-Board (P25 = GPIO25 …).': 'Labels as printed on the breakout board (P25 = GPIO25 …).', 'P0 = BOOT-Taster – dort nichts anschließen.': 'P0 = BOOT button – do not connect anything there.', '220 Ω in die rote Ader jedes Pigtails eingelötet.': '220 Ω soldered into the red lead of each pigtail.', 'Bohrplan Abzweigdose 150 × 100 × 70 mm – Maßstab 1:1': 'Drilling template, junction box 150 × 100 × 70 mm – scale 1:1', 'DIN A4 mit 100 % drucken (nicht „an Seite anpassen“), dann das Prüfmaß nachmessen': 'Print on A4 at 100 % (not “fit to page”), then measure the test line', 'Deckel (Draufsicht)': 'Lid (top view)', 'Fenster OLED 55 × 28': 'OLED window 55 × 28', 'Befestigungslöcher des OLED-Moduls (61,5 × 39,5 mm) nach dem Modul anzeichnen (M2,5)': 'Mark the mounting holes of the OLED module (61.5 × 39.5 mm) from the module itself (M2.5)', 'Prüfmaß 50 mm': 'Test line 50 mm', 'Nach dem Drucken nachmessen: die Linie muss genau 50 mm lang sein.': 'Measure after printing: the line must be exactly 50 mm long.', 'Schablonen ausschneiden und mit Klebeband auf Deckel und Seiten kleben.': 'Cut out the templates and tape them onto the lid and the sides.', 'Anschlussseite (kurze Seite, von außen gesehen)': 'Connector side (short side, seen from outside)', 'Pigtails: Ø 5,0 bohren + M6-Gewinde schneiden (gestrichelt: M6) – oder Ø 6,2 + M6-Mutter innen': 'Pigtails: drill Ø 5.0 + tap M6 (dashed: M6) – or Ø 6.2 + M6 nut inside', 'Alle drei Löcher auf gleicher Höhe, etwa Mitte des Unterteils': 'All three holes at the same height, about the middle of the base', 'Gegenüberliegende Seite – Antenne': 'Opposite side – antenna', 'SMA  Ø 6,5': 'SMA  Ø 6.5', 'Mittig, gleiche Höhe wie die Anschlüsse': 'Centred, same height as the connectors', 'Anordnung in der Abzweigdose (Draufsicht, Deckel offen)': 'Layout in the junction box (top view, lid open)', 'Breakout-Board, DevKit um 180° gedreht': 'Breakout board, DevKit rotated by 180°', 'gestrichelt: USB- und Antennenkabel unter dem Board': 'dashed: USB and antenna cable under the board', 'Antenne (SMA)': 'Antenna (SMA)', 'Gegenüberliegende Seite': 'Opposite side', 'Pigtail X · USB-C · Pigtail Y (Kabelverschraubungen SKINDICHT MINI M6)': 'Pigtail X · USB-C · pigtail Y (cable glands SKINDICHT MINI M6)', 'Anschlussseite (kurze Seite)': 'Connector side (short side)', 'OLED (61,5 × 39,5 mm) sitzt im Scharnierdeckel –': 'OLED (61.5 × 39.5 mm) sits in the hinged lid –', 'Leitungen lang genug lassen': 'leave the wires long enough', 'Kern 1 – scopeTask': 'Core 1 – scopeTask', '• nur Strahlausgabe, ohne Pause': '• beam output only, without pause', '• DAC X/Y an GPIO25/26 (Register)': '• DAC X/Y on GPIO25/26 (registers)', '• Rundtour: Zifferblatt + Ziffern': '• round trip: dial + numerals', '• Zeiger nach der Uhrzeit': '• hands according to the time', '• gleich schnelle Linien = gleich hell': '• equally fast lines = equally bright', '• Profil ANALOG/DIGITAL, Testbild': '• profile ANALOG/DIGITAL, test pattern', '• ca. 230 Bilder pro Sekunde': '• approx. 230 frames per second', 'Kern 0 – uiTask + wifiTask': 'Core 0 – uiTask + wifiTask', '• WLAN (stärkstes bekanntes Netz)': '• WiFi (strongest known network)', '• Zeit per NTP, stündlich': '• time via NTP, hourly', '• Webserver, Setup-WLAN, mDNS': '• web server, setup network, mDNS', '• OLED-Anzeige (SPI)': '• OLED display (SPI)', '• BOOT-Taster, Einstellungen (NVS)': '• BOOT button, settings (NVS)', '• Protokoll (Ringpuffer 8 KB)': '• log (ring buffer 8 KB)', '• CPU-Last-Messung': '• CPU load measurement', 'Übergabe nur über wenige atomare Variablen (Uhrzeit, Zifferblatt, Helligkeit, Profil) – keine Sperren im Zeichenpfad': 'Hand-over only via a few atomic variables (time, dial, brightness, profile) – no locks in the drawing path'}
+EN = {'Optional: Echtzeituhr DS3231 (ZS-042)': 'Optional: real-time clock DS3231 (ZS-042)', 'Knopfzelle CR2032 auf der Rückseite': 'Coin cell CR2032 on the back', 'P21 → SDA (RTC)': 'P21 → SDA (RTC)', 'optional': 'optional', 'OLED sitzt im Scharnierdeckel –': 'OLED sits in the hinged lid –', 'Leitungen lang genug lassen': 'leave the wires long enough', '47,5': '47.5', 'ESP32-Breakout-Board (Schraubklemmen), DevKit aufgesteckt': 'ESP32 breakout board (screw terminals), DevKit plugged in', 'USB-C ← Flachbandkabel ← USB-C-Einbaubuchse (Anschlussseite)': 'USB-C ← flat cable ← USB-C panel socket (connector side)', 'Gehäusewand': 'Enclosure wall', 'BNC-Stecker → Oszilloskop Kanal 1': 'BNC plug → oscilloscope channel 1', 'BNC-Stecker → Oszilloskop Kanal 2': 'BNC plug → oscilloscope channel 2', '⏚ = Klemme GND': '⏚ = GND terminal', 'Pigtail: rot = Innenleiter (Signal),': 'Pigtail: red = core (signal),', 'braun = Schirm (Masse)': 'brown = shield (ground)', 'SMA-Buchse + WLAN-Antenne (Bingfu, SMA)': 'SMA socket + WiFi antenna (Bingfu, SMA)', '(IPEX→SMA-Pigtail aus dem Antennen-Kit)': '(IPEX→SMA pigtail from the antenna kit)', 'GND (Masse)': 'GND (ground)', 'Beschriftung wie auf dem Breakout-Board (P25 = GPIO25 …).': 'Labels as printed on the breakout board (P25 = GPIO25 …).', 'P0 = BOOT-Taster – dort nichts anschließen.': 'P0 = BOOT button – do not connect anything there.', '220 Ω in die rote Ader jedes Pigtails eingelötet.': '220 Ω soldered into the red lead of each pigtail.', 'Bohrplan Abzweigdose 150 × 100 × 70 mm – Maßstab 1:1': 'Drilling template, junction box 150 × 100 × 70 mm – scale 1:1', 'DIN A4 mit 100 % drucken (nicht „an Seite anpassen“), dann das Prüfmaß nachmessen': 'Print on A4 at 100 % (not “fit to page”), then measure the test line', 'Deckel (Draufsicht)': 'Lid (top view)', 'Fenster OLED 55 × 28': 'OLED window 55 × 28', 'Befestigungslöcher des OLED-Moduls (61,5 × 39,5 mm) nach dem Modul anzeichnen (M2,5)': 'Mark the mounting holes of the OLED module (61.5 × 39.5 mm) from the module itself (M2.5)', 'Prüfmaß 50 mm': 'Test line 50 mm', 'Nach dem Drucken nachmessen: die Linie muss genau 50 mm lang sein.': 'Measure after printing: the line must be exactly 50 mm long.', 'Schablonen ausschneiden und mit Klebeband auf Deckel und Seiten kleben.': 'Cut out the templates and tape them onto the lid and the sides.', 'Anschlussseite (kurze Seite, von außen gesehen)': 'Connector side (short side, seen from outside)', 'Pigtails: Ø 5,0 bohren + M6-Gewinde schneiden (gestrichelt: M6) – oder Ø 6,2 + M6-Mutter innen': 'Pigtails: drill Ø 5.0 + tap M6 (dashed: M6) – or Ø 6.2 + M6 nut inside', 'Alle drei Löcher auf gleicher Höhe, etwa Mitte des Unterteils': 'All three holes at the same height, about the middle of the base', 'Gegenüberliegende Seite – Antenne': 'Opposite side – antenna', 'SMA  Ø 6,5': 'SMA  Ø 6.5', 'Mittig, gleiche Höhe wie die Anschlüsse': 'Centred, same height as the connectors', 'Anordnung in der Abzweigdose (Draufsicht, Deckel offen)': 'Layout in the junction box (top view, lid open)', 'Breakout-Board, DevKit um 180° gedreht': 'Breakout board, DevKit rotated by 180°', 'gestrichelt: USB- und Antennenkabel unter dem Board': 'dashed: USB and antenna cable under the board', 'Antenne (SMA)': 'Antenna (SMA)', 'Gegenüberliegende Seite': 'Opposite side', 'Pigtail X · USB-C · Pigtail Y (Kabelverschraubungen SKINDICHT MINI M6)': 'Pigtail X · USB-C · pigtail Y (cable glands SKINDICHT MINI M6)', 'Anschlussseite (kurze Seite)': 'Connector side (short side)', 'OLED (61,5 × 39,5 mm) sitzt im Scharnierdeckel –': 'OLED (61.5 × 39.5 mm) sits in the hinged lid –', 'Leitungen lang genug lassen': 'leave the wires long enough', 'Kern 1 – scopeTask': 'Core 1 – scopeTask', '• nur Strahlausgabe, ohne Pause': '• beam output only, without pause', '• DAC X/Y an GPIO25/26 (Register)': '• DAC X/Y on GPIO25/26 (registers)', '• Rundtour: Zifferblatt + Ziffern': '• round trip: dial + numerals', '• Zeiger nach der Uhrzeit': '• hands according to the time', '• gleich schnelle Linien = gleich hell': '• equally fast lines = equally bright', '• Profil ANALOG/DIGITAL, Testbild': '• profile ANALOG/DIGITAL, test pattern', '• ca. 230 Bilder pro Sekunde': '• approx. 230 frames per second', 'Kern 0 – uiTask + wifiTask': 'Core 0 – uiTask + wifiTask', '• WLAN (stärkstes bekanntes Netz)': '• WiFi (strongest known network)', '• Zeit per NTP, stündlich': '• time via NTP, hourly', '• Webserver, Setup-WLAN, mDNS': '• web server, setup network, mDNS', '• OLED-Anzeige (SPI)': '• OLED display (SPI)', '• BOOT-Taster, Einstellungen (NVS)': '• BOOT button, settings (NVS)', '• Protokoll (Ringpuffer 8 KB)': '• log (ring buffer 8 KB)', '• CPU-Last-Messung': '• CPU load measurement', 'Übergabe nur über wenige atomare Variablen (Uhrzeit, Zifferblatt, Helligkeit, Profil) – keine Sperren im Zeichenpfad': 'Hand-over only via a few atomic variables (time, dial, brightness, profile) – no locks in the drawing path'}
 
 def save(name, w, h, body, extra=''):
     svg = (f"<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 {w} {h}' {extra} {FONT}>\n"
@@ -163,16 +163,49 @@ def verdrahtung():
     a(f"<text x='{X1+142}' y='30' font-size='12'>SMA-Buchse + WLAN-Antenne (Bingfu, SMA)</text>")
     a(f"<text x='{X1+142}' y='46' font-size='11' fill='#444'>(IPEX→SMA-Pigtail aus dem Antennen-Kit)</text>")
     # Legende
+    # --- Optional: Echtzeituhr DS3231 (Modul ZS-042, 38 × 22 mm), gestrichelt angeschlossen
+    SDA, SCL = '#c99a00', '#5d6d7e'
+    RX, RY, rw, rh = 836, 668, 232, 134
+    a(f"<rect x='{RX-28}' y='{RY-46}' width='{rw+42}' height='{rh+62}' rx='8' fill='none' stroke='#888' stroke-dasharray='6 5'/>")
+    a(f"<text x='{RX-18}' y='{RY-28}' font-size='12' font-weight='bold' fill='#444'>Optional: Echtzeituhr DS3231 (ZS-042)</text>")
+    a(f"<text x='{RX-18}' y='{RY-12}' font-size='11' fill='#444'>Knopfzelle CR2032 auf der Rückseite</text>")
+    a(f"<rect x='{RX}' y='{RY}' width='{rw}' height='{rh}' rx='5' fill='#1f5fbf' stroke='#163a78' stroke-width='2'/>")
+    for hx, hy in ((RX+rw-14, RY+14), (RX+rw-14, RY+rh-14)):
+        a(f"<circle cx='{hx}' cy='{hy}' r='6' fill='#fff' stroke='#c9a227' stroke-width='2'/>")
+    a(f"<rect x='{RX+70}' y='{RY+28}' width='84' height='44' rx='2' fill='#1a1a1a'/>")
+    for k in range(8):
+        for yy in (RY+24, RY+72):
+            a(f"<rect x='{RX+74+k*10}' y='{yy}' width='4' height='4' fill='#bbb'/>")
+    a(f"<text x='{RX+112}' y='{RY+50}' text-anchor='middle' font-size='9' fill='#ccc'>DS3231SN</text>")
+    a(f"<rect x='{RX+80}' y='{RY+92}' width='40' height='22' rx='2' fill='#1a1a1a'/>")
+    a(f"<text x='{RX+100}' y='{RY+106}' text-anchor='middle' font-size='6' fill='#aaa'>AT24C32</text>")
+    a(f"<rect x='{RX+170}' y='{RY+40}' width='18' height='7' fill='#c0392b' stroke='#7a1f16'/>")      # Ladediode
+    rpins = {}
+    a(f"<rect x='{RX+4}' y='{RY+6}' width='14' height='{rh-12}' fill='#111' rx='2'/>")
+    for k, n in enumerate(['32K', 'SQW', 'SCL', 'SDA', 'VCC', 'GND']):      # Reihenfolge wie auf dem Modul
+        py = RY + 18 + k * 20
+        rpins[n] = py
+        a(f"<rect x='{RX-6}' y='{py-2}' width='20' height='4' fill='#d4af37'/><rect x='{RX+6}' y='{py-5}' width='10' height='10' fill='#222' stroke='#555'/>")
+        a(f"<text x='{RX+24}' y='{py+4}' font-size='10' fill='#fff' font-weight='bold'>{n}</text>")
+    # Klemmen P22 (rechts 3), P21 (rechts 6), GND (rechts 7): erst neben dem Board nach unten,
+    # unterhalb der OLED-Leitungen nach rechts, dann links an der Legende vorbei zum Modul
+    for n, rp, col, vx, hy, dx2 in (('SCL', 3, SCL, 634, 450, 748), ('SDA', 6, SDA, 626, 462, 740), ('GND', 7, '#111', 618, 474, 732)):
+        terminal(X1, y(rp), col)
+        wire([(X1 + 10, y(rp)), (vx, y(rp)), (vx, hy), (dx2, hy), (dx2, rpins[n]), (RX - 6, rpins[n])], col, True)
+    # VCC von 3V3: rote Leitung oben verlängert, rechts außen herum, von unten an VCC
+    wire([(750, 62), (1100, 62), (1100, RY + rh + 24), (812, RY + rh + 24), (812, rpins['VCC']), (RX - 6, rpins['VCC'])], '#d62828', True)
     leg = [('#d62828', '3V3 → OLED VCC'), ('#111', 'GND (Masse)'), ('#e09f00', 'P25 (DAC1) → X'),
-           ('#1d6fd6', 'P26 (DAC2) → Y'), ('#2a9d48', 'P23 → DIN'),
-           ('#7b3fb5', 'P18 → CLK'), ('#d1495b', 'P5 → CS'), ('#00a6a6', 'P17 → DC'), ('#a0522d', 'P4 → RST')]
+           ('#1d6fd6', 'P26 (DAC2) → Y'), ('#2a9d48', 'P23 → DIN'), ('#7b3fb5', 'P18 → CLK'),
+           ('#d1495b', 'P5 → CS'), ('#00a6a6', 'P17 → DC'), ('#a0522d', 'P4 → RST'),
+           (SDA, 'P21 → SDA (RTC)'), (SCL, 'P22 → SCL (RTC)')]
     for k, (c, t) in enumerate(leg):
-        lx, ly = 760 + (k // 5) * 170, 420 + (k % 5) * 22 if k < 5 else 420 + (k - 5) * 22
+        lx, ly = 760 + (k // 6) * 170, 420 + (k % 6) * 22
         a(f"<line x1='{lx}' y1='{ly}' x2='{lx+26}' y2='{ly}' stroke='{c}' stroke-width='4'/><text x='{lx+32}' y='{ly+4}' font-size='11'>{t}</text>")
-    a("<text x='760' y='545' font-size='11' fill='#444'>Beschriftung wie auf dem Breakout-Board (P25 = GPIO25 …).</text>")
-    a("<text x='760' y='562' font-size='11' fill='#444'>P0 = BOOT-Taster – dort nichts anschließen.</text>")
-    a("<text x='760' y='579' font-size='11' fill='#444'>220 Ω in die rote Ader jedes Pigtails eingelötet.</text>")
-    save('verdrahtung.svg', 1110, 680, '\n'.join(s))
+    a("<line x1='930' y1='552' x2='956' y2='552' stroke='#555' stroke-width='3' stroke-dasharray='6 4'/><text x='962' y='556' font-size='11'>optional</text>")
+    a("<text x='760' y='576' font-size='11' fill='#444'>Beschriftung wie auf dem Breakout-Board (P25 = GPIO25 …).</text>")
+    a("<text x='760' y='592' font-size='11' fill='#444'>P0 = BOOT-Taster – dort nichts anschließen.</text>")
+    a("<text x='760' y='608' font-size='11' fill='#444'>220 Ω in die rote Ader jedes Pigtails eingelötet.</text>")
+    save('verdrahtung.svg', 1110, 860, '\n'.join(s))
 
 # ---------------------------------------------------------------- Bohrplan 1:1
 def bohrplan():
@@ -259,7 +292,7 @@ def aufbau():
     a(f"<path d='M{ix},{iy} L{ix},{by_+bh} C{ix},{by_+bh+45} {ax},{by_+bh+45} {ax},{by_+bh}' fill='none' stroke='{ant}' stroke-width='3'/>")
     a(f"<line x1='{ax}' y1='{by_+bh}' x2='{ax}' y2='{by_}' stroke='{ant}' stroke-width='3' stroke-dasharray='8 6'/>")
     a(f"<path d='M{ax},{by_} C{ax},{Y+60} {sx},{Y+70} {sx},{Y+8}' fill='none' stroke='{ant}' stroke-width='3'/>")
-    a(f"<text x='{bx+bw/2}' y='{by_-10}' text-anchor='middle' font-size='11' fill='#1d5e2c'>Breakout-Board, DevKit um 180° gedreht</text>")
+    a(f"<text x='{bx+bw}' y='{by_-10}' text-anchor='end' font-size='11' fill='#1d5e2c'>Breakout-Board, DevKit um 180° gedreht</text>")
     a(f"<text x='{bx+bw/2}' y='{by_+bh+16}' text-anchor='middle' font-size='10' fill='#555'>gestrichelt: USB- und Antennenkabel unter dem Board</text>")
     # Antenne mittig auf der Gegenseite (oben)
     a(f"<circle cx='{sx}' cy='{Y}' r='10' fill='#d8b14a' stroke='#8a6d1d'/><line x1='{sx}' y1='{Y}' x2='{sx}' y2='{Y-60}' stroke='#333' stroke-width='8' stroke-linecap='round'/>")
@@ -281,8 +314,17 @@ def aufbau():
     a(f"<text x='{tx+4}' y='{by_+bh*0.55+26}' font-size='10' fill='#1d5e2c' text-anchor='end'>P25/P26</text>")
     a(f"<text x='{X+W/2}' y='{yb+132}' text-anchor='middle' font-size='12'>Pigtail X · USB-C · Pigtail Y (Kabelverschraubungen SKINDICHT MINI M6)</text>")
     a(f"<text x='{X+W/2}' y='{yb+152}' text-anchor='middle' font-size='13' fill='#555'>Anschlussseite (kurze Seite)</text>")
-    a(f"<text x='{X+W/2}' y='{Y+mm(14)}' text-anchor='middle' font-size='11' fill='#555'>OLED (61,5 × 39,5 mm) sitzt im Scharnierdeckel –</text>")
-    a(f"<text x='{X+W/2}' y='{Y+mm(14)+15}' text-anchor='middle' font-size='11' fill='#555'>Leitungen lang genug lassen</text>")
+    a(f"<text x='{X+mm(73)}' y='{Y+mm(9)}' text-anchor='middle' font-size='10' fill='#555'>OLED sitzt im Scharnierdeckel –</text>")
+    a(f"<text x='{X+mm(73)}' y='{Y+mm(9)+13}' text-anchor='middle' font-size='10' fill='#555'>Leitungen lang genug lassen</text>")
+    # Optional: Echtzeituhr DS3231 (ZS-042, 38 × 22 mm) oben links, 4 Leitungen zur linken Klemmenleiste
+    rx, ry = X + mm(5), Y + mm(7)
+    a(f"<rect x='{rx}' y='{ry}' width='{mm(38)}' height='{mm(22)}' rx='4' fill='#1f5fbf' fill-opacity='.85' stroke='#163a78' stroke-width='2' stroke-dasharray='7 5'/>")
+    a(f"<rect x='{rx+mm(13)}' y='{ry+mm(6)}' width='{mm(13)}' height='{mm(8)}' fill='#1a1a1a'/>")
+    a(f"<text x='{rx+mm(19)}' y='{ry+mm(19)}' text-anchor='middle' font-size='10' fill='#fff'>DS3231 (optional)</text>")
+    for n in range(4):                                        # GND, 3V3, SDA, SCL senkrecht in die linke Klemmenleiste
+        px = bx + 11 + n * 4
+        a(f"<line x1='{px}' y1='{ry+mm(22)}' x2='{px}' y2='{by_+24}' stroke='{['#111','#d62828','#c99a00','#5d6d7e'][n]}' stroke-width='2' stroke-dasharray='5 4'/>")
+    a(f"<text x='{rx}' y='{ry-6}' font-size='10' fill='#1f5fbf'>RTC: SDA → P21, SCL → P22</text>")
     a(f"<text x='{X-14}' y='{Y+H/2}' text-anchor='middle' font-size='12' fill='#06c' transform='rotate(-90 {X-14} {Y+H/2})'>150 mm</text>")
     a(f"<text x='{X+W/2}' y='{yb+172}' text-anchor='middle' font-size='12' fill='#06c'>100 mm</text>")
     save('aufbau.svg', X * 2 + W, yb + 184, '\n'.join(s))

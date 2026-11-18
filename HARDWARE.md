@@ -35,6 +35,12 @@ GPIO5  ───────────────── OLED CS
 GPIO17 ───────────────── OLED DC
 GPIO4  ───────────────── OLED RST
 
+optional – Echtzeituhr DS3231 (ZS-042):
+3V3  ─────────────────── RTC VCC
+GND  ─────────────────── RTC GND
+GPIO21 (I²C SDA) ─────── RTC SDA
+GPIO22 (I²C SCL) ─────── RTC SCL
+
 IPEX/U.FL ── Pigtail (Antennen-Kit) ── SMA-Buchse in der gegenüberliegenden Seite ── Bingfu-Antenne (SMA)
 ```
 
@@ -55,6 +61,9 @@ Die Pins stehen zentral in `ESP32_OscilloscopeClock_v2.0/config.h`. Fest vorgege
 | rechts | 10 | GPIO5 | OLED CS |
 | rechts | 11 | GPIO17 | OLED DC |
 | rechts | 13 | GPIO4 | OLED RST |
+| rechts | 3 | GPIO22 | optional: RTC SCL |
+| rechts | 6 | GPIO21 | optional: RTC SDA |
+| rechts | 7 | GND | optional: RTC GND (VCC der RTC an 3V3, links Pos. 1) |
 
 GPIO0 (rechts, Pos. 14) ist der BOOT-Taster auf dem Board – dort nichts anschließen.
 

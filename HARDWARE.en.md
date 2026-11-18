@@ -35,6 +35,12 @@ GPIO5  ───────────────── OLED CS
 GPIO17 ───────────────── OLED DC
 GPIO4  ───────────────── OLED RST
 
+optional – DS3231 real-time clock (ZS-042):
+3V3  ─────────────────── RTC VCC
+GND  ─────────────────── RTC GND
+GPIO21 (I²C SDA) ─────── RTC SDA
+GPIO22 (I²C SCL) ─────── RTC SCL
+
 IPEX/U.FL ── pigtail (antenna kit) ── SMA socket in the opposite side ── Bingfu antenna (SMA)
 ```
 
@@ -55,6 +61,9 @@ DAC pins) and GPIO18/23 (hardware SPI for the display).
 | right | 10 | GPIO5 | OLED CS |
 | right | 11 | GPIO17 | OLED DC |
 | right | 13 | GPIO4 | OLED RST |
+| right | 3 | GPIO22 | optional: RTC SCL |
+| right | 6 | GPIO21 | optional: RTC SDA |
+| right | 7 | GND | optional: RTC GND (RTC VCC to 3V3, left pos. 1) |
 
 GPIO0 (right, pos. 14) is the BOOT button on the board – do not connect anything there.
 
