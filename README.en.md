@@ -92,7 +92,7 @@ pictures are screenshots of the page. Photos of the finished device will follow 
 ### Quick start (Arduino IDE 2.x)
 1. Boards manager: install **esp32 by Espressif** (2.0.x or 3.x), board **ESP32 Dev Module**.
    Under **Tools → Partition Scheme** choose “**Huge APP (3MB No OTA/1MB SPIFFS)**”. This gives the
-   program 3 MB instead of 1.25 MB (39 % used instead of 93 %). The clock uses neither OTA updates
+   program 3 MB instead of 1.25 MB (39 % used instead of 94 %). The clock uses neither OTA updates
    nor SPIFFS, and saved networks and settings survive the change.
 2. Library manager: install **U8g2** (by oliver).
 3. Open `ESP32_OscilloscopeClock_v2.0.ino` and upload. Set the serial monitor to 115200 baud.
@@ -144,7 +144,7 @@ interface.
 
 The configuration variants (profile ANALOG/DIGITAL, Z blanking, dial 0/1/2, `USE_FAST_DAC 0`,
 EXCEL mode) were also built without warnings before the web interface was added. With the
-recommended partition scheme **Huge APP** the same firmware uses approx. 1,235,000 of 3,145,728
+recommended partition scheme **Huge APP** the same firmware uses 1,238,170 of 3,145,728
 bytes (**39 %**), with “Minimal SPIFFS” 62 %.
 
 Also simulated on a PC: beam path (brightness, retrace lines, frame rate), OLED content, BOOT

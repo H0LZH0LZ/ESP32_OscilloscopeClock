@@ -83,7 +83,7 @@ sind Screenshots der Seite. Fotos des fertigen Geräts folgen nach dem Bau des P
 ### Schnellstart (Arduino IDE 2.x)
 1. Boardverwalter: **esp32 by Espressif** (2.0.x oder 3.x) installieren, Board **ESP32 Dev Module**.
    Unter **Werkzeuge → Partition Scheme** „**Huge APP (3MB No OTA/1MB SPIFFS)**“ wählen. Dann stehen
-   3 MB statt 1,25 MB für das Programm zur Verfügung (Belegung 39 % statt 93 %). Die Uhr nutzt weder
+   3 MB statt 1,25 MB für das Programm zur Verfügung (Belegung 39 % statt 94 %). Die Uhr nutzt weder
    OTA-Updates noch SPIFFS, und gespeicherte WLANs und Einstellungen bleiben beim Umstellen erhalten.
 2. Bibliotheksverwalter: **U8g2** (by oliver) installieren.
 3. `ESP32_OscilloscopeClock_v2.0.ino` öffnen und hochladen. Seriellen Monitor auf 115200 Baud stellen.
@@ -134,7 +134,7 @@ stehen in `ESP32_OscilloscopeClock_v2.0/config.h`. Im Betrieb ändert man sie be
 
 Die Konfigurationsvarianten (Profil ANALOG/DIGITAL, Z-Dunkeltastung, Zifferblatt 0/1/2,
 `USE_FAST_DAC 0`, EXCEL-Modus) wurden vor dem Webinterface ebenfalls ohne Warnungen gebaut.
-Mit dem empfohlenen Partitionsschema **Huge APP** belegt dieselbe Firmware ca. 1.235.000 von 3.145.728 Byte
+Mit dem empfohlenen Partitionsschema **Huge APP** belegt dieselbe Firmware 1.238.170 von 3.145.728 Byte
 (**39 %**), mit „Minimal SPIFFS“ 62 %.
 
 Zusätzlich auf dem PC simuliert: Strahlverlauf (Helligkeit, Rücklaufspuren, Bildrate),
