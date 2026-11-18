@@ -59,7 +59,8 @@ footer{font-size:13px;color:var(--mute);padding:8px 4px}
 #nav h3{font-size:13px;color:var(--mute);text-transform:uppercase;letter-spacing:.06em;margin:4px 8px 12px}
 #nav a{display:flex;align-items:center;min-height:48px;padding:0 12px;border-radius:10px;color:var(--fg);text-decoration:none;font-weight:600}
 #nav a:hover,#nav a.cur{background:var(--bg)}#nav a.cur{color:var(--acc)}
-#nav a.sub{min-height:40px;padding-left:28px;font-weight:400;font-size:15px;color:var(--mute)}
+#nav a.sub{min-height:48px;padding:6px 12px 6px 28px;font-weight:600;font-size:15px;line-height:1.3}
+#nav a.sub small{display:block;font-weight:300;font-size:13px;color:var(--mute);margin-top:1px}
 #nav .navopt{margin:16px 12px 0;padding-top:12px;border-top:1px solid var(--line)}
 #nav label{display:block;color:var(--mute);font-size:14px;margin:0 0 6px}
 #nav select{font:inherit;font-size:16px;width:100%;min-height:44px;padding:0 10px;margin-bottom:6px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--fg)}
@@ -79,12 +80,13 @@ html[lang="de"] [data-l="en"],html[lang="en"] [data-l="de"]{display:none!importa
  <a href="#bilder-h"><span data-l="de">Bilder</span><span data-l="en">Pictures</span></a>
  <a href="#downloads-h">Downloads</a>
  <h3 style="margin-top:20px"><span data-l="de">Links</span><span data-l="en">Links</span></h3>
- <a class="sub" href="demo/"><span data-l="de">Testseite (Webinterface)</span><span data-l="en">Test page (web interface)</span></a>
- <a class="sub" href="https://github.com/HolzHolz123/ESP32_OscilloscopeClock">GitHub</a>
+ <a class="sub" href="demo/"><span data-l="de">Testseite<small>Webinterface ausprobieren</small></span><span data-l="en">Test page<small>Try the web interface</small></span></a>
+ <a class="sub" href="https://github.com/HolzHolz123/ESP32_OscilloscopeClock"><span data-l="de">GitHub – Version 2.0<small>Diese Firmware, Quellcode und Anleitung</small></span><span data-l="en">GitHub – version 2.0<small>This firmware, source code and guide</small></span></a>
+ <a class="sub" href="https://github.com/maurohh/ESP32_OscilloscopeClock"><span data-l="de">GitHub – Original (Mauro Pintus)<small>Ursprüngliche Oscilloscope Clock von 2018</small></span><span data-l="en">GitHub – original (Mauro Pintus)<small>The original Oscilloscope Clock from 2018</small></span></a>
  <div class="navopt"><label for="sLang"><span data-l="de">Sprache</span><span data-l="en">Language</span></label>
   <select id="sLang"><option value="de">Deutsch</option><option value="en">English</option></select></div>
  <div class="navopt"><label for="sTheme"><span data-l="de">Darstellung</span><span data-l="en">Appearance</span></label>
-  <select id="sTheme"><option value="auto">Automatisch / Automatic</option><option value="light">Hell / Light</option><option value="dark">Dunkel / Dark</option></select></div>
+  <select id="sTheme"><option value="auto">Automatisch</option><option value="light">Hell</option><option value="dark">Dunkel</option></select></div>
 </nav>
 <div id="shade"></div>
 <main>
@@ -130,14 +132,14 @@ html[lang="de"] [data-l="en"],html[lang="en"] [data-l="de"]{display:none!importa
 
 <div class="grp"><h2 id="downloads-h">Downloads</h2>
 <section>
- <a class="row" href="ESP32_Oscilloscope_Clock_Dokumentation.pdf"><span><span data-l="de">Dokumentation</span><span data-l="en">Documentation (German)</span><small class="note" data-l="de">PDF, Deutsch – Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small><small class="note" data-l="en">PDF – assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
- <a class="row" href="ESP32_Oscilloscope_Clock_Documentation.pdf"><span><span data-l="de">Dokumentation (Englisch)</span><span data-l="en">Documentation</span><small class="note" data-l="de">PDF, English</small><small class="note" data-l="en">PDF, English – assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
- <a class="row" href="https://github.com/HolzHolz123/ESP32_OscilloscopeClock"><span><span data-l="de">Firmware und Quellcode auf GitHub</span><span data-l="en">Firmware and source code on GitHub</span><small class="note" data-l="de">Für Arduino IDE 2.x oder PlatformIO, mit Anleitung und Werkzeugen</small><small class="note" data-l="en">For Arduino IDE 2.x or PlatformIO, with guide and tools</small></span><span>›</span></a>
+ <a class="row" href="ESP32_Oscilloscope_Clock_Dokumentation.pdf"><span><span data-l="de">Dokumentation (Deutsch)</span><span data-l="en">Documentation (German)</span><small class="note" data-l="de">PDF – Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small><small class="note" data-l="en">PDF – assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
+ <a class="row" href="ESP32_Oscilloscope_Clock_Documentation.pdf"><span><span data-l="de">Dokumentation (Englisch)</span><span data-l="en">Documentation (English)</span><small class="note" data-l="de">PDF – Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small><small class="note" data-l="en">PDF – assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
+ <a class="row" href="fonts/OFL.txt"><span><span data-l="de">Schriftart Raleway</span><span data-l="en">Font Raleway</span><small class="note" data-l="de">SIL Open Font License 1.1 – Lizenztext</small><small class="note" data-l="en">SIL Open Font License 1.1 – licence text</small></span><span>›</span></a>
 </section></div>
 
 <footer>
- <p data-l="de">Idee nach der ESP32 Oscilloscope Clock von Mauro Pintus (2018); Firmware, Webinterface und Grafiken sind neu geschrieben. Schrift: Raleway (SIL Open Font License 1.1). Bilder von Oszilloskop und OLED sind aus den Firmware-Daten erzeugt, Fotos des fertigen Geräts folgen.</p>
- <p data-l="en">Based on an idea by Mauro Pintus (ESP32 Oscilloscope Clock, 2018); firmware, web interface and graphics are rewritten. Font: Raleway (SIL Open Font License 1.1). Oscilloscope and OLED pictures are rendered from the firmware data, photos of the finished device will follow.</p>
+ <p data-l="de">Idee nach der ESP32 Oscilloscope Clock von Mauro Pintus (2018); Firmware, Webinterface und Grafiken sind neu geschrieben. Bilder von Oszilloskop und OLED sind aus den Firmware-Daten erzeugt, Fotos des fertigen Geräts folgen.</p>
+ <p data-l="en">Based on an idea by Mauro Pintus (ESP32 Oscilloscope Clock, 2018); firmware, web interface and graphics are rewritten. Oscilloscope and OLED pictures are rendered from the firmware data, photos of the finished device will follow.</p>
 </footer>
 </main>
 <script>
@@ -157,7 +159,11 @@ function spy(){const lim=document.querySelector('h1').getBoundingClientRect().bo
  navA.forEach((a,i)=>a.classList.toggle('cur',i===k))}
 addEventListener('scroll',spy,{passive:true});addEventListener('resize',spy);spy();
 // Sprache und Darstellung (im Browser gemerkt)
-$('sLang').value=root.lang;$('sLang').onchange=e=>{root.lang=e.target.value;try{localStorage.setItem('lang',root.lang)}catch(x){}};
+// Auswahl "Darstellung" nur in der gewählten Sprache beschriften
+const THEME={de:['Automatisch','Hell','Dunkel'],en:['Automatic','Light','Dark']};
+function themeLabels(){[...$('sTheme').options].forEach((o,i)=>o.textContent=THEME[root.lang==='en'?'en':'de'][i])}
+$('sLang').value=root.lang;themeLabels();
+$('sLang').onchange=e=>{root.lang=e.target.value;themeLabels();try{localStorage.setItem('lang',root.lang)}catch(x){}};
 $('sTheme').value=root.dataset.theme||'auto';
 $('sTheme').onchange=e=>{const m=e.target.value;if(m==='auto'){delete root.dataset.theme;root.style.colorScheme=''}else{root.dataset.theme=m;root.style.colorScheme=m}
  try{localStorage.setItem('theme',m)}catch(x){}};
