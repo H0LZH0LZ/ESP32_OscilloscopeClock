@@ -91,6 +91,9 @@ def main():
     api = read(os.path.join(DEMO, 'mock-api.js'))
     assert '/*VEC*/null' in api
     api = api.replace('/*VEC*/null', json.dumps(vectors(), separators=(',', ':')), 1)
+    # dieselben Vektordaten für die Oszilloskop-Vorschau der Projektseite docs/index.html
+    with open(os.path.join(ROOT, 'docs', 'vectors.json'), 'w', encoding='utf-8') as f:
+        json.dump(vectors(), f, separators=(',', ':'))
     settings = read(os.path.join(DEMO, 'mock-settings.js'))
     ui = read(os.path.join(DEMO, 'demo-ui.js'))
 

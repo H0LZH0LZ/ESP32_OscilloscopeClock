@@ -2,127 +2,234 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>ESP32 Oscilloscope Clock v2.0</title>
 <meta name="description" content="Vektoruhr für das Oszilloskop im X/Y-Modus mit ESP32, NTP, OLED und Webinterface – Testseite, Dokumentation und Bilder.">
-<!-- Projektseite für GitHub Pages (Quelle: Ordner docs/). Deutsch/Englisch umschaltbar,
-     Texte stehen doppelt im HTML (data-l="de" / data-l="en"). -->
+<!-- Projektseite für GitHub Pages (Quelle: Ordner docs/), aufgebaut wie das Webinterface der Uhr:
+     feste Titelzeile, Seitenmenü, Oszilloskop-Vorschau (Vektordaten aus vectors.json, erzeugt von
+     tools/gen_demo.py), Abschnitte als Karten. Deutsch/Englisch: Texte stehen doppelt (data-l). -->
+<script>try{const m=localStorage.getItem('theme');if(m==='light'||m==='dark'){document.documentElement.dataset.theme=m;document.documentElement.style.colorScheme=m}
+ const l=localStorage.getItem('lang');document.documentElement.lang=l==='de'||l==='en'?l:((navigator.language||'de').slice(0,2)==='de'?'de':'en')}catch(e){}</script>
 <style>
-/* Schrift: Raleway (SIL Open Font License 1.1), verkleinert wie im Webinterface als "ScopeClock Sans";
-   selbst gehostet (docs/fonts/, erzeugt von tools/gen_demo.py aus font.h) – kein Google-Fonts-Abruf */
+/* Schrift: Raleway (SIL OFL 1.1), verkleinert wie im Webinterface als "ScopeClock Sans";
+   selbst gehostet in fonts/ (aus font.h, tools/gen_demo.py) – kein Abruf von Google Fonts */
 @font-face{font-family:'ScopeClock Sans';src:url(fonts/scopeclock-sans-300.woff2) format('woff2');font-weight:300 500;font-display:swap}
 @font-face{font-family:'ScopeClock Sans';src:url(fonts/scopeclock-sans-600.woff2) format('woff2');font-weight:600 700;font-display:swap}
-:root{--bg:#f4f5f2;--card:#fff;--fg:#14161a;--mute:#4a4e57;--line:#e2e4df;--acc:#0a7d44;--acc-fg:#fff;--scope:#050805;
- --sans:"ScopeClock Sans",system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
-@media (prefers-color-scheme:dark){:root{--bg:#0b0d0c;--card:#161a18;--fg:#eef1ee;--mute:#b5bcb7;--line:#27302b;--acc:#30d158;--acc-fg:#04130a}}
+:root{--scope-bg:transparent;--scope-trace:#0b7a3e;--scope-glow:rgba(11,122,62,.12);--scope-halo:rgba(11,122,62,.35);--scope-grid:rgba(0,0,0,.07);
+ --bg:#f2f2f5;--card:#fff;--fg:#000;--mute:#38383d;--line:#e3e3e8;--acc:#0a7d44;--accfg:#fff;
+ --sans:'ScopeClock Sans',system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--scope-bg:#050805;--scope-trace:#b6ffc4;--scope-glow:rgba(80,255,120,.18);--scope-halo:#3dff6a;--scope-grid:rgba(120,255,140,.08);--bg:#000;--card:#1c1c1e;--fg:#fff;--mute:#d0d0d6;--line:#2c2c2e;--acc:#30d158;--accfg:#04130a}}
+:root[data-theme="dark"]{--scope-bg:#050805;--scope-trace:#b6ffc4;--scope-glow:rgba(80,255,120,.18);--scope-halo:#3dff6a;--scope-grid:rgba(120,255,140,.08);--bg:#000;--card:#1c1c1e;--fg:#fff;--mute:#d0d0d6;--line:#2c2c2e;--acc:#30d158;--accfg:#04130a}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--fg);font:300 16px/1.55 var(--sans);letter-spacing:.01em;-webkit-text-size-adjust:100%}
+b,strong{font-weight:600}
+body{margin:0;background:var(--bg);color:var(--fg);font:300 16px/1.45 var(--sans);letter-spacing:.01em;
+ -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+ padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);-webkit-text-size-adjust:100%}
 a{color:var(--acc)}
-main{max-width:1040px;margin:0 auto;padding:0 16px 48px}
-header{display:flex;justify-content:flex-end;padding:14px 0 0}
-.lang button{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--card);color:var(--fg);padding:6px 12px;cursor:pointer}
-.lang button:first-child{border-radius:8px 0 0 8px}.lang button:last-child{border-radius:0 8px 8px 0;border-left:0}
-.lang button[aria-pressed="true"]{background:var(--acc);color:var(--acc-fg);border-color:var(--acc)}
-.hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:36px;align-items:center;padding:24px 0 8px}
-.hero img{width:100%;max-width:440px;display:block;margin:0 auto;border-radius:14px;background:var(--scope)}
-h1{font-size:clamp(28px,4.4vw,44px);line-height:1.12;margin:0 0 12px;font-weight:600;letter-spacing:0}
-b,strong,h2{font-weight:600}
-.lead{font-size:18px;color:var(--mute);margin:0 0 22px}
-.btns{display:flex;flex-wrap:wrap;gap:10px}
-.btn{display:inline-flex;align-items:center;min-height:44px;padding:0 18px;border-radius:10px;font-weight:600;text-decoration:none;border:1px solid var(--line);background:var(--card);color:var(--fg)}
-.btn.main{background:var(--acc);border-color:var(--acc);color:var(--acc-fg)}
-h2{font-size:22px;margin:44px 0 14px}
-.feat{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;padding:0;margin:0;list-style:none}
-.feat li{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
-.feat b{display:block;margin-bottom:2px}
-figure{margin:0;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;overflow:hidden}
-figure img{width:100%;height:auto;display:block;border-radius:6px}
-figcaption{font-size:14px;color:var(--mute);margin-top:8px}
-.wide{margin-bottom:12px}
-.svgbg{background:#fff}
-.note{font-size:14px;color:var(--mute)}
-footer{margin-top:48px;padding-top:16px;border-top:1px solid var(--line);font-size:14px;color:var(--mute)}
-@media (max-width:760px){.hero{grid-template-columns:minmax(0,1fr);gap:20px}}
+main{max-width:640px;margin:0 auto;padding:0 16px 32px}
+@media (min-width:1000px){main{max-width:760px}}
+/* Titelleiste: bleibt oben stehen */
+h1{position:sticky;top:env(safe-area-inset-top);z-index:22;display:flex;align-items:center;justify-content:center;
+ min-height:64px;margin:0;padding:0 46px;background:var(--bg);text-align:center;
+ font-size:15px;font-weight:600;color:var(--mute);text-transform:uppercase;letter-spacing:.06em}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top);background:var(--bg);z-index:25}
+/* Oben: Oszilloskop-Vorschau, Punkte, Uhrzeit */
+header{padding:0 0 4px;text-align:center;scroll-margin-top:calc(env(safe-area-inset-top) + 64px)}
+.scope{position:relative}
+.scope canvas{display:block;width:100%;max-width:420px;height:auto;margin:4px auto 0;border-radius:14px;touch-action:pan-y;cursor:grab}
+@media (min-width:700px){.scope canvas{max-width:460px}}
+.dialtag{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);background:var(--card);color:var(--fg);font-size:13px;
+ padding:4px 10px;border-radius:8px;border:1px solid var(--line);opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
+.dialtag.show{opacity:1}
+.dots{display:flex;align-items:center;justify-content:center;gap:2px;margin:0 0 4px}
+.dots button{font:inherit;border:0;background:transparent;color:var(--mute);min-height:36px;padding:0 12px;font-size:22px;font-weight:300;cursor:pointer}
+.dots .dot{width:30px;padding:0;display:flex;align-items:center;justify-content:center}
+.dots .dot::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--mute);opacity:.3}
+.dots .dot[aria-current="true"]::before{background:var(--acc);opacity:1;width:10px;height:10px}
+#clock{font:300 50px/1.1 var(--sans);letter-spacing:.02em;margin:4px 0 0}
+#clock i{display:inline-block;width:.62em;font-style:normal;text-align:center}
+#date{color:var(--mute);font-size:21px;margin-top:2px}
+.lead{color:var(--mute);margin:14px 4px 4px}
+.btn{display:flex;align-items:center;justify-content:center;min-height:44px;border-radius:10px;padding:0 16px;margin:12px 0 6px;
+ background:var(--acc);color:var(--accfg);font-weight:600;text-decoration:none}
+/* Abschnitte: Überschrift in Großbuchstaben (bleibt unter der Titelleiste stehen), Inhalt als Karte */
+.grp{position:relative}
+h2{position:sticky;top:calc(env(safe-area-inset-top) + 64px);scroll-margin-top:calc(env(safe-area-inset-top) + 64px);
+ z-index:20;display:flex;align-items:center;min-height:44px;margin:0;padding:0 4px;background:var(--bg);
+ font-size:13px;font-weight:600;color:var(--mute);text-transform:uppercase;letter-spacing:.06em}
+section{background:var(--card);border-radius:14px;margin:0 0 14px;padding:6px 16px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:44px;border-top:1px solid var(--line);padding:8px 0;color:var(--fg);text-decoration:none}
+.row:first-child{border-top:0}
+.row>span:last-child:not(:first-child){text-align:right;color:var(--mute);flex:none}
+.row .note{display:block;font-size:13px;line-height:1.35;color:var(--mute);margin-top:2px}
+a.row>span:last-child{color:var(--acc);font-size:20px}
+section p{margin:10px 0}
+figure{margin:0;padding:12px 0;border-top:1px solid var(--line)}
+figure:first-child{border-top:0}
+figure img{width:100%;height:auto;display:block;border-radius:8px}
+.svg img{background:#fff}
+figcaption{font-size:13px;color:var(--mute);margin-top:8px}
+footer{font-size:13px;color:var(--mute);padding:8px 4px}
+/* Seitenmenü */
+#menuBtn{position:fixed;top:calc(env(safe-area-inset-top) + 10px);left:calc(env(safe-area-inset-left) + 10px);z-index:30;
+ width:44px;height:44px;padding:0;margin:0;border-radius:12px;background:var(--card);color:var(--fg);
+ border:1px solid var(--line);font:22px/1 var(--sans);box-shadow:0 2px 8px rgba(0,0,0,.15);cursor:pointer}
+#nav{position:fixed;top:0;bottom:0;left:0;z-index:40;width:min(78vw,280px);background:var(--card);
+ padding:calc(env(safe-area-inset-top) + 16px) 12px 16px calc(env(safe-area-inset-left) + 12px);
+ transform:translateX(-105%);transition:transform .25s ease;box-shadow:2px 0 16px rgba(0,0,0,.25);overflow-y:auto}
+#nav.open{transform:none}
+#nav h3{font-size:13px;color:var(--mute);text-transform:uppercase;letter-spacing:.06em;margin:4px 8px 12px}
+#nav a{display:flex;align-items:center;min-height:48px;padding:0 12px;border-radius:10px;color:var(--fg);text-decoration:none;font-weight:600}
+#nav a:hover,#nav a.cur{background:var(--bg)}#nav a.cur{color:var(--acc)}
+#nav .navlang{margin:16px 12px 0;padding-top:12px;border-top:1px solid var(--line)}
+#nav label{display:block;color:var(--mute);font-size:14px;margin:0 0 6px}
+#nav select{font:inherit;font-size:16px;width:100%;min-height:44px;padding:0 10px;margin-bottom:6px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--fg)}
+#shade{position:fixed;inset:0;z-index:35;background:rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .25s}
+#shade.open{opacity:1;pointer-events:auto}
+#prog{position:fixed;top:0;left:0;right:0;height:3px;z-index:35;background:var(--acc);transform:scaleX(0);transform-origin:0 0;pointer-events:none}
+/* Sprache: jeweils die andere ausblenden */
 html[lang="de"] [data-l="en"],html[lang="en"] [data-l="de"]{display:none!important}
 </style>
 </head>
 <body>
+<button id="menuBtn" aria-label="Menü" aria-controls="nav" aria-expanded="false">☰</button>
+<nav id="nav" aria-hidden="true">
+ <h3><span data-l="de">Abschnitte</span><span data-l="en">Sections</span></h3>
+ <a href="#uhr"><span data-l="de">Uhr</span><span data-l="en">Clock</span></a>
+ <a href="#projekt-h"><span data-l="de">Projekt</span><span data-l="en">Project</span></a>
+ <a href="#funktionen-h"><span data-l="de">Funktionen</span><span data-l="en">Features</span></a>
+ <a href="#hardware-h">Hardware</a>
+ <a href="#bilder-h"><span data-l="de">Bilder</span><span data-l="en">Pictures</span></a>
+ <a href="#downloads-h">Downloads</a>
+ <div class="navlang"><label for="sLang"><span data-l="de">Sprache</span><span data-l="en">Language</span></label>
+  <select id="sLang"><option value="de">Deutsch</option><option value="en">English</option></select></div>
+ <div class="navlang"><label for="sTheme"><span data-l="de">Darstellung</span><span data-l="en">Appearance</span></label>
+  <select id="sTheme"><option value="auto">Automatisch / Automatic</option><option value="light">Hell / Light</option><option value="dark">Dunkel / Dark</option></select></div>
+</nav>
+<div id="shade"></div>
+<div id="prog" aria-hidden="true"></div>
 <main>
-<header><div class="lang" role="group" aria-label="Sprache / Language">
- <button type="button" data-set="de" aria-pressed="true">Deutsch</button><button type="button" data-set="en" aria-pressed="false">English</button>
-</div></header>
+<h1>ESP32 Oscilloscope Clock</h1>
 
-<section class="hero">
- <img src="images/oszilloskop_uhr.png" alt="Analoge Uhr auf dem Schirm eines Oszilloskops">
- <div>
-  <h1>ESP32 Oscilloscope Clock v2.0</h1>
-  <p class="lead" data-l="de">Eine analoge Uhr, gezeichnet vom Elektronenstrahl: Der ESP32 erzeugt die X/Y-Spannungen mit seinen DACs – mit Zeit aus dem Internet, OLED-Anzeige und Webinterface fürs Handy.</p>
-  <p class="lead" data-l="en">An analogue clock drawn by the electron beam: the ESP32 generates the X/Y voltages with its DACs – with time from the internet, an OLED display and a web interface for your phone.</p>
-  <div class="btns">
-   <a class="btn main" href="demo/"><span data-l="de">Webinterface ausprobieren</span><span data-l="en">Try the web interface</span></a>
-   <a class="btn" href="ESP32_Oscilloscope_Clock_Dokumentation.pdf" data-l="de">Dokumentation (PDF)</a>
-   <a class="btn" href="ESP32_Oscilloscope_Clock_Documentation.pdf" data-l="en">Documentation (PDF)</a>
-   <a class="btn" href="https://github.com/HolzHolz123/ESP32_OscilloscopeClock">GitHub</a>
-  </div>
-  <p class="note" data-l="de">Die Testseite läuft ohne Uhr im Browser – alle Werte sind simuliert.</p>
-  <p class="note" data-l="en">The test page runs in the browser without a clock – all values are simulated.</p>
- </div>
-</section>
+<header id="uhr">
+ <div class="scope"><canvas id="scope" width="512" height="512" role="img" tabindex="0" aria-label="Oszilloskop-Vorschau"></canvas><div class="dialtag" id="dialTag"></div></div>
+ <div class="dots"><button type="button" id="dPrev" aria-label="‹">‹</button><span id="dotList" style="display:flex"></span><button type="button" id="dNext" aria-label="›">›</button></div>
+ <div id="clock">--:--:--</div><div id="date">&nbsp;</div>
+ <p class="lead" data-l="de">So zeichnet die Uhr auf dem Oszilloskop – mit der Uhrzeit dieses Geräts. Über die Vorschau wischen wechselt das Zifferblatt.</p>
+ <p class="lead" data-l="en">This is how the clock draws on the oscilloscope – with this device's time. Swipe over the preview to change the dial.</p>
+</header>
 
-<h2 data-l="de">Funktionen</h2><h2 data-l="en">Features</h2>
-<ul class="feat">
- <li data-l="de"><b>Genaue Zeit</b>per NTP, automatische Sommerzeit; optional Echtzeituhr DS3231 für den Betrieb ohne Internet.</li>
- <li data-l="en"><b>Accurate time</b>via NTP, automatic daylight saving time; optional DS3231 real-time clock for use without internet.</li>
- <li data-l="de"><b>Gleich helle Linien</b>dank konstanter Strahlgeschwindigkeit, kaum sichtbare Rücklaufspuren, ca. 230 Bilder/s.</li>
- <li data-l="en"><b>Equally bright lines</b>thanks to a constant beam speed, barely visible retrace lines, approx. 230 frames/s.</li>
- <li data-l="de"><b>Fünf Zifferblätter</b>und ein Testbild zum Einstellen des Oszilloskops; Wechsel per Wischen.</li>
- <li data-l="en"><b>Five dials</b>and a test pattern for adjusting the oscilloscope; switch by swiping.</li>
- <li data-l="de"><b>Für jedes Oszilloskop</b>Profil DIGITAL (Speicher-Oszilloskope) oder ANALOG (Röhre), per BOOT-Taster.</li>
- <li data-l="en"><b>For any oscilloscope</b>profile DIGITAL (storage scopes) or ANALOG (CRT), via the BOOT button.</li>
- <li data-l="de"><b>Webinterface</b>Live-Vorschau, Status, alle Einstellungen, WLAN, Debug – Deutsch/Englisch, hell/dunkel.</li>
- <li data-l="en"><b>Web interface</b>live preview, status, all settings, Wi-Fi, debug – German/English, light/dark.</li>
- <li data-l="de"><b>OLED am Gerät</b>Uhrzeit und Datum im 7-Segment-Stil, WLAN und Signalstärke.</li>
- <li data-l="en"><b>OLED on the device</b>time and date in 7-segment style, Wi-Fi and signal strength.</li>
-</ul>
+<div class="grp"><h2 id="projekt-h"><span data-l="de">Projekt</span><span data-l="en">Project</span></h2>
+<section>
+ <p data-l="de">Eine analoge Uhr, gezeichnet vom Elektronenstrahl: Ein ESP32 erzeugt mit seinen beiden DACs die Spannungen für X und Y und fährt Zifferblatt, Ziffern und Zeiger etwa 230-mal pro Sekunde ab – mit Zeit aus dem Internet, OLED-Anzeige am Gerät und einem Webinterface fürs Handy.</p>
+ <p data-l="en">An analogue clock drawn by the electron beam: an ESP32 generates the X and Y voltages with its two DACs and traces dial, numerals and hands about 230 times per second – with time from the internet, an OLED display on the device and a web interface for your phone.</p>
+ <a class="btn" href="demo/"><span data-l="de">Webinterface ausprobieren</span><span data-l="en">Try the web interface</span></a>
+ <a class="row" href="demo/"><span><span data-l="de">Testseite</span><span data-l="en">Test page</span><small class="note" data-l="de">Läuft ohne Uhr im Browser, alle Werte sind simuliert</small><small class="note" data-l="en">Runs in the browser without a clock, all values are simulated</small></span><span>›</span></a>
+ <a class="row" href="https://github.com/HolzHolz123/ESP32_OscilloscopeClock"><span>GitHub<small class="note" data-l="de">Quellcode, Anleitung und Werkzeuge</small><small class="note" data-l="en">Source code, guide and tools</small></span><span>›</span></a>
+</section></div>
 
-<h2 data-l="de">Bilder</h2><h2 data-l="en">Pictures</h2>
-<figure class="wide">
- <img src="images/oszilloskop_zifferblaetter.png" alt="Zifferblätter" data-l="de"><img src="images/oszilloskop_zifferblaetter_en.png" alt="Dials" data-l="en">
- <figcaption data-l="de">Die fünf Zifferblätter und das Testbild – erzeugt aus den Vektordaten der Firmware</figcaption>
- <figcaption data-l="en">The five dials and the test pattern – rendered from the firmware's vector data</figcaption>
-</figure>
-<figure class="wide">
- <img src="images/web_uebersicht.png" alt="Webinterface Handy" data-l="de"><img src="images/web_uebersicht_en.png" alt="Web interface phone" data-l="en">
- <figcaption data-l="de">Webinterface auf dem Handy: hell, dunkel, Seitenmenü</figcaption>
- <figcaption data-l="en">Web interface on a phone: light, dark, side menu</figcaption>
-</figure>
-<figure class="wide svgbg">
- <img src="images/verdrahtung.svg" alt="Verdrahtung" data-l="de"><img src="images/verdrahtung_en.svg" alt="Wiring" data-l="en">
- <figcaption data-l="de">Verdrahtung – alle Leitungen in die Schraubklemmen des Breakout-Boards, die Echtzeituhr ist optional</figcaption>
- <figcaption data-l="en">Wiring – all wires into the screw terminals of the breakout board, the real-time clock is optional</figcaption>
-</figure>
-<figure class="svgbg" style="max-width:640px">
- <img src="images/software.svg" alt="Software" data-l="de"><img src="images/software_en.svg" alt="Software" data-l="en">
- <figcaption data-l="de">Aufteilung der Firmware auf die beiden Kerne</figcaption><figcaption data-l="en">Division of the firmware between the two cores</figcaption>
-</figure>
-<p class="note" data-l="de">Oszilloskop- und OLED-Bilder sind am PC aus den echten Firmware-Daten erzeugt, die Webinterface-Bilder sind Screenshots. Fotos des fertigen Geräts folgen.</p>
-<p class="note" data-l="en">Oscilloscope and OLED pictures were generated on a PC from the real firmware data, the web interface pictures are screenshots. Photos of the finished device will follow.</p>
+<div class="grp"><h2 id="funktionen-h"><span data-l="de">Funktionen</span><span data-l="en">Features</span></h2>
+<section>
+ <div class="row"><span><span data-l="de">Genaue Zeit</span><span data-l="en">Accurate time</span><small class="note" data-l="de">Per NTP, stündlich abgeglichen, automatische Sommerzeit; optional Echtzeituhr DS3231 für den Betrieb ohne Internet</small><small class="note" data-l="en">Via NTP, synced hourly, automatic daylight saving time; optional DS3231 real-time clock for use without internet</small></span></div>
+ <div class="row"><span><span data-l="de">Gleich helle Linien</span><span data-l="en">Equally bright lines</span><small class="note" data-l="de">Konstante Strahlgeschwindigkeit, kaum sichtbare Rücklaufspuren, ca. 230 Bilder pro Sekunde</small><small class="note" data-l="en">Constant beam speed, barely visible retrace lines, approx. 230 frames per second</small></span></div>
+ <div class="row"><span><span data-l="de">Fünf Zifferblätter</span><span data-l="en">Five dials</span><small class="note" data-l="de">Ziffern, römisch oder nur Striche – dazu ein Testbild zum Einstellen des Oszilloskops</small><small class="note" data-l="en">Numerals, Roman or ticks only – plus a test pattern for adjusting the oscilloscope</small></span></div>
+ <div class="row"><span><span data-l="de">Für jedes Oszilloskop</span><span data-l="en">For any oscilloscope</span><small class="note" data-l="de">Profil DIGITAL für Speicher-Oszilloskope, ANALOG für Röhren – per BOOT-Taster oder Webinterface</small><small class="note" data-l="en">Profile DIGITAL for storage scopes, ANALOG for CRTs – via the BOOT button or the web interface</small></span></div>
+ <div class="row"><span>Webinterface<small class="note" data-l="de">Live-Vorschau, Status, alle Einstellungen, WLAN, Debug – Deutsch/Englisch, hell/dunkel, als App installierbar</small><small class="note" data-l="en">Live preview, status, all settings, Wi-Fi, debug – German/English, light/dark, installable as an app</small></span></div>
+ <div class="row"><span><span data-l="de">OLED am Gerät</span><span data-l="en">OLED on the device</span><small class="note" data-l="de">Uhrzeit und Datum im 7-Segment-Stil, WLAN und Signalstärke</small><small class="note" data-l="en">Time and date in 7-segment style, Wi-Fi and signal strength</small></span></div>
+</section></div>
+
+<div class="grp"><h2 id="hardware-h">Hardware</h2>
+<section>
+ <div class="row"><span>ESP32-WROOM-32U DevKitC V4<small class="note" data-l="de">Zwei 8-Bit-DACs an GPIO25/26, externe Antenne</small><small class="note" data-l="en">Two 8-bit DACs on GPIO25/26, external antenna</small></span><span>1×</span></div>
+ <div class="row"><span>Waveshare 2.42" OLED<small class="note">SSD1309, 128 × 64, SPI</small></span><span>1×</span></div>
+ <div class="row"><span><span data-l="de">BNC-Pigtails mit 220 Ω</span><span data-l="en">BNC pigtails with 220 Ω</span><small class="note" data-l="de">X und Y, durch Kabelverschraubungen M6</small><small class="note" data-l="en">X and Y, through M6 cable glands</small></span><span>2×</span></div>
+ <div class="row"><span><span data-l="de">Breakout-Board, USB-C-Einbaubuchse</span><span data-l="en">Breakout board, USB-C panel socket</span><small class="note" data-l="de">Alles in Schraubklemmen – auf dem DevKit wird nichts gelötet</small><small class="note" data-l="en">Everything in screw terminals – nothing is soldered on the DevKit</small></span><span>1×</span></div>
+ <div class="row"><span><span data-l="de">Abzweigdose 150 × 100 × 70 mm</span><span data-l="en">Junction box 150 × 100 × 70 mm</span><small class="note" data-l="de">Mit Bohrplan im Maßstab 1:1 in der Dokumentation</small><small class="note" data-l="en">With a 1:1 drilling template in the documentation</small></span><span>1×</span></div>
+ <div class="row"><span><span data-l="de">Echtzeituhr DS3231</span><span data-l="en">DS3231 real-time clock</span><small class="note" data-l="de">Optional, I²C an GPIO21/22, Knopfzelle CR2032</small><small class="note" data-l="en">Optional, I²C on GPIO21/22, CR2032 coin cell</small></span><span>optional</span></div>
+</section></div>
+
+<div class="grp"><h2 id="bilder-h"><span data-l="de">Bilder</span><span data-l="en">Pictures</span></h2>
+<section>
+ <figure><img src="images/oszilloskop_zifferblaetter.png" alt="Zifferblätter" data-l="de" loading="lazy"><img src="images/oszilloskop_zifferblaetter_en.png" alt="Dials" data-l="en" loading="lazy">
+  <figcaption data-l="de">Die fünf Zifferblätter und das Testbild – erzeugt aus den Vektordaten der Firmware</figcaption><figcaption data-l="en">The five dials and the test pattern – rendered from the firmware's vector data</figcaption></figure>
+ <figure><img src="images/web_uebersicht.png" alt="Webinterface" data-l="de" loading="lazy"><img src="images/web_uebersicht_en.png" alt="Web interface" data-l="en" loading="lazy">
+  <figcaption data-l="de">Webinterface auf dem Handy: hell, dunkel, Seitenmenü</figcaption><figcaption data-l="en">Web interface on a phone: light, dark, side menu</figcaption></figure>
+ <figure class="svg"><img src="images/verdrahtung.svg" alt="Verdrahtung" data-l="de" loading="lazy"><img src="images/verdrahtung_en.svg" alt="Wiring" data-l="en" loading="lazy">
+  <figcaption data-l="de">Verdrahtung – alle Leitungen in die Schraubklemmen, die Echtzeituhr ist optional</figcaption><figcaption data-l="en">Wiring – all wires into the screw terminals, the real-time clock is optional</figcaption></figure>
+ <figure class="svg"><img src="images/software.svg" alt="Software" data-l="de" loading="lazy"><img src="images/software_en.svg" alt="Software" data-l="en" loading="lazy">
+  <figcaption data-l="de">Aufteilung der Firmware auf die beiden Kerne</figcaption><figcaption data-l="en">Division of the firmware between the two cores</figcaption></figure>
+</section></div>
+
+<div class="grp"><h2 id="downloads-h">Downloads</h2>
+<section>
+ <a class="row" href="ESP32_Oscilloscope_Clock_Dokumentation.pdf"><span><span data-l="de">Dokumentation</span><span data-l="en">Documentation (German)</span><small class="note" data-l="de">PDF, Deutsch – Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small><small class="note" data-l="en">PDF – assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
+ <a class="row" href="ESP32_Oscilloscope_Clock_Documentation.pdf"><span><span data-l="de">Dokumentation (Englisch)</span><span data-l="en">Documentation</span><small class="note" data-l="de">PDF, English</small><small class="note" data-l="en">PDF, English – assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
+ <a class="row" href="https://github.com/HolzHolz123/ESP32_OscilloscopeClock"><span><span data-l="de">Firmware und Quellcode</span><span data-l="en">Firmware and source code</span><small class="note" data-l="de">Arduino IDE 2.x oder PlatformIO</small><small class="note" data-l="en">Arduino IDE 2.x or PlatformIO</small></span><span>›</span></a>
+</section></div>
 
 <footer>
- <p data-l="de">Idee nach der ESP32 Oscilloscope Clock von Mauro Pintus (2018); Firmware, Webinterface und Grafiken sind neu geschrieben. Quellcode und Anleitung: <a href="https://github.com/HolzHolz123/ESP32_OscilloscopeClock">GitHub</a>.</p>
- <p data-l="en">Based on an idea by Mauro Pintus (ESP32 Oscilloscope Clock, 2018); firmware, web interface and graphics are rewritten. Source code and guide: <a href="https://github.com/HolzHolz123/ESP32_OscilloscopeClock">GitHub</a>.</p>
+ <p data-l="de">Idee nach der ESP32 Oscilloscope Clock von Mauro Pintus (2018); Firmware, Webinterface und Grafiken sind neu geschrieben. Schrift: Raleway (SIL Open Font License 1.1). Bilder von Oszilloskop und OLED sind aus den Firmware-Daten erzeugt, Fotos des fertigen Geräts folgen.</p>
+ <p data-l="en">Based on an idea by Mauro Pintus (ESP32 Oscilloscope Clock, 2018); firmware, web interface and graphics are rewritten. Font: Raleway (SIL Open Font License 1.1). Oscilloscope and OLED pictures are rendered from the firmware data, photos of the finished device will follow.</p>
 </footer>
 </main>
 <script>
-// Sprache: gespeicherte Wahl, sonst Browsersprache (Deutsch für "de…", sonst Englisch)
-(function(){
- var root=document.documentElement,btns=document.querySelectorAll('[data-set]');
- function set(l){root.lang=l;btns.forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.set===l))});
-  try{localStorage.setItem('lang',l)}catch(e){}}
- var l=null;try{l=localStorage.getItem('lang')}catch(e){}
- set(l==='de'||l==='en'?l:((navigator.language||'de').slice(0,2)==='de'?'de':'en'));
- btns.forEach(function(b){b.onclick=function(){set(b.dataset.set)}});
-})();
+const $=id=>document.getElementById(id),root=document.documentElement;
+const de=()=>root.lang==='de';
+// ---- Sprache und Darstellung (Seitenmenü) ----
+function setLang(l){root.lang=l;$('sLang').value=l;try{localStorage.setItem('lang',l)}catch(e){}tick(true)}
+$('sLang').value=root.lang;$('sLang').onchange=e=>setLang(e.target.value);
+$('sTheme').value=root.dataset.theme||'auto';
+$('sTheme').onchange=e=>{const m=e.target.value;if(m==='auto'){delete root.dataset.theme;root.style.colorScheme=''}else{root.dataset.theme=m;root.style.colorScheme=m}
+ try{localStorage.setItem('theme',m)}catch(x){}draw()};
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>draw());
+// ---- Seitenmenü ----
+function menu(o){$('nav').classList.toggle('open',o);$('shade').classList.toggle('open',o);$('menuBtn').setAttribute('aria-expanded',o);
+ $('nav').setAttribute('aria-hidden',!o);$('menuBtn').textContent=o?'✕':'☰'}
+$('menuBtn').onclick=()=>menu(!$('nav').classList.contains('open'));$('shade').onclick=()=>menu(false);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')menu(false)});
+const navA=[...document.querySelectorAll('#nav a')],navT=navA.map(a=>document.querySelector(a.getAttribute('href')));
+navA.forEach(a=>a.addEventListener('click',()=>menu(false)));
+// Abschnitt in der Bildschirmmitte im Menü markieren, Fortschrittsbalken oben
+function spy(){const top=document.querySelector('h1').getBoundingClientRect().bottom,mid=(top+innerHeight)/2;let k=0;
+ navT.forEach((t,i)=>{const b=t.tagName==='H2'?t.parentNode:t;if(b.getBoundingClientRect().top<=mid)k=i});
+ navA.forEach((a,i)=>a.classList.toggle('cur',i===k));
+ const se=document.scrollingElement,max=se.scrollHeight-se.clientHeight;$('prog').style.transform='scaleX('+(max>0?Math.min(1,se.scrollTop/max):0)+')'}
+addEventListener('scroll',spy,{passive:true});addEventListener('resize',spy);
+// ---- Oszilloskop-Vorschau: dieselben Vektordaten wie die Uhr (vectors.json) ----
+const DIALS=[['Ziffern 1–12','Numbers 1–12'],['Ziffern 12 · 3 · 6 · 9','Numbers 12 · 3 · 6 · 9'],['Römisch I–XII','Roman I–XII'],['Römisch XII · III · VI · IX','Roman XII · III · VI · IX'],['Nur Striche','Ticks only']];
+const ORDER=[0,1,4,3,2];let V=null,dial=0;
+function colors(){const c=getComputedStyle(root),v=n=>c.getPropertyValue(n).trim();return {bg:v('--scope-bg'),trace:v('--scope-trace'),glow:v('--scope-glow'),halo:v('--scope-halo'),grid:v('--scope-grid')}}
+function draw(){const c=$('scope'),g=c.getContext('2d'),W=c.width,k=W/256,S=colors();
+ g.clearRect(0,0,W,W);if(S.bg&&S.bg!=='transparent'){g.fillStyle=S.bg;g.fillRect(0,0,W,W)}
+ g.strokeStyle=S.grid;g.lineWidth=1;for(let i=1;i<8;i++){const p=Math.round(i*W/8)+.5;g.beginPath();g.moveTo(p,0);g.lineTo(p,W);g.moveTo(0,p);g.lineTo(W,p);g.stroke()}
+ dots();if(!V)return;
+ const d=new Date(),h=d.getHours(),m=d.getMinutes(),s=d.getSeconds();
+ const groups=[V.dial,V.digits[dial]||[],[V.hr[(h%12)*5+Math.floor(m/12)],V.min[m]],[V.sec[s]]];
+ g.lineCap='round';g.lineJoin='round';
+ for(const polys of groups)
+  for(const [w,col,blur] of [[5,S.glow,10],[1.8,S.trace,3]]){g.lineWidth=w*k/2;g.strokeStyle=col;g.shadowColor=S.halo;g.shadowBlur=blur;g.beginPath();
+   for(const p of polys){if(!p||p.length<4)continue;g.moveTo(p[0]*k,(255-p[1])*k);for(let i=2;i<p.length;i+=2)g.lineTo(p[i]*k,(255-p[i+1])*k)}g.stroke()}
+ g.shadowBlur=0}
+function dots(){const l=$('dotList');if(!l.children.length)for(const st of ORDER){const b=document.createElement('button');b.type='button';b.className='dot';b.dataset.dial=st;b.onclick=()=>setDial(st);l.append(b)}
+ for(const b of l.children){b.setAttribute('aria-current',String(+b.dataset.dial===dial));b.setAttribute('aria-label',DIALS[+b.dataset.dial][de()?0:1])}}
+let tagT=0;function setDial(st){dial=st;draw();const e=$('dialTag');e.textContent=DIALS[st][de()?0:1];e.classList.add('show');clearTimeout(tagT);tagT=setTimeout(()=>e.classList.remove('show'),1600)}
+function step(n){setDial(ORDER[(ORDER.indexOf(dial)+n+ORDER.length)%ORDER.length])}
+$('dPrev').onclick=()=>step(-1);$('dNext').onclick=()=>step(1);
+let sx=null,sy=0;const sc=$('scope');
+sc.addEventListener('pointerdown',e=>{sx=e.clientX;sy=e.clientY});
+sc.addEventListener('pointerup',e=>{if(sx===null)return;const dx=e.clientX-sx,dy=e.clientY-sy;sx=null;if(Math.abs(dx)>=40&&Math.abs(dx)>Math.abs(dy)*1.5)step(dx<0?1:-1)});
+sc.addEventListener('pointercancel',()=>{sx=null});
+sc.addEventListener('keydown',e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();step(e.key==='ArrowRight'?1:-1)}});
+// ---- Uhrzeit und Datum (Uhrzeit dieses Geräts), Kalenderwoche nach ISO 8601 ----
+function isoWeek(d){const t=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));const n=t.getUTCDay()||7;t.setUTCDate(t.getUTCDate()+4-n);
+ const y=new Date(Date.UTC(t.getUTCFullYear(),0,1));return Math.ceil(((t-y)/864e5+1)/7)}
+let last=-1;
+function tick(force){const d=new Date(),s=d.getSeconds();if(!force&&s===last)return;last=s;const z=v=>String(v).padStart(2,'0');
+ $('clock').innerHTML=(z(d.getHours())+':'+z(d.getMinutes())+':'+z(s)).replace(/[0-9]/g,'<i>$&</i>');
+ const w=z(isoWeek(d));$('date').textContent=de()?'KW '+w+' – '+z(d.getDate())+'.'+z(d.getMonth()+1)+'.'+d.getFullYear():'Week '+w+' – '+d.getFullYear()+'-'+z(d.getMonth()+1)+'-'+z(d.getDate());
+ draw()}
+setInterval(tick,200);tick(true);spy();
+fetch('vectors.json').then(r=>r.json()).then(v=>{V=v;draw()}).catch(()=>{});
 </script>
 </body>
 </html>
