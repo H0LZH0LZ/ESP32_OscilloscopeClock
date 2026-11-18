@@ -40,7 +40,7 @@ h2{display:flex;align-items:center;min-height:44px;margin:0;padding:0 4px;scroll
  font-size:13px;font-weight:600;color:var(--mute);text-transform:uppercase;letter-spacing:.06em}
 section{background:var(--card);border-radius:14px;margin:0 0 14px;padding:6px 16px}
 .row{display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:44px;border-top:1px solid var(--line);padding:8px 0;color:var(--fg);text-decoration:none}
-.row:first-child{border-top:0}
+.row:first-child,.row[data-l]+.row[data-l]{border-top:0}
 .row>span:last-child:not(:first-child){text-align:right;color:var(--mute);flex:none}
 .row{font-size:15px}
 .row .note{display:block;font-size:12.5px;line-height:1.35;color:var(--mute);margin-top:2px}
@@ -110,7 +110,8 @@ figcaption{font-size:13px;color:var(--mute);margin-top:8px}
 #nav h3{font-size:13px;color:var(--mute);text-transform:uppercase;letter-spacing:.06em;margin:4px 8px 12px}
 #nav a{display:flex;align-items:center;min-height:48px;padding:0 12px;border-radius:10px;color:var(--fg);text-decoration:none;font-weight:600}
 #nav a:hover,#nav a.cur{background:var(--bg)}#nav a.cur{color:var(--acc)}
-#nav .navopt{margin:16px 12px 0;padding-top:12px;border-top:1px solid var(--line)}
+#nav .navopt{margin:0 12px 10px}
+#nav .navopt+h3{margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
 #nav label{display:block;color:var(--mute);font-size:14px;margin:0 0 6px}
 #nav select{font:inherit;font-size:16px;width:100%;min-height:44px;padding:0 10px;margin-bottom:6px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--fg)}
 #shade{position:fixed;inset:0;z-index:35;background:rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .25s}
@@ -122,9 +123,13 @@ html[lang="de"] [data-l="en"],html[lang="en"] [data-l="de"]{display:none!importa
 <body>
 <button id="menuBtn" aria-label="Menü / Menu" aria-controls="nav" aria-expanded="false">☰</button>
 <nav id="nav" aria-hidden="true">
+ <div class="navopt"><label for="sLang"><span data-l="de">Sprache</span><span data-l="en">Language</span></label>
+  <select id="sLang"><option value="de">Deutsch</option><option value="en">English</option></select></div>
+ <div class="navopt"><label for="sTheme"><span data-l="de">Darstellung</span><span data-l="en">Appearance</span></label>
+  <select id="sTheme"><option value="auto">Automatisch</option><option value="light">Hell</option><option value="dark">Dunkel</option></select></div>
  <h3><span data-l="de">Abschnitte</span><span data-l="en">Sections</span></h3>
  <a href="#projekt-h"><span data-l="de">Projekt</span><span data-l="en">Project</span></a>
- <a href="#downloads-h">Downloads &amp; Links</a>
+ <a href="#downloads-h">0 Downloads &amp; Links</a>
  <!-- KAPITEL-MENUE -->
  <a href="#kap1"><span data-l="de">1 Überblick</span><span data-l="en">1 Overview</span></a>
  <a href="#kap2"><span data-l="de">2 Teileliste und Werkzeug</span><span data-l="en">2 Parts list and tools</span></a>
@@ -138,10 +143,6 @@ html[lang="de"] [data-l="en"],html[lang="en"] [data-l="de"]{display:none!importa
  <a href="#kap10"><span data-l="de">10 Technik: wie die Uhr arbeitet</span><span data-l="en">10 Technology: how the clock works</span></a>
  <a href="#kap11"><span data-l="de">11 Anhang</span><span data-l="en">11 Appendix</span></a>
 <!-- /KAPITEL-MENUE -->
- <div class="navopt"><label for="sLang"><span data-l="de">Sprache</span><span data-l="en">Language</span></label>
-  <select id="sLang"><option value="de">Deutsch</option><option value="en">English</option></select></div>
- <div class="navopt"><label for="sTheme"><span data-l="de">Darstellung</span><span data-l="en">Appearance</span></label>
-  <select id="sTheme"><option value="auto">Automatisch</option><option value="light">Hell</option><option value="dark">Dunkel</option></select></div>
 </nav>
 <div id="shade"></div>
 <main>
@@ -157,10 +158,10 @@ html[lang="de"] [data-l="en"],html[lang="en"] [data-l="de"]{display:none!importa
  </div>
 </section></div>
 
-<div class="grp"><h2 id="downloads-h">Downloads &amp; Links</h2>
+<div class="grp"><h2 id="downloads-h" class="coll" role="button" tabindex="0" aria-expanded="true">0 Downloads &amp; Links</h2>
 <section>
- <a class="row" href="ESP32_Oscilloscope_Clock_Dokumentation.pdf"><span><span data-l="de">Dokumentation (Deutsch)</span><span data-l="en">Documentation (German)</span><small class="note" data-l="de">PDF – Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small><small class="note" data-l="en">PDF – assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
- <a class="row" href="ESP32_Oscilloscope_Clock_Documentation.pdf"><span><span data-l="de">Dokumentation (Englisch)</span><span data-l="en">Documentation (English)</span><small class="note" data-l="de">PDF – Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small><small class="note" data-l="en">PDF – assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
+ <a class="row" data-l="de" href="ESP32_Oscilloscope_Clock_Dokumentation.pdf"><span>Dokumentation (PDF)<small class="note">Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small></span><span>›</span></a>
+ <a class="row" data-l="en" href="ESP32_Oscilloscope_Clock_Documentation.pdf"><span>Documentation (PDF)<small class="note">Assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
  <a class="row" href="demo/"><span><span data-l="de">Testseite</span><span data-l="en">Test page</span><small class="note" data-l="de">Das Webinterface der Uhr ausprobieren – läuft im Browser, alle Werte sind simuliert</small><small class="note" data-l="en">Try the clock's web interface – runs in the browser, all values are simulated</small></span><span>›</span></a>
  <a class="row" href="https://github.com/HolzHolz123/ESP32_OscilloscopeClock"><span><span data-l="de">GitHub – Version 2.0</span><span data-l="en">GitHub – version 2.0</span><small class="note" data-l="de">Diese Firmware mit Quellcode, Anleitung und Werkzeugen</small><small class="note" data-l="en">This firmware with source code, guide and tools</small></span><span>›</span></a>
  <a class="row" href="https://github.com/maurohh/ESP32_OscilloscopeClock"><span><span data-l="de">GitHub – Original</span><span data-l="en">GitHub – original</span><small class="note" data-l="de">Die ursprüngliche ESP32 Oscilloscope Clock von Mauro Pintus (2018), nach deren Idee diese Version entstand</small><small class="note" data-l="en">The original ESP32 Oscilloscope Clock by Mauro Pintus (2018) that inspired this version</small></span><span>›</span></a>
