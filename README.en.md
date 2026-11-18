@@ -2,6 +2,8 @@
 
 [Deutsch](README.md) · **English**
 
+<p align="center"><img src="docs/images/oszilloskop_uhr.png" alt="The clock on the oscilloscope" width="380"></p>
+
 A vector clock for an oscilloscope in X/Y mode, based on an idea by Mauro Pintus (see [Origin](#origin)),
 adapted for this hardware: **ESP32-WROOM-32U DevKitC V4**, **Waveshare 2.42" OLED (SPI)**, external
 2.4 GHz antenna, BNC outputs and an ABS enclosure.
@@ -17,11 +19,37 @@ This documentation quotes the German labels and adds the English label in parent
 „Einstellungen“ (Settings).
 
 ### Contents
+- [Pictures](#pictures)
 - [Features](#features)
 - [Quick start (Arduino IDE 2.x)](#quick-start-arduino-ide-2x)
 - [Operation](#operation)
 - [Status and tests](#status-and-tests)
 - [Origin](#origin)
+
+### Pictures
+
+The oscilloscope and OLED pictures were generated on a PC from the real firmware data, the web interface
+pictures are screenshots of the page. Photos of the finished device will follow once the prototype is built.
+
+**The five dials and the test pattern** – switch by swiping over the preview in the web interface
+
+<img src="docs/images/oszilloskop_zifferblaetter_en.png" alt="Dials" width="100%">
+
+| OLED in operation | OLED in the setup network | Web interface on a PC |
+|---|---|---|
+| <img src="docs/images/oled_normal_en.png" alt="OLED in operation" width="260"> | <img src="docs/images/oled_setup_en.png" alt="OLED in the setup network" width="260"> | <img src="docs/images/web_pc_dunkel_en.png" alt="Web interface on a PC" width="260"> |
+
+**Web interface on a phone** – start view light and dark, side menu
+
+<img src="docs/images/web_uebersicht_en.png" alt="Web interface on a phone" width="100%">
+
+**Wiring** – all wires go into the screw terminals of the breakout board, the real-time clock is optional
+
+<img src="docs/images/verdrahtung_en.svg" alt="Wiring" width="100%">
+
+| Layout in the enclosure | Division between the two cores |
+|---|---|
+| <img src="docs/images/aufbau_en.svg" alt="Layout in the enclosure" width="330"> | <img src="docs/images/software_en.svg" alt="Software" width="420"> |
 
 ### Features
 - **Core 1** does nothing but generate the X/Y signals (GPIO25/26) – no pauses, no locks.

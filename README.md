@@ -2,6 +2,8 @@
 
 **Deutsch** · [English](README.en.md)
 
+<p align="center"><img src="docs/images/oszilloskop_uhr.png" alt="Die Uhr auf dem Oszilloskop" width="380"></p>
+
 Vektoruhr für das Oszilloskop im X/Y-Modus, nach einer Idee von Mauro Pintus (siehe [Herkunft](#herkunft)), für folgende
 Hardware angepasst: **ESP32-WROOM-32U DevKitC V4**, **Waveshare 2.42" OLED (SPI)**, externe
 2,4-GHz-Antenne, BNC-Ausgänge und ein ABS-Gehäuse.
@@ -13,11 +15,37 @@ Hardware angepasst: **ESP32-WROOM-32U DevKitC V4**, **Waveshare 2.42" OLED (SPI)
 **Testseite des Webinterfaces ohne Uhr: [web/demo/scope-clock-demo.html](web/demo/scope-clock-demo.html)** – herunterladen und im Browser öffnen; alle Werte sind simuliert.
 
 ### Inhalt
+- [Bilder](#bilder)
 - [Was ist neu](#was-ist-neu)
 - [Schnellstart (Arduino IDE 2.x)](#schnellstart-arduino-ide-2x)
 - [Bedienung](#bedienung)
 - [Stand und Tests](#stand-und-tests)
 - [Herkunft](#herkunft)
+
+### Bilder
+
+Die Bilder von Oszilloskop und OLED sind am PC aus den echten Firmware-Daten erzeugt, die Webinterface-Bilder
+sind Screenshots der Seite. Fotos des fertigen Geräts folgen nach dem Bau des Prototyps.
+
+**Die fünf Zifferblätter und das Testbild** – Wechsel per Wischen über die Vorschau im Webinterface
+
+<img src="docs/images/oszilloskop_zifferblaetter.png" alt="Zifferblätter" width="100%">
+
+| OLED im Betrieb | OLED im Setup-WLAN | Webinterface am PC |
+|---|---|---|
+| <img src="docs/images/oled_normal.png" alt="OLED im Betrieb" width="260"> | <img src="docs/images/oled_setup.png" alt="OLED im Setup-WLAN" width="260"> | <img src="docs/images/web_pc_dunkel.png" alt="Webinterface am PC" width="260"> |
+
+**Webinterface auf dem Handy** – Startansicht hell und dunkel, Seitenmenü
+
+<img src="docs/images/web_uebersicht.png" alt="Webinterface auf dem Handy" width="100%">
+
+**Verdrahtung** – alle Leitungen gehen in die Schraubklemmen des Breakout-Boards, die Echtzeituhr ist optional
+
+<img src="docs/images/verdrahtung.svg" alt="Verdrahtung" width="100%">
+
+| Anordnung im Gehäuse | Aufteilung auf die beiden Kerne |
+|---|---|
+| <img src="docs/images/aufbau.svg" alt="Anordnung im Gehäuse" width="330"> | <img src="docs/images/software.svg" alt="Software" width="420"> |
 
 ### Was ist neu
 - **Core 1** erzeugt ausschließlich die X/Y-Signale (GPIO25/26) – ohne Pausen, ohne Locks.
