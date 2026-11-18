@@ -70,6 +70,22 @@ h2.coll::after{content:"";width:8px;height:8px;margin:0 10px 4px 0;border:solid 
 .doc p,.doc li,.doc td{overflow-wrap:break-word}
 .doc pre{font:11.5px/1.45 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px;overflow-x:auto;white-space:pre}
 .doc .small{font-size:12.5px;color:var(--mute)}
+/* Handy: Bild und Text untereinander, Tabellenzeilen als Einträge mit Bezeichnung, Protokoll umbrechen */
+@media (max-width:600px){
+ .doc .two{display:block}.doc .two>*{width:auto!important}
+ .doc .two figure img{max-width:340px;margin:0 auto;display:block}
+ .doc .tw{overflow:visible}
+ .doc table,.doc tbody,.doc tr,.doc td{display:block;width:auto!important}
+ .doc tr:has(th){display:none}
+ .doc tr{border-top:1px solid var(--line);padding:8px 0}
+ .doc tr:nth-child(2){border-top:0}
+ .doc td{border:0;padding:1px 0}
+ .doc td:first-child{font-weight:600;font-size:13.5px;margin-bottom:2px}
+ .doc td:not(:first-child)::before{content:attr(data-th);display:block;font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--mute);margin-top:4px}
+ .doc td.qty{display:none}
+ .doc td[data-qty]{font-size:13.5px}
+ .doc td[data-qty]::before{content:attr(data-qty);display:inline;margin:0 4px 0 0;font-size:13.5px;font-weight:600;letter-spacing:0;text-transform:none;color:var(--fg)}
+ .doc pre{white-space:pre-wrap;overflow-wrap:anywhere}}
 /* Überblick oben: Bild + Kurzbeschreibung, darunter Schnellzugriff */
 .intro{padding:14px 16px}
 .hero{display:flex;gap:14px;align-items:flex-start}
@@ -77,10 +93,6 @@ h2.coll::after{content:"";width:8px;height:8px;margin:0 10px 4px 0;border:solid 
 .hero b{display:block;font-size:15px;margin-bottom:4px}
 .hero p{margin:0;font-size:12.5px;line-height:1.4;color:var(--mute)}
 @media (max-width:360px){.hero img{width:88px;height:88px}}
-.quick{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
-.quick a{flex:1 1 auto;display:flex;align-items:center;justify-content:center;min-height:40px;padding:0 12px;border:1px solid var(--line);
- border-radius:10px;color:var(--acc);font-size:14px;font-weight:600;text-decoration:none;white-space:nowrap}
-.quick a:hover{background:var(--bg)}
 a.row>span:last-child{color:var(--acc);font-size:20px}
 figure{margin:0;padding:12px 0;border-top:1px solid var(--line)}
 figure:first-child{border-top:0}
@@ -112,6 +124,7 @@ html[lang="de"] [data-l="en"],html[lang="en"] [data-l="de"]{display:none!importa
 <nav id="nav" aria-hidden="true">
  <h3><span data-l="de">Abschnitte</span><span data-l="en">Sections</span></h3>
  <a href="#projekt-h"><span data-l="de">Projekt</span><span data-l="en">Project</span></a>
+ <a href="#downloads-h">Downloads &amp; Links</a>
  <!-- KAPITEL-MENUE -->
  <a href="#kap1"><span data-l="de">1 Überblick</span><span data-l="en">1 Overview</span></a>
  <a href="#kap2"><span data-l="de">2 Teileliste und Werkzeug</span><span data-l="en">2 Parts list and tools</span></a>
@@ -125,8 +138,6 @@ html[lang="de"] [data-l="en"],html[lang="en"] [data-l="de"]{display:none!importa
  <a href="#kap10"><span data-l="de">10 Technik: wie die Uhr arbeitet</span><span data-l="en">10 Technology: how the clock works</span></a>
  <a href="#kap11"><span data-l="de">11 Anhang</span><span data-l="en">11 Appendix</span></a>
 <!-- /KAPITEL-MENUE -->
- <a href="#downloads-h">Downloads</a>
- <a href="#links-h">Links</a>
  <div class="navopt"><label for="sLang"><span data-l="de">Sprache</span><span data-l="en">Language</span></label>
   <select id="sLang"><option value="de">Deutsch</option><option value="en">English</option></select></div>
  <div class="navopt"><label for="sTheme"><span data-l="de">Darstellung</span><span data-l="en">Appearance</span></label>
@@ -144,11 +155,16 @@ html[lang="de"] [data-l="en"],html[lang="en"] [data-l="de"]{display:none!importa
    <p data-l="de">Eine analoge Uhr, gezeichnet vom Elektronenstrahl: Ein ESP32 erzeugt mit seinen beiden DACs die Spannungen für X und Y und fährt Zifferblatt, Ziffern und Zeiger etwa 230-mal pro Sekunde ab – mit Zeit aus dem Internet, optionaler OLED-Anzeige und einem Webinterface fürs Handy.</p>
    <p data-l="en">An analogue clock drawn by the electron beam: an ESP32 generates the X and Y voltages with its two DACs and traces dial, numerals and hands about 230 times per second – with time from the internet, an optional OLED display and a web interface for your phone.</p></div>
  </div>
- <div class="quick">
-  <a href="ESP32_Oscilloscope_Clock_Dokumentation.pdf" data-l="de">Dokumentation (PDF)</a><a href="ESP32_Oscilloscope_Clock_Documentation.pdf" data-l="en">Documentation (PDF)</a>
-  <a href="https://github.com/HolzHolz123/ESP32_OscilloscopeClock">GitHub v2.0</a>
-  <a href="demo/"><span data-l="de">Testseite</span><span data-l="en">Test page</span></a>
- </div>
+</section></div>
+
+<div class="grp"><h2 id="downloads-h">Downloads &amp; Links</h2>
+<section>
+ <a class="row" href="ESP32_Oscilloscope_Clock_Dokumentation.pdf"><span><span data-l="de">Dokumentation (Deutsch)</span><span data-l="en">Documentation (German)</span><small class="note" data-l="de">PDF – Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small><small class="note" data-l="en">PDF – assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
+ <a class="row" href="ESP32_Oscilloscope_Clock_Documentation.pdf"><span><span data-l="de">Dokumentation (Englisch)</span><span data-l="en">Documentation (English)</span><small class="note" data-l="de">PDF – Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small><small class="note" data-l="en">PDF – assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
+ <a class="row" href="demo/"><span><span data-l="de">Testseite</span><span data-l="en">Test page</span><small class="note" data-l="de">Das Webinterface der Uhr ausprobieren – läuft im Browser, alle Werte sind simuliert</small><small class="note" data-l="en">Try the clock's web interface – runs in the browser, all values are simulated</small></span><span>›</span></a>
+ <a class="row" href="https://github.com/HolzHolz123/ESP32_OscilloscopeClock"><span><span data-l="de">GitHub – Version 2.0</span><span data-l="en">GitHub – version 2.0</span><small class="note" data-l="de">Diese Firmware mit Quellcode, Anleitung und Werkzeugen</small><small class="note" data-l="en">This firmware with source code, guide and tools</small></span><span>›</span></a>
+ <a class="row" href="https://github.com/maurohh/ESP32_OscilloscopeClock"><span><span data-l="de">GitHub – Original</span><span data-l="en">GitHub – original</span><small class="note" data-l="de">Die ursprüngliche ESP32 Oscilloscope Clock von Mauro Pintus (2018), nach deren Idee diese Version entstand</small><small class="note" data-l="en">The original ESP32 Oscilloscope Clock by Mauro Pintus (2018) that inspired this version</small></span><span>›</span></a>
+ <a class="row" href="fonts/OFL.txt"><span><span data-l="de">Schriftart Raleway</span><span data-l="en">Font Raleway</span><small class="note" data-l="de">SIL Open Font License 1.1 – Lizenztext</small><small class="note" data-l="en">SIL Open Font License 1.1 – licence text</small></span><span>›</span></a>
 </section></div>
 
 <!-- KAPITEL -->
@@ -201,18 +217,18 @@ built-in digital-to-analogue converters (DACs) and traces the dial, numerals and
 kommt direkt in den Eingang des Oszilloskops, ein zusätzliches BNC-Kabel ist nicht nötig.</p>
 <div class="tw"><table>
  <tr><th>Anz.</th><th>Teil</th><th>Hinweis</th></tr>
- <tr><td>1</td><td><b>ESP32-WROOM-32U DevKitC V4</b> mit USB-C und Antennen-Kit (DUBEUYEW, „2 Stück ESP32-WROOM-32U ESP32 DevKitC V4 USB-C mit Antennen-Kit“), 48,5 × 28,5 mm</td><td>Klassischer ESP32 mit zwei 8-Bit-DACs an GPIO25/26, USB-Seriell-Wandler CP2102. Das Antennen-Kit enthält das IPEX→SMA-Pigtail. Andere ESP32-Varianten (S2, S3, C3) haben keine bzw. andere DACs und passen nicht.</td></tr>
- <tr><td>1</td><td><b>ESP32-Breakout-Board mit Schraubklemmen</b> (XTVTX, „ESP32 Breakout Board Erweiterungskarte GPIO 1 in 2“, 2er-Pack)</td><td>Das DevKit wird aufgesteckt, alle Leitungen kommen in Schraubklemmen – am DevKit wird nichts gelötet. Die Klemmen sind wie die Stifte beschriftet (3V3, GND, P25, P26, P23 …).</td></tr>
- <tr><td>2</td><td><b>BNC-Pigtail-Leitung</b> BNC-Stecker auf 2,54-mm-DuPont-Stift, RG316 (TEJIATE, „SMA to DuPont BNC/Q9/N … RG316“, Variante <b>BNC-J to J</b>)</td><td>X und Y. Länge passend zum Abstand zum Oszilloskop wählen (30–80 cm erhältlich; 50 cm ist ein guter Wert). Rot = Innenleiter (Signal), braun = Schirm (Masse) – mit dem Durchgangsprüfer bestätigen.</td></tr>
- <tr><td>2</td><td><b>Kabelverschraubung Lapp SKINDICHT MINI</b> M6×1, Messing vernickelt, Klemmbereich 2–3 mm, IP68 (Lapp 52001860, RS 458-3953)</td><td>Je Pigtail eine; hält und dichtet das RG316 (Ø ca. 2,5 mm) in der Gehäusewand.</td></tr>
- <tr><td>1</td><td><b>USB-C-Einbauverlängerung</b> USB 3.1, IP67, 0,2 m, Stecker auf Buchse, FPC-Flachbandkabel, Einbauöffnung 16 mm (Plinkwirekb)</td><td>USB-C-Buchse in der Gehäusewand; das Flachbandkabel steckt innen im DevKit. Darüber wird die Uhr versorgt und programmiert.</td></tr>
- <tr><td>1</td><td><b>Abzweigdose ABS 150 × 100 × 70 mm</b>, IP67, mit Scharnierdeckel, Edelstahlverschlüssen und Montageplatte (Yunseity)</td><td>Kunststoff, damit das WLAN-Signal durchkommt. Das Breakout-Board wird auf die gelochte Montageplatte geschraubt.</td></tr>
- <tr><td>1</td><td><b>Waveshare 2,42inch OLED Display Module</b>, weiß, 128 × 64 Pixel, SPI/I²C (SSD1309); Platine 61,5 × 39,5 mm, aktive Fläche 55,0 × 27,5 mm</td><td><b>Optional</b> – die Uhr läuft auch ohne Display. Im Auslieferungszustand (4-Wire-SPI) verwenden, nichts umlöten. Stiftleiste von unten: VCC, GND, DIN, CLK, CS, DC, RST.</td></tr>
- <tr><td>1</td><td><b>WLAN-Antenne Bingfu</b> 2,4/5,8 GHz, 8 dBi, SMA-Stecker (Variante „SMA“), abwinkelbar</td><td>Pflicht: Das Modul -32U hat keine eingebaute Antenne. Sie wird auf die SMA-Buchse des IPEX-Pigtails aus dem Antennen-Kit geschraubt – SMA und RP-SMA nicht mischen (Stecker der Antenne muss zur Buchse des Pigtails passen).</td></tr>
- <tr><td>2</td><td>Widerstand <b>220 Ω</b>, 0,25 W (empfohlen)</td><td>In die rote Ader jedes Pigtails eingelötet; schützt die DAC-Ausgänge bei einem Kurzschluss am BNC-Stecker.</td></tr>
- <tr><td>(1)</td><td><i>Optional:</i> Echtzeituhr <b>DS3231</b>, Modul ZS-042 (z. B. WINGONEER „Tiny DS3231 AT24C32“)</td><td>Hält die Uhrzeit nach einem Stromausfall ohne Internet. VCC → 3V3, GND → GND, SDA → P21, SCL → P22. Knopfzelle: normale CR2032 – Modul nur an 3V3 (an 5 V würde die Ladeschaltung sie laden). Im Webinterface einschalten.</td></tr>
- <tr><td>–</td><td>Kleinteile</td><td>7 Leitungen für das OLED (DuPont-Kabel oder Litze), Schrumpfschlauch, Abstandsbolzen M2,5 (OLED) und M3 (Breakout-Board), ggf. 2–3 Muttern M6</td></tr>
- <tr><td>1</td><td>USB-Netzteil 5 V, ≥ 1 A, mit USB-C-Kabel</td><td>Ein normales, ungeerdetes Steckernetzteil vermeidet Brummschleifen.</td></tr>
+ <tr><td class="qty" data-th="Anz.">1</td><td data-qty="1 ×" data-th="Teil"><b>ESP32-WROOM-32U DevKitC V4</b> mit USB-C und Antennen-Kit (DUBEUYEW, „2 Stück ESP32-WROOM-32U ESP32 DevKitC V4 USB-C mit Antennen-Kit“), 48,5 × 28,5 mm</td><td data-th="Hinweis">Klassischer ESP32 mit zwei 8-Bit-DACs an GPIO25/26, USB-Seriell-Wandler CP2102. Das Antennen-Kit enthält das IPEX→SMA-Pigtail. Andere ESP32-Varianten (S2, S3, C3) haben keine bzw. andere DACs und passen nicht.</td></tr>
+ <tr><td class="qty" data-th="Anz.">1</td><td data-qty="1 ×" data-th="Teil"><b>ESP32-Breakout-Board mit Schraubklemmen</b> (XTVTX, „ESP32 Breakout Board Erweiterungskarte GPIO 1 in 2“, 2er-Pack)</td><td data-th="Hinweis">Das DevKit wird aufgesteckt, alle Leitungen kommen in Schraubklemmen – am DevKit wird nichts gelötet. Die Klemmen sind wie die Stifte beschriftet (3V3, GND, P25, P26, P23 …).</td></tr>
+ <tr><td class="qty" data-th="Anz.">2</td><td data-qty="2 ×" data-th="Teil"><b>BNC-Pigtail-Leitung</b> BNC-Stecker auf 2,54-mm-DuPont-Stift, RG316 (TEJIATE, „SMA to DuPont BNC/Q9/N … RG316“, Variante <b>BNC-J to J</b>)</td><td data-th="Hinweis">X und Y. Länge passend zum Abstand zum Oszilloskop wählen (30–80 cm erhältlich; 50 cm ist ein guter Wert). Rot = Innenleiter (Signal), braun = Schirm (Masse) – mit dem Durchgangsprüfer bestätigen.</td></tr>
+ <tr><td class="qty" data-th="Anz.">2</td><td data-qty="2 ×" data-th="Teil"><b>Kabelverschraubung Lapp SKINDICHT MINI</b> M6×1, Messing vernickelt, Klemmbereich 2–3 mm, IP68 (Lapp 52001860, RS 458-3953)</td><td data-th="Hinweis">Je Pigtail eine; hält und dichtet das RG316 (Ø ca. 2,5 mm) in der Gehäusewand.</td></tr>
+ <tr><td class="qty" data-th="Anz.">1</td><td data-qty="1 ×" data-th="Teil"><b>USB-C-Einbauverlängerung</b> USB 3.1, IP67, 0,2 m, Stecker auf Buchse, FPC-Flachbandkabel, Einbauöffnung 16 mm (Plinkwirekb)</td><td data-th="Hinweis">USB-C-Buchse in der Gehäusewand; das Flachbandkabel steckt innen im DevKit. Darüber wird die Uhr versorgt und programmiert.</td></tr>
+ <tr><td class="qty" data-th="Anz.">1</td><td data-qty="1 ×" data-th="Teil"><b>Abzweigdose ABS 150 × 100 × 70 mm</b>, IP67, mit Scharnierdeckel, Edelstahlverschlüssen und Montageplatte (Yunseity)</td><td data-th="Hinweis">Kunststoff, damit das WLAN-Signal durchkommt. Das Breakout-Board wird auf die gelochte Montageplatte geschraubt.</td></tr>
+ <tr><td class="qty" data-th="Anz.">1</td><td data-qty="1 ×" data-th="Teil"><b>Waveshare 2,42inch OLED Display Module</b>, weiß, 128 × 64 Pixel, SPI/I²C (SSD1309); Platine 61,5 × 39,5 mm, aktive Fläche 55,0 × 27,5 mm</td><td data-th="Hinweis"><b>Optional</b> – die Uhr läuft auch ohne Display. Im Auslieferungszustand (4-Wire-SPI) verwenden, nichts umlöten. Stiftleiste von unten: VCC, GND, DIN, CLK, CS, DC, RST.</td></tr>
+ <tr><td class="qty" data-th="Anz.">1</td><td data-qty="1 ×" data-th="Teil"><b>WLAN-Antenne Bingfu</b> 2,4/5,8 GHz, 8 dBi, SMA-Stecker (Variante „SMA“), abwinkelbar</td><td data-th="Hinweis">Pflicht: Das Modul -32U hat keine eingebaute Antenne. Sie wird auf die SMA-Buchse des IPEX-Pigtails aus dem Antennen-Kit geschraubt – SMA und RP-SMA nicht mischen (Stecker der Antenne muss zur Buchse des Pigtails passen).</td></tr>
+ <tr><td class="qty" data-th="Anz.">2</td><td data-qty="2 ×" data-th="Teil">Widerstand <b>220 Ω</b>, 0,25 W (empfohlen)</td><td data-th="Hinweis">In die rote Ader jedes Pigtails eingelötet; schützt die DAC-Ausgänge bei einem Kurzschluss am BNC-Stecker.</td></tr>
+ <tr><td class="qty" data-th="Anz.">(1)</td><td data-qty="(1) ×" data-th="Teil"><i>Optional:</i> Echtzeituhr <b>DS3231</b>, Modul ZS-042 (z. B. WINGONEER „Tiny DS3231 AT24C32“)</td><td data-th="Hinweis">Hält die Uhrzeit nach einem Stromausfall ohne Internet. VCC → 3V3, GND → GND, SDA → P21, SCL → P22. Knopfzelle: normale CR2032 – Modul nur an 3V3 (an 5 V würde die Ladeschaltung sie laden). Im Webinterface einschalten.</td></tr>
+ <tr><td class="qty" data-th="Anz.">–</td><td data-qty="– ×" data-th="Teil">Kleinteile</td><td data-th="Hinweis">7 Leitungen für das OLED (DuPont-Kabel oder Litze), Schrumpfschlauch, Abstandsbolzen M2,5 (OLED) und M3 (Breakout-Board), ggf. 2–3 Muttern M6</td></tr>
+ <tr><td class="qty" data-th="Anz.">1</td><td data-qty="1 ×" data-th="Teil">USB-Netzteil 5 V, ≥ 1 A, mit USB-C-Kabel</td><td data-th="Hinweis">Ein normales, ungeerdetes Steckernetzteil vermeidet Brummschleifen.</td></tr>
 </table></div>
 <h3>Beim Bau des Prototyps verwendete Artikel</h3>
 <ul class="small">
@@ -237,18 +253,18 @@ cables</b> that are led through the enclosure wall with <b>cable glands</b>. The
 oscilloscope input; no additional BNC cable is needed.</p>
 <div class="tw"><table>
  <tr><th>Qty</th><th>Part</th><th>Note</th></tr>
- <tr><td>1</td><td><b>ESP32-WROOM-32U DevKitC V4</b> with USB-C and antenna kit (DUBEUYEW, “2 pcs ESP32-WROOM-32U ESP32 DevKitC V4 USB-C with antenna kit”), 48.5 × 28.5 mm</td><td>Classic ESP32 with two 8-bit DACs on GPIO25/26, USB-serial converter CP2102. The antenna kit contains the IPEX→SMA pigtail. Other ESP32 variants (S2, S3, C3) have no or different DACs and do not fit.</td></tr>
- <tr><td>1</td><td><b>ESP32 breakout board with screw terminals</b> (XTVTX, “ESP32 breakout board expansion board GPIO 1 in 2”, pack of 2)</td><td>The DevKit is plugged in and all wires go into screw terminals – nothing is soldered on the DevKit. The terminals are labelled like the pins (3V3, GND, P25, P26, P23 …).</td></tr>
- <tr><td>2</td><td><b>BNC pigtail cable</b>, BNC plug to 2.54 mm DuPont pin, RG316 (TEJIATE, “SMA to DuPont BNC/Q9/N … RG316”, variant <b>BNC-J to J</b>)</td><td>X and Y. Choose the length to suit the distance to the oscilloscope (30–80 cm available; 50 cm is a good choice). Red = core (signal), brown = shield (ground) – confirm with a continuity tester.</td></tr>
- <tr><td>2</td><td><b>Cable gland Lapp SKINDICHT MINI</b> M6×1, nickel-plated brass, clamping range 2–3 mm, IP68 (Lapp 52001860, RS 458-3953)</td><td>One per pigtail; holds and seals the RG316 (approx. Ø 2.5 mm) in the enclosure wall.</td></tr>
- <tr><td>1</td><td><b>USB-C panel-mount extension</b> USB 3.1, IP67, 0.2 m, plug to socket, FPC flat cable, 16 mm cut-out (Plinkwirekb)</td><td>USB-C socket in the enclosure wall; the flat cable plugs into the DevKit inside. It powers and programs the clock.</td></tr>
- <tr><td>1</td><td><b>ABS junction box 150 × 100 × 70 mm</b>, IP67, with hinged lid, stainless steel latches and mounting plate (Yunseity)</td><td>Plastic so that the Wi-Fi signal gets through. The breakout board is screwed onto the perforated mounting plate.</td></tr>
- <tr><td>1</td><td><b>Waveshare 2.42inch OLED display module</b>, white, 128 × 64 pixels, SPI/I²C (SSD1309); board 61.5 × 39.5 mm, active area 55.0 × 27.5 mm</td><td><b>Optional</b> – the clock also runs without a display. Use as delivered (4-wire SPI), no resoldering. Pin header from the bottom: VCC, GND, DIN, CLK, CS, DC, RST.</td></tr>
- <tr><td>1</td><td><b>Wi-Fi antenna Bingfu</b> 2.4/5.8 GHz, 8 dBi, SMA plug (variant “SMA”), angled</td><td>Mandatory: the -32U module has no built-in antenna. It screws onto the SMA socket of the IPEX pigtail from the antenna kit – do not mix SMA and RP-SMA (the antenna plug must match the pigtail socket).</td></tr>
- <tr><td>2</td><td>Resistor <b>220 Ω</b>, 0.25 W (recommended)</td><td>Soldered into the red lead of each pigtail; protects the DAC outputs if the BNC plug is short-circuited.</td></tr>
- <tr><td>(1)</td><td><i>Optional:</i> real-time clock <b>DS3231</b>, module ZS-042 (e.g. WINGONEER “Tiny DS3231 AT24C32”)</td><td>Keeps the time after a power failure without internet. VCC → 3V3, GND → GND, SDA → P21, SCL → P22. Coin cell: normal CR2032 – connect the module to 3V3 only (at 5 V its charging circuit would charge it). Switch on in the web interface.</td></tr>
- <tr><td>–</td><td>Small parts</td><td>7 wires for the OLED (DuPont cables or stranded wire), heat-shrink tubing, standoffs M2.5 (OLED) and M3 (breakout board), possibly 2–3 M6 nuts</td></tr>
- <tr><td>1</td><td>USB power supply 5 V, ≥ 1 A, with USB-C cable</td><td>A normal, unearthed plug-in power supply avoids ground loops.</td></tr>
+ <tr><td class="qty" data-th="Qty">1</td><td data-qty="1 ×" data-th="Part"><b>ESP32-WROOM-32U DevKitC V4</b> with USB-C and antenna kit (DUBEUYEW, “2 pcs ESP32-WROOM-32U ESP32 DevKitC V4 USB-C with antenna kit”), 48.5 × 28.5 mm</td><td data-th="Note">Classic ESP32 with two 8-bit DACs on GPIO25/26, USB-serial converter CP2102. The antenna kit contains the IPEX→SMA pigtail. Other ESP32 variants (S2, S3, C3) have no or different DACs and do not fit.</td></tr>
+ <tr><td class="qty" data-th="Qty">1</td><td data-qty="1 ×" data-th="Part"><b>ESP32 breakout board with screw terminals</b> (XTVTX, “ESP32 breakout board expansion board GPIO 1 in 2”, pack of 2)</td><td data-th="Note">The DevKit is plugged in and all wires go into screw terminals – nothing is soldered on the DevKit. The terminals are labelled like the pins (3V3, GND, P25, P26, P23 …).</td></tr>
+ <tr><td class="qty" data-th="Qty">2</td><td data-qty="2 ×" data-th="Part"><b>BNC pigtail cable</b>, BNC plug to 2.54 mm DuPont pin, RG316 (TEJIATE, “SMA to DuPont BNC/Q9/N … RG316”, variant <b>BNC-J to J</b>)</td><td data-th="Note">X and Y. Choose the length to suit the distance to the oscilloscope (30–80 cm available; 50 cm is a good choice). Red = core (signal), brown = shield (ground) – confirm with a continuity tester.</td></tr>
+ <tr><td class="qty" data-th="Qty">2</td><td data-qty="2 ×" data-th="Part"><b>Cable gland Lapp SKINDICHT MINI</b> M6×1, nickel-plated brass, clamping range 2–3 mm, IP68 (Lapp 52001860, RS 458-3953)</td><td data-th="Note">One per pigtail; holds and seals the RG316 (approx. Ø 2.5 mm) in the enclosure wall.</td></tr>
+ <tr><td class="qty" data-th="Qty">1</td><td data-qty="1 ×" data-th="Part"><b>USB-C panel-mount extension</b> USB 3.1, IP67, 0.2 m, plug to socket, FPC flat cable, 16 mm cut-out (Plinkwirekb)</td><td data-th="Note">USB-C socket in the enclosure wall; the flat cable plugs into the DevKit inside. It powers and programs the clock.</td></tr>
+ <tr><td class="qty" data-th="Qty">1</td><td data-qty="1 ×" data-th="Part"><b>ABS junction box 150 × 100 × 70 mm</b>, IP67, with hinged lid, stainless steel latches and mounting plate (Yunseity)</td><td data-th="Note">Plastic so that the Wi-Fi signal gets through. The breakout board is screwed onto the perforated mounting plate.</td></tr>
+ <tr><td class="qty" data-th="Qty">1</td><td data-qty="1 ×" data-th="Part"><b>Waveshare 2.42inch OLED display module</b>, white, 128 × 64 pixels, SPI/I²C (SSD1309); board 61.5 × 39.5 mm, active area 55.0 × 27.5 mm</td><td data-th="Note"><b>Optional</b> – the clock also runs without a display. Use as delivered (4-wire SPI), no resoldering. Pin header from the bottom: VCC, GND, DIN, CLK, CS, DC, RST.</td></tr>
+ <tr><td class="qty" data-th="Qty">1</td><td data-qty="1 ×" data-th="Part"><b>Wi-Fi antenna Bingfu</b> 2.4/5.8 GHz, 8 dBi, SMA plug (variant “SMA”), angled</td><td data-th="Note">Mandatory: the -32U module has no built-in antenna. It screws onto the SMA socket of the IPEX pigtail from the antenna kit – do not mix SMA and RP-SMA (the antenna plug must match the pigtail socket).</td></tr>
+ <tr><td class="qty" data-th="Qty">2</td><td data-qty="2 ×" data-th="Part">Resistor <b>220 Ω</b>, 0.25 W (recommended)</td><td data-th="Note">Soldered into the red lead of each pigtail; protects the DAC outputs if the BNC plug is short-circuited.</td></tr>
+ <tr><td class="qty" data-th="Qty">(1)</td><td data-qty="(1) ×" data-th="Part"><i>Optional:</i> real-time clock <b>DS3231</b>, module ZS-042 (e.g. WINGONEER “Tiny DS3231 AT24C32”)</td><td data-th="Note">Keeps the time after a power failure without internet. VCC → 3V3, GND → GND, SDA → P21, SCL → P22. Coin cell: normal CR2032 – connect the module to 3V3 only (at 5 V its charging circuit would charge it). Switch on in the web interface.</td></tr>
+ <tr><td class="qty" data-th="Qty">–</td><td data-qty="– ×" data-th="Part">Small parts</td><td data-th="Note">7 wires for the OLED (DuPont cables or stranded wire), heat-shrink tubing, standoffs M2.5 (OLED) and M3 (breakout board), possibly 2–3 M6 nuts</td></tr>
+ <tr><td class="qty" data-th="Qty">1</td><td data-qty="1 ×" data-th="Part">USB power supply 5 V, ≥ 1 A, with USB-C cable</td><td data-th="Note">A normal, unearthed plug-in power supply avoids ground loops.</td></tr>
 </table></div>
 <h3>Articles used to build the prototype</h3>
 <ul class="small">
@@ -274,19 +290,19 @@ oscilloscope input; no additional BNC cable is needed.</p>
 <figure><img loading="lazy" src="images/verdrahtung.svg"><figcaption>Abb. 4 – Verdrahtung. Das DevKit steckt im Breakout-Board; alle Leitungen kommen in die gleichnamigen Schraubklemmen.</figcaption></figure>
 <div class="tw"><table style="break-inside:avoid">
  <tr><th>Klemme am Breakout-Board</th><th>Anschluss</th><th>Ziel</th></tr>
- <tr><td>P25 (GPIO25, DAC1)</td><td>über 220 Ω</td><td>Pigtail „X“, rote Ader → Oszilloskop Kanal 1</td></tr>
- <tr><td>P26 (GPIO26, DAC2)</td><td>über 220 Ω</td><td>Pigtail „Y“, rote Ader → Oszilloskop Kanal 2</td></tr>
- <tr><td>GND (linke Reihe)</td><td>direkt</td><td>braune Adern (Schirm) aller Pigtails</td></tr>
- <tr><td>3V3</td><td>direkt</td><td>OLED VCC</td></tr>
- <tr><td>GND (rechte Reihe)</td><td>direkt</td><td>OLED GND</td></tr>
- <tr><td>P23</td><td>direkt</td><td>OLED DIN</td></tr>
- <tr><td>P18</td><td>direkt</td><td>OLED CLK</td></tr>
- <tr><td>P5</td><td>direkt</td><td>OLED CS</td></tr>
- <tr><td>P17</td><td>direkt</td><td>OLED DC</td></tr>
- <tr><td>P4</td><td>direkt</td><td>OLED RST</td></tr>
- <tr><td>P21 / P22 · 3V3 · GND</td><td>direkt</td><td><i>optional:</i> Echtzeituhr DS3231 – SDA / SCL · VCC · GND</td></tr>
- <tr><td>IPEX-Buchse am Modul</td><td>Antennen-Pigtail</td><td>SMA-Buchse in der gegenüberliegenden Seite → Antenne</td></tr>
- <tr><td>USB-C des DevKits</td><td>Flachbandkabel</td><td>USB-C-Einbaubuchse in der Anschlussseite</td></tr>
+ <tr><td data-th="Klemme am Breakout-Board">P25 (GPIO25, DAC1)</td><td data-th="Anschluss">über 220 Ω</td><td data-th="Ziel">Pigtail „X“, rote Ader → Oszilloskop Kanal 1</td></tr>
+ <tr><td data-th="Klemme am Breakout-Board">P26 (GPIO26, DAC2)</td><td data-th="Anschluss">über 220 Ω</td><td data-th="Ziel">Pigtail „Y“, rote Ader → Oszilloskop Kanal 2</td></tr>
+ <tr><td data-th="Klemme am Breakout-Board">GND (linke Reihe)</td><td data-th="Anschluss">direkt</td><td data-th="Ziel">braune Adern (Schirm) aller Pigtails</td></tr>
+ <tr><td data-th="Klemme am Breakout-Board">3V3</td><td data-th="Anschluss">direkt</td><td data-th="Ziel">OLED VCC</td></tr>
+ <tr><td data-th="Klemme am Breakout-Board">GND (rechte Reihe)</td><td data-th="Anschluss">direkt</td><td data-th="Ziel">OLED GND</td></tr>
+ <tr><td data-th="Klemme am Breakout-Board">P23</td><td data-th="Anschluss">direkt</td><td data-th="Ziel">OLED DIN</td></tr>
+ <tr><td data-th="Klemme am Breakout-Board">P18</td><td data-th="Anschluss">direkt</td><td data-th="Ziel">OLED CLK</td></tr>
+ <tr><td data-th="Klemme am Breakout-Board">P5</td><td data-th="Anschluss">direkt</td><td data-th="Ziel">OLED CS</td></tr>
+ <tr><td data-th="Klemme am Breakout-Board">P17</td><td data-th="Anschluss">direkt</td><td data-th="Ziel">OLED DC</td></tr>
+ <tr><td data-th="Klemme am Breakout-Board">P4</td><td data-th="Anschluss">direkt</td><td data-th="Ziel">OLED RST</td></tr>
+ <tr><td data-th="Klemme am Breakout-Board">P21 / P22 · 3V3 · GND</td><td data-th="Anschluss">direkt</td><td data-th="Ziel"><i>optional:</i> Echtzeituhr DS3231 – SDA / SCL · VCC · GND</td></tr>
+ <tr><td data-th="Klemme am Breakout-Board">IPEX-Buchse am Modul</td><td data-th="Anschluss">Antennen-Pigtail</td><td data-th="Ziel">SMA-Buchse in der gegenüberliegenden Seite → Antenne</td></tr>
+ <tr><td data-th="Klemme am Breakout-Board">USB-C des DevKits</td><td data-th="Anschluss">Flachbandkabel</td><td data-th="Ziel">USB-C-Einbaubuchse in der Anschlussseite</td></tr>
 </table></div>
 <div class="warn"><b>Wichtig:</b> Klemme P0 (GPIO0) ist der BOOT-Taster – dort nichts anschließen. Das OLED an <b>3V3</b>,
 nicht an 5V. Das Modul -32U nie ohne Antenne im WLAN-Betrieb laufen lassen.</div>
@@ -330,19 +346,19 @@ Der Außenkontakt hat Durchgang zu GND. Alle Schraubklemmen leicht nachziehen.</
 <figure><img loading="lazy" src="images/verdrahtung_en.svg"><figcaption>Fig. 4 – Wiring. The DevKit sits in the breakout board; all wires go into the screw terminals of the same name.</figcaption></figure>
 <div class="tw"><table style="break-inside:avoid">
  <tr><th>Terminal on the breakout board</th><th>Connection</th><th>Target</th></tr>
- <tr><td>P25 (GPIO25, DAC1)</td><td>via 220 Ω</td><td>pigtail “X”, red lead → oscilloscope channel 1</td></tr>
- <tr><td>P26 (GPIO26, DAC2)</td><td>via 220 Ω</td><td>pigtail “Y”, red lead → oscilloscope channel 2</td></tr>
- <tr><td>GND (left row)</td><td>direct</td><td>brown leads (shield) of all pigtails</td></tr>
- <tr><td>3V3</td><td>direct</td><td>OLED VCC</td></tr>
- <tr><td>GND (right row)</td><td>direct</td><td>OLED GND</td></tr>
- <tr><td>P23</td><td>direct</td><td>OLED DIN</td></tr>
- <tr><td>P18</td><td>direct</td><td>OLED CLK</td></tr>
- <tr><td>P5</td><td>direct</td><td>OLED CS</td></tr>
- <tr><td>P17</td><td>direct</td><td>OLED DC</td></tr>
- <tr><td>P4</td><td>direct</td><td>OLED RST</td></tr>
- <tr><td>P21 / P22 · 3V3 · GND</td><td>direct</td><td><i>optional:</i> DS3231 real-time clock – SDA / SCL · VCC · GND</td></tr>
- <tr><td>IPEX socket on the module</td><td>antenna pigtail</td><td>SMA socket in the opposite side → antenna</td></tr>
- <tr><td>USB-C of the DevKit</td><td>flat cable</td><td>USB-C panel socket in the connector side</td></tr>
+ <tr><td data-th="Terminal on the breakout board">P25 (GPIO25, DAC1)</td><td data-th="Connection">via 220 Ω</td><td data-th="Target">pigtail “X”, red lead → oscilloscope channel 1</td></tr>
+ <tr><td data-th="Terminal on the breakout board">P26 (GPIO26, DAC2)</td><td data-th="Connection">via 220 Ω</td><td data-th="Target">pigtail “Y”, red lead → oscilloscope channel 2</td></tr>
+ <tr><td data-th="Terminal on the breakout board">GND (left row)</td><td data-th="Connection">direct</td><td data-th="Target">brown leads (shield) of all pigtails</td></tr>
+ <tr><td data-th="Terminal on the breakout board">3V3</td><td data-th="Connection">direct</td><td data-th="Target">OLED VCC</td></tr>
+ <tr><td data-th="Terminal on the breakout board">GND (right row)</td><td data-th="Connection">direct</td><td data-th="Target">OLED GND</td></tr>
+ <tr><td data-th="Terminal on the breakout board">P23</td><td data-th="Connection">direct</td><td data-th="Target">OLED DIN</td></tr>
+ <tr><td data-th="Terminal on the breakout board">P18</td><td data-th="Connection">direct</td><td data-th="Target">OLED CLK</td></tr>
+ <tr><td data-th="Terminal on the breakout board">P5</td><td data-th="Connection">direct</td><td data-th="Target">OLED CS</td></tr>
+ <tr><td data-th="Terminal on the breakout board">P17</td><td data-th="Connection">direct</td><td data-th="Target">OLED DC</td></tr>
+ <tr><td data-th="Terminal on the breakout board">P4</td><td data-th="Connection">direct</td><td data-th="Target">OLED RST</td></tr>
+ <tr><td data-th="Terminal on the breakout board">P21 / P22 · 3V3 · GND</td><td data-th="Connection">direct</td><td data-th="Target"><i>optional:</i> DS3231 real-time clock – SDA / SCL · VCC · GND</td></tr>
+ <tr><td data-th="Terminal on the breakout board">IPEX socket on the module</td><td data-th="Connection">antenna pigtail</td><td data-th="Target">SMA socket in the opposite side → antenna</td></tr>
+ <tr><td data-th="Terminal on the breakout board">USB-C of the DevKit</td><td data-th="Connection">flat cable</td><td data-th="Target">USB-C panel socket in the connector side</td></tr>
 </table></div>
 <div class="warn"><b>Important:</b> terminal P0 (GPIO0) is the BOOT button – do not connect anything there. Connect the OLED to
 <b>3V3</b>, not to 5V. Never run the -32U module on Wi-Fi without an antenna.</div>
@@ -474,14 +490,14 @@ in the web interface or by holding the BOOT button for 3 s.</div></div>
 </div>
 <div class="tw"><table>
  <tr><th>Einstellung</th><th>Wert</th><th>Grund</th></tr>
- <tr><td>Betriebsart</td><td><b>X/Y</b></td><td>Kanal 1 lenkt waagerecht, Kanal 2 senkrecht ab</td></tr>
- <tr><td>Kopplung</td><td>DC, beide Kanäle</td><td>Die Signale haben einen Gleichanteil (0–3,2 V)</td></tr>
- <tr><td>Empfindlichkeit</td><td>0,5 V/Div, beide gleich</td><td>8 Teilungen = 4 V, das 3,2-V-Bild passt hinein</td></tr>
- <tr><td>Position/Offset</td><td>Bildmitte, ca. −1,6 V</td><td>DAC-Mitte ≈ 1,6 V</td></tr>
- <tr><td>Zeitbasis (digital)</td><td>1 ms/Div</td><td>Ein Aufnahmefenster deckt ganze Uhrenbilder ab (ca. 4,3 ms je Bild)</td></tr>
- <tr><td>Trigger (digital)</td><td>Auto</td><td>Die Uhr liefert kein Triggerereignis</td></tr>
- <tr><td>Nachleuchten</td><td>kurz bis mittel, falls vorhanden</td><td>beruhigt den Bildaufbau</td></tr>
- <tr><td>Bandbreitenbegrenzung</td><td>ein (z. B. 20 MHz)</td><td>weniger Rauschen</td></tr>
+ <tr><td data-th="Einstellung">Betriebsart</td><td data-th="Wert"><b>X/Y</b></td><td data-th="Grund">Kanal 1 lenkt waagerecht, Kanal 2 senkrecht ab</td></tr>
+ <tr><td data-th="Einstellung">Kopplung</td><td data-th="Wert">DC, beide Kanäle</td><td data-th="Grund">Die Signale haben einen Gleichanteil (0–3,2 V)</td></tr>
+ <tr><td data-th="Einstellung">Empfindlichkeit</td><td data-th="Wert">0,5 V/Div, beide gleich</td><td data-th="Grund">8 Teilungen = 4 V, das 3,2-V-Bild passt hinein</td></tr>
+ <tr><td data-th="Einstellung">Position/Offset</td><td data-th="Wert">Bildmitte, ca. −1,6 V</td><td data-th="Grund">DAC-Mitte ≈ 1,6 V</td></tr>
+ <tr><td data-th="Einstellung">Zeitbasis (digital)</td><td data-th="Wert">1 ms/Div</td><td data-th="Grund">Ein Aufnahmefenster deckt ganze Uhrenbilder ab (ca. 4,3 ms je Bild)</td></tr>
+ <tr><td data-th="Einstellung">Trigger (digital)</td><td data-th="Wert">Auto</td><td data-th="Grund">Die Uhr liefert kein Triggerereignis</td></tr>
+ <tr><td data-th="Einstellung">Nachleuchten</td><td data-th="Wert">kurz bis mittel, falls vorhanden</td><td data-th="Grund">beruhigt den Bildaufbau</td></tr>
+ <tr><td data-th="Einstellung">Bandbreitenbegrenzung</td><td data-th="Wert">ein (z. B. 20 MHz)</td><td data-th="Grund">weniger Rauschen</td></tr>
 </table></div>
 <h3>Hinweise zu einzelnen Geräten</h3>
 <ul>
@@ -509,14 +525,14 @@ USB kann Brumm ins Bild bringen. Im Dauerbetrieb ein normales USB-Steckernetztei
 </div>
 <div class="tw"><table>
  <tr><th>Setting</th><th>Value</th><th>Reason</th></tr>
- <tr><td>Mode</td><td><b>X/Y</b></td><td>Channel 1 deflects horizontally, channel 2 vertically</td></tr>
- <tr><td>Coupling</td><td>DC, both channels</td><td>The signals have a DC component (0–3.2 V)</td></tr>
- <tr><td>Sensitivity</td><td>0.5 V/div, both the same</td><td>8 divisions = 4 V, the 3.2 V picture fits</td></tr>
- <tr><td>Position/offset</td><td>centre of the screen, approx. −1.6 V</td><td>DAC centre ≈ 1.6 V</td></tr>
- <tr><td>Time base (digital)</td><td>1 ms/div</td><td>One acquisition window covers whole clock frames (approx. 4.3 ms per frame)</td></tr>
- <tr><td>Trigger (digital)</td><td>Auto</td><td>The clock provides no trigger event</td></tr>
- <tr><td>Persistence</td><td>short to medium, if available</td><td>smooths the picture build-up</td></tr>
- <tr><td>Bandwidth limit</td><td>on (e.g. 20 MHz)</td><td>less noise</td></tr>
+ <tr><td data-th="Setting">Mode</td><td data-th="Value"><b>X/Y</b></td><td data-th="Reason">Channel 1 deflects horizontally, channel 2 vertically</td></tr>
+ <tr><td data-th="Setting">Coupling</td><td data-th="Value">DC, both channels</td><td data-th="Reason">The signals have a DC component (0–3.2 V)</td></tr>
+ <tr><td data-th="Setting">Sensitivity</td><td data-th="Value">0.5 V/div, both the same</td><td data-th="Reason">8 divisions = 4 V, the 3.2 V picture fits</td></tr>
+ <tr><td data-th="Setting">Position/offset</td><td data-th="Value">centre of the screen, approx. −1.6 V</td><td data-th="Reason">DAC centre ≈ 1.6 V</td></tr>
+ <tr><td data-th="Setting">Time base (digital)</td><td data-th="Value">1 ms/div</td><td data-th="Reason">One acquisition window covers whole clock frames (approx. 4.3 ms per frame)</td></tr>
+ <tr><td data-th="Setting">Trigger (digital)</td><td data-th="Value">Auto</td><td data-th="Reason">The clock provides no trigger event</td></tr>
+ <tr><td data-th="Setting">Persistence</td><td data-th="Value">short to medium, if available</td><td data-th="Reason">smooths the picture build-up</td></tr>
+ <tr><td data-th="Setting">Bandwidth limit</td><td data-th="Value">on (e.g. 20 MHz)</td><td data-th="Reason">less noise</td></tr>
 </table></div>
 <h3>Notes on individual devices</h3>
 <ul>
@@ -595,80 +611,80 @@ beschrieben wird. Jede Gruppe hat „Auf Standardwerte zurücksetzen“; danach 
 <h3>Oszilloskop</h3>
 <div class="tw"><table>
  <tr><th style="width:24%">Einstellung</th><th style="width:16%">Bereich (Standard)</th><th>Wirkung</th></tr>
- <tr><td>Oszilloskop-Profil</td><td>DIGITAL / ANALOG (DIGITAL)</td><td>Legt fest, wie der Strahl zwischen zwei Linien springt.
+ <tr><td data-th="Einstellung">Oszilloskop-Profil</td><td data-th="Bereich (Standard)">DIGITAL / ANALOG (DIGITAL)</td><td data-th="Wirkung">Legt fest, wie der Strahl zwischen zwei Linien springt.
  <b>DIGITAL</b> springt sofort: Ein Speicher-Oszilloskop zeigt so keine Abtastpunkte auf dem Weg, die als Spur sichtbar wären.
  <b>ANALOG</b> springt schnell, bremst kurz vor dem Ziel und landet sauber am Linienanfang – das ergibt auf einer Röhre die
  schwächste Rücklaufspur. Auch mit dem BOOT-Taster (3 s halten) umschaltbar.</td></tr>
- <tr><td>Testbild</td><td>an / aus (aus)</td><td>Zeigt statt der Uhr einen Rahmen mit Marken, einen Kreis und ein Mittelkreuz. Damit werden Position,
+ <tr><td data-th="Einstellung">Testbild</td><td data-th="Bereich (Standard)">an / aus (aus)</td><td data-th="Wirkung">Zeigt statt der Uhr einen Rahmen mit Marken, einen Kreis und ein Mittelkreuz. Damit werden Position,
  Größe, gleiche Verstärkung von X und Y (Kreis rund statt oval) und Fokus eingestellt. Wird nicht gespeichert; nach dem
  Einschalten erscheint es automatisch für 10 Sekunden.</td></tr>
- <tr><td>Zifferblatt</td><td>5 Stile (Ziffern 1–12)</td><td>Ziffern 1–12, nur 12·3·6·9, nur Striche, römisch XII·III·VI·IX oder römisch I–XII. Wechselt
+ <tr><td data-th="Einstellung">Zifferblatt</td><td data-th="Bereich (Standard)">5 Stile (Ziffern 1–12)</td><td data-th="Wirkung">Ziffern 1–12, nur 12·3·6·9, nur Striche, römisch XII·III·VI·IX oder römisch I–XII. Wechselt
  sofort am Oszilloskop; auch durch Wischen über die Vorschau. Weniger Ziffern bedeuten ein kürzeres Bild und damit
  eine höhere Bildrate (weniger Flimmern).</td></tr>
- <tr><td>Verweilzeit des Strahls</td><td>1,00–10,00 µs pro Schritt (3,00 µs)</td><td>Wie lange der Strahl auf jedem Wegstück verweilt. <b>Länger</b> = hellere, kräftigere Linien und
+ <tr><td data-th="Einstellung">Verweilzeit des Strahls</td><td data-th="Bereich (Standard)">1,00–10,00 µs pro Schritt (3,00 µs)</td><td data-th="Wirkung">Wie lange der Strahl auf jedem Wegstück verweilt. <b>Länger</b> = hellere, kräftigere Linien und
  sauberere Ecken, aber weniger Bilder pro Sekunde (mehr Flimmern). <b>Kürzer</b> = ruhigeres Bild, aber dunklere Linien; ein
  langsames Oszilloskop rundet dann Ecken ab. Die geschätzte Bildrate wird beim Ziehen angezeigt (Standard ca. 230 Bilder/s).</td></tr>
- <tr><td>Helligkeit Stunden-/Minutenzeiger</td><td>0–100 % (67 %)</td><td>Verweilzeit auf den beiden Zeigern im Verhältnis zum Rest. Die schmalen, eng beieinander liegenden
+ <tr><td data-th="Einstellung">Helligkeit Stunden-/Minutenzeiger</td><td data-th="Bereich (Standard)">0–100 % (67 %)</td><td data-th="Wirkung">Verweilzeit auf den beiden Zeigern im Verhältnis zum Rest. Die schmalen, eng beieinander liegenden
  Doppellinien der Zeiger wirken sonst heller als Zifferblatt und Ziffern; mit 67 % erscheinen sie gleich hell. 0 % blendet die
  Zeiger aus. Der Sekundenzeiger ist davon nicht betroffen.</td></tr>
- <tr><td>Helligkeit Minutenstriche</td><td>0–100 % (100 %)</td><td>Helligkeit der 60 Striche am Rand. Weniger Helligkeit lässt die Zeiger stärker hervortreten und
+ <tr><td data-th="Einstellung">Helligkeit Minutenstriche</td><td data-th="Bereich (Standard)">0–100 % (100 %)</td><td data-th="Wirkung">Helligkeit der 60 Striche am Rand. Weniger Helligkeit lässt die Zeiger stärker hervortreten und
  verkürzt das Bild etwas; 0 % blendet die Striche ganz aus.</td></tr>
- <tr><td>Helligkeit Ziffern</td><td>0–100 % (100 %)</td><td>Helligkeit der Zahlen auf dem Zifferblatt. 0 % blendet sie aus – das entspricht dann dem Stil „nur Striche“.</td></tr>
- <tr><td>Rücklauf-Tempo</td><td>0–48 (24)</td><td>Nur im Profil ANALOG: wie schnell der Strahl zwischen zwei Linien springt (Vielfaches des Zeichentempos).
+ <tr><td data-th="Einstellung">Helligkeit Ziffern</td><td data-th="Bereich (Standard)">0–100 % (100 %)</td><td data-th="Wirkung">Helligkeit der Zahlen auf dem Zifferblatt. 0 % blendet sie aus – das entspricht dann dem Stil „nur Striche“.</td></tr>
+ <tr><td data-th="Einstellung">Rücklauf-Tempo</td><td data-th="Bereich (Standard)">0–48 (24)</td><td data-th="Wirkung">Nur im Profil ANALOG: wie schnell der Strahl zwischen zwei Linien springt (Vielfaches des Zeichentempos).
  <b>Schneller</b> = schwächere Rücklaufspur; ist das Oszilloskop dafür zu langsam, entstehen kleine „Haken“ an den
  Linienanfängen – dann Wert verringern (z. B. 12). 0 = harter Sprung. Im Profil DIGITAL und bei Dunkeltastung ausgegraut, der Wert bleibt gespeichert.</td></tr>
- <tr><td>Dunkeltastung (Z-Eingang)</td><td>an / aus (aus); High oder Low = dunkel (High)</td><td>Nur mit einem <b>dritten Kabel</b> von GPIO27 (Klemme P27) zum Z-Eingang des Oszilloskops – im beschriebenen Aufbau nicht vorhanden. Schaltet den Strahl bei jedem Sprung aus, die Rücklaufspuren verschwinden. Pegel laut Handbuch des Oszilloskops; ausgeschaltet ist GPIO27 hochohmig.</td></tr>
+ <tr><td data-th="Einstellung">Dunkeltastung (Z-Eingang)</td><td data-th="Bereich (Standard)">an / aus (aus); High oder Low = dunkel (High)</td><td data-th="Wirkung">Nur mit einem <b>dritten Kabel</b> von GPIO27 (Klemme P27) zum Z-Eingang des Oszilloskops – im beschriebenen Aufbau nicht vorhanden. Schaltet den Strahl bei jedem Sprung aus, die Rücklaufspuren verschwinden. Pegel laut Handbuch des Oszilloskops; ausgeschaltet ist GPIO27 hochohmig.</td></tr>
 </table></div>
 
 <h3>Uhrzeit</h3>
 <div class="tw"><table>
  <tr><th style="width:24%">Einstellung</th><th style="width:16%">Bereich (Standard)</th><th>Wirkung</th></tr>
- <tr><td>Uhrzeit stellen</td><td>Gerätezeit oder Datum + Uhrzeit</td><td>Erscheint nur, solange kein Zeitserver erreichbar ist (z. B. ohne Internet); die Gruppe Uhrzeit klappt
+ <tr><td data-th="Einstellung">Uhrzeit stellen</td><td data-th="Bereich (Standard)">Gerätezeit oder Datum + Uhrzeit</td><td data-th="Wirkung">Erscheint nur, solange kein Zeitserver erreichbar ist (z. B. ohne Internet); die Gruppe Uhrzeit klappt
  dann von selbst auf. „Uhrzeit dieses Geräts übernehmen“ stellt die Uhr auf die Zeit des Handys/PCs, alternativ Datum und
  Uhrzeit von Hand. Sommer-/Winterzeit automatisch nach der Zeitzone oder fest. Die Rückmeldung zeigt die gestellte Zeit.
  Sobald ein Zeitserver erreichbar ist, stellt sich die Uhr wieder selbst; nach einem Neustart muss von Hand neu gestellt werden.</td></tr>
- <tr><td>Zeitformat</td><td>24 h / 12 h (24 h)</td><td>Darstellung auf dem OLED und auf der Webseite; im 12-Stunden-Format mit AM/PM. Das Zifferblatt am
+ <tr><td data-th="Einstellung">Zeitformat</td><td data-th="Bereich (Standard)">24 h / 12 h (24 h)</td><td data-th="Wirkung">Darstellung auf dem OLED und auf der Webseite; im 12-Stunden-Format mit AM/PM. Das Zifferblatt am
  Oszilloskop ist davon unabhängig, das Debug-Protokoll bleibt immer bei 24 h.</td></tr>
- <tr><td>Zeitzone</td><td>Liste (Mitteleuropa)</td><td>Bestimmt die Ortszeit einschließlich der Regeln für Sommer- und Winterzeit. Wirkt sofort auf Zeiger,
+ <tr><td data-th="Einstellung">Zeitzone</td><td data-th="Bereich (Standard)">Liste (Mitteleuropa)</td><td data-th="Wirkung">Bestimmt die Ortszeit einschließlich der Regeln für Sommer- und Winterzeit. Wirkt sofort auf Zeiger,
  OLED und Webseite. Geht die Uhr um ganze Stunden falsch, ist meist die Zeitzone falsch gewählt.</td></tr>
- <tr><td>Echtzeituhr (RTC)</td><td>an / aus (aus)</td><td>Nur mit DS3231-Modul (SDA GPIO21, SCL GPIO22): hält die Uhrzeit mit Knopfzelle auch nach einem Stromausfall ohne Internet. Status: „Läuft“, „Nicht gefunden“ oder „Zeit ungültig“.</td></tr>
- <tr><td>Zeitserver (NTP)</td><td>Hostname (de.pool.ntp.org)</td><td>Server im Internet, von dem die Uhr die genaue Zeit holt – nach dem Start und danach stündlich.
+ <tr><td data-th="Einstellung">Echtzeituhr (RTC)</td><td data-th="Bereich (Standard)">an / aus (aus)</td><td data-th="Wirkung">Nur mit DS3231-Modul (SDA GPIO21, SCL GPIO22): hält die Uhrzeit mit Knopfzelle auch nach einem Stromausfall ohne Internet. Status: „Läuft“, „Nicht gefunden“ oder „Zeit ungültig“.</td></tr>
+ <tr><td data-th="Einstellung">Zeitserver (NTP)</td><td data-th="Bereich (Standard)">Hostname (de.pool.ntp.org)</td><td data-th="Wirkung">Server im Internet, von dem die Uhr die genaue Zeit holt – nach dem Start und danach stündlich.
  „Übernehmen“ speichert den Namen und gleicht sofort neu ab. Zwei weitere Server aus <code>config.h</code> dienen als Reserve.</td></tr>
 </table></div>
 
 <h3>Display (OLED)</h3>
 <div class="tw"><table>
  <tr><th style="width:24%">Einstellung</th><th style="width:16%">Bereich (Standard)</th><th>Wirkung</th></tr>
- <tr><td>OLED-Helligkeit</td><td>0–100 % (50 %)</td><td>Helligkeit des kleinen Displays an der Uhr. Niedrige Werte schonen das OLED (weniger Einbrennen,
+ <tr><td data-th="Einstellung">OLED-Helligkeit</td><td data-th="Bereich (Standard)">0–100 % (50 %)</td><td data-th="Wirkung">Helligkeit des kleinen Displays an der Uhr. Niedrige Werte schonen das OLED (weniger Einbrennen,
  längere Lebensdauer); 0 % schaltet es ganz aus. Beim Halten des BOOT-Tasters wird es für die Anzeige des Profilwechsels
  trotzdem kurz eingeschaltet.</td></tr>
- <tr><td>Sekunden anzeigen</td><td>an / aus (an)</td><td>Uhrzeit auf dem OLED als HH:MM:SS oder nur HH:MM. Ohne Sekunden ändert sich das Bild nur einmal pro Minute – schont das Display.</td></tr>
- <tr><td>OLED um 180° drehen</td><td>an / aus (aus)</td><td>Dreht die Anzeige auf den Kopf, falls das Display im Deckel kopfüber eingebaut ist.</td></tr>
- <tr><td>OLED-Pixelverschiebung</td><td>an / aus (an)</td><td>Verschiebt das Bild jede Minute um wenige Pixel, damit dauerhaft leuchtende Punkte nicht einbrennen. Kaum zu sehen.</td></tr>
+ <tr><td data-th="Einstellung">Sekunden anzeigen</td><td data-th="Bereich (Standard)">an / aus (an)</td><td data-th="Wirkung">Uhrzeit auf dem OLED als HH:MM:SS oder nur HH:MM. Ohne Sekunden ändert sich das Bild nur einmal pro Minute – schont das Display.</td></tr>
+ <tr><td data-th="Einstellung">OLED um 180° drehen</td><td data-th="Bereich (Standard)">an / aus (aus)</td><td data-th="Wirkung">Dreht die Anzeige auf den Kopf, falls das Display im Deckel kopfüber eingebaut ist.</td></tr>
+ <tr><td data-th="Einstellung">OLED-Pixelverschiebung</td><td data-th="Bereich (Standard)">an / aus (an)</td><td data-th="Wirkung">Verschiebt das Bild jede Minute um wenige Pixel, damit dauerhaft leuchtende Punkte nicht einbrennen. Kaum zu sehen.</td></tr>
 </table></div>
 
 <h3>WLAN</h3>
 <div class="tw"><table>
  <tr><th style="width:24%">Einstellung</th><th style="width:16%">Bereich</th><th>Wirkung</th></tr>
- <tr><td>Gespeicherte Netze</td><td>bis zu 10</td><td>Netze, mit denen sich die Uhr verbinden darf; sie wählt das stärkste. „Löschen“ entfernt ein Netz (danach Neustart).
+ <tr><td data-th="Einstellung">Gespeicherte Netze</td><td data-th="Bereich">bis zu 10</td><td data-th="Wirkung">Netze, mit denen sich die Uhr verbinden darf; sie wählt das stärkste. „Löschen“ entfernt ein Netz (danach Neustart).
  Passwörter werden nie angezeigt. Ohne WLAN-Verbindung klappt die Gruppe von selbst auf.</td></tr>
- <tr><td>Netze in Reichweite suchen</td><td>–</td><td>Listet die Netze in der Nähe mit Signalstärke, das stärkste oben. Antippen übernimmt den Namen ins Formular.</td></tr>
- <tr><td>Netz hinzufügen</td><td>SSID 1–32, Passwort leer oder 8–63 Zeichen</td><td>Speichert ein neues Netz bzw. ein geändertes Passwort (nach einer Passwortänderung startet die Uhr kurz neu). Für offene Netze das Passwort leer lassen.
+ <tr><td data-th="Einstellung">Netze in Reichweite suchen</td><td data-th="Bereich">–</td><td data-th="Wirkung">Listet die Netze in der Nähe mit Signalstärke, das stärkste oben. Antippen übernimmt den Namen ins Formular.</td></tr>
+ <tr><td data-th="Einstellung">Netz hinzufügen</td><td data-th="Bereich">SSID 1–32, Passwort leer oder 8–63 Zeichen</td><td data-th="Wirkung">Speichert ein neues Netz bzw. ein geändertes Passwort (nach einer Passwortänderung startet die Uhr kurz neu). Für offene Netze das Passwort leer lassen.
  Danach „Neu verbinden“, damit die Uhr das stärkste Netz neu wählt.</td></tr>
- <tr><td>Neu verbinden</td><td>–</td><td>Trennt kurz und verbindet sich mit dem stärksten bekannten Netz; die Seite ist dabei einige Sekunden nicht erreichbar.</td></tr>
- <tr><td>WLAN zurücksetzen</td><td>–</td><td>Löscht nach Rückfrage alle gespeicherten Netze. Die Uhr startet neu und öffnet das Setup-WLAN
+ <tr><td data-th="Einstellung">Neu verbinden</td><td data-th="Bereich">–</td><td data-th="Wirkung">Trennt kurz und verbindet sich mit dem stärksten bekannten Netz; die Seite ist dabei einige Sekunden nicht erreichbar.</td></tr>
+ <tr><td data-th="Einstellung">WLAN zurücksetzen</td><td data-th="Bereich">–</td><td data-th="Wirkung">Löscht nach Rückfrage alle gespeicherten Netze. Die Uhr startet neu und öffnet das Setup-WLAN
  „ScopeClock-Setup“ zum neuen Einrichten.</td></tr>
 </table></div>
 
 <h3>System und Seitenmenü</h3>
 <div class="tw"><table>
  <tr><th style="width:24%">Einstellung</th><th style="width:16%">Bereich (Standard)</th><th>Wirkung</th></tr>
- <tr><td>Gerätename</td><td>a–z, 0–9, Bindestrich, max. 32 (scope-clock)</td><td>Name im Router und Adresse <code>http://&lt;name&gt;.local</code> (im Router nach dem nächsten Verbinden). Praktisch bei mehreren Uhren im selben Netz.</td></tr>
- <tr><td>Einstellungen sichern / laden</td><td>JSON-Datei</td><td>„Sichern“ lädt alle Einstellungen (außer WLANs) als Datei herunter, „Laden“ spielt sie wieder ein – etwa nach einem Tausch des ESP32.</td></tr>
- <tr><td>Alle Einstellungen zurücksetzen</td><td>–</td><td>Setzt alle Gruppen, die Sprache und den Gerätenamen auf die Werte aus <code>config.h</code> und schaltet
+ <tr><td data-th="Einstellung">Gerätename</td><td data-th="Bereich (Standard)">a–z, 0–9, Bindestrich, max. 32 (scope-clock)</td><td data-th="Wirkung">Name im Router und Adresse <code>http://&lt;name&gt;.local</code> (im Router nach dem nächsten Verbinden). Praktisch bei mehreren Uhren im selben Netz.</td></tr>
+ <tr><td data-th="Einstellung">Einstellungen sichern / laden</td><td data-th="Bereich (Standard)">JSON-Datei</td><td data-th="Wirkung">„Sichern“ lädt alle Einstellungen (außer WLANs) als Datei herunter, „Laden“ spielt sie wieder ein – etwa nach einem Tausch des ESP32.</td></tr>
+ <tr><td data-th="Einstellung">Alle Einstellungen zurücksetzen</td><td data-th="Bereich (Standard)">–</td><td data-th="Wirkung">Setzt alle Gruppen, die Sprache und den Gerätenamen auf die Werte aus <code>config.h</code> und schaltet
  das Testbild aus. WLANs bleiben erhalten; 8 Sekunden lang „Rückgängig“.</td></tr>
- <tr><td>Sprache (Seitenmenü)</td><td>Deutsch / English (Deutsch)</td><td>Sprache der Webseite, des OLED und des Debug-Protokolls; wird auf der Uhr gespeichert und gilt für alle Geräte.</td></tr>
- <tr><td>Darstellung (Seitenmenü)</td><td>automatisch, hell, dunkel</td><td>Farbschema der Webseite; „Automatisch“ folgt dem Handy/PC. Nur im Browser gespeichert.</td></tr>
+ <tr><td data-th="Einstellung">Sprache (Seitenmenü)</td><td data-th="Bereich (Standard)">Deutsch / English (Deutsch)</td><td data-th="Wirkung">Sprache der Webseite, des OLED und des Debug-Protokolls; wird auf der Uhr gespeichert und gilt für alle Geräte.</td></tr>
+ <tr><td data-th="Einstellung">Darstellung (Seitenmenü)</td><td data-th="Bereich (Standard)">automatisch, hell, dunkel</td><td data-th="Wirkung">Farbschema der Webseite; „Automatisch“ folgt dem Handy/PC. Nur im Browser gespeichert.</td></tr>
 </table></div>
 </div><div data-l="en">
 <p>All settings take effect <b>immediately</b> – on the oscilloscope, on the OLED and in the preview – and are saved permanently on
@@ -678,81 +694,81 @@ group has “Reset to defaults”; the change can then be undone with “Undo”
 <h3>Oscilloscope</h3>
 <div class="tw"><table>
  <tr><th style="width:24%">Setting</th><th style="width:16%">Range (default)</th><th>Effect</th></tr>
- <tr><td>Oscilloscope profile</td><td>DIGITAL / ANALOG (DIGITAL)</td><td>Defines how the beam jumps between two lines.
+ <tr><td data-th="Setting">Oscilloscope profile</td><td data-th="Range (default)">DIGITAL / ANALOG (DIGITAL)</td><td data-th="Effect">Defines how the beam jumps between two lines.
  <b>DIGITAL</b> jumps instantly: a storage oscilloscope then shows no sample points along the way that would be visible as a trace.
  <b>ANALOG</b> jumps fast, brakes shortly before the target and lands cleanly at the start of the line – this gives the faintest
  retrace line on a CRT. Can also be switched with the BOOT button (hold for 3 s).</td></tr>
- <tr><td>Test pattern</td><td>on / off (off)</td><td>Shows a frame with marks, a circle and a centre cross instead of the clock. Used to set position,
+ <tr><td data-th="Setting">Test pattern</td><td data-th="Range (default)">on / off (off)</td><td data-th="Effect">Shows a frame with marks, a circle and a centre cross instead of the clock. Used to set position,
  size, equal gain of X and Y (circle round instead of oval) and focus. Not saved; appears automatically for 10 seconds after power-on.</td></tr>
- <tr><td>Dial</td><td>5 styles (numerals 1–12)</td><td>Numerals 1–12, only 12·3·6·9, ticks only, Roman XII·III·VI·IX or Roman I–XII. Changes immediately
+ <tr><td data-th="Setting">Dial</td><td data-th="Range (default)">5 styles (numerals 1–12)</td><td data-th="Effect">Numerals 1–12, only 12·3·6·9, ticks only, Roman XII·III·VI·IX or Roman I–XII. Changes immediately
  on the oscilloscope; also by swiping over the preview. Fewer numerals mean a shorter frame and therefore a higher frame rate (less flicker).</td></tr>
- <tr><td>Beam dwell time</td><td>1.00–10.00 µs per step (3.00 µs)</td><td>How long the beam dwells on each piece of its path. <b>Longer</b> = brighter, stronger lines and
+ <tr><td data-th="Setting">Beam dwell time</td><td data-th="Range (default)">1.00–10.00 µs per step (3.00 µs)</td><td data-th="Effect">How long the beam dwells on each piece of its path. <b>Longer</b> = brighter, stronger lines and
  cleaner corners, but fewer frames per second (more flicker). <b>Shorter</b> = calmer picture but darker lines; a slow oscilloscope
  then rounds the corners. The estimated frame rate is shown while dragging (default approx. 230 frames/s).</td></tr>
- <tr><td>Hour/minute hand brightness</td><td>0–100 % (67 %)</td><td>Dwell time on the two hands relative to the rest. The narrow, closely spaced double lines of the
+ <tr><td data-th="Setting">Hour/minute hand brightness</td><td data-th="Range (default)">0–100 % (67 %)</td><td data-th="Effect">Dwell time on the two hands relative to the rest. The narrow, closely spaced double lines of the
  hands otherwise look brighter than the dial and numerals; at 67 % they appear equally bright. 0 % hides the hands. The second hand is not affected.</td></tr>
- <tr><td>Tick mark brightness</td><td>0–100 % (100 %)</td><td>Brightness of the 60 marks around the edge. Less brightness makes the hands stand out more and
+ <tr><td data-th="Setting">Tick mark brightness</td><td data-th="Range (default)">0–100 % (100 %)</td><td data-th="Effect">Brightness of the 60 marks around the edge. Less brightness makes the hands stand out more and
  shortens the frame slightly; 0 % hides the marks completely.</td></tr>
- <tr><td>Numeral brightness</td><td>0–100 % (100 %)</td><td>Brightness of the numbers on the dial. 0 % hides them – equivalent to the style “ticks only”.</td></tr>
- <tr><td>Retrace speed</td><td>0–48 (24)</td><td>Only in profile ANALOG: how fast the beam jumps between two lines (multiple of the drawing speed).
+ <tr><td data-th="Setting">Numeral brightness</td><td data-th="Range (default)">0–100 % (100 %)</td><td data-th="Effect">Brightness of the numbers on the dial. 0 % hides them – equivalent to the style “ticks only”.</td></tr>
+ <tr><td data-th="Setting">Retrace speed</td><td data-th="Range (default)">0–48 (24)</td><td data-th="Effect">Only in profile ANALOG: how fast the beam jumps between two lines (multiple of the drawing speed).
  <b>Faster</b> = fainter retrace line; if the oscilloscope is too slow for it, small “hooks” appear at the start of lines – then reduce
  the value (e.g. 12). 0 = instant jump. Greyed out in profile DIGITAL and with Z blanking; the value stays saved.</td></tr>
- <tr><td>Z blanking (Z input)</td><td>on / off (off); high or low = dark (high)</td><td>Only with a <b>third wire</b> from GPIO27 (terminal P27) to the Z input of the oscilloscope – not part of the described build. Switches the beam off during every jump, the retrace lines disappear. Level as stated in the oscilloscope manual; when off, GPIO27 is high impedance.</td></tr>
+ <tr><td data-th="Setting">Z blanking (Z input)</td><td data-th="Range (default)">on / off (off); high or low = dark (high)</td><td data-th="Effect">Only with a <b>third wire</b> from GPIO27 (terminal P27) to the Z input of the oscilloscope – not part of the described build. Switches the beam off during every jump, the retrace lines disappear. Level as stated in the oscilloscope manual; when off, GPIO27 is high impedance.</td></tr>
 </table></div>
 
 <h3>Time</h3>
 <div class="tw"><table>
  <tr><th style="width:24%">Setting</th><th style="width:16%">Range (default)</th><th>Effect</th></tr>
- <tr><td>Set time</td><td>device time or date + time</td><td>Only appears while no time server can be reached (e.g. without internet); the Time group then
+ <tr><td data-th="Setting">Set time</td><td data-th="Range (default)">device time or date + time</td><td data-th="Effect">Only appears while no time server can be reached (e.g. without internet); the Time group then
  expands by itself. “Take over this device's time” sets the clock to the time of the phone/PC, alternatively date and time by hand.
  Summer/winter time automatically according to the time zone or fixed. The confirmation shows the time that was set. As soon as a
  time server is reachable, the clock sets itself again; after a restart the time must be set by hand again.</td></tr>
- <tr><td>Time format</td><td>24 h / 12 h (24 h)</td><td>Display on the OLED and on the web page; 12-hour format with AM/PM. The dial on the oscilloscope is
+ <tr><td data-th="Setting">Time format</td><td data-th="Range (default)">24 h / 12 h (24 h)</td><td data-th="Effect">Display on the OLED and on the web page; 12-hour format with AM/PM. The dial on the oscilloscope is
  independent of this, the debug log always stays at 24 h.</td></tr>
- <tr><td>Time zone</td><td>list (Central Europe)</td><td>Determines the local time including the rules for summer and winter time. Takes effect immediately
+ <tr><td data-th="Setting">Time zone</td><td data-th="Range (default)">list (Central Europe)</td><td data-th="Effect">Determines the local time including the rules for summer and winter time. Takes effect immediately
  on the hands, OLED and web page. If the clock is off by whole hours, the time zone is usually wrong.</td></tr>
- <tr><td>Real-time clock (RTC)</td><td>on / off (off)</td><td>Only with a DS3231 module connected (SDA GPIO21, SCL GPIO22). Keeps date and time with its coin cell even after a power failure without internet; updated at every time sync and when the time is set by hand. The status shows “Running”, “Not found” or “Time invalid” (battery empty or new).</td></tr>
- <tr><td>Time server (NTP)</td><td>host name (de.pool.ntp.org)</td><td>Server on the internet from which the clock fetches the exact time – after start-up and then every hour.
+ <tr><td data-th="Setting">Real-time clock (RTC)</td><td data-th="Range (default)">on / off (off)</td><td data-th="Effect">Only with a DS3231 module connected (SDA GPIO21, SCL GPIO22). Keeps date and time with its coin cell even after a power failure without internet; updated at every time sync and when the time is set by hand. The status shows “Running”, “Not found” or “Time invalid” (battery empty or new).</td></tr>
+ <tr><td data-th="Setting">Time server (NTP)</td><td data-th="Range (default)">host name (de.pool.ntp.org)</td><td data-th="Effect">Server on the internet from which the clock fetches the exact time – after start-up and then every hour.
  “Apply” saves the name and synchronises immediately. Two more servers from <code>config.h</code> serve as a fallback.</td></tr>
 </table></div>
 
 <h3>Display (OLED)</h3>
 <div class="tw"><table>
  <tr><th style="width:24%">Setting</th><th style="width:16%">Range (default)</th><th>Effect</th></tr>
- <tr><td>OLED brightness</td><td>0–100 % (50 %)</td><td>Brightness of the small display on the clock. Low values protect the OLED (less burn-in, longer life);
+ <tr><td data-th="Setting">OLED brightness</td><td data-th="Range (default)">0–100 % (50 %)</td><td data-th="Effect">Brightness of the small display on the clock. Low values protect the OLED (less burn-in, longer life);
  0 % switches it off completely. While the BOOT button is held, it is still switched on briefly to show the profile change.</td></tr>
- <tr><td>Show seconds</td><td>on / off (on)</td><td>Time on the OLED as HH:MM:SS or only HH:MM. Without seconds the picture only changes once per
+ <tr><td data-th="Setting">Show seconds</td><td data-th="Range (default)">on / off (on)</td><td data-th="Effect">Time on the OLED as HH:MM:SS or only HH:MM. Without seconds the picture only changes once per
  minute – which protects the display even more.</td></tr>
- <tr><td>Rotate OLED by 180°</td><td>on / off (off)</td><td>Turns the display upside down if it is mounted upside down in the lid.</td></tr>
- <tr><td>OLED pixel shift</td><td>on / off (on)</td><td>Shifts the whole picture by a few pixels every minute so that permanently lit points (e.g. the colon)
+ <tr><td data-th="Setting">Rotate OLED by 180°</td><td data-th="Range (default)">on / off (off)</td><td data-th="Effect">Turns the display upside down if it is mounted upside down in the lid.</td></tr>
+ <tr><td data-th="Setting">OLED pixel shift</td><td data-th="Range (default)">on / off (on)</td><td data-th="Effect">Shifts the whole picture by a few pixels every minute so that permanently lit points (e.g. the colon)
  do not burn in. The shift is hardly noticeable.</td></tr>
 </table></div>
 
 <h3>Wi-Fi</h3>
 <div class="tw"><table>
  <tr><th style="width:24%">Setting</th><th style="width:16%">Range</th><th>Effect</th></tr>
- <tr><td>Saved networks</td><td>up to 10</td><td>Networks the clock may connect to. It automatically chooses the strongest network in range.
+ <tr><td data-th="Setting">Saved networks</td><td data-th="Range">up to 10</td><td data-th="Effect">Networks the clock may connect to. It automatically chooses the strongest network in range.
  “Delete” removes a network; the clock restarts afterwards. Passwords are never shown. Without a Wi-Fi connection the group expands by itself.</td></tr>
- <tr><td>Search for networks in range</td><td>–</td><td>Lists the nearby networks, strongest first, with bars and dBm; the connected network is marked.
+ <tr><td data-th="Setting">Search for networks in range</td><td data-th="Range">–</td><td data-th="Effect">Lists the nearby networks, strongest first, with bars and dBm; the connected network is marked.
  Tapping one copies its name into the form.</td></tr>
- <tr><td>Add network</td><td>SSID 1–32, password empty or 8–63 characters</td><td>Saves a new network or a changed password (after a password change the clock restarts briefly). Leave the password empty for open networks.
+ <tr><td data-th="Setting">Add network</td><td data-th="Range">SSID 1–32, password empty or 8–63 characters</td><td data-th="Effect">Saves a new network or a changed password (after a password change the clock restarts briefly). Leave the password empty for open networks.
  Then “Reconnect” so that the clock chooses the strongest network again.</td></tr>
- <tr><td>Reconnect</td><td>–</td><td>Briefly disconnects and connects to the strongest known network; the page is unreachable for a few seconds.</td></tr>
- <tr><td>Reset Wi-Fi</td><td>–</td><td>Deletes all saved networks after confirmation. The clock restarts and opens the setup network
+ <tr><td data-th="Setting">Reconnect</td><td data-th="Range">–</td><td data-th="Effect">Briefly disconnects and connects to the strongest known network; the page is unreachable for a few seconds.</td></tr>
+ <tr><td data-th="Setting">Reset Wi-Fi</td><td data-th="Range">–</td><td data-th="Effect">Deletes all saved networks after confirmation. The clock restarts and opens the setup network
  “ScopeClock-Setup” for a new set-up.</td></tr>
 </table></div>
 
 <h3>System and side menu</h3>
 <div class="tw"><table>
  <tr><th style="width:24%">Setting</th><th style="width:16%">Range (default)</th><th>Effect</th></tr>
- <tr><td>Device name</td><td>a–z, 0–9, hyphen, max. 32 (scope-clock)</td><td>Name of the clock in the router and address in the browser: <code>http://&lt;name&gt;.local</code>. Applies
+ <tr><td data-th="Setting">Device name</td><td data-th="Range (default)">a–z, 0–9, hyphen, max. 32 (scope-clock)</td><td data-th="Effect">Name of the clock in the router and address in the browser: <code>http://&lt;name&gt;.local</code>. Applies
  immediately to the .local address, in the router after the next connection. Useful if several clocks run in the same network.</td></tr>
- <tr><td>Back up / load settings</td><td>JSON file</td><td>“Save” downloads all settings (except Wi-Fi networks) as a file, “Load” imports such a file again
+ <tr><td data-th="Setting">Back up / load settings</td><td data-th="Range (default)">JSON file</td><td data-th="Effect">“Save” downloads all settings (except Wi-Fi networks) as a file, “Load” imports such a file again
  – e.g. after replacing the ESP32 or to configure several clocks the same way.</td></tr>
- <tr><td>Reset all settings</td><td>–</td><td>Resets all groups, the language and the device name to the values from <code>config.h</code> and switches the
+ <tr><td data-th="Setting">Reset all settings</td><td data-th="Range (default)">–</td><td data-th="Effect">Resets all groups, the language and the device name to the values from <code>config.h</code> and switches the
  test pattern off. Wi-Fi networks are kept; “Undo” for 8 seconds.</td></tr>
- <tr><td>Language (side menu)</td><td>Deutsch / English (Deutsch)</td><td>Language of the web page, the OLED and the debug log; saved on the clock and applies to all devices.</td></tr>
- <tr><td>Appearance (side menu)</td><td>automatic / light / dark (automatic)</td><td>Colour scheme of the web page. “Automatic” follows the setting of the phone/PC. Only saved in the
+ <tr><td data-th="Setting">Language (side menu)</td><td data-th="Range (default)">Deutsch / English (Deutsch)</td><td data-th="Effect">Language of the web page, the OLED and the debug log; saved on the clock and applies to all devices.</td></tr>
+ <tr><td data-th="Setting">Appearance (side menu)</td><td data-th="Range (default)">automatic / light / dark (automatic)</td><td data-th="Effect">Colour scheme of the web page. “Automatic” follows the setting of the phone/PC. Only saved in the
  respective browser, not on the clock.</td></tr>
 </table></div>
 </div></section></div>
@@ -761,43 +777,43 @@ group has “Reset to defaults”; the change can then be undone with “Undo”
 <section class="doc"><div data-l="de">
 <div class="tw"><table>
  <tr><th>Beobachtung</th><th>Abhilfe</th></tr>
- <tr><td>Kein Bild auf dem Oszilloskop</td><td>X/Y-Betrieb, DC-Kopplung, 0,5 V/Div; Position auf Bildmitte; Pigtail X an Kanal 1, Y an Kanal 2; Testbild einschalten</td></tr>
- <tr><td>Bild gespiegelt oder gedreht</td><td>X und Y vertauscht, oder Kanal invertiert (Invert-Funktion ausschalten)</td></tr>
- <tr><td>Bild flimmert</td><td>Verweilzeit verringern (z. B. 2,00 µs); am digitalen Oszilloskop Zeitbasis 1 ms/Div, Nachleuchten</td></tr>
- <tr><td>Linien zu dunkel</td><td>Verweilzeit erhöhen (z. B. 5,00 µs) oder Intensität am Oszilloskop</td></tr>
- <tr><td>Ecken verrundet, Ziffern verwaschen</td><td>Verweilzeit erhöhen</td></tr>
- <tr><td>Kleine „Haken“ an Linienanfängen</td><td>Rücklauf-Tempo verringern (z. B. 12)</td></tr>
- <tr><td>Rücklaufspuren sichtbar</td><td>Rücklauf-Tempo erhöhen oder Profil DIGITAL probieren; mit Z-Eingang: Dunkeltastung (drittes Kabel an GPIO27)</td></tr>
- <tr><td>Uhr soll komplett neu eingerichtet werden</td><td>BOOT-Taster 10 s halten (Werkseinstellungen: alle Einstellungen und WLANs werden gelöscht)</td></tr>
- <tr><td>Kreis im Testbild oval</td><td>Empfindlichkeit von X und Y gleich einstellen (beide 0,5 V/Div, Feinregler auf „kalibriert“)</td></tr>
- <tr><td>Brummen/Zittern im Bild</td><td>Ungeerdetes USB-Netzteil statt PC verwenden</td></tr>
- <tr><td>„Keine NTP-Verbindung“</td><td>WLAN prüfen (Status); ohne Internet die Zeit unter Einstellungen → Uhrzeit stellen – mit DS3231-Modul bleibt sie dann auch nach einem Stromausfall erhalten</td></tr>
- <tr><td>Zeit um ganze Stunden falsch</td><td>Zeitzone prüfen; Sommer-/Winterzeit beim Stellen von Hand</td></tr>
- <tr><td>http://scope-clock.local geht nicht</td><td>IP-Adresse aus dem Status oder dem Router verwenden (manche Android-Geräte unterstützen .local nicht)</td></tr>
- <tr><td>OLED bleibt dunkel</td><td>Im Status „OLED-Anzeige“ ansehen: „Aus“ = Helligkeit 0 %, unter Einstellungen → Display erhöhen. Steht dort „An“, die Verdrahtung prüfen: CLK GPIO18, DIN GPIO23, CS GPIO5, DC GPIO17, RST GPIO4, VCC an 3V3 (ob ein Display angeschlossen ist, kann die Uhr nicht erkennen)</td></tr>
- <tr><td>OLED-Bild 2 Pixel versetzt</td><td>in der <code>.ino</code> <code>NONAME0</code> durch <code>NONAME2</code> ersetzen</td></tr>
- <tr><td>Hochladen schlägt fehl</td><td>Partitionsschema „Huge APP“; ggf. BOOT-Taster beim Start des Hochladens drücken</td></tr>
+ <tr><td data-th="Beobachtung">Kein Bild auf dem Oszilloskop</td><td data-th="Abhilfe">X/Y-Betrieb, DC-Kopplung, 0,5 V/Div; Position auf Bildmitte; Pigtail X an Kanal 1, Y an Kanal 2; Testbild einschalten</td></tr>
+ <tr><td data-th="Beobachtung">Bild gespiegelt oder gedreht</td><td data-th="Abhilfe">X und Y vertauscht, oder Kanal invertiert (Invert-Funktion ausschalten)</td></tr>
+ <tr><td data-th="Beobachtung">Bild flimmert</td><td data-th="Abhilfe">Verweilzeit verringern (z. B. 2,00 µs); am digitalen Oszilloskop Zeitbasis 1 ms/Div, Nachleuchten</td></tr>
+ <tr><td data-th="Beobachtung">Linien zu dunkel</td><td data-th="Abhilfe">Verweilzeit erhöhen (z. B. 5,00 µs) oder Intensität am Oszilloskop</td></tr>
+ <tr><td data-th="Beobachtung">Ecken verrundet, Ziffern verwaschen</td><td data-th="Abhilfe">Verweilzeit erhöhen</td></tr>
+ <tr><td data-th="Beobachtung">Kleine „Haken“ an Linienanfängen</td><td data-th="Abhilfe">Rücklauf-Tempo verringern (z. B. 12)</td></tr>
+ <tr><td data-th="Beobachtung">Rücklaufspuren sichtbar</td><td data-th="Abhilfe">Rücklauf-Tempo erhöhen oder Profil DIGITAL probieren; mit Z-Eingang: Dunkeltastung (drittes Kabel an GPIO27)</td></tr>
+ <tr><td data-th="Beobachtung">Uhr soll komplett neu eingerichtet werden</td><td data-th="Abhilfe">BOOT-Taster 10 s halten (Werkseinstellungen: alle Einstellungen und WLANs werden gelöscht)</td></tr>
+ <tr><td data-th="Beobachtung">Kreis im Testbild oval</td><td data-th="Abhilfe">Empfindlichkeit von X und Y gleich einstellen (beide 0,5 V/Div, Feinregler auf „kalibriert“)</td></tr>
+ <tr><td data-th="Beobachtung">Brummen/Zittern im Bild</td><td data-th="Abhilfe">Ungeerdetes USB-Netzteil statt PC verwenden</td></tr>
+ <tr><td data-th="Beobachtung">„Keine NTP-Verbindung“</td><td data-th="Abhilfe">WLAN prüfen (Status); ohne Internet die Zeit unter Einstellungen → Uhrzeit stellen – mit DS3231-Modul bleibt sie dann auch nach einem Stromausfall erhalten</td></tr>
+ <tr><td data-th="Beobachtung">Zeit um ganze Stunden falsch</td><td data-th="Abhilfe">Zeitzone prüfen; Sommer-/Winterzeit beim Stellen von Hand</td></tr>
+ <tr><td data-th="Beobachtung">http://scope-clock.local geht nicht</td><td data-th="Abhilfe">IP-Adresse aus dem Status oder dem Router verwenden (manche Android-Geräte unterstützen .local nicht)</td></tr>
+ <tr><td data-th="Beobachtung">OLED bleibt dunkel</td><td data-th="Abhilfe">Im Status „OLED-Anzeige“ ansehen: „Aus“ = Helligkeit 0 %, unter Einstellungen → Display erhöhen. Steht dort „An“, die Verdrahtung prüfen: CLK GPIO18, DIN GPIO23, CS GPIO5, DC GPIO17, RST GPIO4, VCC an 3V3 (ob ein Display angeschlossen ist, kann die Uhr nicht erkennen)</td></tr>
+ <tr><td data-th="Beobachtung">OLED-Bild 2 Pixel versetzt</td><td data-th="Abhilfe">in der <code>.ino</code> <code>NONAME0</code> durch <code>NONAME2</code> ersetzen</td></tr>
+ <tr><td data-th="Beobachtung">Hochladen schlägt fehl</td><td data-th="Abhilfe">Partitionsschema „Huge APP“; ggf. BOOT-Taster beim Start des Hochladens drücken</td></tr>
 </table></div>
 <p>Für eine Fehlermeldung im Debug-Bereich „Herunterladen“ antippen und die Textdatei weitergeben.</p>
 </div><div data-l="en">
 <div class="tw"><table>
  <tr><th>Observation</th><th>Remedy</th></tr>
- <tr><td>No picture on the oscilloscope</td><td>X/Y mode, DC coupling, 0.5 V/div; position at the centre; pigtail X to channel 1, Y to channel 2; switch on the test pattern</td></tr>
- <tr><td>Picture mirrored or rotated</td><td>X and Y swapped, or a channel inverted (switch off the invert function)</td></tr>
- <tr><td>Picture flickers</td><td>reduce the dwell time (e.g. 2.00 µs); on a digital oscilloscope time base 1 ms/div, persistence</td></tr>
- <tr><td>Lines too dark</td><td>increase the dwell time (e.g. 5.00 µs) or the intensity on the oscilloscope</td></tr>
- <tr><td>Rounded corners, blurred numerals</td><td>increase the dwell time</td></tr>
- <tr><td>Small “hooks” at the start of lines</td><td>reduce the retrace speed (e.g. 12)</td></tr>
- <tr><td>Retrace lines visible</td><td>increase the retrace speed or try profile DIGITAL; with a Z input: Z blanking (third wire to GPIO27)</td></tr>
- <tr><td>The clock should be set up completely anew</td><td>hold the BOOT button for 10 s (factory reset: all settings and networks are erased)</td></tr>
- <tr><td>Circle in the test pattern is oval</td><td>set the same sensitivity for X and Y (both 0.5 V/div, fine control at “calibrated”)</td></tr>
- <tr><td>Hum/jitter in the picture</td><td>use an unearthed USB power supply instead of a PC</td></tr>
- <tr><td>“No NTP connection”</td><td>check Wi-Fi (status); without internet set the time under Settings → Time – with a DS3231 module it is then kept even after a power failure</td></tr>
- <tr><td>Time off by whole hours</td><td>check the time zone; summer/winter time when setting by hand</td></tr>
- <tr><td>http://scope-clock.local does not work</td><td>use the IP address from the status or the router (some Android devices do not support .local)</td></tr>
- <tr><td>OLED stays dark</td><td>check “OLED display” in the status: “Off” = brightness 0 %, increase it under Settings → Display. If it says “On”, check the wiring: CLK GPIO18, DIN GPIO23, CS GPIO5, DC GPIO17, RST GPIO4, VCC to 3V3 (the clock cannot detect whether a display is connected)</td></tr>
- <tr><td>OLED picture shifted by 2 pixels</td><td>replace <code>NONAME0</code> with <code>NONAME2</code> in the <code>.ino</code></td></tr>
- <tr><td>Upload fails</td><td>partition scheme “Huge APP”; if necessary press the BOOT button when the upload starts</td></tr>
+ <tr><td data-th="Observation">No picture on the oscilloscope</td><td data-th="Remedy">X/Y mode, DC coupling, 0.5 V/div; position at the centre; pigtail X to channel 1, Y to channel 2; switch on the test pattern</td></tr>
+ <tr><td data-th="Observation">Picture mirrored or rotated</td><td data-th="Remedy">X and Y swapped, or a channel inverted (switch off the invert function)</td></tr>
+ <tr><td data-th="Observation">Picture flickers</td><td data-th="Remedy">reduce the dwell time (e.g. 2.00 µs); on a digital oscilloscope time base 1 ms/div, persistence</td></tr>
+ <tr><td data-th="Observation">Lines too dark</td><td data-th="Remedy">increase the dwell time (e.g. 5.00 µs) or the intensity on the oscilloscope</td></tr>
+ <tr><td data-th="Observation">Rounded corners, blurred numerals</td><td data-th="Remedy">increase the dwell time</td></tr>
+ <tr><td data-th="Observation">Small “hooks” at the start of lines</td><td data-th="Remedy">reduce the retrace speed (e.g. 12)</td></tr>
+ <tr><td data-th="Observation">Retrace lines visible</td><td data-th="Remedy">increase the retrace speed or try profile DIGITAL; with a Z input: Z blanking (third wire to GPIO27)</td></tr>
+ <tr><td data-th="Observation">The clock should be set up completely anew</td><td data-th="Remedy">hold the BOOT button for 10 s (factory reset: all settings and networks are erased)</td></tr>
+ <tr><td data-th="Observation">Circle in the test pattern is oval</td><td data-th="Remedy">set the same sensitivity for X and Y (both 0.5 V/div, fine control at “calibrated”)</td></tr>
+ <tr><td data-th="Observation">Hum/jitter in the picture</td><td data-th="Remedy">use an unearthed USB power supply instead of a PC</td></tr>
+ <tr><td data-th="Observation">“No NTP connection”</td><td data-th="Remedy">check Wi-Fi (status); without internet set the time under Settings → Time – with a DS3231 module it is then kept even after a power failure</td></tr>
+ <tr><td data-th="Observation">Time off by whole hours</td><td data-th="Remedy">check the time zone; summer/winter time when setting by hand</td></tr>
+ <tr><td data-th="Observation">http://scope-clock.local does not work</td><td data-th="Remedy">use the IP address from the status or the router (some Android devices do not support .local)</td></tr>
+ <tr><td data-th="Observation">OLED stays dark</td><td data-th="Remedy">check “OLED display” in the status: “Off” = brightness 0 %, increase it under Settings → Display. If it says “On”, check the wiring: CLK GPIO18, DIN GPIO23, CS GPIO5, DC GPIO17, RST GPIO4, VCC to 3V3 (the clock cannot detect whether a display is connected)</td></tr>
+ <tr><td data-th="Observation">OLED picture shifted by 2 pixels</td><td data-th="Remedy">replace <code>NONAME0</code> with <code>NONAME2</code> in the <code>.ino</code></td></tr>
+ <tr><td data-th="Observation">Upload fails</td><td data-th="Remedy">partition scheme “Huge APP”; if necessary press the BOOT button when the upload starts</td></tr>
 </table></div>
 <p>For a bug report tap “Download” in the debug section and pass on the text file.</p>
 </div></section></div>
@@ -857,48 +873,48 @@ oscilloscope shows no sample points along the way.</p>
 <p class="small">Fast alles lässt sich im Webinterface ändern; <code>config.h</code> liefert nur die Startwerte bzw. feste Pins.</p>
 <div class="tw"><table>
  <tr><th>Parameter</th><th>Standard</th><th>Bedeutung</th></tr>
- <tr><td><code>DAC_X_PIN</code>, <code>DAC_Y_PIN</code></td><td>25, 26</td><td>DAC-Ausgänge (fest)</td></tr>
- <tr><td><code>OLED_CS/DC/RST_PIN</code></td><td>5, 17, 4</td><td>OLED-Anschlüsse; CLK 18 und DIN 23 sind fest (Hardware-SPI)</td></tr>
- <tr><td><code>SCOPE_PROFILE</code></td><td>1</td><td>0 = ANALOG, 1 = DIGITAL</td></tr>
- <tr><td><code>BEAM_NS_PER_UNIT</code></td><td>3000</td><td>Verweilzeit pro Schritt in ns (≈ 230 Bilder/s)</td></tr>
- <tr><td><code>JUMP_SPEED</code>, <code>JUMP_LANDING</code>, <code>JUMP_RAMP</code></td><td>24, 8, 4</td><td>Sprünge im Profil ANALOG</td></tr>
- <tr><td><code>HAND/TICK/DIGIT_BRIGHT_PCT</code></td><td>67, 100, 100</td><td>Helligkeiten</td></tr>
- <tr><td><code>DIAL_STYLE</code></td><td>0</td><td>0 = 1–12, 1 = 12/3/6/9, 2 = I–XII, 3 = XII/III/VI/IX, 4 = nur Striche</td></tr>
- <tr><td><code>RTC_ENABLE</code>, <code>RTC_SDA_PIN</code>, <code>RTC_SCL_PIN</code></td><td>0, 21, 22</td><td>Optionale Echtzeituhr DS3231 (im Webinterface umschaltbar)</td></tr>
- <tr><td><code>TZ_INFO</code>, <code>NTP_SERVER_1…3</code></td><td>Mitteleuropa, de.pool.ntp.org …</td><td>Zeitzone und Zeitserver</td></tr>
- <tr><td><code>FALLBACK_H/M/S</code></td><td>10:08:37</td><td>Startzeit ohne Zeitquelle</td></tr>
- <tr><td><code>OLED_BRIGHT_PCT</code>, <code>OLED_SECONDS</code>, <code>OLED_FLIP</code>, <code>OLED_SHIFT_EVERY_S</code></td><td>50, 1, 0, 60</td><td>OLED</td></tr>
- <tr><td><code>CLOCK_12H</code>, <code>UI_LANG</code></td><td>0, 0</td><td>24 h, Deutsch</td></tr>
- <tr><td><code>WIFI_HOSTNAME</code></td><td>scope-clock</td><td>Start-Gerätename</td></tr>
- <tr><td><code>WEB_SETUP_AP_SSID</code>, <code>WEB_SETUP_AP_AFTER_S</code></td><td>ScopeClock-Setup, 60</td><td>Setup-WLAN und Wartezeit</td></tr>
- <tr><td><code>WEB_MAX_NETWORKS</code>, <code>LOG_BUFFER_SIZE</code></td><td>10, 8192</td><td>WLANs, Größe des Debug-Speichers</td></tr>
- <tr><td><code>BOOT_TEST_S</code>, <code>BUTTON_LONG_MS</code>, <code>BUTTON_FACTORY_MS</code></td><td>10, 3000, 10000</td><td>Start-Testbild (s), BOOT-Taster: Profil umschalten, Werkseinstellungen (ms)</td></tr>
- <tr><td><code>ZBLANK_PIN</code>, <code>ZBLANK_ENABLE</code>, <code>ZBLANK_ACTIVE_HIGH</code></td><td>27, 0, 1</td><td>Optionale Dunkeltastung: GPIO, Startwert aus, High = dunkel (im Webinterface umschaltbar)</td></tr>
+ <tr><td data-th="Parameter"><code>DAC_X_PIN</code>, <code>DAC_Y_PIN</code></td><td data-th="Standard">25, 26</td><td data-th="Bedeutung">DAC-Ausgänge (fest)</td></tr>
+ <tr><td data-th="Parameter"><code>OLED_CS/DC/RST_PIN</code></td><td data-th="Standard">5, 17, 4</td><td data-th="Bedeutung">OLED-Anschlüsse; CLK 18 und DIN 23 sind fest (Hardware-SPI)</td></tr>
+ <tr><td data-th="Parameter"><code>SCOPE_PROFILE</code></td><td data-th="Standard">1</td><td data-th="Bedeutung">0 = ANALOG, 1 = DIGITAL</td></tr>
+ <tr><td data-th="Parameter"><code>BEAM_NS_PER_UNIT</code></td><td data-th="Standard">3000</td><td data-th="Bedeutung">Verweilzeit pro Schritt in ns (≈ 230 Bilder/s)</td></tr>
+ <tr><td data-th="Parameter"><code>JUMP_SPEED</code>, <code>JUMP_LANDING</code>, <code>JUMP_RAMP</code></td><td data-th="Standard">24, 8, 4</td><td data-th="Bedeutung">Sprünge im Profil ANALOG</td></tr>
+ <tr><td data-th="Parameter"><code>HAND/TICK/DIGIT_BRIGHT_PCT</code></td><td data-th="Standard">67, 100, 100</td><td data-th="Bedeutung">Helligkeiten</td></tr>
+ <tr><td data-th="Parameter"><code>DIAL_STYLE</code></td><td data-th="Standard">0</td><td data-th="Bedeutung">0 = 1–12, 1 = 12/3/6/9, 2 = I–XII, 3 = XII/III/VI/IX, 4 = nur Striche</td></tr>
+ <tr><td data-th="Parameter"><code>RTC_ENABLE</code>, <code>RTC_SDA_PIN</code>, <code>RTC_SCL_PIN</code></td><td data-th="Standard">0, 21, 22</td><td data-th="Bedeutung">Optionale Echtzeituhr DS3231 (im Webinterface umschaltbar)</td></tr>
+ <tr><td data-th="Parameter"><code>TZ_INFO</code>, <code>NTP_SERVER_1…3</code></td><td data-th="Standard">Mitteleuropa, de.pool.ntp.org …</td><td data-th="Bedeutung">Zeitzone und Zeitserver</td></tr>
+ <tr><td data-th="Parameter"><code>FALLBACK_H/M/S</code></td><td data-th="Standard">10:08:37</td><td data-th="Bedeutung">Startzeit ohne Zeitquelle</td></tr>
+ <tr><td data-th="Parameter"><code>OLED_BRIGHT_PCT</code>, <code>OLED_SECONDS</code>, <code>OLED_FLIP</code>, <code>OLED_SHIFT_EVERY_S</code></td><td data-th="Standard">50, 1, 0, 60</td><td data-th="Bedeutung">OLED</td></tr>
+ <tr><td data-th="Parameter"><code>CLOCK_12H</code>, <code>UI_LANG</code></td><td data-th="Standard">0, 0</td><td data-th="Bedeutung">24 h, Deutsch</td></tr>
+ <tr><td data-th="Parameter"><code>WIFI_HOSTNAME</code></td><td data-th="Standard">scope-clock</td><td data-th="Bedeutung">Start-Gerätename</td></tr>
+ <tr><td data-th="Parameter"><code>WEB_SETUP_AP_SSID</code>, <code>WEB_SETUP_AP_AFTER_S</code></td><td data-th="Standard">ScopeClock-Setup, 60</td><td data-th="Bedeutung">Setup-WLAN und Wartezeit</td></tr>
+ <tr><td data-th="Parameter"><code>WEB_MAX_NETWORKS</code>, <code>LOG_BUFFER_SIZE</code></td><td data-th="Standard">10, 8192</td><td data-th="Bedeutung">WLANs, Größe des Debug-Speichers</td></tr>
+ <tr><td data-th="Parameter"><code>BOOT_TEST_S</code>, <code>BUTTON_LONG_MS</code>, <code>BUTTON_FACTORY_MS</code></td><td data-th="Standard">10, 3000, 10000</td><td data-th="Bedeutung">Start-Testbild (s), BOOT-Taster: Profil umschalten, Werkseinstellungen (ms)</td></tr>
+ <tr><td data-th="Parameter"><code>ZBLANK_PIN</code>, <code>ZBLANK_ENABLE</code>, <code>ZBLANK_ACTIVE_HIGH</code></td><td data-th="Standard">27, 0, 1</td><td data-th="Bedeutung">Optionale Dunkeltastung: GPIO, Startwert aus, High = dunkel (im Webinterface umschaltbar)</td></tr>
 </table></div>
 <h3>Schnittstellen des Webservers</h3>
 <div class="tw"><table>
  <tr><th>Aufruf</th><th>Funktion</th></tr>
- <tr><td><code>GET /</code></td><td>Webseite (gzip)</td></tr>
- <tr><td><code>GET /api/status</code></td><td>Uhrzeit, NTP, WLAN, Setup-WLAN, Profil, Bildrate, Speicher, Last, Neustartgrund, OLED-Helligkeit</td></tr>
- <tr><td><code>GET /api/settings</code>, <code>POST /api/settings</code></td><td>Einstellungen lesen bzw. ändern (beliebige Felder, sofort wirksam)</td></tr>
- <tr><td><code>POST /api/settings/reset</code></td><td>Gruppe (scope/time/display) oder alles auf config.h</td></tr>
- <tr><td><code>POST /api/dial</code>, <code>POST /api/time</code></td><td>Zifferblatt umschalten; Uhrzeit von Hand stellen</td></tr>
- <tr><td><code>GET /api/networks</code>, <code>GET /api/scan</code></td><td>gespeicherte Netze (nur Namen), Netzsuche</td></tr>
- <tr><td><code>POST /api/wifi</code>, <code>/api/wifi/delete</code>, <code>/api/wifi/reset</code>, <code>/api/reconnect</code></td><td>WLAN-Verwaltung</td></tr>
- <tr><td><code>GET /api/log</code>, <code>POST /api/log/clear</code></td><td>Debug-Protokoll lesen bzw. leeren</td></tr>
- <tr><td><code>GET /api/vectors</code></td><td>Vektordaten für die Vorschau (fertig erzeugt in <code>vectors.h</code>, gzip)</td></tr>
+ <tr><td data-th="Aufruf"><code>GET /</code></td><td data-th="Funktion">Webseite (gzip)</td></tr>
+ <tr><td data-th="Aufruf"><code>GET /api/status</code></td><td data-th="Funktion">Uhrzeit, NTP, WLAN, Setup-WLAN, Profil, Bildrate, Speicher, Last, Neustartgrund, OLED-Helligkeit</td></tr>
+ <tr><td data-th="Aufruf"><code>GET /api/settings</code>, <code>POST /api/settings</code></td><td data-th="Funktion">Einstellungen lesen bzw. ändern (beliebige Felder, sofort wirksam)</td></tr>
+ <tr><td data-th="Aufruf"><code>POST /api/settings/reset</code></td><td data-th="Funktion">Gruppe (scope/time/display) oder alles auf config.h</td></tr>
+ <tr><td data-th="Aufruf"><code>POST /api/dial</code>, <code>POST /api/time</code></td><td data-th="Funktion">Zifferblatt umschalten; Uhrzeit von Hand stellen</td></tr>
+ <tr><td data-th="Aufruf"><code>GET /api/networks</code>, <code>GET /api/scan</code></td><td data-th="Funktion">gespeicherte Netze (nur Namen), Netzsuche</td></tr>
+ <tr><td data-th="Aufruf"><code>POST /api/wifi</code>, <code>/api/wifi/delete</code>, <code>/api/wifi/reset</code>, <code>/api/reconnect</code></td><td data-th="Funktion">WLAN-Verwaltung</td></tr>
+ <tr><td data-th="Aufruf"><code>GET /api/log</code>, <code>POST /api/log/clear</code></td><td data-th="Funktion">Debug-Protokoll lesen bzw. leeren</td></tr>
+ <tr><td data-th="Aufruf"><code>GET /api/vectors</code></td><td data-th="Funktion">Vektordaten für die Vorschau (fertig erzeugt in <code>vectors.h</code>, gzip)</td></tr>
 </table></div>
 <h3>Dateien im Projekt</h3>
 <div class="tw"><table>
  <tr><th>Datei</th><th>Inhalt</th></tr>
- <tr><td><code>ESP32_OscilloscopeClock_v2.0/*.ino</code></td><td>Firmware</td></tr>
- <tr><td><code>config.h</code></td><td>Startwerte und Pins</td></tr>
- <tr><td><code>DataTable.h</code></td><td>Vektordaten (aus <code>tools/gen_vectors.py</code>)</td></tr>
- <tr><td><code>vectors.h</code></td><td>Vorschau-Daten für das Webinterface (aus <code>tools/gen_vectors.py --vectors</code>)</td></tr>
- <tr><td><code>webpage.h</code>, <code>font.h</code>, <code>icon.h</code></td><td>Webseite (aus <code>web/index.html</code> mit <code>tools/gen_webpage.py</code>), Schrift, App-Symbol</td></tr>
- <tr><td><code>docs/demo/index.html</code></td><td>Testseite des Webinterfaces ohne Uhr, im Browser öffnen (erzeugt mit <code>tools/gen_demo.py</code>)</td></tr>
- <tr><td><code>docs/</code></td><td>diese Dokumentation auf Deutsch und Englisch (Quellen <code>dokumentation.html</code>, <code>documentation.en.html</code>), Bilder</td></tr>
- <tr><td><code>README.md</code>, <code>HARDWARE.md</code>, <code>SOFTWARE.md</code></td><td>Kurzfassung auf GitHub (Deutsch und Englisch)</td></tr>
+ <tr><td data-th="Datei"><code>ESP32_OscilloscopeClock_v2.0/*.ino</code></td><td data-th="Inhalt">Firmware</td></tr>
+ <tr><td data-th="Datei"><code>config.h</code></td><td data-th="Inhalt">Startwerte und Pins</td></tr>
+ <tr><td data-th="Datei"><code>DataTable.h</code></td><td data-th="Inhalt">Vektordaten (aus <code>tools/gen_vectors.py</code>)</td></tr>
+ <tr><td data-th="Datei"><code>vectors.h</code></td><td data-th="Inhalt">Vorschau-Daten für das Webinterface (aus <code>tools/gen_vectors.py --vectors</code>)</td></tr>
+ <tr><td data-th="Datei"><code>webpage.h</code>, <code>font.h</code>, <code>icon.h</code></td><td data-th="Inhalt">Webseite (aus <code>web/index.html</code> mit <code>tools/gen_webpage.py</code>), Schrift, App-Symbol</td></tr>
+ <tr><td data-th="Datei"><code>docs/demo/index.html</code></td><td data-th="Inhalt">Testseite des Webinterfaces ohne Uhr, im Browser öffnen (erzeugt mit <code>tools/gen_demo.py</code>)</td></tr>
+ <tr><td data-th="Datei"><code>docs/</code></td><td data-th="Inhalt">diese Dokumentation auf Deutsch und Englisch (Quellen <code>dokumentation.html</code>, <code>documentation.en.html</code>), Bilder</td></tr>
+ <tr><td data-th="Datei"><code>README.md</code>, <code>HARDWARE.md</code>, <code>SOFTWARE.md</code></td><td data-th="Inhalt">Kurzfassung auf GitHub (Deutsch und Englisch)</td></tr>
 </table></div>
 <h3>Herkunft und Lizenzen</h3>
 <p>Die Idee stammt von der <b>ESP32 Oscilloscope Clock von Mauro Pintus</b> (Mailand 2018,
@@ -913,48 +929,48 @@ OLED-Inhalt, BOOT-Taster und Webinterface wurden am PC simuliert bzw. im Browser
 <p class="small">Almost everything can be changed in the web interface; <code>config.h</code> only provides the defaults and fixed pins.</p>
 <div class="tw"><table>
  <tr><th>Parameter</th><th>Default</th><th>Meaning</th></tr>
- <tr><td><code>DAC_X_PIN</code>, <code>DAC_Y_PIN</code></td><td>25, 26</td><td>DAC outputs (fixed)</td></tr>
- <tr><td><code>OLED_CS/DC/RST_PIN</code></td><td>5, 17, 4</td><td>OLED connections; CLK 18 and DIN 23 are fixed (hardware SPI)</td></tr>
- <tr><td><code>SCOPE_PROFILE</code></td><td>1</td><td>0 = ANALOG, 1 = DIGITAL</td></tr>
- <tr><td><code>BEAM_NS_PER_UNIT</code></td><td>3000</td><td>Dwell time per step in ns (≈ 230 frames/s)</td></tr>
- <tr><td><code>JUMP_SPEED</code>, <code>JUMP_LANDING</code>, <code>JUMP_RAMP</code></td><td>24, 8, 4</td><td>Jumps in profile ANALOG</td></tr>
- <tr><td><code>HAND/TICK/DIGIT_BRIGHT_PCT</code></td><td>67, 100, 100</td><td>Brightness values</td></tr>
- <tr><td><code>DIAL_STYLE</code></td><td>0</td><td>0 = 1–12, 1 = 12/3/6/9, 2 = I–XII, 3 = XII/III/VI/IX, 4 = ticks only</td></tr>
- <tr><td><code>RTC_ENABLE</code>, <code>RTC_SDA_PIN</code>, <code>RTC_SCL_PIN</code></td><td>0, 21, 22</td><td>Optional DS3231 real-time clock (switchable in the web interface)</td></tr>
- <tr><td><code>TZ_INFO</code>, <code>NTP_SERVER_1…3</code></td><td>Central Europe, de.pool.ntp.org …</td><td>Time zone and time servers</td></tr>
- <tr><td><code>FALLBACK_H/M/S</code></td><td>10:08:37</td><td>Start time without a time source</td></tr>
- <tr><td><code>OLED_BRIGHT_PCT</code>, <code>OLED_SECONDS</code>, <code>OLED_FLIP</code>, <code>OLED_SHIFT_EVERY_S</code></td><td>50, 1, 0, 60</td><td>OLED</td></tr>
- <tr><td><code>CLOCK_12H</code>, <code>UI_LANG</code></td><td>0, 0</td><td>24 h, German (1 = English)</td></tr>
- <tr><td><code>WIFI_HOSTNAME</code></td><td>scope-clock</td><td>Default device name</td></tr>
- <tr><td><code>WEB_SETUP_AP_SSID</code>, <code>WEB_SETUP_AP_AFTER_S</code></td><td>ScopeClock-Setup, 60</td><td>Setup network and waiting time</td></tr>
- <tr><td><code>WEB_MAX_NETWORKS</code>, <code>LOG_BUFFER_SIZE</code></td><td>10, 8192</td><td>Wi-Fi networks, size of the debug memory</td></tr>
- <tr><td><code>BOOT_TEST_S</code>, <code>BUTTON_LONG_MS</code>, <code>BUTTON_FACTORY_MS</code></td><td>10, 3000, 10000</td><td>Start-up test pattern (s), BOOT button: switch profile, factory reset (ms)</td></tr>
- <tr><td><code>ZBLANK_PIN</code>, <code>ZBLANK_ENABLE</code>, <code>ZBLANK_ACTIVE_HIGH</code></td><td>27, 0, 1</td><td>Optional Z blanking: GPIO, start value off, high = dark (switchable in the web interface)</td></tr>
+ <tr><td data-th="Parameter"><code>DAC_X_PIN</code>, <code>DAC_Y_PIN</code></td><td data-th="Default">25, 26</td><td data-th="Meaning">DAC outputs (fixed)</td></tr>
+ <tr><td data-th="Parameter"><code>OLED_CS/DC/RST_PIN</code></td><td data-th="Default">5, 17, 4</td><td data-th="Meaning">OLED connections; CLK 18 and DIN 23 are fixed (hardware SPI)</td></tr>
+ <tr><td data-th="Parameter"><code>SCOPE_PROFILE</code></td><td data-th="Default">1</td><td data-th="Meaning">0 = ANALOG, 1 = DIGITAL</td></tr>
+ <tr><td data-th="Parameter"><code>BEAM_NS_PER_UNIT</code></td><td data-th="Default">3000</td><td data-th="Meaning">Dwell time per step in ns (≈ 230 frames/s)</td></tr>
+ <tr><td data-th="Parameter"><code>JUMP_SPEED</code>, <code>JUMP_LANDING</code>, <code>JUMP_RAMP</code></td><td data-th="Default">24, 8, 4</td><td data-th="Meaning">Jumps in profile ANALOG</td></tr>
+ <tr><td data-th="Parameter"><code>HAND/TICK/DIGIT_BRIGHT_PCT</code></td><td data-th="Default">67, 100, 100</td><td data-th="Meaning">Brightness values</td></tr>
+ <tr><td data-th="Parameter"><code>DIAL_STYLE</code></td><td data-th="Default">0</td><td data-th="Meaning">0 = 1–12, 1 = 12/3/6/9, 2 = I–XII, 3 = XII/III/VI/IX, 4 = ticks only</td></tr>
+ <tr><td data-th="Parameter"><code>RTC_ENABLE</code>, <code>RTC_SDA_PIN</code>, <code>RTC_SCL_PIN</code></td><td data-th="Default">0, 21, 22</td><td data-th="Meaning">Optional DS3231 real-time clock (switchable in the web interface)</td></tr>
+ <tr><td data-th="Parameter"><code>TZ_INFO</code>, <code>NTP_SERVER_1…3</code></td><td data-th="Default">Central Europe, de.pool.ntp.org …</td><td data-th="Meaning">Time zone and time servers</td></tr>
+ <tr><td data-th="Parameter"><code>FALLBACK_H/M/S</code></td><td data-th="Default">10:08:37</td><td data-th="Meaning">Start time without a time source</td></tr>
+ <tr><td data-th="Parameter"><code>OLED_BRIGHT_PCT</code>, <code>OLED_SECONDS</code>, <code>OLED_FLIP</code>, <code>OLED_SHIFT_EVERY_S</code></td><td data-th="Default">50, 1, 0, 60</td><td data-th="Meaning">OLED</td></tr>
+ <tr><td data-th="Parameter"><code>CLOCK_12H</code>, <code>UI_LANG</code></td><td data-th="Default">0, 0</td><td data-th="Meaning">24 h, German (1 = English)</td></tr>
+ <tr><td data-th="Parameter"><code>WIFI_HOSTNAME</code></td><td data-th="Default">scope-clock</td><td data-th="Meaning">Default device name</td></tr>
+ <tr><td data-th="Parameter"><code>WEB_SETUP_AP_SSID</code>, <code>WEB_SETUP_AP_AFTER_S</code></td><td data-th="Default">ScopeClock-Setup, 60</td><td data-th="Meaning">Setup network and waiting time</td></tr>
+ <tr><td data-th="Parameter"><code>WEB_MAX_NETWORKS</code>, <code>LOG_BUFFER_SIZE</code></td><td data-th="Default">10, 8192</td><td data-th="Meaning">Wi-Fi networks, size of the debug memory</td></tr>
+ <tr><td data-th="Parameter"><code>BOOT_TEST_S</code>, <code>BUTTON_LONG_MS</code>, <code>BUTTON_FACTORY_MS</code></td><td data-th="Default">10, 3000, 10000</td><td data-th="Meaning">Start-up test pattern (s), BOOT button: switch profile, factory reset (ms)</td></tr>
+ <tr><td data-th="Parameter"><code>ZBLANK_PIN</code>, <code>ZBLANK_ENABLE</code>, <code>ZBLANK_ACTIVE_HIGH</code></td><td data-th="Default">27, 0, 1</td><td data-th="Meaning">Optional Z blanking: GPIO, start value off, high = dark (switchable in the web interface)</td></tr>
 </table></div>
 <h3>Web server interfaces</h3>
 <div class="tw"><table>
  <tr><th>Request</th><th>Function</th></tr>
- <tr><td><code>GET /</code></td><td>Web page (gzip)</td></tr>
- <tr><td><code>GET /api/status</code></td><td>Time, NTP, Wi-Fi, setup network, profile, frame rate, memory, load, restart reason, OLED brightness</td></tr>
- <tr><td><code>GET /api/settings</code>, <code>POST /api/settings</code></td><td>Read or change settings (any fields, effective immediately)</td></tr>
- <tr><td><code>POST /api/settings/reset</code></td><td>Group (scope/time/display) or everything to config.h</td></tr>
- <tr><td><code>POST /api/dial</code>, <code>POST /api/time</code></td><td>Change the dial; set the time by hand</td></tr>
- <tr><td><code>GET /api/networks</code>, <code>GET /api/scan</code></td><td>Saved networks (names only), network scan</td></tr>
- <tr><td><code>POST /api/wifi</code>, <code>/api/wifi/delete</code>, <code>/api/wifi/reset</code>, <code>/api/reconnect</code></td><td>Wi-Fi management</td></tr>
- <tr><td><code>GET /api/log</code>, <code>POST /api/log/clear</code></td><td>Read or clear the debug log</td></tr>
- <tr><td><code>GET /api/vectors</code></td><td>Vector data for the preview (generated in <code>vectors.h</code>, gzip)</td></tr>
+ <tr><td data-th="Request"><code>GET /</code></td><td data-th="Function">Web page (gzip)</td></tr>
+ <tr><td data-th="Request"><code>GET /api/status</code></td><td data-th="Function">Time, NTP, Wi-Fi, setup network, profile, frame rate, memory, load, restart reason, OLED brightness</td></tr>
+ <tr><td data-th="Request"><code>GET /api/settings</code>, <code>POST /api/settings</code></td><td data-th="Function">Read or change settings (any fields, effective immediately)</td></tr>
+ <tr><td data-th="Request"><code>POST /api/settings/reset</code></td><td data-th="Function">Group (scope/time/display) or everything to config.h</td></tr>
+ <tr><td data-th="Request"><code>POST /api/dial</code>, <code>POST /api/time</code></td><td data-th="Function">Change the dial; set the time by hand</td></tr>
+ <tr><td data-th="Request"><code>GET /api/networks</code>, <code>GET /api/scan</code></td><td data-th="Function">Saved networks (names only), network scan</td></tr>
+ <tr><td data-th="Request"><code>POST /api/wifi</code>, <code>/api/wifi/delete</code>, <code>/api/wifi/reset</code>, <code>/api/reconnect</code></td><td data-th="Function">Wi-Fi management</td></tr>
+ <tr><td data-th="Request"><code>GET /api/log</code>, <code>POST /api/log/clear</code></td><td data-th="Function">Read or clear the debug log</td></tr>
+ <tr><td data-th="Request"><code>GET /api/vectors</code></td><td data-th="Function">Vector data for the preview (generated in <code>vectors.h</code>, gzip)</td></tr>
 </table></div>
 <h3>Files in the project</h3>
 <div class="tw"><table>
  <tr><th>File</th><th>Content</th></tr>
- <tr><td><code>ESP32_OscilloscopeClock_v2.0/*.ino</code></td><td>Firmware</td></tr>
- <tr><td><code>config.h</code></td><td>Defaults and pins</td></tr>
- <tr><td><code>DataTable.h</code></td><td>Vector data (from <code>tools/gen_vectors.py</code>)</td></tr>
- <tr><td><code>vectors.h</code></td><td>Preview data for the web interface (from <code>tools/gen_vectors.py --vectors</code>)</td></tr>
- <tr><td><code>webpage.h</code>, <code>font.h</code>, <code>icon.h</code></td><td>Web page (from <code>web/index.html</code> with <code>tools/gen_webpage.py</code>), font, app icon</td></tr>
- <tr><td><code>docs/demo/index.html</code></td><td>test page of the web interface without a clock, open it in a browser (generated with <code>tools/gen_demo.py</code>)</td></tr>
- <tr><td><code>docs/</code></td><td>this documentation in German and English (sources <code>dokumentation.html</code>, <code>documentation.en.html</code>), images</td></tr>
- <tr><td><code>README.md</code>, <code>HARDWARE.md</code>, <code>SOFTWARE.md</code></td><td>Summary on GitHub (German and English)</td></tr>
+ <tr><td data-th="File"><code>ESP32_OscilloscopeClock_v2.0/*.ino</code></td><td data-th="Content">Firmware</td></tr>
+ <tr><td data-th="File"><code>config.h</code></td><td data-th="Content">Defaults and pins</td></tr>
+ <tr><td data-th="File"><code>DataTable.h</code></td><td data-th="Content">Vector data (from <code>tools/gen_vectors.py</code>)</td></tr>
+ <tr><td data-th="File"><code>vectors.h</code></td><td data-th="Content">Preview data for the web interface (from <code>tools/gen_vectors.py --vectors</code>)</td></tr>
+ <tr><td data-th="File"><code>webpage.h</code>, <code>font.h</code>, <code>icon.h</code></td><td data-th="Content">Web page (from <code>web/index.html</code> with <code>tools/gen_webpage.py</code>), font, app icon</td></tr>
+ <tr><td data-th="File"><code>docs/demo/index.html</code></td><td data-th="Content">test page of the web interface without a clock, open it in a browser (generated with <code>tools/gen_demo.py</code>)</td></tr>
+ <tr><td data-th="File"><code>docs/</code></td><td data-th="Content">this documentation in German and English (sources <code>dokumentation.html</code>, <code>documentation.en.html</code>), images</td></tr>
+ <tr><td data-th="File"><code>README.md</code>, <code>HARDWARE.md</code>, <code>SOFTWARE.md</code></td><td data-th="Content">Summary on GitHub (German and English)</td></tr>
 </table></div>
 <h3>Origin and licences</h3>
 <p>The idea comes from the <b>ESP32 Oscilloscope Clock by Mauro Pintus</b> (Milan 2018,
@@ -967,19 +983,8 @@ OLED content, BOOT button and web interface were simulated on a PC or tested in 
 </div></section></div>
 <!-- /KAPITEL -->
 
-<div class="grp"><h2 id="downloads-h">Downloads</h2>
-<section>
- <a class="row" href="ESP32_Oscilloscope_Clock_Dokumentation.pdf"><span><span data-l="de">Dokumentation (Deutsch)</span><span data-l="en">Documentation (German)</span><small class="note" data-l="de">PDF – Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small><small class="note" data-l="en">PDF – assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
- <a class="row" href="ESP32_Oscilloscope_Clock_Documentation.pdf"><span><span data-l="de">Dokumentation (Englisch)</span><span data-l="en">Documentation (English)</span><small class="note" data-l="de">PDF – Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small><small class="note" data-l="en">PDF – assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
- <a class="row" href="fonts/OFL.txt"><span><span data-l="de">Schriftart Raleway</span><span data-l="en">Font Raleway</span><small class="note" data-l="de">SIL Open Font License 1.1 – Lizenztext</small><small class="note" data-l="en">SIL Open Font License 1.1 – licence text</small></span><span>›</span></a>
-</section></div>
 
-<div class="grp"><h2 id="links-h">Links</h2>
-<section>
- <a class="row" href="demo/"><span><span data-l="de">Testseite</span><span data-l="en">Test page</span><small class="note" data-l="de">Das Webinterface der Uhr ausprobieren – läuft im Browser, alle Werte sind simuliert</small><small class="note" data-l="en">Try the clock's web interface – runs in the browser, all values are simulated</small></span><span>›</span></a>
- <a class="row" href="https://github.com/HolzHolz123/ESP32_OscilloscopeClock"><span><span data-l="de">GitHub – Version 2.0</span><span data-l="en">GitHub – version 2.0</span><small class="note" data-l="de">Diese Firmware mit Quellcode, Anleitung und Werkzeugen</small><small class="note" data-l="en">This firmware with source code, guide and tools</small></span><span>›</span></a>
- <a class="row" href="https://github.com/maurohh/ESP32_OscilloscopeClock"><span><span data-l="de">GitHub – Original</span><span data-l="en">GitHub – original</span><small class="note" data-l="de">Die ursprüngliche ESP32 Oscilloscope Clock von Mauro Pintus (2018), nach deren Idee diese Version entstand</small><small class="note" data-l="en">The original ESP32 Oscilloscope Clock by Mauro Pintus (2018) that inspired this version</small></span><span>›</span></a>
-</section></div>
+
 </main>
 <script>
 const $=id=>document.getElementById(id),root=document.documentElement;

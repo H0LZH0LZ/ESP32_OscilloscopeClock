@@ -23,6 +23,33 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DOCS = os.path.join(ROOT, 'docs')
 
 
+def label_cells(m):
+    """Schreibt die Texte der Kopfzeile als data-th in die Zellen der übrigen Zeilen."""
+    t = m.group(0)
+    rows = re.findall(r'<tr[^>]*>.*?</tr>', t, flags=re.S)
+    if not rows or '<th' not in rows[0]:
+        return t
+    heads = [html.escape(html.unescape(re.sub(r'<[^>]+>', '', h)).strip(), quote=True)
+             for h in re.findall(r'<th[^>]*>(.*?)</th>', rows[0], flags=re.S)]
+    for r in rows[1:]:
+        i = 0
+
+        def tag(_m):
+            nonlocal i
+            h = heads[i] if i < len(heads) else ''
+            i += 1
+            return '<td data-th="%s"' % h
+        nr = re.sub(r'<td(?=[ >])', tag, r)
+        # Teileliste: die Anzahl steht auf dem Handy vor dem Teil („2 ×“) statt als eigener Eintrag
+        if heads and heads[0] in ('Anz.', 'Qty'):
+            q = re.search(r'<td[^>]*>(.*?)</td>', nr, flags=re.S)
+            nr = nr.replace('<td data-th="%s"' % heads[0], '<td class="qty" data-th="%s"' % heads[0], 1)
+            nr = nr.replace('<td data-th="%s"' % heads[1], '<td data-qty="%s ×" data-th="%s"'
+                            % (html.escape(re.sub(r'<[^>]+>', '', q.group(1)).strip(), quote=True), heads[1]), 1)
+        t = t.replace(r, nr, 1)
+    return t
+
+
 def chapters(path):
     """Liefert [(Titel, HTML-Inhalt), …] der nummerierten Kapitel."""
     s = open(path, encoding='utf-8').read()
@@ -35,7 +62,10 @@ def chapters(path):
         title, content = parts[i].strip(), parts[i + 1].strip()
         if not re.match(r'\d+ ', title):
             continue
-        # Tabellen auf dem Handy seitlich scrollbar machen, feste Breiten der PDF-Bilder entfernen
+        # Tabellen: jede Zelle bekommt die Spaltenbezeichnung (data-th) – auf dem Handy stehen die
+        # Zeilen dann als Einträge untereinander, jeweils mit Bezeichnung
+        content = re.sub(r'<table[^>]*>.*?</table>', label_cells, content, flags=re.S)
+        # feste Breiten der PDF-Bilder entfernen
         content = re.sub(r'<table([^>]*)>', r'<div class="tw"><table\1>', content)
         content = content.replace('</table>', '</table></div>')
         content = re.sub(r'(<img [^>]*?) style="width:\d+%"', r'\1', content)
