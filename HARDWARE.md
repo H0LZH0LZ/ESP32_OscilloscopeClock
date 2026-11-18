@@ -88,7 +88,7 @@ eingebaut, im Webinterface „OLED um 180° drehen“ einschalten.
 
 ### Optional: Echtzeituhr DS3231 (z. B. Modul ZS-042)
 Hält Datum und Uhrzeit mit Knopfzelle auch nach einem Stromausfall ohne Internet (DS3231: ±2 ppm, etwa
-1 Minute pro Jahr). Im beschriebenen Aufbau nicht enthalten.
+1 Minute pro Jahr). Im beschriebenen Aufbau nicht enthalten. Passendes Modul: [WINGONEER „Tiny DS3231 AT24C32“](https://www.amazon.de/dp/B01H5NAFUY).
 
 | Modul | Breakout-Board |
 |---|---|

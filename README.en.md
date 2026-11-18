@@ -64,7 +64,7 @@ pictures are screenshots of the page. Photos of the finished device will follow 
 - Works without internet too: the time can be set by hand in the web interface (or taken over
   from the phone with one tap), optionally with summer or winter time fixed. Without any time source
   the clock counts from a fixed start time.
-- **Optional DS3231 real-time clock** (I²C, GPIO21/22): keeps date and time with its coin cell even after a
+- **Optional [DS3231 real-time clock](https://www.amazon.de/dp/B01H5NAFUY)** (I²C, GPIO21/22): keeps date and time with its coin cell even after a
   power failure without internet. Switch on in the web interface, off by default.
 - Several Wi-Fi networks: the clock automatically connects to the strongest known network.
 - **12- or 24-hour format** for OLED and web interface (12 h with AM/PM), switchable in the web interface.

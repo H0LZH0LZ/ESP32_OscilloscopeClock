@@ -56,7 +56,7 @@ sind Screenshots der Seite. Fotos des fertigen Geräts folgen nach dem Bau des P
 - Ohne Internet läuft die Uhr trotzdem: Die Uhrzeit lässt sich im Webinterface von Hand stellen
   (oder mit einem Fingertipp vom Handy übernehmen), wahlweise mit fester Sommer- oder Winterzeit.
   Ohne Zeitquelle zählt sie ab einer festen Startzeit hoch.
-- **Optional Echtzeituhr DS3231** (I²C, GPIO21/22): hält Datum und Uhrzeit mit Knopfzelle auch nach einem
+- **Optional [Echtzeituhr DS3231](https://www.amazon.de/dp/B01H5NAFUY)** (I²C, GPIO21/22): hält Datum und Uhrzeit mit Knopfzelle auch nach einem
   Stromausfall ohne Internet. Im Webinterface einschaltbar, ab Werk aus.
 - Mehrere WLANs: Die Uhr verbindet sich automatisch mit dem stärksten bekannten Netz.
 - **12- oder 24-Stunden-Format** für OLED und Webinterface (12 h mit AM/PM), umschaltbar im Webinterface.

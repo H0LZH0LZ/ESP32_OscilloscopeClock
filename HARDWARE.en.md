@@ -88,7 +88,7 @@ replace `NONAME0` with `NONAME2` in the `.ino`. If the display is mounted upside
 
 ### Optional: DS3231 real-time clock (e.g. module ZS-042)
 Keeps date and time with its coin cell even after a power failure without internet (DS3231: ±2 ppm, about
-1 minute per year). Not part of the described build.
+1 minute per year). Not part of the described build. Suitable module: [WINGONEER “Tiny DS3231 AT24C32”](https://www.amazon.de/dp/B01H5NAFUY).
 
 | Module | Breakout board |
 |---|---|
