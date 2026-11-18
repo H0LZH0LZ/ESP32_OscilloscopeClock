@@ -6,14 +6,14 @@
 
 | Teil | Zweck |
 |---|---|
-| ESP32-WROOM-32U DevKitC V4, USB-C, mit Antennen-Kit (DUBEUYEW), 48,5 × 28,5 mm | Klassischer Dual-Core-ESP32 mit zwei 8-Bit-DACs (GPIO25/26); das Kit enthält das IPEX→SMA-Pigtail |
-| Waveshare 2,42inch OLED Display Module, weiß (SSD1309, 128×64, SPI/I²C), 61,5 × 39,5 mm – **optional**, im Prototyp verbaut | Lokale Textanzeige (die Uhr läuft auch ohne): Uhrzeit 24h und Datum/KW (7-Segment-Stil), SSID, Signal |
-| WLAN-Antenne Bingfu 2,4/5,8 GHz, 8 dBi, SMA-Stecker | Pflicht beim *-32U*: das Modul hat **keine** PCB-Antenne; SMA und RP-SMA nicht mischen |
-| ESP32-Breakout-Board mit Schraubklemmen | DevKit aufstecken, alle Leitungen in Schraubklemmen (Beschriftung P25, P26 …) – nichts am DevKit löten |
-| 2× BNC-Pigtail, BNC-Stecker auf 2,54-mm-DuPont-Stift, RG316 | X- und Y-Ausgang; der BNC-Stecker kommt direkt ins Oszilloskop (rot = Signal, braun = Schirm) |
-| 2× Kabelverschraubung Lapp SKINDICHT MINI M6×1 (52001860), Klemmbereich 2–3 mm | führt die Pigtails durch die Gehäusewand |
-| USB-C-Einbauverlängerung (IP67, 0,2 m, Einbauöffnung 16 mm) | Versorgung und Programmierung von außen |
-| ABS-Abzweigdose 150 × 100 × 70 mm, IP67, Scharnierdeckel, Montageplatte | Gehäuse (funkdurchlässig) |
+| [ESP32-WROOM-32U DevKitC V4](https://www.amazon.de/dp/B0F65G3V81), USB-C, mit Antennen-Kit (DUBEUYEW), 48,5 × 28,5 mm | Klassischer Dual-Core-ESP32 mit zwei 8-Bit-DACs (GPIO25/26); das Kit enthält das IPEX→SMA-Pigtail |
+| [Waveshare 2,42inch OLED Display Module](https://www.amazon.de/dp/B0CL6WMHJN), weiß (SSD1309, 128×64, SPI/I²C), 61,5 × 39,5 mm – **optional**, im Prototyp verbaut | Lokale Textanzeige (die Uhr läuft auch ohne): Uhrzeit 24h und Datum/KW (7-Segment-Stil), SSID, Signal |
+| [WLAN-Antenne Bingfu](https://www.amazon.de/dp/B086JCJMSN) 2,4/5,8 GHz, 8 dBi, SMA-Stecker | Pflicht beim *-32U*: das Modul hat **keine** PCB-Antenne; SMA und RP-SMA nicht mischen |
+| [ESP32-Breakout-Board mit Schraubklemmen](https://www.amazon.de/dp/B0BCWBW4SR) | DevKit aufstecken, alle Leitungen in Schraubklemmen (Beschriftung P25, P26 …) – nichts am DevKit löten |
+| 2× [BNC-Pigtail](https://de.aliexpress.com/item/1005006318978533.html), BNC-Stecker auf 2,54-mm-DuPont-Stift, RG316 | X- und Y-Ausgang; der BNC-Stecker kommt direkt ins Oszilloskop (rot = Signal, braun = Schirm) |
+| 2× [Kabelverschraubung Lapp SKINDICHT MINI](https://de.rs-online.com/web/p/kabelverschraubungen/4583953) M6×1 (52001860), Klemmbereich 2–3 mm | führt die Pigtails durch die Gehäusewand |
+| [USB-C-Einbauverlängerung](https://www.amazon.de/dp/B0FM7RLQTF) (IP67, 0,2 m, Einbauöffnung 16 mm) | Versorgung und Programmierung von außen |
+| [ABS-Abzweigdose 150 × 100 × 70 mm](https://www.amazon.de/dp/B0B5RGNNXV), IP67, Scharnierdeckel, Montageplatte | Gehäuse (funkdurchlässig) |
 | Kleinteile | 2× 220 Ω (in die rote Ader der Pigtails), Abstandsbolzen M2,5/M3 |
 
 Ausführliche Aufbauanleitung mit Bohrplan: [docs/ESP32_Oscilloscope_Clock_Dokumentation.pdf](docs/ESP32_Oscilloscope_Clock_Dokumentation.pdf).

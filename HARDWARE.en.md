@@ -6,14 +6,14 @@
 
 | Part | Purpose |
 |---|---|
-| ESP32-WROOM-32U DevKitC V4, USB-C, with antenna kit (DUBEUYEW), 48.5 × 28.5 mm | Classic dual-core ESP32 with two 8-bit DACs (GPIO25/26); the kit contains the IPEX→SMA pigtail |
-| Waveshare 2.42inch OLED display module, white (SSD1309, 128×64, SPI/I²C), 61.5 × 39.5 mm – **optional**, fitted in the prototype | Local text display (the clock also runs without it): time 24 h and date/calendar week (7-segment style), SSID, signal |
-| WiFi antenna Bingfu 2.4/5.8 GHz, 8 dBi, SMA plug | Mandatory with the *-32U*: the module has **no** PCB antenna; do not mix SMA and RP-SMA |
-| ESP32 breakout board with screw terminals | plug in the DevKit, all wires go into screw terminals (labelled P25, P26 …) – no soldering on the DevKit |
-| 2× BNC pigtail, BNC plug to 2.54 mm DuPont pin, RG316 | X and Y outputs; the BNC plug goes straight into the oscilloscope (red = signal, brown = shield) |
-| 2× cable gland Lapp SKINDICHT MINI M6×1 (52001860), clamping range 2–3 mm | leads the pigtails through the enclosure wall |
-| USB-C panel-mount extension (IP67, 0.2 m, 16 mm cut-out) | power and programming from outside |
-| ABS junction box 150 × 100 × 70 mm, IP67, hinged lid, mounting plate | Enclosure (RF-transparent) |
+| [ESP32-WROOM-32U DevKitC V4](https://www.amazon.de/dp/B0F65G3V81), USB-C, with antenna kit (DUBEUYEW), 48.5 × 28.5 mm | Classic dual-core ESP32 with two 8-bit DACs (GPIO25/26); the kit contains the IPEX→SMA pigtail |
+| [Waveshare 2.42inch OLED display module](https://www.amazon.de/dp/B0CL6WMHJN), white (SSD1309, 128×64, SPI/I²C), 61.5 × 39.5 mm – **optional**, fitted in the prototype | Local text display (the clock also runs without it): time 24 h and date/calendar week (7-segment style), SSID, signal |
+| [WiFi antenna Bingfu](https://www.amazon.de/dp/B086JCJMSN) 2.4/5.8 GHz, 8 dBi, SMA plug | Mandatory with the *-32U*: the module has **no** PCB antenna; do not mix SMA and RP-SMA |
+| [ESP32 breakout board with screw terminals](https://www.amazon.de/dp/B0BCWBW4SR) | plug in the DevKit, all wires go into screw terminals (labelled P25, P26 …) – no soldering on the DevKit |
+| 2× [BNC pigtail](https://de.aliexpress.com/item/1005006318978533.html), BNC plug to 2.54 mm DuPont pin, RG316 | X and Y outputs; the BNC plug goes straight into the oscilloscope (red = signal, brown = shield) |
+| 2× [cable gland Lapp SKINDICHT MINI](https://de.rs-online.com/web/p/kabelverschraubungen/4583953) M6×1 (52001860), clamping range 2–3 mm | leads the pigtails through the enclosure wall |
+| [USB-C panel-mount extension](https://www.amazon.de/dp/B0FM7RLQTF) (IP67, 0.2 m, 16 mm cut-out) | power and programming from outside |
+| [ABS junction box 150 × 100 × 70 mm](https://www.amazon.de/dp/B0B5RGNNXV), IP67, hinged lid, mounting plate | Enclosure (RF-transparent) |
 | Small parts | 2× 220 Ω (in the red lead of the pigtails), standoffs M2.5/M3 |
 
 Detailed assembly guide with drilling template: [docs/ESP32_Oscilloscope_Clock_Documentation.pdf](docs/ESP32_Oscilloscope_Clock_Documentation.pdf).
