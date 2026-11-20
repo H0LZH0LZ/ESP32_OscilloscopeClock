@@ -205,7 +205,7 @@ Der Außenkontakt hat Durchgang zu GND. Alle Schraubklemmen leicht nachziehen.</
 <h3>Partitionsschema: zwei Varianten</h3>
 <table style="break-inside:avoid">
  <tr><th>Variante</th><th>Arduino IDE: Partition Scheme</th><th>PlatformIO</th><th>Programmspeicher</th></tr>
- <tr><td><b>A – Huge APP</b> (empfohlen)</td><td>„Huge APP (3MB No OTA/1MB SPIFFS)“</td><td><code>pio run -t upload</code></td><td>1.238.378 von 3.145.728 Byte (<b>39 %</b>)</td></tr>
+ <tr><td><b>A – Huge APP</b> (empfohlen)</td><td>„Huge APP (3MB No OTA/1MB SPIFFS)“</td><td><code>pio run -t upload</code></td><td>1.238.394 von 3.145.728 Byte (<b>39 %</b>)</td></tr>
  <tr><td><b>B – Standard</b></td><td>„Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)“ – Voreinstellung, nichts umstellen</td><td><code>pio run -e standard -t upload</code></td><td>1.238.362 von 1.310.720 Byte (<b>94 %</b>)</td></tr>
 </table>
 <p>Beide Varianten laufen gleich. <b>A</b> lässt rund 1,9 MB Platz für Erweiterungen; die Uhr nutzt weder OTA-Updates noch

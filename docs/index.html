@@ -466,7 +466,7 @@ The outer contact has continuity to GND. Retighten all screw terminals slightly.
 <h3>Partitionsschema: zwei Varianten</h3>
 <div class="tw"><table style="break-inside:avoid">
  <tr><th>Variante</th><th>Arduino IDE: Partition Scheme</th><th>PlatformIO</th><th>Programmspeicher</th></tr>
- <tr><td data-th="Variante"><b>A – Huge APP</b> (empfohlen)</td><td data-th="Arduino IDE: Partition Scheme">„Huge APP (3MB No OTA/1MB SPIFFS)“</td><td data-th="PlatformIO"><code>pio run -t upload</code></td><td data-th="Programmspeicher">1.238.378 von 3.145.728 Byte (<b>39 %</b>)</td></tr>
+ <tr><td data-th="Variante"><b>A – Huge APP</b> (empfohlen)</td><td data-th="Arduino IDE: Partition Scheme">„Huge APP (3MB No OTA/1MB SPIFFS)“</td><td data-th="PlatformIO"><code>pio run -t upload</code></td><td data-th="Programmspeicher">1.238.394 von 3.145.728 Byte (<b>39 %</b>)</td></tr>
  <tr><td data-th="Variante"><b>B – Standard</b></td><td data-th="Arduino IDE: Partition Scheme">„Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)“ – Voreinstellung, nichts umstellen</td><td data-th="PlatformIO"><code>pio run -e standard -t upload</code></td><td data-th="Programmspeicher">1.238.362 von 1.310.720 Byte (<b>94 %</b>)</td></tr>
 </table></div>
 <p>Beide Varianten laufen gleich. <b>A</b> lässt rund 1,9 MB Platz für Erweiterungen; die Uhr nutzt weder OTA-Updates noch
@@ -490,7 +490,7 @@ Das Skript entfernt Kommentare, komprimiert die Seite mit gzip und schreibt <cod
 <h3>Partition scheme: two variants</h3>
 <div class="tw"><table style="break-inside:avoid">
  <tr><th>Variant</th><th>Arduino IDE: Partition Scheme</th><th>PlatformIO</th><th>Program memory</th></tr>
- <tr><td data-th="Variant"><b>A – Huge APP</b> (recommended)</td><td data-th="Arduino IDE: Partition Scheme">“Huge APP (3MB No OTA/1MB SPIFFS)”</td><td data-th="PlatformIO"><code>pio run -t upload</code></td><td data-th="Program memory">1,238,378 of 3,145,728 bytes (<b>39 %</b>)</td></tr>
+ <tr><td data-th="Variant"><b>A – Huge APP</b> (recommended)</td><td data-th="Arduino IDE: Partition Scheme">“Huge APP (3MB No OTA/1MB SPIFFS)”</td><td data-th="PlatformIO"><code>pio run -t upload</code></td><td data-th="Program memory">1,238,394 of 3,145,728 bytes (<b>39 %</b>)</td></tr>
  <tr><td data-th="Variant"><b>B – Standard</b></td><td data-th="Arduino IDE: Partition Scheme">“Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)” – the default, nothing to change</td><td data-th="PlatformIO"><code>pio run -e standard -t upload</code></td><td data-th="Program memory">1,238,362 of 1,310,720 bytes (<b>94 %</b>)</td></tr>
 </table></div>
 <p>Both variants work the same. <b>A</b> leaves about 1.9 MB for extensions; the clock uses neither OTA updates nor SPIFFS,

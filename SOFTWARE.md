@@ -137,8 +137,8 @@ Passwort. Das gilt immer, wenn die Uhr mit einem WLAN verbunden ist, nicht nur i
 die Strahlausgabe auf Core 1 nicht.
 
 **Seite (`webpage.h`):** eine Seite mit **einklappbarem Seitenmenü** (☰ oben links, bleibt beim
-Scrollen sichtbar): Uhr, Status, Einstellungen mit den Unterpunkten Oszilloskop, Uhrzeit, Display,
-WLAN und System (springen direkt in die jeweilige Gruppe), Protokoll, darunter die Sprachauswahl.
+Scrollen sichtbar): oben Sprache und Darstellung, darunter Uhr, Status, Einstellungen mit den Unterpunkten
+Oszilloskop, Uhrzeit, Display, WLAN und System (springen direkt in die jeweilige Gruppe) und Debug.
 Der Abschnitt in der Bildschirmmitte ist im Menü grün markiert (Scroll-Spy, `spy()`;
 bei einer Einstellungsgruppe ist auch „Einstellungen“ grün), ein 3 px schmaler grüner Balken am
 oberen Rand zeigt, wie weit die Seite gescrollt ist.

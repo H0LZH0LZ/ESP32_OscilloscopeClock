@@ -203,7 +203,7 @@ The outer contact has continuity to GND. Retighten all screw terminals slightly.
 <h3>Partition scheme: two variants</h3>
 <table style="break-inside:avoid">
  <tr><th>Variant</th><th>Arduino IDE: Partition Scheme</th><th>PlatformIO</th><th>Program memory</th></tr>
- <tr><td><b>A – Huge APP</b> (recommended)</td><td>“Huge APP (3MB No OTA/1MB SPIFFS)”</td><td><code>pio run -t upload</code></td><td>1,238,378 of 3,145,728 bytes (<b>39 %</b>)</td></tr>
+ <tr><td><b>A – Huge APP</b> (recommended)</td><td>“Huge APP (3MB No OTA/1MB SPIFFS)”</td><td><code>pio run -t upload</code></td><td>1,238,394 of 3,145,728 bytes (<b>39 %</b>)</td></tr>
  <tr><td><b>B – Standard</b></td><td>“Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)” – the default, nothing to change</td><td><code>pio run -e standard -t upload</code></td><td>1,238,362 of 1,310,720 bytes (<b>94 %</b>)</td></tr>
 </table>
 <p>Both variants work the same. <b>A</b> leaves about 1.9 MB for extensions; the clock uses neither OTA updates nor SPIFFS,

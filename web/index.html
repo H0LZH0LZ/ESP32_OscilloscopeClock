@@ -198,7 +198,8 @@ html{scroll-behavior:smooth}
 /* Fortschrittsbalken ganz oben: zeigt, wie weit die Seite gescrollt ist */
 #prog{position:fixed;top:0;left:0;right:0;height:3px;z-index:35;background:var(--acc);transform:scaleX(0);transform-origin:0 0;pointer-events:none}
 #nav a.subnav{min-height:40px;padding-left:28px;font-size:15px;font-weight:400;color:var(--mute)}   /* Gruppen der Einstellungen */
-#nav .navlang{margin:16px 12px 0;padding-top:12px;border-top:1px solid var(--line)}
+#nav .navlang{margin:0 12px 10px}
+#nav .navlang+h3{margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
 #nav .navlang label{margin:0 0 6px}
 #nav select{font:inherit;font-size:16px;width:100%;min-height:44px;padding:0 10px;margin-bottom:6px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--fg)}
 #shade{position:fixed;inset:0;z-index:35;background:rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .25s}
@@ -267,8 +268,14 @@ button,input,.set select,.logsel,#nav select,pre,.scope,#nav a{border-radius:var
 <body>
 <!-- Menütaste: öffnet/schließt das Seitenmenü -->
 <button id="menuBtn" aria-label="Menü" aria-controls="nav" aria-expanded="false">☰</button>
-<!-- Seitenmenü: Sprungziele zu den Abschnitten, darunter die Sprachauswahl -->
+<!-- Seitenmenü: oben Sprache und Darstellung, darunter die Sprungziele zu den Abschnitten -->
 <nav id="nav" aria-label="Abschnitte" aria-hidden="true">
+ <!-- Sprache: Deutsch/English für Seite, OLED und Protokoll (wird auf der Uhr gespeichert) -->
+ <div class="navlang"><label for="sLang">Sprache</label>
+  <select id="sLang"><option value="de" lang="de">Deutsch</option><option value="en" lang="en">English</option></select></div>
+ <!-- Darstellung: automatisch (System), hell oder dunkel – nur in diesem Browser gespeichert -->
+ <div class="navlang"><label for="sTheme">Darstellung</label>
+  <select id="sTheme"><option value="auto">Automatisch</option><option value="light">Hell</option><option value="dark">Dunkel</option></select></div>
  <h3>Abschnitte</h3>
  <a href="#uhr">Uhr</a>
  <a href="#status-h">Status</a>
@@ -280,12 +287,6 @@ button,input,.set select,.logsel,#nav select,pre,.scope,#nav a{border-radius:var
  <a class="subnav" href="#wlan-h">WLAN</a>
  <a class="subnav" href="#sys-h">System</a>
  <a href="#log-h">Debug</a>
- <!-- Sprache: Deutsch/English für Seite, OLED und Protokoll (wird auf der Uhr gespeichert) -->
- <div class="navlang"><label for="sLang">Sprache</label>
-  <select id="sLang"><option value="de" lang="de">Deutsch</option><option value="en" lang="en">English</option></select></div>
- <!-- Darstellung: automatisch (System), hell oder dunkel – nur in diesem Browser gespeichert -->
- <div class="navlang"><label for="sTheme">Darstellung</label>
-  <select id="sTheme"><option value="auto">Automatisch</option><option value="light">Hell</option><option value="dark">Dunkel</option></select></div>
 </nav>
 <div id="shade"></div>
 <div id="prog" aria-hidden="true"></div>
