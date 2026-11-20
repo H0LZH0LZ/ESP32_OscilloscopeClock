@@ -166,11 +166,17 @@ a.row>span:last-child{font-size:18px}
  main>*:not(h1){max-width:900px}
  #shade{display:none}}
 @media (max-width:600px){.hero{flex-direction:column}.hero img{width:140px;height:140px}}
+/* Schließen-Taste oben rechts im geöffneten Seitenmenü (Handy) */
+#navClose{position:absolute;top:calc(env(safe-area-inset-top) + 3px);right:6px;width:38px;height:36px;min-height:0;margin:0;padding:0;
+ border:0;border-radius:4px;background:transparent;color:var(--fg);font:22px/1 var(--sans);cursor:pointer}
+#navClose:hover{background:var(--hov)}
+@media (min-width:1100px){#navClose{display:none}}
 </style>
 </head>
 <body>
 <button id="menuBtn" aria-label="Menü / Menu" aria-controls="nav" aria-expanded="false">☰</button>
 <nav id="nav" aria-hidden="true">
+ <button type="button" id="navClose" aria-label="Menü schließen / Close menu">✕</button>
  <div class="navopt"><label for="sLang"><span data-l="de">Sprache</span><span data-l="en">Language</span></label>
   <select id="sLang"><option value="de">Deutsch</option><option value="en">English</option></select></div>
  <div class="navopt"><label for="sTheme"><span data-l="de">Darstellung</span><span data-l="en">Appearance</span></label>
@@ -467,8 +473,8 @@ The outer contact has continuity to GND. Retighten all screw terminals slightly.
 <h3>Partitionsschema: zwei Varianten</h3>
 <div class="tw"><table style="break-inside:avoid">
  <tr><th>Variante</th><th>Arduino IDE: Partition Scheme</th><th>PlatformIO</th><th>Programmspeicher</th></tr>
- <tr><td data-th="Variante"><b>A – Huge APP</b> (empfohlen)</td><td data-th="Arduino IDE: Partition Scheme">„Huge APP (3MB No OTA/1MB SPIFFS)“</td><td data-th="PlatformIO"><code>pio run -t upload</code></td><td data-th="Programmspeicher">1.238.458 von 3.145.728 Byte (<b>39 %</b>)</td></tr>
- <tr><td data-th="Variante"><b>B – Standard</b></td><td data-th="Arduino IDE: Partition Scheme">„Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)“ – Voreinstellung, nichts umstellen</td><td data-th="PlatformIO"><code>pio run -e standard -t upload</code></td><td data-th="Programmspeicher">1.238.442 von 1.310.720 Byte (<b>94 %</b>)</td></tr>
+ <tr><td data-th="Variante"><b>A – Huge APP</b> (empfohlen)</td><td data-th="Arduino IDE: Partition Scheme">„Huge APP (3MB No OTA/1MB SPIFFS)“</td><td data-th="PlatformIO"><code>pio run -t upload</code></td><td data-th="Programmspeicher">1.238.586 von 3.145.728 Byte (<b>39 %</b>)</td></tr>
+ <tr><td data-th="Variante"><b>B – Standard</b></td><td data-th="Arduino IDE: Partition Scheme">„Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)“ – Voreinstellung, nichts umstellen</td><td data-th="PlatformIO"><code>pio run -e standard -t upload</code></td><td data-th="Programmspeicher">1.238.554 von 1.310.720 Byte (<b>94 %</b>)</td></tr>
 </table></div>
 <p>Beide Varianten laufen gleich. <b>A</b> lässt rund 1,9 MB Platz für Erweiterungen; die Uhr nutzt weder OTA-Updates noch
 SPIFFS, deshalb fehlt dabei nichts. <b>B</b> funktioniert ohne Umstellen, hat aber nur noch etwa 70 KB Reserve. Ein Wechsel
@@ -491,8 +497,8 @@ Das Skript entfernt Kommentare, komprimiert die Seite mit gzip und schreibt <cod
 <h3>Partition scheme: two variants</h3>
 <div class="tw"><table style="break-inside:avoid">
  <tr><th>Variant</th><th>Arduino IDE: Partition Scheme</th><th>PlatformIO</th><th>Program memory</th></tr>
- <tr><td data-th="Variant"><b>A – Huge APP</b> (recommended)</td><td data-th="Arduino IDE: Partition Scheme">“Huge APP (3MB No OTA/1MB SPIFFS)”</td><td data-th="PlatformIO"><code>pio run -t upload</code></td><td data-th="Program memory">1,238,458 of 3,145,728 bytes (<b>39 %</b>)</td></tr>
- <tr><td data-th="Variant"><b>B – Standard</b></td><td data-th="Arduino IDE: Partition Scheme">“Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)” – the default, nothing to change</td><td data-th="PlatformIO"><code>pio run -e standard -t upload</code></td><td data-th="Program memory">1,238,442 of 1,310,720 bytes (<b>94 %</b>)</td></tr>
+ <tr><td data-th="Variant"><b>A – Huge APP</b> (recommended)</td><td data-th="Arduino IDE: Partition Scheme">“Huge APP (3MB No OTA/1MB SPIFFS)”</td><td data-th="PlatformIO"><code>pio run -t upload</code></td><td data-th="Program memory">1,238,586 of 3,145,728 bytes (<b>39 %</b>)</td></tr>
+ <tr><td data-th="Variant"><b>B – Standard</b></td><td data-th="Arduino IDE: Partition Scheme">“Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)” – the default, nothing to change</td><td data-th="PlatformIO"><code>pio run -e standard -t upload</code></td><td data-th="Program memory">1,238,554 of 1,310,720 bytes (<b>94 %</b>)</td></tr>
 </table></div>
 <p>Both variants work the same. <b>A</b> leaves about 1.9 MB for extensions; the clock uses neither OTA updates nor SPIFFS,
 so nothing is lost. <b>B</b> works without changing anything but leaves only about 70 KB. You can switch at any time (choose
@@ -900,7 +906,7 @@ Im Profil ANALOG springt der Strahl schnell und bremst vor dem Ziel, im Profil D
 unterwegs keine Abtastpunkte zeigt.</p>
 <p><b>Vektordaten:</b> Zifferblatt, Ziffern, Zeiger und Testbild sind eigene Zeichnungen, erzeugt mit <code>tools/gen_vectors.py</code>
 (Koordinaten 0–255, 8 Bit je Achse).</p>
-<p><b>Speicher:</b> Programmspeicher 1.238.442 Byte (94 % beim Standard-Partitionsschema, ca. 39 % mit „Huge APP“), globale Variablen
+<p><b>Speicher:</b> Programmspeicher 1.238.554 Byte (94 % beim Standard-Partitionsschema, ca. 39 % mit „Huge APP“), globale Variablen
 74.924 Byte (22 %). Die Webseite liegt gzip-komprimiert im Flash (21 KB), die Schrift (Raleway, auf die benötigten Zeichen reduziert) als WOFF2 (30 KB).</p>
 <h3>Debug-Meldungen (Beispiel)</h3>
 <pre>+0s ESP32 Oscilloscope Clock v2.0
@@ -923,7 +929,7 @@ In profile ANALOG the beam jumps fast and brakes before the target; in profile D
 oscilloscope shows no sample points along the way.</p>
 <p><b>Vector data:</b> dial, numerals, hands and test pattern are original drawings generated with <code>tools/gen_vectors.py</code>
 (coordinates 0–255, 8 bits per axis).</p>
-<p><b>Memory:</b> program memory 1,238,442 bytes (94 % with the default partition scheme, approx. 39 % with “Huge APP”), global variables
+<p><b>Memory:</b> program memory 1,238,554 bytes (94 % with the default partition scheme, approx. 39 % with “Huge APP”), global variables
 74,924 bytes (22 %). The web page is stored gzip-compressed in flash (21 KB), the font (Raleway, reduced to the characters needed) as WOFF2 (30 KB).</p>
 <h3>Debug messages (example, language English)</h3>
 <pre>+0s ESP32 Oscilloscope Clock v2.0
@@ -1060,7 +1066,8 @@ const $=id=>document.getElementById(id),root=document.documentElement;
 // Seitenmenü öffnen/schließen
 function menu(o){$('nav').classList.toggle('open',o);$('shade').classList.toggle('open',o);$('menuBtn').setAttribute('aria-expanded',o);
  $('nav').setAttribute('aria-hidden',!o);$('menuBtn').textContent=o?'✕':'☰'}
-$('menuBtn').onclick=()=>menu(!$('nav').classList.contains('open'));$('shade').onclick=()=>menu(false);
+$('menuBtn').onclick=()=>menu(!$('nav').classList.contains('open'));$('shade').onclick=()=>menu(false);$('navClose').onclick=()=>{menu(false);$('menuBtn').focus()};
+addEventListener('keydown',e=>{if(e.key==='Escape'&&$('nav').classList.contains('open'))menu(false)});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')menu(false)});
 // Abschnitte: Klick springt (Überschrift landet unter der Titelzeile), Menü schließt
 const navA=[...document.querySelectorAll('#nav a[href^="#"]')],navT=navA.map(a=>document.querySelector(a.getAttribute('href')));

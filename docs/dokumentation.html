@@ -205,8 +205,8 @@ Der Außenkontakt hat Durchgang zu GND. Alle Schraubklemmen leicht nachziehen.</
 <h3>Partitionsschema: zwei Varianten</h3>
 <table style="break-inside:avoid">
  <tr><th>Variante</th><th>Arduino IDE: Partition Scheme</th><th>PlatformIO</th><th>Programmspeicher</th></tr>
- <tr><td><b>A – Huge APP</b> (empfohlen)</td><td>„Huge APP (3MB No OTA/1MB SPIFFS)“</td><td><code>pio run -t upload</code></td><td>1.238.458 von 3.145.728 Byte (<b>39 %</b>)</td></tr>
- <tr><td><b>B – Standard</b></td><td>„Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)“ – Voreinstellung, nichts umstellen</td><td><code>pio run -e standard -t upload</code></td><td>1.238.442 von 1.310.720 Byte (<b>94 %</b>)</td></tr>
+ <tr><td><b>A – Huge APP</b> (empfohlen)</td><td>„Huge APP (3MB No OTA/1MB SPIFFS)“</td><td><code>pio run -t upload</code></td><td>1.238.586 von 3.145.728 Byte (<b>39 %</b>)</td></tr>
+ <tr><td><b>B – Standard</b></td><td>„Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)“ – Voreinstellung, nichts umstellen</td><td><code>pio run -e standard -t upload</code></td><td>1.238.554 von 1.310.720 Byte (<b>94 %</b>)</td></tr>
 </table>
 <p>Beide Varianten laufen gleich. <b>A</b> lässt rund 1,9 MB Platz für Erweiterungen; die Uhr nutzt weder OTA-Updates noch
 SPIFFS, deshalb fehlt dabei nichts. <b>B</b> funktioniert ohne Umstellen, hat aber nur noch etwa 70 KB Reserve. Ein Wechsel
@@ -418,7 +418,7 @@ Im Profil ANALOG springt der Strahl schnell und bremst vor dem Ziel, im Profil D
 unterwegs keine Abtastpunkte zeigt.</p>
 <p><b>Vektordaten:</b> Zifferblatt, Ziffern, Zeiger und Testbild sind eigene Zeichnungen, erzeugt mit <code>tools/gen_vectors.py</code>
 (Koordinaten 0–255, 8 Bit je Achse).</p>
-<p><b>Speicher:</b> Programmspeicher 1.238.442 Byte (94 % beim Standard-Partitionsschema, ca. 39 % mit „Huge APP“), globale Variablen
+<p><b>Speicher:</b> Programmspeicher 1.238.554 Byte (94 % beim Standard-Partitionsschema, ca. 39 % mit „Huge APP“), globale Variablen
 74.924 Byte (22 %). Die Webseite liegt gzip-komprimiert im Flash (21 KB), die Schrift (Raleway, auf die benötigten Zeichen reduziert) als WOFF2 (30 KB).</p>
 <h3>Debug-Meldungen (Beispiel)</h3>
 <pre>+0s ESP32 Oscilloscope Clock v2.0

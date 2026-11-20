@@ -149,6 +149,10 @@ h2.coll::after{content:"";width:8px;height:8px;margin:0 10px 4px 0;border:solid 
  .scope canvas{max-width:min(340px,62vh)}}
 .undo{width:auto;min-height:32px;margin:0 0 0 10px;padding:0 12px;font-size:14px;display:inline-flex;align-items:center}
 .logsel{font:inherit;font-size:16px;width:100%;min-height:44px;padding:0 10px;margin-top:6px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--fg)}
+#navClose{position:absolute;top:calc(env(safe-area-inset-top) + 3px);right:6px;width:38px;height:36px;min-height:0;margin:0;padding:0;
+ border:0;border-radius:4px;background:transparent;color:var(--fg);font:22px/1 var(--sans);cursor:pointer}
+#navClose:hover{background:var(--hov)}
+@media (min-width:1100px){#navClose{display:none}}
 :root{--hov:#e9e9ee;--rad:4px}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--hov:#2c2c2e}}
 :root[data-theme="dark"]{--hov:#2c2c2e}
@@ -181,6 +185,7 @@ button,input,.set select,.logsel,#nav select,pre,.scope,#nav a{border-radius:var
 
 <button id="menuBtn" aria-label="Menü" aria-controls="nav" aria-expanded="false">☰</button>
 <nav id="nav" aria-label="Abschnitte" aria-hidden="true">
+ <button type="button" id="navClose" aria-label="Menü schließen">✕</button>
   <div class="navlang"><label for="sLang">Sprache</label>
   <select id="sLang"><option value="de" lang="de">Deutsch</option><option value="en" lang="en">English</option></select></div>
   <div class="navlang"><label for="sTheme">Darstellung</label>
@@ -898,7 +903,7 @@ Object.assign(EN,{"Setzt nur die Einstellungen dieser Gruppe auf die Werte aus c
 Object.assign(EN,{"Helligkeit Minutenstriche": "Tick mark brightness", "Helligkeit Ziffern": "Numeral brightness", "Die 60 Striche am Rand. Über 100 % heller, aber weniger Bilder pro Sekunde.": "The 60 marks around the edge. Above 100 % brighter, but fewer frames per second.", "Die Zahlen auf dem Zifferblatt. Über 100 % heller, aber weniger Bilder pro Sekunde.": "The numerals on the dial. Above 100 % brighter, but fewer frames per second."});
 Object.assign(EN,{"Unter 100 %, weil die schmalen Zeiger sonst heller wirken als der Rest. 0 % blendet die Zeiger aus.": "Below 100 % because the narrow hands would otherwise look brighter than the rest. 0 % hides the hands.", "Die 60 Striche am Rand. 0 % blendet sie aus.": "The 60 marks around the edge. 0 % hides them.", "Die Zahlen auf dem Zifferblatt. 0 % blendet sie aus.": "The numerals on the dial. 0 % hides them.", "Helligkeit des kleinen Displays an der Uhr. 0 % schaltet es aus; niedrige Werte schonen das OLED.": "Brightness of the small display on the clock. 0 % switches it off; low values protect the OLED.", "Sekunden anzeigen": "Show seconds", "Uhrzeit auf dem OLED als HH:MM:SS oder nur HH:MM.": "Time on the OLED as HH:MM:SS or just HH:MM.", "aus": "off"});
 Object.assign(EN,{"WLAN zurücksetzen": "Reset Wi-Fi", "Löscht alle gespeicherten Netze. Die Uhr startet danach neu und öffnet das Setup-WLAN „ScopeClock-Setup“.": "Deletes all saved networks. The clock then restarts and opens the setup network “ScopeClock-Setup”."});
-Object.assign(EN,{"Darstellung": "Appearance", "Hell": "Light", "Dunkel": "Dark", "Voriges Zifferblatt": "Previous dial", "Nächstes Zifferblatt": "Next dial", "Alle": "All", "Zeit": "Time", "Warnungen": "Warnings", "Zeigt nur Meldungen eines Bereichs; „Warnungen“ zeigt Probleme wie Verbindungsabbrüche.": "Shows only messages of one area; “Warnings” shows problems such as connection losses.", "Rückgängig": "Undo", "Wiederhergestellt": "Restored", "von Hand": "manual"});
+Object.assign(EN,{"Menü schließen": "Close menu", "Darstellung": "Appearance", "Hell": "Light", "Dunkel": "Dark", "Voriges Zifferblatt": "Previous dial", "Nächstes Zifferblatt": "Next dial", "Alle": "All", "Zeit": "Time", "Warnungen": "Warnings", "Zeigt nur Meldungen eines Bereichs; „Warnungen“ zeigt Probleme wie Verbindungsabbrüche.": "Shows only messages of one area; “Warnings” shows problems such as connection losses.", "Rückgängig": "Undo", "Wiederhergestellt": "Restored", "von Hand": "manual"});
 Object.assign(EN,{"Nur Striche": "Ticks only", "Testbild": "Test pattern", "Zeigt statt der Uhr Rahmen, Kreis und Mittelkreuz zum Einstellen von Position, Größe und Fokus. Der Kreis muss rund sein (X und Y gleich groß). Wird nicht gespeichert; nach dem Einschalten erscheint es automatisch für 10 s.": "Shows a frame, circle and centre cross instead of the clock to adjust position, size and focus. The circle must be round (X and Y equal). Not saved; after power-on it appears automatically for 10 s.", "Gerätename": "Device name", "Name im Router und Adresse im Browser:": "Name in the router and address in the browser:", "nur a–z, 0–9 und Bindestrich.": "only a–z, 0–9 and hyphen.", "Einstellungen sichern": "Back up settings", "Sichern (Datei)": "Save (file)", "Laden": "Load", "Speichert alle Einstellungen außer WLANs in einer Datei und spielt sie wieder ein – etwa nach einem Tausch des ESP32.": "Saves all settings except Wi-Fi networks to a file and loads them back – e.g. after replacing the ESP32.", "„Aktualisieren“ lädt sofort neu. „Herunterladen“ speichert das ganze Protokoll als Textdatei, etwa für eine Fehlermeldung. „Leeren“ löscht den Protokollspeicher der Uhr, etwa vor einem Test. Die Uhr speichert die letzten 8 KB (ca. 120 Zeilen).": "“Refresh” reloads immediately. “Download” saves the whole log as a text file, e.g. for a bug report. “Clear” deletes the log memory of the clock, e.g. before a test. The clock keeps the last 8 KB (approx. 120 lines).", "verbunden": "connected", "Datei ungültig": "Invalid file", "Geladen": "Loaded"});
 Object.assign(EN,{"Alle Einstellungen zurücksetzen": "Reset all settings", "Setzt alle Gruppen, Sprache und Gerätename auf die Werte aus config.h zurück und schaltet das Testbild aus. WLANs bleiben erhalten.": "Resets all groups, language and device name to the values from config.h and switches the test pattern off. Wi-Fi networks are kept.", "Leeren": "Clear", "Protokoll auf der Uhr löschen?": "Clear the log on the clock?", "Gelöscht": "Cleared", "Fehler": "Error"});
 Object.assign(EN,{"Herunterladen":"Download","protokoll":"log"});
@@ -981,7 +986,8 @@ $('scope').addEventListener('keydown',e=>{if(e.key==='ArrowLeft'||e.key==='Arrow
 function menu(open){$('nav').classList.toggle('open',open);$('shade').classList.toggle('open',open);
  $('menuBtn').setAttribute('aria-expanded',open);$('nav').setAttribute('aria-hidden',!open);$('menuBtn').textContent=open?'✕':'☰'}
 $('menuBtn').onclick=()=>menu(!$('nav').classList.contains('open'));
-$('shade').onclick=()=>menu(false);
+$('shade').onclick=()=>menu(false);$('navClose').onclick=()=>{menu(false);$('menuBtn').focus()};
+addEventListener('keydown',e=>{if(e.key==='Escape'&&$('nav').classList.contains('open'))menu(false)});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')menu(false)});
 document.querySelectorAll('#nav a').forEach(a=>a.addEventListener('click',()=>{menu(false);
  const h=document.querySelector(a.getAttribute('href'));if(h&&h.classList.contains('grouphead'))openGroup(h.parentNode,true);
