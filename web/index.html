@@ -247,6 +247,8 @@ h2.coll::after{content:"";width:8px;height:8px;margin:0 10px 4px 0;border:solid 
 h1{position:fixed;inset:0 0 auto;top:env(safe-area-inset-top);justify-content:flex-start;height:64px;padding:0 16px 0 calc(env(safe-area-inset-left) + 68px);
  background:var(--card);border-bottom:1px solid var(--line);color:var(--fg);font-size:17px;font-weight:600;text-transform:none;letter-spacing:.01em}
 main{padding-top:64px}
+h1{white-space:nowrap;font-size:clamp(14px,4.4vw,17px)}
+h1 .ver{display:inline-block;margin-left:8px;padding:1px 8px;border-radius:var(--rad);background:var(--acc);color:var(--bg);font-size:12px;font-weight:600;letter-spacing:.02em}
 #menuBtn{border:0;box-shadow:none;background:transparent;border-radius:var(--rad)}
 #menuBtn:hover{background:var(--hov)}
 h2{font-size:17px;font-weight:600;color:var(--fg);text-transform:none;letter-spacing:0;min-height:52px}
@@ -291,7 +293,7 @@ button,input,.set select,.logsel,#nav select,pre,.scope,#nav a{border-radius:var
 <div id="shade"></div>
 <div id="prog" aria-hidden="true"></div>
 <main>
-<h1>ESP32 Oscilloscope Clock</h1>
+<h1>ESP32 Oscilloscope Clock <span class="ver">v2.0</span></h1>
 <header id="uhr">
 <!-- Vorschau des Oszilloskop-Bildes: Wischen wechselt das Zifferblatt -->
 <div class="scope"><canvas id="scope" width="512" height="512" role="img" tabindex="0"

@@ -122,7 +122,7 @@ html[lang="de"] [data-l="en"],html[lang="en"] [data-l="de"]{display:none!importa
 /* Kopfleiste über die volle Breite, Titel links */
 h1{position:fixed;inset:0 0 auto;height:56px;min-height:0;justify-content:flex-start;padding:0 16px 0 64px;
  background:var(--card);border-bottom:1px solid var(--line);color:var(--fg);font-size:16px;letter-spacing:.02em;text-transform:none;font-weight:700}
-h1>span{font-size:16px}
+h1>span{font-size:clamp(13px,4.2vw,16px)}
 h1 .ver{display:inline-block;margin-left:8px;padding:1px 8px;border-radius:var(--rad);background:var(--acc);color:var(--accfg);font-size:12px;font-weight:700;vertical-align:2px}
 main{padding-top:72px}
 #menuBtn{top:6px;left:8px;width:44px;height:44px;border-radius:var(--rad);box-shadow:none;border:0;background:transparent;color:var(--fg);z-index:30}
@@ -138,6 +138,7 @@ section{border-radius:var(--rad);border:1px solid var(--line);box-shadow:none;ma
 .hero p{font-size:14px;color:var(--mute)}
 /* Links & Dokumente als Kacheln */
 #downloads-h+section{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;padding:0;border:0;background:transparent}
+.grp.closed>#downloads-h+section{display:none}
 #downloads-h+section .row{border:1px solid var(--line);border-left:4px solid var(--acc);border-radius:var(--rad);background:var(--card);padding:12px 14px;min-height:76px;align-items:flex-start;font-weight:700}
 #downloads-h+section .row:hover{border-left-color:var(--acc);background:var(--hov)}
 #downloads-h+section .row .note{font-weight:400}
@@ -466,8 +467,8 @@ The outer contact has continuity to GND. Retighten all screw terminals slightly.
 <h3>Partitionsschema: zwei Varianten</h3>
 <div class="tw"><table style="break-inside:avoid">
  <tr><th>Variante</th><th>Arduino IDE: Partition Scheme</th><th>PlatformIO</th><th>Programmspeicher</th></tr>
- <tr><td data-th="Variante"><b>A – Huge APP</b> (empfohlen)</td><td data-th="Arduino IDE: Partition Scheme">„Huge APP (3MB No OTA/1MB SPIFFS)“</td><td data-th="PlatformIO"><code>pio run -t upload</code></td><td data-th="Programmspeicher">1.238.394 von 3.145.728 Byte (<b>39 %</b>)</td></tr>
- <tr><td data-th="Variante"><b>B – Standard</b></td><td data-th="Arduino IDE: Partition Scheme">„Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)“ – Voreinstellung, nichts umstellen</td><td data-th="PlatformIO"><code>pio run -e standard -t upload</code></td><td data-th="Programmspeicher">1.238.362 von 1.310.720 Byte (<b>94 %</b>)</td></tr>
+ <tr><td data-th="Variante"><b>A – Huge APP</b> (empfohlen)</td><td data-th="Arduino IDE: Partition Scheme">„Huge APP (3MB No OTA/1MB SPIFFS)“</td><td data-th="PlatformIO"><code>pio run -t upload</code></td><td data-th="Programmspeicher">1.238.458 von 3.145.728 Byte (<b>39 %</b>)</td></tr>
+ <tr><td data-th="Variante"><b>B – Standard</b></td><td data-th="Arduino IDE: Partition Scheme">„Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)“ – Voreinstellung, nichts umstellen</td><td data-th="PlatformIO"><code>pio run -e standard -t upload</code></td><td data-th="Programmspeicher">1.238.442 von 1.310.720 Byte (<b>94 %</b>)</td></tr>
 </table></div>
 <p>Beide Varianten laufen gleich. <b>A</b> lässt rund 1,9 MB Platz für Erweiterungen; die Uhr nutzt weder OTA-Updates noch
 SPIFFS, deshalb fehlt dabei nichts. <b>B</b> funktioniert ohne Umstellen, hat aber nur noch etwa 70 KB Reserve. Ein Wechsel
@@ -490,8 +491,8 @@ Das Skript entfernt Kommentare, komprimiert die Seite mit gzip und schreibt <cod
 <h3>Partition scheme: two variants</h3>
 <div class="tw"><table style="break-inside:avoid">
  <tr><th>Variant</th><th>Arduino IDE: Partition Scheme</th><th>PlatformIO</th><th>Program memory</th></tr>
- <tr><td data-th="Variant"><b>A – Huge APP</b> (recommended)</td><td data-th="Arduino IDE: Partition Scheme">“Huge APP (3MB No OTA/1MB SPIFFS)”</td><td data-th="PlatformIO"><code>pio run -t upload</code></td><td data-th="Program memory">1,238,394 of 3,145,728 bytes (<b>39 %</b>)</td></tr>
- <tr><td data-th="Variant"><b>B – Standard</b></td><td data-th="Arduino IDE: Partition Scheme">“Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)” – the default, nothing to change</td><td data-th="PlatformIO"><code>pio run -e standard -t upload</code></td><td data-th="Program memory">1,238,362 of 1,310,720 bytes (<b>94 %</b>)</td></tr>
+ <tr><td data-th="Variant"><b>A – Huge APP</b> (recommended)</td><td data-th="Arduino IDE: Partition Scheme">“Huge APP (3MB No OTA/1MB SPIFFS)”</td><td data-th="PlatformIO"><code>pio run -t upload</code></td><td data-th="Program memory">1,238,458 of 3,145,728 bytes (<b>39 %</b>)</td></tr>
+ <tr><td data-th="Variant"><b>B – Standard</b></td><td data-th="Arduino IDE: Partition Scheme">“Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)” – the default, nothing to change</td><td data-th="PlatformIO"><code>pio run -e standard -t upload</code></td><td data-th="Program memory">1,238,442 of 1,310,720 bytes (<b>94 %</b>)</td></tr>
 </table></div>
 <p>Both variants work the same. <b>A</b> leaves about 1.9 MB for extensions; the clock uses neither OTA updates nor SPIFFS,
 so nothing is lost. <b>B</b> works without changing anything but leaves only about 70 KB. You can switch at any time (choose
@@ -899,7 +900,7 @@ Im Profil ANALOG springt der Strahl schnell und bremst vor dem Ziel, im Profil D
 unterwegs keine Abtastpunkte zeigt.</p>
 <p><b>Vektordaten:</b> Zifferblatt, Ziffern, Zeiger und Testbild sind eigene Zeichnungen, erzeugt mit <code>tools/gen_vectors.py</code>
 (Koordinaten 0–255, 8 Bit je Achse).</p>
-<p><b>Speicher:</b> Programmspeicher 1.238.362 Byte (94 % beim Standard-Partitionsschema, ca. 39 % mit „Huge APP“), globale Variablen
+<p><b>Speicher:</b> Programmspeicher 1.238.442 Byte (94 % beim Standard-Partitionsschema, ca. 39 % mit „Huge APP“), globale Variablen
 74.924 Byte (22 %). Die Webseite liegt gzip-komprimiert im Flash (21 KB), die Schrift (Raleway, auf die benötigten Zeichen reduziert) als WOFF2 (30 KB).</p>
 <h3>Debug-Meldungen (Beispiel)</h3>
 <pre>+0s ESP32 Oscilloscope Clock v2.0
@@ -922,7 +923,7 @@ In profile ANALOG the beam jumps fast and brakes before the target; in profile D
 oscilloscope shows no sample points along the way.</p>
 <p><b>Vector data:</b> dial, numerals, hands and test pattern are original drawings generated with <code>tools/gen_vectors.py</code>
 (coordinates 0–255, 8 bits per axis).</p>
-<p><b>Memory:</b> program memory 1,238,362 bytes (94 % with the default partition scheme, approx. 39 % with “Huge APP”), global variables
+<p><b>Memory:</b> program memory 1,238,442 bytes (94 % with the default partition scheme, approx. 39 % with “Huge APP”), global variables
 74,924 bytes (22 %). The web page is stored gzip-compressed in flash (21 KB), the font (Raleway, reduced to the characters needed) as WOFF2 (30 KB).</p>
 <h3>Debug messages (example, language English)</h3>
 <pre>+0s ESP32 Oscilloscope Clock v2.0
