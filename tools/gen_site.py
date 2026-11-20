@@ -102,6 +102,12 @@ def main():
     s = open(f, encoding='utf-8').read()
     s = replace_between(s, 'KAPITEL-MENUE', '\n'.join(nav))
     s = replace_between(s, 'KAPITEL', '\n\n'.join(body))
+    # PDF-Links mit Versionskennung (Prüfsumme der Datei): Browser und Handys laden nach jeder
+    # neuen PDF-Fassung die aktuelle Datei statt einer zwischengespeicherten alten
+    import hashlib
+    for pdf in ('ESP32_Oscilloscope_Clock_Dokumentation.pdf', 'ESP32_Oscilloscope_Clock_Documentation.pdf'):
+        v = hashlib.md5(open(os.path.join(DOCS, pdf), 'rb').read()).hexdigest()[:8]
+        s = re.sub(r'href="' + re.escape(pdf) + r'(\?v=[0-9a-f]+)?"', f'href="{pdf}?v={v}"', s)
     open(f, 'w', encoding='utf-8').write(s)
     print(f'docs/index.html: {len(de)} Kapitel eingesetzt')
 
