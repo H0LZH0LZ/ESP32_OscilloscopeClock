@@ -31,7 +31,7 @@ def save(name, w, h, body, extra=''):
 def verdrahtung():
     L = ['3V3','EN','VP','VN','P34','P35','P32','P33','P25','P26','P27','P14','P12','GND','P13','SD2','SD3','CMD','5V']
     R = ['GND','P23','P22','TX','RX','P21','GND','P19','P18','P5','P17','P16','P4','P0','P2','P15','SD1','SD0','CLK']
-    X0, X1, Y0, P = 400, 600, 130, 24
+    X0, X1, Y0, P = 350, 650, 130, 24
     y = lambda i: Y0 + (i - 1) * P
     s = []
     a = s.append
@@ -46,44 +46,65 @@ def verdrahtung():
     # Buchsenleisten, in denen das DevKit steckt
     for hx in (X0+16, X1-22):
         a(f"<rect x='{hx}' y='{Y0-14}' width='6' height='{18*P+28}' fill='#111'/>")
-    # --- DevKitC V4 (schwarze Platine, weiße Beschriftung, Stiftleisten am Rand)
+    # --- DevKitC V4 wie das Original (Vorderseite, 28,5 × 48,5 mm, USB-C unten): schwarze Platine,
+    # oben das Modul ESP32-WROOM-32U mit Schirmblech und IPEX-Buchse oben rechts, darunter
+    # Spannungsregler AMS1117, USB-Seriell-Wandler CP2102, Taster EN/Boot und USB-C-Buchse
     DX0, DX1 = X0+20, X1-20
-    a(f"<rect x='{DX0}' y='{Y0-44}' width='{DX1-DX0}' height='{18*P+92}' rx='4' fill='#151515' stroke='#000' stroke-width='1.5'/>")
-    for i in range(1, 20):
-        for px in (DX0+5, DX1-5):
-            a(f"<rect x='{px-3}' y='{y(i)-3}' width='6' height='6' fill='#2a2a2a'/><circle cx='{px}' cy='{y(i)}' r='1.6' fill='#c9a227'/>")
-    # Modul ESP32-WROOM-32U: silbernes Schirmblech, IPEX-Buchse oben rechts
-    MX0, MX1 = DX0+34, DX1-34
-    a(f"<rect x='{MX0-4}' y='{Y0-38}' width='{MX1-MX0+8}' height='136' rx='2' fill='#2a2a2a'/>")
-    a(f"<rect x='{MX0}' y='{Y0-30}' width='{MX1-MX0}' height='118' rx='3' fill='#cfd2d6' stroke='#9aa0a6'/>")
-    a(f"<rect x='{MX0+5}' y='{Y0-25}' width='{MX1-MX0-10}' height='108' rx='2' fill='none' stroke='#b4b8bd' stroke-width='1'/>")
-    a(f"<text x='{(MX0+MX1)/2}' y='{Y0+8}' text-anchor='middle' font-size='9' fill='#555' font-weight='bold'>ESP32-WROOM-32U</text>")
-    a(f"<text x='{(MX0+MX1)/2}' y='{Y0+22}' text-anchor='middle' font-size='7' fill='#777'>CE · FCC · 211-16007</text>")
-    for qx in range(4):
-        for qy in range(4):
-            if (qx + qy) % 2 == 0:
-                a(f"<rect x='{MX1-30+qx*5}' y='{Y0+50+qy*5}' width='5' height='5' fill='#666'/>")
-    a(f"<circle cx='{MX1-10}' cy='{Y0-18}' r='6' fill='#d8b14a' stroke='#8a6d1d' stroke-width='1.5'/><circle cx='{MX1-10}' cy='{Y0-18}' r='2' fill='#8a6d1d'/>")
-    a(f"<text x='{MX1-20}' y='{Y0-30}' text-anchor='end' font-size='9' fill='#fff'>IPEX</text>")
-    for k in range(10):                                           # Lötpads unter dem Modul
-        a(f"<rect x='{MX0+6+k*((MX1-MX0-12)/10)}' y='{Y0+92}' width='6' height='5' fill='#c9a227'/>")
-    # Spannungsregler AMS1117 und USB-Seriell-Wandler CP2102
-    a(f"<rect x='{(DX0+DX1)/2-14}' y='{y(10)-8}' width='28' height='18' fill='#222' stroke='#444'/>")
+    DY0, DY1 = Y0-44, y(19)+48
+    DC = (DX0+DX1)/2
+    a(f"<rect x='{DX0}' y='{DY0}' width='{DX1-DX0}' height='{DY1-DY0}' rx='4' fill='#141414' stroke='#000' stroke-width='1.5'/>")
+    for i in range(1, 20):                                        # Stiftleisten: Lötaugen mit Pins
+        for px in (DX0+9, DX1-9):
+            a(f"<rect x='{px-6}' y='{y(i)-6}' width='12' height='12' fill='#202020' stroke='#333'/><rect x='{px-2.5}' y='{y(i)-2.5}' width='5' height='5' fill='#d4af37'/>")
+    # Modul: Modulplatine (dunkel), Schirmblech (silber) mit Aufdruck, QR-Code, Lötpads seitlich
+    MW, MH = 156, 172                                             # 18 × 19,2 mm
+    MX0, MY0 = DC-MW/2, DY0+6
+    a(f"<rect x='{MX0}' y='{MY0}' width='{MW}' height='{MH}' rx='2' fill='#1f2a24' stroke='#3a3a3a'/>")
+    for k in range(9):                                            # Lötpads links/rechts am Modul
+        for px in (MX0-3, MX0+MW-4):
+            a(f"<rect x='{px}' y='{MY0+56+k*13}' width='7' height='6' fill='#c9a227'/>")
+    for k in range(10):                                           # Lötpads unten
+        a(f"<rect x='{MX0+22+k*13}' y='{MY0+MH-4}' width='6' height='7' fill='#c9a227'/>")
+    SX0, SY0, SW, SH = MX0+6, MY0+34, MW-12, MH-44                # Schirmblech
+    a(f"<rect x='{SX0}' y='{SY0}' width='{SW}' height='{SH}' rx='3' fill='#cfd3d7' stroke='#8f969d' stroke-width='1.5'/>")
+    a(f"<rect x='{SX0+4}' y='{SY0+4}' width='{SW-8}' height='{SH-8}' rx='2' fill='none' stroke='#b9bec4'/>")
+    a(f"<text x='{SX0+10}' y='{SY0+20}' font-size='11' fill='#4a4f55' font-weight='bold'>ESP32-WROOM-32U</text>")
+    a(f"<text x='{SX0+10}' y='{SY0+34}' font-size='7' fill='#6a7076'>CE · FCC ID: 2AC7Z-ESPWROOM32U</text>")
+    a(f"<text x='{SX0+10}' y='{SY0+46}' font-size='8' fill='#6a7076'>R 211-16007</text>")
+    qx0, qy0, q = SX0+SW-48, SY0+SH-48, 4                         # QR-Code mit drei Suchmustern
+    a(f"<rect x='{qx0-2}' y='{qy0-2}' width='{11*q+4}' height='{11*q+4}' fill='#e4e7ea'/>")
+    for fx, fy in ((0, 0), (7, 0), (0, 7)):
+        a(f"<rect x='{qx0+fx*q}' y='{qy0+fy*q}' width='{4*q}' height='{4*q}' fill='#3d4247'/><rect x='{qx0+fx*q+q*.7}' y='{qy0+fy*q+q*.7}' width='{2.6*q}' height='{2.6*q}' fill='#e4e7ea'/><rect x='{qx0+fx*q+q*1.3}' y='{qy0+fy*q+q*1.3}' width='{1.4*q}' height='{1.4*q}' fill='#3d4247'/>")
+    for k, (cx, cy) in enumerate([(5,1),(5,3),(4,5),(6,5),(8,5),(10,5),(5,7),(7,7),(9,8),(10,10),(8,10),(6,9),(5,10),(9,6),(7,9)]):
+        a(f"<rect x='{qx0+cx*q}' y='{qy0+cy*q}' width='{q}' height='{q}' fill='#3d4247'/>")
+    IX, IY = MX0+MW-14, MY0+14                                    # IPEX-Buchse oben rechts
+    a(f"<circle cx='{IX}' cy='{IY}' r='8' fill='#c9a227' stroke='#8a6d1d' stroke-width='1.5'/><circle cx='{IX}' cy='{IY}' r='3' fill='#8a6d1d'/>")
+    a(f"<text x='{IX-14}' y='{IY+4}' text-anchor='end' font-size='8' fill='#bbb'>IPEX</text>")
+    # Bauteile unter dem Modul (weißer Bestückungsdruck um die Bauteile)
+    ry0 = MY0+MH+22
+    a(f"<rect x='{DC-62}' y='{ry0}' width='40' height='26' fill='#262626' stroke='#555'/>")          # AMS1117
+    a(f"<rect x='{DC-56}' y='{ry0-8}' width='28' height='8' fill='#bbb'/>")
     for k in range(3):
-        a(f"<rect x='{(DX0+DX1)/2-12+k*10}' y='{y(10)+10}' width='4' height='6' fill='#bbb'/>")
-    a(f"<text x='{(DX0+DX1)/2}' y='{y(10)+3}' text-anchor='middle' font-size='6' fill='#aaa'>1117</text>")
-    cx_, cy_ = (DX0+DX1)/2, y(15)
-    a(f"<rect x='{cx_-16}' y='{cy_-16}' width='32' height='32' fill='#2b2b2b' stroke='#555'/>")
-    a(f"<text x='{cx_}' y='{cy_-2}' text-anchor='middle' font-size='6' fill='#aaa'>SILABS</text><text x='{cx_}' y='{cy_+7}' text-anchor='middle' font-size='6' fill='#aaa'>CP2102</text>")
-    a(f"<text x='{(DX0+DX1)/2}' y='{y(7)+6}' text-anchor='middle' font-size='10' fill='#ddd' transform='rotate(-90 {(DX0+DX1)/2} {y(7)+2})'>ESP32_DevKitc_V4</text>")
-    # Taster EN (links) und BOOT (rechts), USB-C-Buchse unten
-    for bxk, lab, tx, anc in ((DX0+22, 'EN', DX0+38, 'start'), (DX1-22, 'BOOT', DX1-38, 'end')):
-        by0 = y(19) + 24
-        a(f"<rect x='{bxk-11}' y='{by0}' width='22' height='22' rx='2' fill='#d9d9d9' stroke='#888'/><circle cx='{bxk}' cy='{by0+11}' r='6' fill='#3a3a3a'/>")
-        a(f"<text x='{bxk}' y='{by0-3}' text-anchor='middle' font-size='7' fill='#fff'>{lab}</text>")
-    a(f"<rect x='{(DX0+DX1)/2-20}' y='{y(19)+22}' width='40' height='26' rx='7' fill='#d6d8db' stroke='#888' stroke-width='1.5'/>")
-    a(f"<rect x='{(DX0+DX1)/2-14}' y='{y(19)+30}' width='28' height='10' rx='4' fill='#555'/>")
-    a(f"<text x='{(DX0+DX1)/2}' y='{y(19)+74}' text-anchor='middle' font-size='12' fill='#333'>USB-C ← Flachbandkabel ← USB-C-Einbaubuchse (Anschlussseite)</text>")
+        a(f"<rect x='{DC-58+k*13}' y='{ry0+26}' width='5' height='7' fill='#bbb'/>")
+    a(f"<text x='{DC-42}' y='{ry0+16}' text-anchor='middle' font-size='7' fill='#aaa'>1117</text>")
+    a(f"<rect x='{DC+18}' y='{ry0+2}' width='22' height='16' fill='none' stroke='#ddd'/><rect x='{DC+22}' y='{ry0+6}' width='14' height='8' fill='#c0c0c0'/>")  # Kondensator
+    a(f"<rect x='{DC+46}' y='{ry0+2}' width='12' height='7' fill='#e04040'/><text x='{DC+52}' y='{ry0+20}' text-anchor='middle' font-size='6' fill='#ddd'>PWR</text>")  # LED
+    cy_ = ry0+92
+    a(f"<rect x='{DC-24}' y='{cy_-24}' width='48' height='48' fill='none' stroke='#ddd' stroke-width='1'/>")
+    a(f"<rect x='{DC-20}' y='{cy_-20}' width='40' height='40' fill='#2b2b2b' stroke='#555'/>")
+    a(f"<text x='{DC}' y='{cy_-4}' text-anchor='middle' font-size='7' fill='#bbb'>SILABS</text><text x='{DC}' y='{cy_+7}' text-anchor='middle' font-size='7' fill='#bbb'>CP2102</text>")
+    for k in range(4):                                            # kleine SMD-Bauteile
+        a(f"<rect x='{DC-60}' y='{ry0+50+k*16}' width='12' height='7' fill='#8a6d4a'/><rect x='{DC+48}' y='{ry0+50+k*16}' width='12' height='7' fill='#2a2a2a' stroke='#777'/>")
+    # Taster EN (links) und Boot (rechts), USB-C-Buchse unten mittig
+    for bxk, lab in ((DC-62, 'EN'), (DC+62, 'Boot')):
+        by0 = DY1 - 50
+        a(f"<rect x='{bxk-13}' y='{by0}' width='26' height='26' rx='2' fill='#dcdcdc' stroke='#8a8a8a'/><circle cx='{bxk}' cy='{by0+13}' r='7' fill='#2e2e2e'/>")
+        a(f"<text x='{bxk}' y='{by0-5}' text-anchor='middle' font-size='9' fill='#fff' font-weight='bold'>{lab}</text>")
+    a(f"<rect x='{DC-24}' y='{DY1-34}' width='48' height='40' rx='6' fill='#d6d8db' stroke='#8a8a8a' stroke-width='1.5'/>")
+    a(f"<rect x='{DC-17}' y='{DY1-8}' width='34' height='12' rx='5' fill='#4a4a4a'/>")
+    for k in range(6):
+        a(f"<rect x='{DC-20+k*7}' y='{DY1-46}' width='3' height='10' fill='#c9a227'/>")
+    a(f"<text x='{DC}' y='{y(19)+74}' text-anchor='middle' font-size='12' fill='#333'>USB-C ← Flachbandkabel ← USB-C-Einbaubuchse (Anschlussseite)</text>")
     # Schraubklemmen links/rechts; benutzte Klemmen mit Farbmarke
     used = {('L',1):'#d62828',('L',9):'#e09f00',('L',10):'#1d6fd6',('L',14):'#111',
             ('R',1):'#111',('R',2):'#2a9d48',('R',9):'#7b3fb5',('R',10):'#d1495b',('R',11):'#00a6a6',('R',13):'#a0522d'}
@@ -93,10 +114,10 @@ def verdrahtung():
         if c: a(f"<circle cx='{x}' cy='{yy}' r='3' fill='{c}'/>")
     for i, n in enumerate(L, 1):
         c = used.get(('L', i)); terminal(X0, y(i), c)
-        a(f"<text x='{DX0+11}' y='{y(i)+4}' font-size='10' fill='{'#fff' if c else '#9a9a9a'}' {'font-weight=\"bold\"' if c else ''}>{n}</text>")
+        a(f"<text x='{DX0+19}' y='{y(i)+4}' font-size='10' fill='{'#fff' if c else '#9a9a9a'}' {'font-weight=\"bold\"' if c else ''}>{n}</text>")
     for i, n in enumerate(R, 1):
         c = used.get(('R', i)); terminal(X1, y(i), c)
-        a(f"<text x='{DX1-11}' y='{y(i)+4}' text-anchor='end' font-size='10' fill='{'#fff' if c else '#9a9a9a'}' {'font-weight=\"bold\"' if c else ''}>{n}</text>")
+        a(f"<text x='{DX1-19}' y='{y(i)+4}' text-anchor='end' font-size='10' fill='{'#fff' if c else '#9a9a9a'}' {'font-weight=\"bold\"' if c else ''}>{n}</text>")
     def wire(pts, col, dash=False):
         p = ' '.join(f'{x},{yy}' for x, yy in pts)
         a(f"<polyline points='{p}' fill='none' stroke='{col}' stroke-width='3' stroke-linejoin='round' {'stroke-dasharray=\"8 6\"' if dash else ''}/>")
@@ -127,14 +148,14 @@ def verdrahtung():
         wire([(212, by), (212, by + 18)], '#7a4a2a', dash); gnd(212, by + 18)                  # braune Ader = Schirm
     a(f"<text x='{WX+10}' y='212' font-size='10' fill='#555'>Lapp SKINDICHT MINI M6</text>")
     # GND-Klemme
-    wire([(X0 - 10, y(14)), (372, y(14)), (372, y(14) + 16)], '#111'); gnd(372, y(14) + 16)
+    wire([(X0 - 10, y(14)), (326, y(14)), (326, y(14) + 16)], '#111'); gnd(326, y(14) + 16)
     a(f"<text x='10' y='590' font-size='11' fill='#111'>⏚ = Klemme GND</text>")
     a(f"<text x='10' y='606' font-size='11' fill='#111'>Pigtail: rot = Innenleiter (Signal),</text>")
     a(f"<text x='10' y='622' font-size='11' fill='#111'>braun = Schirm (Masse)</text>")
     # OLED: Waveshare 2,42" von vorn wie das Original – schwarzes Glas fast über die ganze blaue
     # Platine (61,5 × 39,5 mm), Flexkabel unten mittig. Die Stiftleiste sitzt auf der Rückseite am
     # rechten Rand (von vorn gesehen), Reihenfolge von oben: RST, DC, CS, CLK, DIN, GND, VCC.
-    OX, oy0 = 790, 132
+    OX, oy0 = 840, 132
     ow, oh = 270, 173                                             # Seitenverhältnis 61,5 × 39,5
     a(f"<rect x='{OX}' y='{oy0}' width='{ow}' height='{oh}' rx='4' fill='#1b4f9c' stroke='#143d78' stroke-width='2'/>")
     gx0, gy0, gw, gh = OX+3, oy0+4, ow-6, oh*37/39.5             # Glas 60,5 × 37 mm
@@ -163,14 +184,14 @@ def verdrahtung():
     order = [('RST', 13, '#a0522d'), ('DC', 11, '#00a6a6'), ('CS', 10, '#d1495b'), ('CLK', 9, '#7b3fb5'),
              ('DIN', 2, '#2a9d48'), ('GND', 1, '#111')]
     for k, (n, rp, col) in enumerate(order):
-        cx, by, dx = 720 - k * 16, oy0 - 10 - k * 10, OX + ow + 50 + k * 10
+        cx, by, dx = 770 - k * 16, oy0 - 10 - k * 10, OX + ow + 50 + k * 10
         wire([(X1 + 10, y(rp)), (cx, y(rp)), (cx, by), (dx, by), (dx, pins[n]), (OX + ow + 12, pins[n])], col)
     # VCC von 3V3 (links oben) ganz außen herum
     vb, vdx = oy0 - 10 - 6 * 10, OX + ow + 50 + 6 * 10
-    wire([(X0 - 10, y(1)), (360, y(1)), (360, vb), (vdx, vb), (vdx, pins['VCC']), (OX + ow + 12, pins['VCC'])], '#d62828')
-    a(f"<circle cx='750' cy='{vb}' r='4' fill='#d62828'/>")                   # Abzweig 3V3 → RTC VCC
+    wire([(X0 - 10, y(1)), (330, y(1)), (330, vb), (vdx, vb), (vdx, pins['VCC']), (OX + ow + 12, pins['VCC'])], '#d62828')
+    a(f"<circle cx='800' cy='{vb}' r='4' fill='#d62828'/>")                   # Abzweig 3V3 → RTC VCC
     # Antenne: IPEX-Kabel zur SMA-Buchse, Bingfu-Antenne (schwarz, abwinkelbar) waagerecht
-    a(f"<path d='M{X1-60},{Y0-14} C{X1-60},20 {X1+60},26 {X1+108},26' fill='none' stroke='#777' stroke-width='4'/>")
+    a(f"<path d='M{IX},{IY} C{IX},10 {X1+60},26 {X1+108},26' fill='none' stroke='#777' stroke-width='4'/>")
     a(f"<rect x='{X1+104}' y='17' width='16' height='18' rx='2' fill='#d8b14a' stroke='#8a6d1d'/>")
     a(f"<rect x='{X1+120}' y='19' width='14' height='14' rx='2' fill='#c9a227' stroke='#8a6d1d'/>")
     a(f"<circle cx='{X1+142}' cy='26' r='8' fill='#1c1c1c'/>")
@@ -180,7 +201,7 @@ def verdrahtung():
     # Legende
     # --- Optional: Echtzeituhr DS3231 (Modul ZS-042, 38 × 22 mm), gestrichelt angeschlossen
     SDA, SCL = '#c99a00', '#5d6d7e'
-    RX, RY, rw, rh = 836, 668, 232, 134
+    RX, RY, rw, rh = 886, 668, 232, 134
     a(f"<rect x='{RX-28}' y='{RY-46}' width='{rw+42}' height='{rh+62}' rx='8' fill='none' stroke='#888' stroke-dasharray='6 5'/>")
     a(f"<text x='{RX-18}' y='{RY-28}' font-size='12' font-weight='bold' fill='#444'>Optional: Echtzeituhr DS3231 (ZS-042)</text>")
     a(f"<text x='{RX-18}' y='{RY-12}' font-size='11' fill='#444'>Knopfzelle CR2032 auf der Rückseite</text>")
@@ -211,24 +232,24 @@ def verdrahtung():
         a(f"<text x='{RX+24}' y='{py+4}' font-size='10' fill='#fff' font-weight='bold'>{n}</text>")
     # Klemmen P22 (rechts 3), P21 (rechts 6), GND (rechts 7): erst neben dem Board nach unten,
     # unterhalb der OLED-Leitungen nach rechts, dann links an der Legende vorbei zum Modul
-    for n, rp, col, vx, hy, dx2 in (('SCL', 3, SCL, 634, 450, 748), ('SDA', 6, SDA, 626, 462, 740), ('GND', 7, '#111', 618, 474, 732)):
+    for n, rp, col, vx, hy, dx2 in (('SCL', 3, SCL, 684, 450, 798), ('SDA', 6, SDA, 676, 462, 790), ('GND', 7, '#111', 668, 474, 782)):
         terminal(X1, y(rp), col)
         wire([(X1 + 10, y(rp)), (vx, y(rp)), (vx, hy), (dx2, hy), (dx2, rpins[n]), (RX - 6, rpins[n])], col, True)
     # VCC von 3V3: von der roten Leitung oben gerade nach unten (zwischen Board und OLED),
     # dann von links an VCC – wie die übrigen RTC-Leitungen
-    wire([(750, vb), (756, vb), (756, rpins['VCC']), (RX - 6, rpins['VCC'])], '#d62828', True)
+    wire([(800, vb), (806, vb), (806, rpins['VCC']), (RX - 6, rpins['VCC'])], '#d62828', True)
     leg = [('#d62828', '3V3 → OLED VCC'), ('#111', 'GND (Masse)'), ('#e09f00', 'P25 (DAC1) → X'),
            ('#1d6fd6', 'P26 (DAC2) → Y'), ('#2a9d48', 'P23 → DIN'), ('#7b3fb5', 'P18 → CLK'),
            ('#d1495b', 'P5 → CS'), ('#00a6a6', 'P17 → DC'), ('#a0522d', 'P4 → RST'),
            (SDA, 'P21 → SDA (RTC)'), (SCL, 'P22 → SCL (RTC)')]
     for k, (c, t) in enumerate(leg):
-        lx, ly = 772 + (k // 6) * 166, 420 + (k % 6) * 22
+        lx, ly = 822 + (k // 6) * 166, 420 + (k % 6) * 22
         a(f"<line x1='{lx}' y1='{ly}' x2='{lx+26}' y2='{ly}' stroke='{c}' stroke-width='4'/><text x='{lx+32}' y='{ly+4}' font-size='11'>{t}</text>")
-    a("<line x1='938' y1='552' x2='964' y2='552' stroke='#555' stroke-width='3' stroke-dasharray='6 4'/><text x='970' y='556' font-size='11'>optional</text>")
-    a("<text x='772' y='576' font-size='11' fill='#444'>Beschriftung wie auf dem Breakout-Board (P25 = GPIO25 …).</text>")
-    a("<text x='772' y='592' font-size='11' fill='#444'>P0 = BOOT-Taster – dort nichts anschließen.</text>")
-    a("<text x='772' y='608' font-size='11' fill='#444'>220 Ω in die rote Ader jedes Pigtails eingelötet.</text>")
-    save('verdrahtung.svg', 1180, 860, '\n'.join(s))
+    a("<line x1='988' y1='552' x2='1014' y2='552' stroke='#555' stroke-width='3' stroke-dasharray='6 4'/><text x='1020' y='556' font-size='11'>optional</text>")
+    a("<text x='822' y='576' font-size='11' fill='#444'>Beschriftung wie auf dem Breakout-Board (P25 = GPIO25 …).</text>")
+    a("<text x='822' y='592' font-size='11' fill='#444'>P0 = BOOT-Taster – dort nichts anschließen.</text>")
+    a("<text x='822' y='608' font-size='11' fill='#444'>220 Ω in die rote Ader jedes Pigtails eingelötet.</text>")
+    save('verdrahtung.svg', 1230, 860, '\n'.join(s))
 
 # ---------------------------------------------------------------- Bohrplan 1:1
 def bohrplan():
