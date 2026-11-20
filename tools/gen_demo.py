@@ -54,6 +54,8 @@ def main():
         sys.exit('webpage.h ist veraltet – zuerst tools/gen_webpage.py ausführen')
 
     style = re.search(r'<style>(.*?)</style>', html, re.S).group(1)
+    # Skripte im <head> (z. B. gespeichertes Farbschema vor dem ersten Zeichnen anwenden) übernehmen
+    head_js = ''.join(re.findall(r'<script>(.*?)</script>', html.split('<body>')[0], re.S))
     body = re.search(r'<body>(.*)</body>', html, re.S).group(1)
     script = re.search(r'<script>(.*?)</script>', body, re.S).group(1)
     body = re.sub(r'<script>.*?</script>', '', body, flags=re.S)
@@ -97,7 +99,7 @@ def main():
     page = ('<!doctype html>\n<html lang="de"><head><meta charset="utf-8">\n'
             '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">\n'
             '<title>Scope Clock Webinterface – Demo</title>\n'
-            f'<style>{style}</style></head><body>\n{body}\n'
+            f'<script>{head_js}</script>\n<style>{style}</style></head><body>\n{body}\n'
             f'<script>{api}</script>\n<script>{settings}</script>\n<script>{script}\n{ui}</script>\n'
             '</body></html>\n')
     with open(OUT, 'w', encoding='utf-8') as f:
