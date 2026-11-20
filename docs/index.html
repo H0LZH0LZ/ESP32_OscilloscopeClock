@@ -15,10 +15,10 @@
    selbst gehostet in fonts/ (aus font.h, tools/gen_demo.py) – kein Abruf von Google Fonts */
 @font-face{font-family:'ScopeClock Sans';src:url(fonts/scopeclock-sans-300.woff2) format('woff2');font-weight:300 500;font-display:swap}
 @font-face{font-family:'ScopeClock Sans';src:url(fonts/scopeclock-sans-600.woff2) format('woff2');font-weight:600 700;font-display:swap}
-:root{--bg:#f2f2f5;--card:#fff;--fg:#000;--mute:#38383d;--line:#e3e3e8;--acc:#0a7d44;--accfg:#fff;
+:root{--bg:#f2f2f5;--card:#fff;--fg:#000;--mute:#38383d;--line:#e3e3e8;--acc:#0a7d44;--accfg:#fff;--card2:#f2f2f5;--hov:#e9e9ee;--rad:4px;
  --sans:'ScopeClock Sans',system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#000;--card:#1c1c1e;--fg:#fff;--mute:#d0d0d6;--line:#2c2c2e;--acc:#30d158;--accfg:#04130a}}
-:root[data-theme="dark"]{--bg:#000;--card:#1c1c1e;--fg:#fff;--mute:#d0d0d6;--line:#2c2c2e;--acc:#30d158;--accfg:#04130a}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#000;--card:#1c1c1e;--fg:#fff;--mute:#d0d0d6;--line:#2c2c2e;--acc:#30d158;--accfg:#04130a;--card2:#000;--hov:#2c2c2e}}
+:root[data-theme="dark"]{--bg:#000;--card:#1c1c1e;--fg:#fff;--mute:#d0d0d6;--line:#2c2c2e;--acc:#30d158;--accfg:#04130a;--card2:#000;--hov:#2c2c2e}
 *{box-sizing:border-box}
 b,strong{font-weight:600}
 body{margin:0;background:var(--bg);color:var(--fg);font:300 16px/1.45 var(--sans);letter-spacing:.01em;
@@ -118,6 +118,53 @@ figcaption{font-size:13px;color:var(--mute);margin-top:8px}
 #shade.open{opacity:1;pointer-events:auto}
 /* Sprache: jeweils die andere ausblenden */
 html[lang="de"] [data-l="en"],html[lang="en"] [data-l="de"]{display:none!important}
+/* ===== Layout im Industrie-Stil (nach dem Vorbild von Siemens iX): Kopfleiste, eckige Karten, Kacheln, festes Menü am PC ===== */
+/* Kopfleiste über die volle Breite, Titel links */
+h1{position:fixed;inset:0 0 auto;height:56px;min-height:0;justify-content:flex-start;padding:0 16px 0 64px;
+ background:var(--card);border-bottom:1px solid var(--line);color:var(--fg);font-size:16px;letter-spacing:.02em;text-transform:none;font-weight:700}
+h1>span{font-size:16px}
+h1 .ver{display:inline-block;margin-left:8px;padding:1px 8px;border-radius:var(--rad);background:var(--acc);color:var(--accfg);font-size:12px;font-weight:700;vertical-align:2px}
+main{padding-top:72px}
+#menuBtn{top:6px;left:8px;width:44px;height:44px;border-radius:var(--rad);box-shadow:none;border:0;background:transparent;color:var(--fg);z-index:30}
+#menuBtn:hover{background:var(--hov)}
+/* Abschnittsüberschriften: fett, normal geschrieben, Akzentlinie */
+h2{font-size:18px;font-weight:700;color:var(--fg);text-transform:none;letter-spacing:0;min-height:52px;padding:0;scroll-margin-top:64px}
+h2.coll::after{border-color:var(--acc)}
+section{border-radius:var(--rad);border:1px solid var(--line);box-shadow:none;margin-bottom:20px}
+/* Überblick als Hero-Fläche */
+.intro{padding:20px;border:1px solid var(--line);border-top:4px solid var(--acc);background:var(--card)}
+.hero img{border-radius:var(--rad);width:128px;height:128px;box-shadow:none}
+.hero b{font-size:22px;line-height:1.2;margin-bottom:8px}
+.hero p{font-size:14px;color:var(--mute)}
+/* Links & Dokumente als Kacheln */
+#downloads-h+section{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;padding:0;border:0;background:transparent}
+#downloads-h+section .row{border:1px solid var(--line);border-left:4px solid var(--acc);border-radius:var(--rad);background:var(--card);padding:12px 14px;min-height:76px;align-items:flex-start;font-weight:700}
+#downloads-h+section .row:hover{border-left-color:var(--acc);background:var(--hov)}
+#downloads-h+section .row .note{font-weight:400}
+a.row>span:last-child{font-size:18px}
+/* Doku-Inhalte */
+.doc{font-size:15px}
+.doc h3{font-size:16px;font-weight:700;padding-left:10px;border-left:3px solid var(--acc)}
+.doc th{color:var(--fg);background:var(--card2);padding:8px}
+.doc td{padding:8px}
+.doc .note{border-radius:0 var(--rad) var(--rad) 0;background:var(--card2)}
+.doc .step b.n{border-radius:var(--rad);background:var(--acc);color:var(--accfg)}
+.doc figure img,.doc pre,.doc code{border-radius:var(--rad)}
+.doc code,.doc pre{background:var(--card2)}
+/* Seitenmenü */
+#nav{background:var(--card);border-right:1px solid var(--line);box-shadow:none;padding-top:72px}
+#nav a{border-radius:var(--rad);min-height:40px;font-weight:600;font-size:14px}
+#nav a:hover{background:var(--hov)}#nav a.cur{background:var(--hov);color:var(--acc)}
+#nav select{border-radius:var(--rad);background:var(--card2)}
+/* Breite Bildschirme: Menü bleibt links stehen */
+@media (min-width:1100px){
+ #nav{transform:none;width:280px;z-index:20}
+ #menuBtn{display:none}
+ h1{padding-left:24px}
+ main{margin-left:280px;max-width:none;padding:72px 40px 40px}
+ main>*:not(h1){max-width:900px}
+ #shade{display:none}}
+@media (max-width:600px){.hero{flex-direction:column}.hero img{width:140px;height:140px}}
 </style>
 </head>
 <body>
