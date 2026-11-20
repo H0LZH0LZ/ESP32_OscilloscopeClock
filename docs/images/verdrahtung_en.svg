@@ -1,14 +1,54 @@
-<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1110 860'  font-family='Helvetica,Arial,sans-serif'>
-<rect x='0' y='0' width='1110' height='860' fill='#fff'/>
-<rect x='376' y='74' width='248' height='550' rx='5' fill='#2f8f46' stroke='#1d5e2c' stroke-width='2'/>
-<circle cx='386' cy='84' r='5' fill='#fff' stroke='#c9a227' stroke-width='2'/>
-<circle cx='614' cy='84' r='5' fill='#fff' stroke='#c9a227' stroke-width='2'/>
-<circle cx='386' cy='614' r='5' fill='#fff' stroke='#c9a227' stroke-width='2'/>
-<circle cx='614' cy='614' r='5' fill='#fff' stroke='#c9a227' stroke-width='2'/>
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1180 860'  font-family='Helvetica,Arial,sans-serif'>
+<rect x='0' y='0' width='1180' height='860' fill='#fff'/>
+<rect x='376' y='74' width='248' height='550' rx='3' fill='#22a54a' stroke='#17803a' stroke-width='2'/>
+<circle cx='386' cy='84' r='5.5' fill='#fff' stroke='#d7efd9' stroke-width='2'/>
+<circle cx='614' cy='84' r='5.5' fill='#fff' stroke='#d7efd9' stroke-width='2'/>
+<circle cx='386' cy='614' r='5.5' fill='#fff' stroke='#d7efd9' stroke-width='2'/>
+<circle cx='614' cy='614' r='5.5' fill='#fff' stroke='#d7efd9' stroke-width='2'/>
+<rect x='388' y='114' width='24' height='464' rx='2' fill='#79d68a' stroke='#3f9b50'/>
+<rect x='588' y='114' width='24' height='464' rx='2' fill='#79d68a' stroke='#3f9b50'/>
 <text x='500.0' y='656' text-anchor='middle' font-size='12' fill='#1d5e2c' font-weight='bold'>ESP32 breakout board (screw terminals), DevKit plugged in</text>
 <rect x='416' y='116' width='6' height='460' fill='#111'/>
 <rect x='578' y='116' width='6' height='460' fill='#111'/>
-<rect x='420' y='86' width='160' height='524' rx='5' fill='#161616' stroke='#000' stroke-width='1.5'/>
+<rect x='420' y='86' width='160' height='524' rx='4' fill='#151515' stroke='#000' stroke-width='1.5'/>
+<rect x='422' y='127' width='6' height='6' fill='#2a2a2a'/><circle cx='425' cy='130' r='1.6' fill='#c9a227'/>
+<rect x='572' y='127' width='6' height='6' fill='#2a2a2a'/><circle cx='575' cy='130' r='1.6' fill='#c9a227'/>
+<rect x='422' y='151' width='6' height='6' fill='#2a2a2a'/><circle cx='425' cy='154' r='1.6' fill='#c9a227'/>
+<rect x='572' y='151' width='6' height='6' fill='#2a2a2a'/><circle cx='575' cy='154' r='1.6' fill='#c9a227'/>
+<rect x='422' y='175' width='6' height='6' fill='#2a2a2a'/><circle cx='425' cy='178' r='1.6' fill='#c9a227'/>
+<rect x='572' y='175' width='6' height='6' fill='#2a2a2a'/><circle cx='575' cy='178' r='1.6' fill='#c9a227'/>
+<rect x='422' y='199' width='6' height='6' fill='#2a2a2a'/><circle cx='425' cy='202' r='1.6' fill='#c9a227'/>
+<rect x='572' y='199' width='6' height='6' fill='#2a2a2a'/><circle cx='575' cy='202' r='1.6' fill='#c9a227'/>
+<rect x='422' y='223' width='6' height='6' fill='#2a2a2a'/><circle cx='425' cy='226' r='1.6' fill='#c9a227'/>
+<rect x='572' y='223' width='6' height='6' fill='#2a2a2a'/><circle cx='575' cy='226' r='1.6' fill='#c9a227'/>
+<rect x='422' y='247' width='6' height='6' fill='#2a2a2a'/><circle cx='425' cy='250' r='1.6' fill='#c9a227'/>
+<rect x='572' y='247' width='6' height='6' fill='#2a2a2a'/><circle cx='575' cy='250' r='1.6' fill='#c9a227'/>
+<rect x='422' y='271' width='6' height='6' fill='#2a2a2a'/><circle cx='425' cy='274' r='1.6' fill='#c9a227'/>
+<rect x='572' y='271' width='6' height='6' fill='#2a2a2a'/><circle cx='575' cy='274' r='1.6' fill='#c9a227'/>
+<rect x='422' y='295' width='6' height='6' fill='#2a2a2a'/><circle cx='425' cy='298' r='1.6' fill='#c9a227'/>
+<rect x='572' y='295' width='6' height='6' fill='#2a2a2a'/><circle cx='575' cy='298' r='1.6' fill='#c9a227'/>
+<rect x='422' y='319' width='6' height='6' fill='#2a2a2a'/><circle cx='425' cy='322' r='1.6' fill='#c9a227'/>
+<rect x='572' y='319' width='6' height='6' fill='#2a2a2a'/><circle cx='575' cy='322' r='1.6' fill='#c9a227'/>
+<rect x='422' y='343' width='6' height='6' fill='#2a2a2a'/><circle cx='425' cy='346' r='1.6' fill='#c9a227'/>
+<rect x='572' y='343' width='6' height='6' fill='#2a2a2a'/><circle cx='575' cy='346' r='1.6' fill='#c9a227'/>
+<rect x='422' y='367' width='6' height='6' fill='#2a2a2a'/><circle cx='425' cy='370' r='1.6' fill='#c9a227'/>
+<rect x='572' y='367' width='6' height='6' fill='#2a2a2a'/><circle cx='575' cy='370' r='1.6' fill='#c9a227'/>
+<rect x='422' y='391' width='6' height='6' fill='#2a2a2a'/><circle cx='425' cy='394' r='1.6' fill='#c9a227'/>
+<rect x='572' y='391' width='6' height='6' fill='#2a2a2a'/><circle cx='575' cy='394' r='1.6' fill='#c9a227'/>
+<rect x='422' y='415' width='6' height='6' fill='#2a2a2a'/><circle cx='425' cy='418' r='1.6' fill='#c9a227'/>
+<rect x='572' y='415' width='6' height='6' fill='#2a2a2a'/><circle cx='575' cy='418' r='1.6' fill='#c9a227'/>
+<rect x='422' y='439' width='6' height='6' fill='#2a2a2a'/><circle cx='425' cy='442' r='1.6' fill='#c9a227'/>
+<rect x='572' y='439' width='6' height='6' fill='#2a2a2a'/><circle cx='575' cy='442' r='1.6' fill='#c9a227'/>
+<rect x='422' y='463' width='6' height='6' fill='#2a2a2a'/><circle cx='425' cy='466' r='1.6' fill='#c9a227'/>
+<rect x='572' y='463' width='6' height='6' fill='#2a2a2a'/><circle cx='575' cy='466' r='1.6' fill='#c9a227'/>
+<rect x='422' y='487' width='6' height='6' fill='#2a2a2a'/><circle cx='425' cy='490' r='1.6' fill='#c9a227'/>
+<rect x='572' y='487' width='6' height='6' fill='#2a2a2a'/><circle cx='575' cy='490' r='1.6' fill='#c9a227'/>
+<rect x='422' y='511' width='6' height='6' fill='#2a2a2a'/><circle cx='425' cy='514' r='1.6' fill='#c9a227'/>
+<rect x='572' y='511' width='6' height='6' fill='#2a2a2a'/><circle cx='575' cy='514' r='1.6' fill='#c9a227'/>
+<rect x='422' y='535' width='6' height='6' fill='#2a2a2a'/><circle cx='425' cy='538' r='1.6' fill='#c9a227'/>
+<rect x='572' y='535' width='6' height='6' fill='#2a2a2a'/><circle cx='575' cy='538' r='1.6' fill='#c9a227'/>
+<rect x='422' y='559' width='6' height='6' fill='#2a2a2a'/><circle cx='425' cy='562' r='1.6' fill='#c9a227'/>
+<rect x='572' y='559' width='6' height='6' fill='#2a2a2a'/><circle cx='575' cy='562' r='1.6' fill='#c9a227'/>
 <rect x='450' y='92' width='100' height='136' rx='2' fill='#2a2a2a'/>
 <rect x='454' y='100' width='92' height='118' rx='3' fill='#cfd2d6' stroke='#9aa0a6'/>
 <rect x='459' y='105' width='82' height='108' rx='2' fill='none' stroke='#b4b8bd' stroke-width='1'/>
@@ -49,130 +89,130 @@
 <rect x='480.0' y='584' width='40' height='26' rx='7' fill='#d6d8db' stroke='#888' stroke-width='1.5'/>
 <rect x='486.0' y='592' width='28' height='10' rx='4' fill='#555'/>
 <text x='500.0' y='636' text-anchor='middle' font-size='12' fill='#333'>USB-C ← flat cable ← USB-C panel socket (connector side)</text>
-<rect x='390' y='119' width='20' height='22' fill='#5cc06b' stroke='#2b7a38'/>
-<circle cx='400' cy='130' r='6' fill='#c8ccd0' stroke='#777'/><line x1='396' y1='130' x2='404' y2='130' stroke='#555' stroke-width='1.5'/>
+<line x1='389' y1='118' x2='411' y2='118' stroke='#3f9b50' stroke-width='1'/>
+<circle cx='400' cy='130' r='7' fill='#d5d9dd' stroke='#7b8187'/><line x1='395' y1='133' x2='405' y2='127' stroke='#5b6066' stroke-width='1.8'/>
 <circle cx='400' cy='130' r='3' fill='#d62828'/>
-<text x='426' y='134' font-size='10' fill='#fff' font-weight="bold">3V3</text>
-<rect x='390' y='143' width='20' height='22' fill='#5cc06b' stroke='#2b7a38'/>
-<circle cx='400' cy='154' r='6' fill='#c8ccd0' stroke='#777'/><line x1='396' y1='154' x2='404' y2='154' stroke='#555' stroke-width='1.5'/>
-<text x='426' y='158' font-size='10' fill='#9a9a9a' >EN</text>
-<rect x='390' y='167' width='20' height='22' fill='#5cc06b' stroke='#2b7a38'/>
-<circle cx='400' cy='178' r='6' fill='#c8ccd0' stroke='#777'/><line x1='396' y1='178' x2='404' y2='178' stroke='#555' stroke-width='1.5'/>
-<text x='426' y='182' font-size='10' fill='#9a9a9a' >VP</text>
-<rect x='390' y='191' width='20' height='22' fill='#5cc06b' stroke='#2b7a38'/>
-<circle cx='400' cy='202' r='6' fill='#c8ccd0' stroke='#777'/><line x1='396' y1='202' x2='404' y2='202' stroke='#555' stroke-width='1.5'/>
-<text x='426' y='206' font-size='10' fill='#9a9a9a' >VN</text>
-<rect x='390' y='215' width='20' height='22' fill='#5cc06b' stroke='#2b7a38'/>
-<circle cx='400' cy='226' r='6' fill='#c8ccd0' stroke='#777'/><line x1='396' y1='226' x2='404' y2='226' stroke='#555' stroke-width='1.5'/>
-<text x='426' y='230' font-size='10' fill='#9a9a9a' >P34</text>
-<rect x='390' y='239' width='20' height='22' fill='#5cc06b' stroke='#2b7a38'/>
-<circle cx='400' cy='250' r='6' fill='#c8ccd0' stroke='#777'/><line x1='396' y1='250' x2='404' y2='250' stroke='#555' stroke-width='1.5'/>
-<text x='426' y='254' font-size='10' fill='#9a9a9a' >P35</text>
-<rect x='390' y='263' width='20' height='22' fill='#5cc06b' stroke='#2b7a38'/>
-<circle cx='400' cy='274' r='6' fill='#c8ccd0' stroke='#777'/><line x1='396' y1='274' x2='404' y2='274' stroke='#555' stroke-width='1.5'/>
-<text x='426' y='278' font-size='10' fill='#9a9a9a' >P32</text>
-<rect x='390' y='287' width='20' height='22' fill='#5cc06b' stroke='#2b7a38'/>
-<circle cx='400' cy='298' r='6' fill='#c8ccd0' stroke='#777'/><line x1='396' y1='298' x2='404' y2='298' stroke='#555' stroke-width='1.5'/>
-<text x='426' y='302' font-size='10' fill='#9a9a9a' >P33</text>
-<rect x='390' y='311' width='20' height='22' fill='#5cc06b' stroke='#2b7a38'/>
-<circle cx='400' cy='322' r='6' fill='#c8ccd0' stroke='#777'/><line x1='396' y1='322' x2='404' y2='322' stroke='#555' stroke-width='1.5'/>
+<text x='431' y='134' font-size='10' fill='#fff' font-weight="bold">3V3</text>
+<line x1='389' y1='142' x2='411' y2='142' stroke='#3f9b50' stroke-width='1'/>
+<circle cx='400' cy='154' r='7' fill='#d5d9dd' stroke='#7b8187'/><line x1='395' y1='157' x2='405' y2='151' stroke='#5b6066' stroke-width='1.8'/>
+<text x='431' y='158' font-size='10' fill='#9a9a9a' >EN</text>
+<line x1='389' y1='166' x2='411' y2='166' stroke='#3f9b50' stroke-width='1'/>
+<circle cx='400' cy='178' r='7' fill='#d5d9dd' stroke='#7b8187'/><line x1='395' y1='181' x2='405' y2='175' stroke='#5b6066' stroke-width='1.8'/>
+<text x='431' y='182' font-size='10' fill='#9a9a9a' >VP</text>
+<line x1='389' y1='190' x2='411' y2='190' stroke='#3f9b50' stroke-width='1'/>
+<circle cx='400' cy='202' r='7' fill='#d5d9dd' stroke='#7b8187'/><line x1='395' y1='205' x2='405' y2='199' stroke='#5b6066' stroke-width='1.8'/>
+<text x='431' y='206' font-size='10' fill='#9a9a9a' >VN</text>
+<line x1='389' y1='214' x2='411' y2='214' stroke='#3f9b50' stroke-width='1'/>
+<circle cx='400' cy='226' r='7' fill='#d5d9dd' stroke='#7b8187'/><line x1='395' y1='229' x2='405' y2='223' stroke='#5b6066' stroke-width='1.8'/>
+<text x='431' y='230' font-size='10' fill='#9a9a9a' >P34</text>
+<line x1='389' y1='238' x2='411' y2='238' stroke='#3f9b50' stroke-width='1'/>
+<circle cx='400' cy='250' r='7' fill='#d5d9dd' stroke='#7b8187'/><line x1='395' y1='253' x2='405' y2='247' stroke='#5b6066' stroke-width='1.8'/>
+<text x='431' y='254' font-size='10' fill='#9a9a9a' >P35</text>
+<line x1='389' y1='262' x2='411' y2='262' stroke='#3f9b50' stroke-width='1'/>
+<circle cx='400' cy='274' r='7' fill='#d5d9dd' stroke='#7b8187'/><line x1='395' y1='277' x2='405' y2='271' stroke='#5b6066' stroke-width='1.8'/>
+<text x='431' y='278' font-size='10' fill='#9a9a9a' >P32</text>
+<line x1='389' y1='286' x2='411' y2='286' stroke='#3f9b50' stroke-width='1'/>
+<circle cx='400' cy='298' r='7' fill='#d5d9dd' stroke='#7b8187'/><line x1='395' y1='301' x2='405' y2='295' stroke='#5b6066' stroke-width='1.8'/>
+<text x='431' y='302' font-size='10' fill='#9a9a9a' >P33</text>
+<line x1='389' y1='310' x2='411' y2='310' stroke='#3f9b50' stroke-width='1'/>
+<circle cx='400' cy='322' r='7' fill='#d5d9dd' stroke='#7b8187'/><line x1='395' y1='325' x2='405' y2='319' stroke='#5b6066' stroke-width='1.8'/>
 <circle cx='400' cy='322' r='3' fill='#e09f00'/>
-<text x='426' y='326' font-size='10' fill='#fff' font-weight="bold">P25</text>
-<rect x='390' y='335' width='20' height='22' fill='#5cc06b' stroke='#2b7a38'/>
-<circle cx='400' cy='346' r='6' fill='#c8ccd0' stroke='#777'/><line x1='396' y1='346' x2='404' y2='346' stroke='#555' stroke-width='1.5'/>
+<text x='431' y='326' font-size='10' fill='#fff' font-weight="bold">P25</text>
+<line x1='389' y1='334' x2='411' y2='334' stroke='#3f9b50' stroke-width='1'/>
+<circle cx='400' cy='346' r='7' fill='#d5d9dd' stroke='#7b8187'/><line x1='395' y1='349' x2='405' y2='343' stroke='#5b6066' stroke-width='1.8'/>
 <circle cx='400' cy='346' r='3' fill='#1d6fd6'/>
-<text x='426' y='350' font-size='10' fill='#fff' font-weight="bold">P26</text>
-<rect x='390' y='359' width='20' height='22' fill='#5cc06b' stroke='#2b7a38'/>
-<circle cx='400' cy='370' r='6' fill='#c8ccd0' stroke='#777'/><line x1='396' y1='370' x2='404' y2='370' stroke='#555' stroke-width='1.5'/>
-<text x='426' y='374' font-size='10' fill='#9a9a9a' >P27</text>
-<rect x='390' y='383' width='20' height='22' fill='#5cc06b' stroke='#2b7a38'/>
-<circle cx='400' cy='394' r='6' fill='#c8ccd0' stroke='#777'/><line x1='396' y1='394' x2='404' y2='394' stroke='#555' stroke-width='1.5'/>
-<text x='426' y='398' font-size='10' fill='#9a9a9a' >P14</text>
-<rect x='390' y='407' width='20' height='22' fill='#5cc06b' stroke='#2b7a38'/>
-<circle cx='400' cy='418' r='6' fill='#c8ccd0' stroke='#777'/><line x1='396' y1='418' x2='404' y2='418' stroke='#555' stroke-width='1.5'/>
-<text x='426' y='422' font-size='10' fill='#9a9a9a' >P12</text>
-<rect x='390' y='431' width='20' height='22' fill='#5cc06b' stroke='#2b7a38'/>
-<circle cx='400' cy='442' r='6' fill='#c8ccd0' stroke='#777'/><line x1='396' y1='442' x2='404' y2='442' stroke='#555' stroke-width='1.5'/>
+<text x='431' y='350' font-size='10' fill='#fff' font-weight="bold">P26</text>
+<line x1='389' y1='358' x2='411' y2='358' stroke='#3f9b50' stroke-width='1'/>
+<circle cx='400' cy='370' r='7' fill='#d5d9dd' stroke='#7b8187'/><line x1='395' y1='373' x2='405' y2='367' stroke='#5b6066' stroke-width='1.8'/>
+<text x='431' y='374' font-size='10' fill='#9a9a9a' >P27</text>
+<line x1='389' y1='382' x2='411' y2='382' stroke='#3f9b50' stroke-width='1'/>
+<circle cx='400' cy='394' r='7' fill='#d5d9dd' stroke='#7b8187'/><line x1='395' y1='397' x2='405' y2='391' stroke='#5b6066' stroke-width='1.8'/>
+<text x='431' y='398' font-size='10' fill='#9a9a9a' >P14</text>
+<line x1='389' y1='406' x2='411' y2='406' stroke='#3f9b50' stroke-width='1'/>
+<circle cx='400' cy='418' r='7' fill='#d5d9dd' stroke='#7b8187'/><line x1='395' y1='421' x2='405' y2='415' stroke='#5b6066' stroke-width='1.8'/>
+<text x='431' y='422' font-size='10' fill='#9a9a9a' >P12</text>
+<line x1='389' y1='430' x2='411' y2='430' stroke='#3f9b50' stroke-width='1'/>
+<circle cx='400' cy='442' r='7' fill='#d5d9dd' stroke='#7b8187'/><line x1='395' y1='445' x2='405' y2='439' stroke='#5b6066' stroke-width='1.8'/>
 <circle cx='400' cy='442' r='3' fill='#111'/>
-<text x='426' y='446' font-size='10' fill='#fff' font-weight="bold">GND</text>
-<rect x='390' y='455' width='20' height='22' fill='#5cc06b' stroke='#2b7a38'/>
-<circle cx='400' cy='466' r='6' fill='#c8ccd0' stroke='#777'/><line x1='396' y1='466' x2='404' y2='466' stroke='#555' stroke-width='1.5'/>
-<text x='426' y='470' font-size='10' fill='#9a9a9a' >P13</text>
-<rect x='390' y='479' width='20' height='22' fill='#5cc06b' stroke='#2b7a38'/>
-<circle cx='400' cy='490' r='6' fill='#c8ccd0' stroke='#777'/><line x1='396' y1='490' x2='404' y2='490' stroke='#555' stroke-width='1.5'/>
-<text x='426' y='494' font-size='10' fill='#9a9a9a' >SD2</text>
-<rect x='390' y='503' width='20' height='22' fill='#5cc06b' stroke='#2b7a38'/>
-<circle cx='400' cy='514' r='6' fill='#c8ccd0' stroke='#777'/><line x1='396' y1='514' x2='404' y2='514' stroke='#555' stroke-width='1.5'/>
-<text x='426' y='518' font-size='10' fill='#9a9a9a' >SD3</text>
-<rect x='390' y='527' width='20' height='22' fill='#5cc06b' stroke='#2b7a38'/>
-<circle cx='400' cy='538' r='6' fill='#c8ccd0' stroke='#777'/><line x1='396' y1='538' x2='404' y2='538' stroke='#555' stroke-width='1.5'/>
-<text x='426' y='542' font-size='10' fill='#9a9a9a' >CMD</text>
-<rect x='390' y='551' width='20' height='22' fill='#5cc06b' stroke='#2b7a38'/>
-<circle cx='400' cy='562' r='6' fill='#c8ccd0' stroke='#777'/><line x1='396' y1='562' x2='404' y2='562' stroke='#555' stroke-width='1.5'/>
-<text x='426' y='566' font-size='10' fill='#9a9a9a' >5V</text>
-<rect x='590' y='119' width='20' height='22' fill='#5cc06b' stroke='#2b7a38'/>
-<circle cx='600' cy='130' r='6' fill='#c8ccd0' stroke='#777'/><line x1='596' y1='130' x2='604' y2='130' stroke='#555' stroke-width='1.5'/>
+<text x='431' y='446' font-size='10' fill='#fff' font-weight="bold">GND</text>
+<line x1='389' y1='454' x2='411' y2='454' stroke='#3f9b50' stroke-width='1'/>
+<circle cx='400' cy='466' r='7' fill='#d5d9dd' stroke='#7b8187'/><line x1='395' y1='469' x2='405' y2='463' stroke='#5b6066' stroke-width='1.8'/>
+<text x='431' y='470' font-size='10' fill='#9a9a9a' >P13</text>
+<line x1='389' y1='478' x2='411' y2='478' stroke='#3f9b50' stroke-width='1'/>
+<circle cx='400' cy='490' r='7' fill='#d5d9dd' stroke='#7b8187'/><line x1='395' y1='493' x2='405' y2='487' stroke='#5b6066' stroke-width='1.8'/>
+<text x='431' y='494' font-size='10' fill='#9a9a9a' >SD2</text>
+<line x1='389' y1='502' x2='411' y2='502' stroke='#3f9b50' stroke-width='1'/>
+<circle cx='400' cy='514' r='7' fill='#d5d9dd' stroke='#7b8187'/><line x1='395' y1='517' x2='405' y2='511' stroke='#5b6066' stroke-width='1.8'/>
+<text x='431' y='518' font-size='10' fill='#9a9a9a' >SD3</text>
+<line x1='389' y1='526' x2='411' y2='526' stroke='#3f9b50' stroke-width='1'/>
+<circle cx='400' cy='538' r='7' fill='#d5d9dd' stroke='#7b8187'/><line x1='395' y1='541' x2='405' y2='535' stroke='#5b6066' stroke-width='1.8'/>
+<text x='431' y='542' font-size='10' fill='#9a9a9a' >CMD</text>
+<line x1='389' y1='550' x2='411' y2='550' stroke='#3f9b50' stroke-width='1'/>
+<circle cx='400' cy='562' r='7' fill='#d5d9dd' stroke='#7b8187'/><line x1='395' y1='565' x2='405' y2='559' stroke='#5b6066' stroke-width='1.8'/>
+<text x='431' y='566' font-size='10' fill='#9a9a9a' >5V</text>
+<line x1='589' y1='118' x2='611' y2='118' stroke='#3f9b50' stroke-width='1'/>
+<circle cx='600' cy='130' r='7' fill='#d5d9dd' stroke='#7b8187'/><line x1='595' y1='133' x2='605' y2='127' stroke='#5b6066' stroke-width='1.8'/>
 <circle cx='600' cy='130' r='3' fill='#111'/>
-<text x='574' y='134' text-anchor='end' font-size='10' fill='#fff' font-weight="bold">GND</text>
-<rect x='590' y='143' width='20' height='22' fill='#5cc06b' stroke='#2b7a38'/>
-<circle cx='600' cy='154' r='6' fill='#c8ccd0' stroke='#777'/><line x1='596' y1='154' x2='604' y2='154' stroke='#555' stroke-width='1.5'/>
+<text x='569' y='134' text-anchor='end' font-size='10' fill='#fff' font-weight="bold">GND</text>
+<line x1='589' y1='142' x2='611' y2='142' stroke='#3f9b50' stroke-width='1'/>
+<circle cx='600' cy='154' r='7' fill='#d5d9dd' stroke='#7b8187'/><line x1='595' y1='157' x2='605' y2='151' stroke='#5b6066' stroke-width='1.8'/>
 <circle cx='600' cy='154' r='3' fill='#2a9d48'/>
-<text x='574' y='158' text-anchor='end' font-size='10' fill='#fff' font-weight="bold">P23</text>
-<rect x='590' y='167' width='20' height='22' fill='#5cc06b' stroke='#2b7a38'/>
-<circle cx='600' cy='178' r='6' fill='#c8ccd0' stroke='#777'/><line x1='596' y1='178' x2='604' y2='178' stroke='#555' stroke-width='1.5'/>
-<text x='574' y='182' text-anchor='end' font-size='10' fill='#9a9a9a' >P22</text>
-<rect x='590' y='191' width='20' height='22' fill='#5cc06b' stroke='#2b7a38'/>
-<circle cx='600' cy='202' r='6' fill='#c8ccd0' stroke='#777'/><line x1='596' y1='202' x2='604' y2='202' stroke='#555' stroke-width='1.5'/>
-<text x='574' y='206' text-anchor='end' font-size='10' fill='#9a9a9a' >TX</text>
-<rect x='590' y='215' width='20' height='22' fill='#5cc06b' stroke='#2b7a38'/>
-<circle cx='600' cy='226' r='6' fill='#c8ccd0' stroke='#777'/><line x1='596' y1='226' x2='604' y2='226' stroke='#555' stroke-width='1.5'/>
-<text x='574' y='230' text-anchor='end' font-size='10' fill='#9a9a9a' >RX</text>
-<rect x='590' y='239' width='20' height='22' fill='#5cc06b' stroke='#2b7a38'/>
-<circle cx='600' cy='250' r='6' fill='#c8ccd0' stroke='#777'/><line x1='596' y1='250' x2='604' y2='250' stroke='#555' stroke-width='1.5'/>
-<text x='574' y='254' text-anchor='end' font-size='10' fill='#9a9a9a' >P21</text>
-<rect x='590' y='263' width='20' height='22' fill='#5cc06b' stroke='#2b7a38'/>
-<circle cx='600' cy='274' r='6' fill='#c8ccd0' stroke='#777'/><line x1='596' y1='274' x2='604' y2='274' stroke='#555' stroke-width='1.5'/>
-<text x='574' y='278' text-anchor='end' font-size='10' fill='#9a9a9a' >GND</text>
-<rect x='590' y='287' width='20' height='22' fill='#5cc06b' stroke='#2b7a38'/>
-<circle cx='600' cy='298' r='6' fill='#c8ccd0' stroke='#777'/><line x1='596' y1='298' x2='604' y2='298' stroke='#555' stroke-width='1.5'/>
-<text x='574' y='302' text-anchor='end' font-size='10' fill='#9a9a9a' >P19</text>
-<rect x='590' y='311' width='20' height='22' fill='#5cc06b' stroke='#2b7a38'/>
-<circle cx='600' cy='322' r='6' fill='#c8ccd0' stroke='#777'/><line x1='596' y1='322' x2='604' y2='322' stroke='#555' stroke-width='1.5'/>
+<text x='569' y='158' text-anchor='end' font-size='10' fill='#fff' font-weight="bold">P23</text>
+<line x1='589' y1='166' x2='611' y2='166' stroke='#3f9b50' stroke-width='1'/>
+<circle cx='600' cy='178' r='7' fill='#d5d9dd' stroke='#7b8187'/><line x1='595' y1='181' x2='605' y2='175' stroke='#5b6066' stroke-width='1.8'/>
+<text x='569' y='182' text-anchor='end' font-size='10' fill='#9a9a9a' >P22</text>
+<line x1='589' y1='190' x2='611' y2='190' stroke='#3f9b50' stroke-width='1'/>
+<circle cx='600' cy='202' r='7' fill='#d5d9dd' stroke='#7b8187'/><line x1='595' y1='205' x2='605' y2='199' stroke='#5b6066' stroke-width='1.8'/>
+<text x='569' y='206' text-anchor='end' font-size='10' fill='#9a9a9a' >TX</text>
+<line x1='589' y1='214' x2='611' y2='214' stroke='#3f9b50' stroke-width='1'/>
+<circle cx='600' cy='226' r='7' fill='#d5d9dd' stroke='#7b8187'/><line x1='595' y1='229' x2='605' y2='223' stroke='#5b6066' stroke-width='1.8'/>
+<text x='569' y='230' text-anchor='end' font-size='10' fill='#9a9a9a' >RX</text>
+<line x1='589' y1='238' x2='611' y2='238' stroke='#3f9b50' stroke-width='1'/>
+<circle cx='600' cy='250' r='7' fill='#d5d9dd' stroke='#7b8187'/><line x1='595' y1='253' x2='605' y2='247' stroke='#5b6066' stroke-width='1.8'/>
+<text x='569' y='254' text-anchor='end' font-size='10' fill='#9a9a9a' >P21</text>
+<line x1='589' y1='262' x2='611' y2='262' stroke='#3f9b50' stroke-width='1'/>
+<circle cx='600' cy='274' r='7' fill='#d5d9dd' stroke='#7b8187'/><line x1='595' y1='277' x2='605' y2='271' stroke='#5b6066' stroke-width='1.8'/>
+<text x='569' y='278' text-anchor='end' font-size='10' fill='#9a9a9a' >GND</text>
+<line x1='589' y1='286' x2='611' y2='286' stroke='#3f9b50' stroke-width='1'/>
+<circle cx='600' cy='298' r='7' fill='#d5d9dd' stroke='#7b8187'/><line x1='595' y1='301' x2='605' y2='295' stroke='#5b6066' stroke-width='1.8'/>
+<text x='569' y='302' text-anchor='end' font-size='10' fill='#9a9a9a' >P19</text>
+<line x1='589' y1='310' x2='611' y2='310' stroke='#3f9b50' stroke-width='1'/>
+<circle cx='600' cy='322' r='7' fill='#d5d9dd' stroke='#7b8187'/><line x1='595' y1='325' x2='605' y2='319' stroke='#5b6066' stroke-width='1.8'/>
 <circle cx='600' cy='322' r='3' fill='#7b3fb5'/>
-<text x='574' y='326' text-anchor='end' font-size='10' fill='#fff' font-weight="bold">P18</text>
-<rect x='590' y='335' width='20' height='22' fill='#5cc06b' stroke='#2b7a38'/>
-<circle cx='600' cy='346' r='6' fill='#c8ccd0' stroke='#777'/><line x1='596' y1='346' x2='604' y2='346' stroke='#555' stroke-width='1.5'/>
+<text x='569' y='326' text-anchor='end' font-size='10' fill='#fff' font-weight="bold">P18</text>
+<line x1='589' y1='334' x2='611' y2='334' stroke='#3f9b50' stroke-width='1'/>
+<circle cx='600' cy='346' r='7' fill='#d5d9dd' stroke='#7b8187'/><line x1='595' y1='349' x2='605' y2='343' stroke='#5b6066' stroke-width='1.8'/>
 <circle cx='600' cy='346' r='3' fill='#d1495b'/>
-<text x='574' y='350' text-anchor='end' font-size='10' fill='#fff' font-weight="bold">P5</text>
-<rect x='590' y='359' width='20' height='22' fill='#5cc06b' stroke='#2b7a38'/>
-<circle cx='600' cy='370' r='6' fill='#c8ccd0' stroke='#777'/><line x1='596' y1='370' x2='604' y2='370' stroke='#555' stroke-width='1.5'/>
+<text x='569' y='350' text-anchor='end' font-size='10' fill='#fff' font-weight="bold">P5</text>
+<line x1='589' y1='358' x2='611' y2='358' stroke='#3f9b50' stroke-width='1'/>
+<circle cx='600' cy='370' r='7' fill='#d5d9dd' stroke='#7b8187'/><line x1='595' y1='373' x2='605' y2='367' stroke='#5b6066' stroke-width='1.8'/>
 <circle cx='600' cy='370' r='3' fill='#00a6a6'/>
-<text x='574' y='374' text-anchor='end' font-size='10' fill='#fff' font-weight="bold">P17</text>
-<rect x='590' y='383' width='20' height='22' fill='#5cc06b' stroke='#2b7a38'/>
-<circle cx='600' cy='394' r='6' fill='#c8ccd0' stroke='#777'/><line x1='596' y1='394' x2='604' y2='394' stroke='#555' stroke-width='1.5'/>
-<text x='574' y='398' text-anchor='end' font-size='10' fill='#9a9a9a' >P16</text>
-<rect x='590' y='407' width='20' height='22' fill='#5cc06b' stroke='#2b7a38'/>
-<circle cx='600' cy='418' r='6' fill='#c8ccd0' stroke='#777'/><line x1='596' y1='418' x2='604' y2='418' stroke='#555' stroke-width='1.5'/>
+<text x='569' y='374' text-anchor='end' font-size='10' fill='#fff' font-weight="bold">P17</text>
+<line x1='589' y1='382' x2='611' y2='382' stroke='#3f9b50' stroke-width='1'/>
+<circle cx='600' cy='394' r='7' fill='#d5d9dd' stroke='#7b8187'/><line x1='595' y1='397' x2='605' y2='391' stroke='#5b6066' stroke-width='1.8'/>
+<text x='569' y='398' text-anchor='end' font-size='10' fill='#9a9a9a' >P16</text>
+<line x1='589' y1='406' x2='611' y2='406' stroke='#3f9b50' stroke-width='1'/>
+<circle cx='600' cy='418' r='7' fill='#d5d9dd' stroke='#7b8187'/><line x1='595' y1='421' x2='605' y2='415' stroke='#5b6066' stroke-width='1.8'/>
 <circle cx='600' cy='418' r='3' fill='#a0522d'/>
-<text x='574' y='422' text-anchor='end' font-size='10' fill='#fff' font-weight="bold">P4</text>
-<rect x='590' y='431' width='20' height='22' fill='#5cc06b' stroke='#2b7a38'/>
-<circle cx='600' cy='442' r='6' fill='#c8ccd0' stroke='#777'/><line x1='596' y1='442' x2='604' y2='442' stroke='#555' stroke-width='1.5'/>
-<text x='574' y='446' text-anchor='end' font-size='10' fill='#9a9a9a' >P0</text>
-<rect x='590' y='455' width='20' height='22' fill='#5cc06b' stroke='#2b7a38'/>
-<circle cx='600' cy='466' r='6' fill='#c8ccd0' stroke='#777'/><line x1='596' y1='466' x2='604' y2='466' stroke='#555' stroke-width='1.5'/>
-<text x='574' y='470' text-anchor='end' font-size='10' fill='#9a9a9a' >P2</text>
-<rect x='590' y='479' width='20' height='22' fill='#5cc06b' stroke='#2b7a38'/>
-<circle cx='600' cy='490' r='6' fill='#c8ccd0' stroke='#777'/><line x1='596' y1='490' x2='604' y2='490' stroke='#555' stroke-width='1.5'/>
-<text x='574' y='494' text-anchor='end' font-size='10' fill='#9a9a9a' >P15</text>
-<rect x='590' y='503' width='20' height='22' fill='#5cc06b' stroke='#2b7a38'/>
-<circle cx='600' cy='514' r='6' fill='#c8ccd0' stroke='#777'/><line x1='596' y1='514' x2='604' y2='514' stroke='#555' stroke-width='1.5'/>
-<text x='574' y='518' text-anchor='end' font-size='10' fill='#9a9a9a' >SD1</text>
-<rect x='590' y='527' width='20' height='22' fill='#5cc06b' stroke='#2b7a38'/>
-<circle cx='600' cy='538' r='6' fill='#c8ccd0' stroke='#777'/><line x1='596' y1='538' x2='604' y2='538' stroke='#555' stroke-width='1.5'/>
-<text x='574' y='542' text-anchor='end' font-size='10' fill='#9a9a9a' >SD0</text>
-<rect x='590' y='551' width='20' height='22' fill='#5cc06b' stroke='#2b7a38'/>
-<circle cx='600' cy='562' r='6' fill='#c8ccd0' stroke='#777'/><line x1='596' y1='562' x2='604' y2='562' stroke='#555' stroke-width='1.5'/>
-<text x='574' y='566' text-anchor='end' font-size='10' fill='#9a9a9a' >CLK</text>
+<text x='569' y='422' text-anchor='end' font-size='10' fill='#fff' font-weight="bold">P4</text>
+<line x1='589' y1='430' x2='611' y2='430' stroke='#3f9b50' stroke-width='1'/>
+<circle cx='600' cy='442' r='7' fill='#d5d9dd' stroke='#7b8187'/><line x1='595' y1='445' x2='605' y2='439' stroke='#5b6066' stroke-width='1.8'/>
+<text x='569' y='446' text-anchor='end' font-size='10' fill='#9a9a9a' >P0</text>
+<line x1='589' y1='454' x2='611' y2='454' stroke='#3f9b50' stroke-width='1'/>
+<circle cx='600' cy='466' r='7' fill='#d5d9dd' stroke='#7b8187'/><line x1='595' y1='469' x2='605' y2='463' stroke='#5b6066' stroke-width='1.8'/>
+<text x='569' y='470' text-anchor='end' font-size='10' fill='#9a9a9a' >P2</text>
+<line x1='589' y1='478' x2='611' y2='478' stroke='#3f9b50' stroke-width='1'/>
+<circle cx='600' cy='490' r='7' fill='#d5d9dd' stroke='#7b8187'/><line x1='595' y1='493' x2='605' y2='487' stroke='#5b6066' stroke-width='1.8'/>
+<text x='569' y='494' text-anchor='end' font-size='10' fill='#9a9a9a' >P15</text>
+<line x1='589' y1='502' x2='611' y2='502' stroke='#3f9b50' stroke-width='1'/>
+<circle cx='600' cy='514' r='7' fill='#d5d9dd' stroke='#7b8187'/><line x1='595' y1='517' x2='605' y2='511' stroke='#5b6066' stroke-width='1.8'/>
+<text x='569' y='518' text-anchor='end' font-size='10' fill='#9a9a9a' >SD1</text>
+<line x1='589' y1='526' x2='611' y2='526' stroke='#3f9b50' stroke-width='1'/>
+<circle cx='600' cy='538' r='7' fill='#d5d9dd' stroke='#7b8187'/><line x1='595' y1='541' x2='605' y2='535' stroke='#5b6066' stroke-width='1.8'/>
+<text x='569' y='542' text-anchor='end' font-size='10' fill='#9a9a9a' >SD0</text>
+<line x1='589' y1='550' x2='611' y2='550' stroke='#3f9b50' stroke-width='1'/>
+<circle cx='600' cy='562' r='7' fill='#d5d9dd' stroke='#7b8187'/><line x1='595' y1='565' x2='605' y2='559' stroke='#5b6066' stroke-width='1.8'/>
+<text x='569' y='566' text-anchor='end' font-size='10' fill='#9a9a9a' >CLK</text>
 <line x1='175' y1='190' x2='175' y2='440' stroke='#999' stroke-width='6' stroke-dasharray='14 6'/>
 <text x='175' y='182' text-anchor='middle' font-size='11' fill='#555'>Enclosure wall</text>
 <line x1='60' y1='250' x2='212' y2='250' stroke='#c98d6b' stroke-width='7' />
@@ -214,50 +254,64 @@
 <text x='10' y='590' font-size='11' fill='#111'>⏚ = GND terminal</text>
 <text x='10' y='606' font-size='11' fill='#111'>Pigtail: red = core (signal),</text>
 <text x='10' y='622' font-size='11' fill='#111'>brown = shield (ground)</text>
-<rect x='800' y='110' width='288' height='185' rx='6' fill='#1f4fa0' stroke='#163a78' stroke-width='2'/>
-<circle cx='812' cy='122' r='7' fill='#fff' stroke='#c9a227' stroke-width='2.5'/>
-<circle cx='1076' cy='122' r='7' fill='#fff' stroke='#c9a227' stroke-width='2.5'/>
-<circle cx='812' cy='283' r='7' fill='#fff' stroke='#c9a227' stroke-width='2.5'/>
-<circle cx='1076' cy='283' r='7' fill='#fff' stroke='#c9a227' stroke-width='2.5'/>
-<rect x='866' y='132' width='192' height='135' rx='3' fill='#0b0d12' stroke='#3a3f4a'/>
-<image href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAABACAAAAAD3vSCjAAAB0klEQVR4nO1YW5LDIAxTd/rRS+j+B9NF9sOQ8AxO0y3dDp4pBcxDsY1wcntgrvxM3n8+gPtwhOyPJ/RZ12D+dAvcDoJQIBShb5VWV9nw6QF8gAX+GQDpmv4ygD+Q8TFMpXsWnfqGTLfA0TE0eYJoRtyVykdbwEM0PX7xzAewjuE6hgvAk0Q00n8NEb1FpltgAZgOwEfF6pwp66/LE6vdHgBE+8UBedWa6qwrpmPKUfXccswnuUAAN/P0HvjlElwgyjwYim3/2qdpT13vRUJvVgoglYzZuybZNdGzRTR1Y2Dvucde21SheJsHQhASBCVZAYDnk7sn5dpl9CoemCnTeWABWAAGAGQprgAZQyhXxHpjnlN8+QARj27rkF9iTReA/KKKfalCYKRza4qQC9soBrQtw90Msan9+rb7lGFnggDpsc25t+MKXveKdN9oIwuQAJTEXhpeDBFa91GEXN8r1l0wHcBhEGrPklqKvYXie9mWYV0DEAK5sVAjgyyj3pvWHQGgmGXK3ZRHINjgKKF6U6nkMAYYWUikEHgmW1GSwKAIZrEhNqPMtms5dkF8gO4y119ijl1gNhcDvWxQlG3K3AXcrwmHOInIu9x5WUy4AEwH8Av0l9LFM5F8YQAAAABJRU5ErkJggg==' x='873' y='149.0' width='178' height='89.0' style='image-rendering:pixelated'/>
-<path d='M934.0,267 L990.0,267 L982.0,291 L942.0,291 Z' fill='#d58a2a' stroke='#9a5e14'/>
-<text x='868' y='124' font-size='9' fill='#fff' font-weight='bold'>Waveshare · 2.42inch OLED Module</text>
-<text x='944.0' y='313' text-anchor='middle' font-size='12' fill='#222'>Waveshare 2.42" OLED · SSD1309 · SPI (4-Wire) – optional</text>
-<rect x='804' y='124' width='14' height='160' fill='#111' rx='2'/>
-<rect x='794' y='136' width='20' height='4' fill='#d4af37'/><rect x='806' y='133' width='10' height='10' fill='#222' stroke='#555'/>
-<text x='824' y='142' font-size='10' fill='#fff' font-weight='bold'>VCC</text>
-<rect x='794' y='160' width='20' height='4' fill='#d4af37'/><rect x='806' y='157' width='10' height='10' fill='#222' stroke='#555'/>
-<text x='824' y='166' font-size='10' fill='#fff' font-weight='bold'>GND</text>
-<rect x='794' y='184' width='20' height='4' fill='#d4af37'/><rect x='806' y='181' width='10' height='10' fill='#222' stroke='#555'/>
-<text x='824' y='190' font-size='10' fill='#fff' font-weight='bold'>DIN</text>
-<rect x='794' y='208' width='20' height='4' fill='#d4af37'/><rect x='806' y='205' width='10' height='10' fill='#222' stroke='#555'/>
-<text x='824' y='214' font-size='10' fill='#fff' font-weight='bold'>CLK</text>
-<rect x='794' y='232' width='20' height='4' fill='#d4af37'/><rect x='806' y='229' width='10' height='10' fill='#222' stroke='#555'/>
-<text x='824' y='238' font-size='10' fill='#fff' font-weight='bold'>CS</text>
-<rect x='794' y='256' width='20' height='4' fill='#d4af37'/><rect x='806' y='253' width='10' height='10' fill='#222' stroke='#555'/>
-<text x='824' y='262' font-size='10' fill='#fff' font-weight='bold'>DC</text>
-<rect x='794' y='280' width='20' height='4' fill='#d4af37'/><rect x='806' y='277' width='10' height='10' fill='#222' stroke='#555'/>
-<text x='824' y='286' font-size='10' fill='#fff' font-weight='bold'>RST</text>
-<polyline points='610,154 640,154 640,186 794,186' fill='none' stroke='#2a9d48' stroke-width='3' stroke-linejoin='round' />
-<polyline points='610,322 656,322 656,210 794,210' fill='none' stroke='#7b3fb5' stroke-width='3' stroke-linejoin='round' />
-<polyline points='610,346 672,346 672,234 794,234' fill='none' stroke='#d1495b' stroke-width='3' stroke-linejoin='round' />
-<polyline points='610,370 688,370 688,258 794,258' fill='none' stroke='#00a6a6' stroke-width='3' stroke-linejoin='round' />
-<polyline points='610,418 704,418 704,282 794,282' fill='none' stroke='#a0522d' stroke-width='3' stroke-linejoin='round' />
-<polyline points='610,130 720,130 720,162 794,162' fill='none' stroke='#111' stroke-width='3' stroke-linejoin='round' />
-<polyline points='390,130 360,130 360,62 750,62 750,138 794,138' fill='none' stroke='#d62828' stroke-width='3' stroke-linejoin='round' />
+<rect x='790' y='132' width='270' height='173' rx='4' fill='#1b4f9c' stroke='#143d78' stroke-width='2'/>
+<rect x='793' y='136' width='264' height='162.0506329113924' rx='2' fill='#07080b' stroke='#2b2f38'/>
+<image href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAABACAAAAAD3vSCjAAAB0klEQVR4nO1YW5LDIAxTd/rRS+j+B9NF9sOQ8AxO0y3dDp4pBcxDsY1wcntgrvxM3n8+gPtwhOyPJ/RZ12D+dAvcDoJQIBShb5VWV9nw6QF8gAX+GQDpmv4ygD+Q8TFMpXsWnfqGTLfA0TE0eYJoRtyVykdbwEM0PX7xzAewjuE6hgvAk0Q00n8NEb1FpltgAZgOwEfF6pwp66/LE6vdHgBE+8UBedWa6qwrpmPKUfXccswnuUAAN/P0HvjlElwgyjwYim3/2qdpT13vRUJvVgoglYzZuybZNdGzRTR1Y2Dvucde21SheJsHQhASBCVZAYDnk7sn5dpl9CoemCnTeWABWAAGAGQprgAZQyhXxHpjnlN8+QARj27rkF9iTReA/KKKfalCYKRza4qQC9soBrQtw90Msan9+rb7lGFnggDpsc25t+MKXveKdN9oIwuQAJTEXhpeDBFa91GEXN8r1l0wHcBhEGrPklqKvYXie9mWYV0DEAK5sVAjgyyj3pvWHQGgmGXK3ZRHINjgKKF6U6nkMAYYWUikEHgmW1GSwKAIZrEhNqPMtms5dkF8gO4y119ijl1gNhcDvWxQlG3K3AXcrwmHOInIu9x5WUy4AEwH8Av0l9LFM5F8YQAAAABJRU5ErkJggg==' x='805.0' y='153.0253164556962' width='240.0' height='120.0' style='image-rendering:pixelated'/>
+<path d='M899.0,298.0506329113924 L951.0,298.0506329113924 L947.0,311 L903.0,311 Z' fill='#d98a26' stroke='#9a5e14'/>
+<rect x='913.0' y='299' width='24' height='10' fill='#1a1a1a'/>
+<circle cx='796' cy='138' r='3' fill='#d7dde6' stroke='#9aa6b8'/>
+<circle cx='1054' cy='138' r='3' fill='#d7dde6' stroke='#9aa6b8'/>
+<circle cx='796' cy='299' r='3' fill='#d7dde6' stroke='#9aa6b8'/>
+<circle cx='1054' cy='299' r='3' fill='#d7dde6' stroke='#9aa6b8'/>
+<text x='925.0' y='329' text-anchor='middle' font-size='12' fill='#222'>Waveshare 2.42" OLED · SSD1309 · SPI (4-Wire) – optional</text>
+<text x='1176' y='301' text-anchor='end' font-size='9' fill='#555'>Pin header on the back</text>
+<rect x='1048' y='144' width='10' height='148' fill='#111' fill-opacity='.85' rx='1'/>
+<rect x='1050' y='149' width='6' height='6' fill='#333'/><rect x='1056' y='150.5' width='16' height='3' fill='#d4af37'/>
+<text x='1076' y='148' font-size='9' fill='#222' font-weight='bold'>RST</text>
+<rect x='1050' y='171' width='6' height='6' fill='#333'/><rect x='1056' y='172.5' width='16' height='3' fill='#d4af37'/>
+<text x='1076' y='170' font-size='9' fill='#222' font-weight='bold'>DC</text>
+<rect x='1050' y='193' width='6' height='6' fill='#333'/><rect x='1056' y='194.5' width='16' height='3' fill='#d4af37'/>
+<text x='1076' y='192' font-size='9' fill='#222' font-weight='bold'>CS</text>
+<rect x='1050' y='215' width='6' height='6' fill='#333'/><rect x='1056' y='216.5' width='16' height='3' fill='#d4af37'/>
+<text x='1076' y='214' font-size='9' fill='#222' font-weight='bold'>CLK</text>
+<rect x='1050' y='237' width='6' height='6' fill='#333'/><rect x='1056' y='238.5' width='16' height='3' fill='#d4af37'/>
+<text x='1076' y='236' font-size='9' fill='#222' font-weight='bold'>DIN</text>
+<rect x='1050' y='259' width='6' height='6' fill='#333'/><rect x='1056' y='260.5' width='16' height='3' fill='#d4af37'/>
+<text x='1076' y='258' font-size='9' fill='#222' font-weight='bold'>GND</text>
+<rect x='1050' y='281' width='6' height='6' fill='#333'/><rect x='1056' y='282.5' width='16' height='3' fill='#d4af37'/>
+<text x='1076' y='280' font-size='9' fill='#222' font-weight='bold'>VCC</text>
+<polyline points='610,418 720,418 720,122 1110,122 1110,152 1072,152' fill='none' stroke='#a0522d' stroke-width='3' stroke-linejoin='round' />
+<polyline points='610,370 704,370 704,112 1120,112 1120,174 1072,174' fill='none' stroke='#00a6a6' stroke-width='3' stroke-linejoin='round' />
+<polyline points='610,346 688,346 688,102 1130,102 1130,196 1072,196' fill='none' stroke='#d1495b' stroke-width='3' stroke-linejoin='round' />
+<polyline points='610,322 672,322 672,92 1140,92 1140,218 1072,218' fill='none' stroke='#7b3fb5' stroke-width='3' stroke-linejoin='round' />
+<polyline points='610,154 656,154 656,82 1150,82 1150,240 1072,240' fill='none' stroke='#2a9d48' stroke-width='3' stroke-linejoin='round' />
+<polyline points='610,130 640,130 640,72 1160,72 1160,262 1072,262' fill='none' stroke='#111' stroke-width='3' stroke-linejoin='round' />
+<polyline points='390,130 360,130 360,62 1170,62 1170,284 1072,284' fill='none' stroke='#d62828' stroke-width='3' stroke-linejoin='round' />
 <circle cx='750' cy='62' r='4' fill='#d62828'/>
-<path d='M540,116 C540,40 690,70 720,40' fill='none' stroke='#777' stroke-width='4'/>
-<rect x='712' y='24' width='22' height='22' rx='3' fill='#d8b14a' stroke='#8a6d1d'/>
-<line x1='723' y1='24' x2='723' y2='-0' stroke='#333' stroke-width='6' stroke-linecap='round'/>
-<text x='742' y='30' font-size='12'>SMA socket + WiFi antenna (Bingfu, SMA)</text>
-<text x='742' y='46' font-size='11' fill='#444'>(IPEX→SMA pigtail from the antenna kit)</text>
+<path d='M540,116 C540,20 660,26 708,26' fill='none' stroke='#777' stroke-width='4'/>
+<rect x='704' y='17' width='16' height='18' rx='2' fill='#d8b14a' stroke='#8a6d1d'/>
+<rect x='720' y='19' width='14' height='14' rx='2' fill='#c9a227' stroke='#8a6d1d'/>
+<circle cx='742' cy='26' r='8' fill='#1c1c1c'/>
+<path d='M748,20 L850,23 Q857,26 850,29 L748,32 Z' fill='#1c1c1c'/>
+<text x='868' y='24' font-size='12'>SMA socket + WiFi antenna (Bingfu, SMA)</text>
+<text x='868' y='40' font-size='11' fill='#444'>(IPEX→SMA pigtail from the antenna kit)</text>
 <rect x='808' y='622' width='274' height='196' rx='8' fill='none' stroke='#888' stroke-dasharray='6 5'/>
 <text x='818' y='640' font-size='12' font-weight='bold' fill='#444'>Optional: real-time clock DS3231 (ZS-042)</text>
 <text x='818' y='656' font-size='11' fill='#444'>Coin cell CR2032 on the back</text>
-<rect x='836' y='668' width='232' height='134' rx='5' fill='#1f5fbf' stroke='#163a78' stroke-width='2'/>
-<circle cx='1054' cy='682' r='6' fill='#fff' stroke='#c9a227' stroke-width='2'/>
-<circle cx='1054' cy='788' r='6' fill='#fff' stroke='#c9a227' stroke-width='2'/>
+<rect x='836' y='668' width='232' height='134' rx='4' fill='#1e6cc8' stroke='#14508f' stroke-width='2'/>
+<circle cx='1006' cy='681' r='6' fill='#fff' stroke='#d6e6f7' stroke-width='2'/>
+<circle cx='956' cy='790' r='6' fill='#fff' stroke='#d6e6f7' stroke-width='2'/>
+<text x='884' y='684' font-size='8' fill='#fff' font-weight='bold'>POWER</text>
+<rect x='888' y='688' width='9' height='5' fill='#eee' stroke='#999'/>
+<text x='986' y='772' font-size='10' fill='#fff' font-weight='bold'>ZS-042</text>
+<rect x='1052' y='702' width='12' height='12' fill='#1e6cc8' stroke='#fff'/><circle cx='1058' cy='708' r='3' fill='#d4af37'/>
+<text x='1048' y='712' text-anchor='end' font-size='8' fill='#fff'>SCL</text>
+<rect x='1052' y='720' width='12' height='12' fill='#1e6cc8' stroke='#fff'/><circle cx='1058' cy='726' r='3' fill='#d4af37'/>
+<text x='1048' y='730' text-anchor='end' font-size='8' fill='#fff'>SDA</text>
+<rect x='1052' y='738' width='12' height='12' fill='#1e6cc8' stroke='#fff'/><circle cx='1058' cy='744' r='3' fill='#d4af37'/>
+<text x='1048' y='748' text-anchor='end' font-size='8' fill='#fff'>VCC</text>
+<rect x='1052' y='756' width='12' height='12' fill='#1e6cc8' stroke='#fff'/><circle cx='1058' cy='762' r='3' fill='#d4af37'/>
+<text x='1048' y='766' text-anchor='end' font-size='8' fill='#fff'>GND</text>
 <rect x='906' y='696' width='84' height='44' rx='2' fill='#1a1a1a'/>
 <rect x='910' y='692' width='4' height='4' fill='#bbb'/>
 <rect x='910' y='740' width='4' height='4' fill='#bbb'/>
@@ -278,7 +332,7 @@
 <text x='948' y='718' text-anchor='middle' font-size='9' fill='#ccc'>DS3231SN</text>
 <rect x='916' y='760' width='40' height='22' rx='2' fill='#1a1a1a'/>
 <text x='936' y='774' text-anchor='middle' font-size='6' fill='#aaa'>AT24C32</text>
-<rect x='1006' y='708' width='18' height='7' fill='#c0392b' stroke='#7a1f16'/>
+<rect x='996' y='698' width='7' height='16' fill='#c0392b' stroke='#7a1f16'/>
 <rect x='840' y='674' width='14' height='122' fill='#111' rx='2'/>
 <rect x='830' y='684' width='20' height='4' fill='#d4af37'/><rect x='842' y='681' width='10' height='10' fill='#222' stroke='#555'/>
 <text x='860' y='690' font-size='10' fill='#fff' font-weight='bold'>32K</text>
@@ -292,16 +346,16 @@
 <text x='860' y='770' font-size='10' fill='#fff' font-weight='bold'>VCC</text>
 <rect x='830' y='784' width='20' height='4' fill='#d4af37'/><rect x='842' y='781' width='10' height='10' fill='#222' stroke='#555'/>
 <text x='860' y='790' font-size='10' fill='#fff' font-weight='bold'>GND</text>
-<rect x='590' y='167' width='20' height='22' fill='#5cc06b' stroke='#2b7a38'/>
-<circle cx='600' cy='178' r='6' fill='#c8ccd0' stroke='#777'/><line x1='596' y1='178' x2='604' y2='178' stroke='#555' stroke-width='1.5'/>
+<line x1='589' y1='166' x2='611' y2='166' stroke='#3f9b50' stroke-width='1'/>
+<circle cx='600' cy='178' r='7' fill='#d5d9dd' stroke='#7b8187'/><line x1='595' y1='181' x2='605' y2='175' stroke='#5b6066' stroke-width='1.8'/>
 <circle cx='600' cy='178' r='3' fill='#5d6d7e'/>
 <polyline points='610,178 634,178 634,450 748,450 748,726 830,726' fill='none' stroke='#5d6d7e' stroke-width='3' stroke-linejoin='round' stroke-dasharray="8 6"/>
-<rect x='590' y='239' width='20' height='22' fill='#5cc06b' stroke='#2b7a38'/>
-<circle cx='600' cy='250' r='6' fill='#c8ccd0' stroke='#777'/><line x1='596' y1='250' x2='604' y2='250' stroke='#555' stroke-width='1.5'/>
+<line x1='589' y1='238' x2='611' y2='238' stroke='#3f9b50' stroke-width='1'/>
+<circle cx='600' cy='250' r='7' fill='#d5d9dd' stroke='#7b8187'/><line x1='595' y1='253' x2='605' y2='247' stroke='#5b6066' stroke-width='1.8'/>
 <circle cx='600' cy='250' r='3' fill='#c99a00'/>
 <polyline points='610,250 626,250 626,462 740,462 740,746 830,746' fill='none' stroke='#c99a00' stroke-width='3' stroke-linejoin='round' stroke-dasharray="8 6"/>
-<rect x='590' y='263' width='20' height='22' fill='#5cc06b' stroke='#2b7a38'/>
-<circle cx='600' cy='274' r='6' fill='#c8ccd0' stroke='#777'/><line x1='596' y1='274' x2='604' y2='274' stroke='#555' stroke-width='1.5'/>
+<line x1='589' y1='262' x2='611' y2='262' stroke='#3f9b50' stroke-width='1'/>
+<circle cx='600' cy='274' r='7' fill='#d5d9dd' stroke='#7b8187'/><line x1='595' y1='277' x2='605' y2='271' stroke='#5b6066' stroke-width='1.8'/>
 <circle cx='600' cy='274' r='3' fill='#111'/>
 <polyline points='610,274 618,274 618,474 732,474 732,786 830,786' fill='none' stroke='#111' stroke-width='3' stroke-linejoin='round' stroke-dasharray="8 6"/>
 <polyline points='750,62 756,62 756,766 830,766' fill='none' stroke='#d62828' stroke-width='3' stroke-linejoin='round' stroke-dasharray="8 6"/>
