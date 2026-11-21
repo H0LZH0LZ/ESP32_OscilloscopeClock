@@ -23,23 +23,23 @@ Detailed assembly guide with drilling template: [docs/ESP32_Oscilloscope_Clock_D
 ```
 Terminal (breakout board) Target
 ─────────────            ──────────────────────────────────────────────
-P25 (DAC1) ──[220Ω]── pigtail "X" red (core)   ──> BNC plug → oscilloscope channel 1
-P26 (DAC2) ──[220Ω]── pigtail "Y" red (core)   ──> BNC plug → oscilloscope channel 2
-GND ─────────────────── pigtail "X" + "Y" brown (shield)
+P25 (DAC1) ──[220Ω]── pigtail "X" red (core)   ──> BNC plug → oscilloscope channel 1   (X deflection voltage)
+P26 (DAC2) ──[220Ω]── pigtail "Y" red (core)   ──> BNC plug → oscilloscope channel 2   (Y deflection voltage)
+GND ─────────────────── pigtail "X" + "Y" brown (shield)                        (ground, reference)
 
-3V3  ─────────────────── OLED VCC
-GND  ─────────────────── OLED GND
-GPIO18 (VSPI SCK) ────── OLED CLK
-GPIO23 (VSPI MOSI) ───── OLED DIN
-GPIO5  ───────────────── OLED CS
-GPIO17 ───────────────── OLED DC
-GPIO4  ───────────────── OLED RST
+3V3  ─────────────────── OLED VCC    3.3 V supply
+GND  ─────────────────── OLED GND    ground
+GPIO18 (VSPI SCK) ────── OLED CLK    SPI clock
+GPIO23 (VSPI MOSI) ───── OLED DIN    SPI data (image content)
+GPIO5  ───────────────── OLED CS     chip select (active low)
+GPIO17 ───────────────── OLED DC     high = image data, low = command
+GPIO4  ───────────────── OLED RST    reset (active low)
 
 optional – DS3231 real-time clock (ZS-042):
-3V3  ─────────────────── RTC VCC
-GND  ─────────────────── RTC GND
-GPIO21 (I²C SDA) ─────── RTC SDA
-GPIO22 (I²C SCL) ─────── RTC SCL
+3V3  ─────────────────── RTC VCC     3.3 V supply
+GND  ─────────────────── RTC GND     ground
+GPIO21 (I²C SDA) ─────── RTC SDA     I²C data
+GPIO22 (I²C SCL) ─────── RTC SCL     I²C clock
 
 IPEX/U.FL ── pigtail (antenna kit) ── SMA socket in the opposite side ── Bingfu antenna (SMA)
 ```

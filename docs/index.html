@@ -215,8 +215,8 @@ a.row>span:last-child{font-size:18px}
 <div class="grp"><h2 id="downloads-h" class="coll" role="button" tabindex="0" aria-expanded="true"><span data-l="de">0 Links &amp; Dokumente</span><span data-l="en">0 Links &amp; documents</span></h2>
 <section>
  <a class="row" target="_blank" rel="noopener" href="https://github.com/HolzHolz123/ESP32_OscilloscopeClock"><span><span data-l="de">GitHub – Version 2.0</span><span data-l="en">GitHub – version 2.0</span><small class="note" data-l="de">Diese Firmware mit Quellcode, Anleitung und Werkzeugen</small><small class="note" data-l="en">This firmware with source code, guide and tools</small></span><span>›</span></a>
- <a class="row" target="_blank" rel="noopener" data-l="de" href="ESP32_Oscilloscope_Clock_Dokumentation.pdf?v=33599ee9"><span>Dokumentation (PDF)<small class="note">Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small></span><span>›</span></a>
- <a class="row" target="_blank" rel="noopener" data-l="en" href="ESP32_Oscilloscope_Clock_Documentation.pdf?v=9c7f991e"><span>Documentation (PDF)<small class="note">Assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
+ <a class="row" target="_blank" rel="noopener" data-l="de" href="ESP32_Oscilloscope_Clock_Dokumentation.pdf?v=6332bfbc"><span>Dokumentation (PDF)<small class="note">Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small></span><span>›</span></a>
+ <a class="row" target="_blank" rel="noopener" data-l="en" href="ESP32_Oscilloscope_Clock_Documentation.pdf?v=e885a6b9"><span>Documentation (PDF)<small class="note">Assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" href="demo/"><span><span data-l="de">Testseite</span><span data-l="en">Test page</span><small class="note" data-l="de">Das Webinterface der Uhr ausprobieren – läuft im Browser, alle Werte sind simuliert</small><small class="note" data-l="en">Try the clock's web interface – runs in the browser, all values are simulated</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" href="https://github.com/maurohh/ESP32_OscilloscopeClock"><span><span data-l="de">GitHub – Original</span><span data-l="en">GitHub – original</span><small class="note" data-l="de">Die ursprüngliche ESP32 Oscilloscope Clock von Mauro Pintus (2018), nach deren Idee diese Version entstand</small><small class="note" data-l="en">The original ESP32 Oscilloscope Clock by Mauro Pintus (2018) that inspired this version</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" href="https://fonts.google.com/specimen/Raleway"><span><span data-l="de">Schriftart Raleway</span><span data-l="en">Font Raleway</span><small class="note" data-l="de">Google Fonts – frei unter der SIL Open Font License 1.1</small><small class="note" data-l="en">Google Fonts – free under the SIL Open Font License 1.1</small></span><span>›</span></a>
@@ -349,21 +349,21 @@ oscilloscope input; no additional BNC cable is needed.</p>
 <div class="grp closed"><h2 id="kap3" class="coll" role="button" tabindex="0" aria-expanded="false"><span data-l="de">3 Aufbauanleitung Schritt für Schritt</span><span data-l="en">3 Step-by-step assembly</span></h2>
 <section class="doc"><div data-l="de">
 <figure><img loading="lazy" src="images/verdrahtung.svg"><figcaption>Abb. 4 – Verdrahtung. Das DevKit steckt im Breakout-Board; alle Leitungen kommen in die gleichnamigen Schraubklemmen.</figcaption></figure>
-<div class="tw"><table style="break-inside:avoid">
- <tr><th>Klemme am Breakout-Board</th><th>Anschluss</th><th>Ziel</th></tr>
- <tr><td data-th="Klemme am Breakout-Board">P25 (GPIO25, DAC1)</td><td data-th="Anschluss">über 220 Ω</td><td data-th="Ziel">Pigtail „X“, rote Ader → Oszilloskop Kanal 1</td></tr>
- <tr><td data-th="Klemme am Breakout-Board">P26 (GPIO26, DAC2)</td><td data-th="Anschluss">über 220 Ω</td><td data-th="Ziel">Pigtail „Y“, rote Ader → Oszilloskop Kanal 2</td></tr>
- <tr><td data-th="Klemme am Breakout-Board">GND (linke Reihe)</td><td data-th="Anschluss">direkt</td><td data-th="Ziel">braune Adern (Schirm) aller Pigtails</td></tr>
- <tr><td data-th="Klemme am Breakout-Board">3V3</td><td data-th="Anschluss">direkt</td><td data-th="Ziel">OLED VCC</td></tr>
- <tr><td data-th="Klemme am Breakout-Board">GND (rechte Reihe)</td><td data-th="Anschluss">direkt</td><td data-th="Ziel">OLED GND</td></tr>
- <tr><td data-th="Klemme am Breakout-Board">P23</td><td data-th="Anschluss">direkt</td><td data-th="Ziel">OLED DIN</td></tr>
- <tr><td data-th="Klemme am Breakout-Board">P18</td><td data-th="Anschluss">direkt</td><td data-th="Ziel">OLED CLK</td></tr>
- <tr><td data-th="Klemme am Breakout-Board">P5</td><td data-th="Anschluss">direkt</td><td data-th="Ziel">OLED CS</td></tr>
- <tr><td data-th="Klemme am Breakout-Board">P17</td><td data-th="Anschluss">direkt</td><td data-th="Ziel">OLED DC</td></tr>
- <tr><td data-th="Klemme am Breakout-Board">P4</td><td data-th="Anschluss">direkt</td><td data-th="Ziel">OLED RST</td></tr>
- <tr><td data-th="Klemme am Breakout-Board">P21 / P22 · 3V3 · GND</td><td data-th="Anschluss">direkt</td><td data-th="Ziel"><i>optional:</i> Echtzeituhr DS3231 – SDA / SCL · VCC · GND</td></tr>
- <tr><td data-th="Klemme am Breakout-Board">IPEX-Buchse am Modul</td><td data-th="Anschluss">Antennen-Pigtail</td><td data-th="Ziel">SMA-Buchse in der gegenüberliegenden Seite → Antenne</td></tr>
- <tr><td data-th="Klemme am Breakout-Board">USB-C des DevKits</td><td data-th="Anschluss">Flachbandkabel</td><td data-th="Ziel">USB-C-Einbaubuchse in der Anschlussseite</td></tr>
+<div class="tw"><table style="font-size:8.2pt">
+ <thead><tr><th>Klemme am Breakout-Board</th><th>Anschluss</th><th>Ziel</th><th>Funktion</th></tr></thead>
+ <tr><td data-th="Klemme am Breakout-Board">P25 (GPIO25, DAC1)</td><td data-th="Anschluss">über 220 Ω</td><td data-th="Ziel">Pigtail „X“, rote Ader → Oszilloskop Kanal 1</td><td data-th="Funktion">Analogausgang DAC1: Spannung für die X-Ablenkung</td></tr>
+ <tr><td data-th="Klemme am Breakout-Board">P26 (GPIO26, DAC2)</td><td data-th="Anschluss">über 220 Ω</td><td data-th="Ziel">Pigtail „Y“, rote Ader → Oszilloskop Kanal 2</td><td data-th="Funktion">Analogausgang DAC2: Spannung für die Y-Ablenkung</td></tr>
+ <tr><td data-th="Klemme am Breakout-Board">GND (linke Reihe)</td><td data-th="Anschluss">direkt</td><td data-th="Ziel">braune Adern (Schirm) aller Pigtails</td><td data-th="Funktion">Masse – Bezug der Ablenkspannungen</td></tr>
+ <tr><td data-th="Klemme am Breakout-Board">3V3</td><td data-th="Anschluss">direkt</td><td data-th="Ziel">OLED VCC</td><td data-th="Funktion">Versorgung 3,3 V für das OLED</td></tr>
+ <tr><td data-th="Klemme am Breakout-Board">GND (rechte Reihe)</td><td data-th="Anschluss">direkt</td><td data-th="Ziel">OLED GND</td><td data-th="Funktion">Masse des OLED</td></tr>
+ <tr><td data-th="Klemme am Breakout-Board">P23</td><td data-th="Anschluss">direkt</td><td data-th="Ziel">OLED DIN</td><td data-th="Funktion">SPI-Daten (VSPI MOSI): Bildinhalt zum Display</td></tr>
+ <tr><td data-th="Klemme am Breakout-Board">P18</td><td data-th="Anschluss">direkt</td><td data-th="Ziel">OLED CLK</td><td data-th="Funktion">SPI-Takt (VSPI SCK)</td></tr>
+ <tr><td data-th="Klemme am Breakout-Board">P5</td><td data-th="Anschluss">direkt</td><td data-th="Ziel">OLED CS</td><td data-th="Funktion">Chip-Auswahl, low = OLED angesprochen</td></tr>
+ <tr><td data-th="Klemme am Breakout-Board">P17</td><td data-th="Anschluss">direkt</td><td data-th="Ziel">OLED DC</td><td data-th="Funktion">Daten/Befehl: high = Bilddaten, low = Befehl</td></tr>
+ <tr><td data-th="Klemme am Breakout-Board">P4</td><td data-th="Anschluss">direkt</td><td data-th="Ziel">OLED RST</td><td data-th="Funktion">Reset des Displays (low-aktiv)</td></tr>
+ <tr><td data-th="Klemme am Breakout-Board">P21 / P22 · 3V3 · GND</td><td data-th="Anschluss">direkt</td><td data-th="Ziel"><i>optional:</i> Echtzeituhr DS3231 – SDA / SCL · VCC · GND</td><td data-th="Funktion">I²C-Daten / I²C-Takt · Versorgung · Masse</td></tr>
+ <tr><td data-th="Klemme am Breakout-Board">IPEX-Buchse am Modul</td><td data-th="Anschluss">Antennen-Pigtail</td><td data-th="Ziel">SMA-Buchse in der gegenüberliegenden Seite → Antenne</td><td data-th="Funktion">WLAN-Signal 2,4 GHz</td></tr>
+ <tr><td data-th="Klemme am Breakout-Board">USB-C des DevKits</td><td data-th="Anschluss">Flachbandkabel</td><td data-th="Ziel">USB-C-Einbaubuchse in der Anschlussseite</td><td data-th="Funktion">Versorgung 5 V, Hochladen der Firmware, serieller Monitor</td></tr>
 </table></div>
 <div class="warn"><b>Wichtig:</b> Klemme P0 (GPIO0) ist der BOOT-Taster – dort nichts anschließen. Das OLED an <b>3V3</b>,
 nicht an 5V. Das Modul -32U nie ohne Antenne im WLAN-Betrieb laufen lassen.</div>
@@ -406,21 +406,21 @@ Der Außenkontakt hat Durchgang zu GND. Alle Schraubklemmen leicht nachziehen.</
 <div class="step"><b class="n">10</b><div><b>Deckel schließen</b> erst nach der Inbetriebnahme (Kapitel 5).</div></div>
 </div><div data-l="en">
 <figure><img loading="lazy" src="images/verdrahtung_en.svg"><figcaption>Fig. 4 – Wiring. The DevKit sits in the breakout board; all wires go into the screw terminals of the same name.</figcaption></figure>
-<div class="tw"><table style="break-inside:avoid">
- <tr><th>Terminal on the breakout board</th><th>Connection</th><th>Target</th></tr>
- <tr><td data-th="Terminal on the breakout board">P25 (GPIO25, DAC1)</td><td data-th="Connection">via 220 Ω</td><td data-th="Target">pigtail “X”, red lead → oscilloscope channel 1</td></tr>
- <tr><td data-th="Terminal on the breakout board">P26 (GPIO26, DAC2)</td><td data-th="Connection">via 220 Ω</td><td data-th="Target">pigtail “Y”, red lead → oscilloscope channel 2</td></tr>
- <tr><td data-th="Terminal on the breakout board">GND (left row)</td><td data-th="Connection">direct</td><td data-th="Target">brown leads (shield) of all pigtails</td></tr>
- <tr><td data-th="Terminal on the breakout board">3V3</td><td data-th="Connection">direct</td><td data-th="Target">OLED VCC</td></tr>
- <tr><td data-th="Terminal on the breakout board">GND (right row)</td><td data-th="Connection">direct</td><td data-th="Target">OLED GND</td></tr>
- <tr><td data-th="Terminal on the breakout board">P23</td><td data-th="Connection">direct</td><td data-th="Target">OLED DIN</td></tr>
- <tr><td data-th="Terminal on the breakout board">P18</td><td data-th="Connection">direct</td><td data-th="Target">OLED CLK</td></tr>
- <tr><td data-th="Terminal on the breakout board">P5</td><td data-th="Connection">direct</td><td data-th="Target">OLED CS</td></tr>
- <tr><td data-th="Terminal on the breakout board">P17</td><td data-th="Connection">direct</td><td data-th="Target">OLED DC</td></tr>
- <tr><td data-th="Terminal on the breakout board">P4</td><td data-th="Connection">direct</td><td data-th="Target">OLED RST</td></tr>
- <tr><td data-th="Terminal on the breakout board">P21 / P22 · 3V3 · GND</td><td data-th="Connection">direct</td><td data-th="Target"><i>optional:</i> DS3231 real-time clock – SDA / SCL · VCC · GND</td></tr>
- <tr><td data-th="Terminal on the breakout board">IPEX socket on the module</td><td data-th="Connection">antenna pigtail</td><td data-th="Target">SMA socket in the opposite side → antenna</td></tr>
- <tr><td data-th="Terminal on the breakout board">USB-C of the DevKit</td><td data-th="Connection">flat cable</td><td data-th="Target">USB-C panel socket in the connector side</td></tr>
+<div class="tw"><table style="font-size:8.2pt">
+ <thead><tr><th>Terminal on the breakout board</th><th>Connection</th><th>Target</th><th>Function</th></tr></thead>
+ <tr><td data-th="Terminal on the breakout board">P25 (GPIO25, DAC1)</td><td data-th="Connection">via 220 Ω</td><td data-th="Target">pigtail “X”, red lead → oscilloscope channel 1</td><td data-th="Function">analogue output DAC1: voltage for the X deflection</td></tr>
+ <tr><td data-th="Terminal on the breakout board">P26 (GPIO26, DAC2)</td><td data-th="Connection">via 220 Ω</td><td data-th="Target">pigtail “Y”, red lead → oscilloscope channel 2</td><td data-th="Function">analogue output DAC2: voltage for the Y deflection</td></tr>
+ <tr><td data-th="Terminal on the breakout board">GND (left row)</td><td data-th="Connection">direct</td><td data-th="Target">brown leads (shield) of all pigtails</td><td data-th="Function">ground – reference of the deflection voltages</td></tr>
+ <tr><td data-th="Terminal on the breakout board">3V3</td><td data-th="Connection">direct</td><td data-th="Target">OLED VCC</td><td data-th="Function">3.3 V supply for the OLED</td></tr>
+ <tr><td data-th="Terminal on the breakout board">GND (right row)</td><td data-th="Connection">direct</td><td data-th="Target">OLED GND</td><td data-th="Function">OLED ground</td></tr>
+ <tr><td data-th="Terminal on the breakout board">P23</td><td data-th="Connection">direct</td><td data-th="Target">OLED DIN</td><td data-th="Function">SPI data (VSPI MOSI): image content to the display</td></tr>
+ <tr><td data-th="Terminal on the breakout board">P18</td><td data-th="Connection">direct</td><td data-th="Target">OLED CLK</td><td data-th="Function">SPI clock (VSPI SCK)</td></tr>
+ <tr><td data-th="Terminal on the breakout board">P5</td><td data-th="Connection">direct</td><td data-th="Target">OLED CS</td><td data-th="Function">chip select, low = OLED addressed</td></tr>
+ <tr><td data-th="Terminal on the breakout board">P17</td><td data-th="Connection">direct</td><td data-th="Target">OLED DC</td><td data-th="Function">data/command: high = image data, low = command</td></tr>
+ <tr><td data-th="Terminal on the breakout board">P4</td><td data-th="Connection">direct</td><td data-th="Target">OLED RST</td><td data-th="Function">display reset (active low)</td></tr>
+ <tr><td data-th="Terminal on the breakout board">P21 / P22 · 3V3 · GND</td><td data-th="Connection">direct</td><td data-th="Target"><i>optional:</i> DS3231 real-time clock – SDA / SCL · VCC · GND</td><td data-th="Function">I²C data / I²C clock · supply · ground</td></tr>
+ <tr><td data-th="Terminal on the breakout board">IPEX socket on the module</td><td data-th="Connection">antenna pigtail</td><td data-th="Target">SMA socket in the opposite side → antenna</td><td data-th="Function">Wi-Fi signal 2.4 GHz</td></tr>
+ <tr><td data-th="Terminal on the breakout board">USB-C of the DevKit</td><td data-th="Connection">flat cable</td><td data-th="Target">USB-C panel socket in the connector side</td><td data-th="Function">5 V supply, firmware upload, serial monitor</td></tr>
 </table></div>
 <div class="warn"><b>Important:</b> terminal P0 (GPIO0) is the BOOT button – do not connect anything there. Connect the OLED to
 <b>3V3</b>, not to 5V. Never run the -32U module on Wi-Fi without an antenna.</div>

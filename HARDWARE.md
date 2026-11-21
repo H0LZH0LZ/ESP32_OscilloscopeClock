@@ -23,23 +23,23 @@ Ausführliche Aufbauanleitung mit Bohrplan: [docs/ESP32_Oscilloscope_Clock_Dokum
 ```
 Klemme (Breakout-Board)  Ziel
 ─────────────            ──────────────────────────────────────────────
-P25 (DAC1) ──[220Ω]── Pigtail "X" rot (Innenleiter) ──> BNC-Stecker → Oszilloskop Kanal 1
-P26 (DAC2) ──[220Ω]── Pigtail "Y" rot (Innenleiter) ──> BNC-Stecker → Oszilloskop Kanal 2
-GND ─────────────────── Pigtail "X" + "Y" braun (Schirm)
+P25 (DAC1) ──[220Ω]── Pigtail "X" rot (Innenleiter) ──> BNC-Stecker → Oszilloskop Kanal 1   (Spannung X-Ablenkung)
+P26 (DAC2) ──[220Ω]── Pigtail "Y" rot (Innenleiter) ──> BNC-Stecker → Oszilloskop Kanal 2   (Spannung Y-Ablenkung)
+GND ─────────────────── Pigtail "X" + "Y" braun (Schirm)                                       (Masse, Bezug)
 
-3V3  ─────────────────── OLED VCC
-GND  ─────────────────── OLED GND
-GPIO18 (VSPI SCK) ────── OLED CLK
-GPIO23 (VSPI MOSI) ───── OLED DIN
-GPIO5  ───────────────── OLED CS
-GPIO17 ───────────────── OLED DC
-GPIO4  ───────────────── OLED RST
+3V3  ─────────────────── OLED VCC    Versorgung 3,3 V
+GND  ─────────────────── OLED GND    Masse
+GPIO18 (VSPI SCK) ────── OLED CLK    SPI-Takt
+GPIO23 (VSPI MOSI) ───── OLED DIN    SPI-Daten (Bildinhalt)
+GPIO5  ───────────────── OLED CS     Chip-Auswahl (low = aktiv)
+GPIO17 ───────────────── OLED DC     high = Bilddaten, low = Befehl
+GPIO4  ───────────────── OLED RST    Reset (low-aktiv)
 
 optional – Echtzeituhr DS3231 (ZS-042):
-3V3  ─────────────────── RTC VCC
-GND  ─────────────────── RTC GND
-GPIO21 (I²C SDA) ─────── RTC SDA
-GPIO22 (I²C SCL) ─────── RTC SCL
+3V3  ─────────────────── RTC VCC     Versorgung 3,3 V
+GND  ─────────────────── RTC GND     Masse
+GPIO21 (I²C SDA) ─────── RTC SDA     I²C-Daten
+GPIO22 (I²C SCL) ─────── RTC SCL     I²C-Takt
 
 IPEX/U.FL ── Pigtail (Antennen-Kit) ── SMA-Buchse in der gegenüberliegenden Seite ── Bingfu-Antenne (SMA)
 ```

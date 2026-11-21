@@ -138,21 +138,21 @@ kommt direkt in den Eingang des Oszilloskops, ein zusätzliches BNC-Kabel ist ni
 
 <h2>3 Aufbauanleitung Schritt für Schritt</h2>
 <figure><img src="images/verdrahtung.svg" style="width:100%"><figcaption>Abb. 4 – Verdrahtung. Das DevKit steckt im Breakout-Board; alle Leitungen kommen in die gleichnamigen Schraubklemmen.</figcaption></figure>
-<table style="break-inside:avoid">
- <tr><th>Klemme am Breakout-Board</th><th>Anschluss</th><th>Ziel</th></tr>
- <tr><td>P25 (GPIO25, DAC1)</td><td>über 220 Ω</td><td>Pigtail „X“, rote Ader → Oszilloskop Kanal 1</td></tr>
- <tr><td>P26 (GPIO26, DAC2)</td><td>über 220 Ω</td><td>Pigtail „Y“, rote Ader → Oszilloskop Kanal 2</td></tr>
- <tr><td>GND (linke Reihe)</td><td>direkt</td><td>braune Adern (Schirm) aller Pigtails</td></tr>
- <tr><td>3V3</td><td>direkt</td><td>OLED VCC</td></tr>
- <tr><td>GND (rechte Reihe)</td><td>direkt</td><td>OLED GND</td></tr>
- <tr><td>P23</td><td>direkt</td><td>OLED DIN</td></tr>
- <tr><td>P18</td><td>direkt</td><td>OLED CLK</td></tr>
- <tr><td>P5</td><td>direkt</td><td>OLED CS</td></tr>
- <tr><td>P17</td><td>direkt</td><td>OLED DC</td></tr>
- <tr><td>P4</td><td>direkt</td><td>OLED RST</td></tr>
- <tr><td>P21 / P22 · 3V3 · GND</td><td>direkt</td><td><i>optional:</i> Echtzeituhr DS3231 – SDA / SCL · VCC · GND</td></tr>
- <tr><td>IPEX-Buchse am Modul</td><td>Antennen-Pigtail</td><td>SMA-Buchse in der gegenüberliegenden Seite → Antenne</td></tr>
- <tr><td>USB-C des DevKits</td><td>Flachbandkabel</td><td>USB-C-Einbaubuchse in der Anschlussseite</td></tr>
+<table style="font-size:8.2pt">
+ <thead><tr><th>Klemme am Breakout-Board</th><th>Anschluss</th><th>Ziel</th><th>Funktion</th></tr></thead>
+ <tr><td>P25 (GPIO25, DAC1)</td><td>über 220 Ω</td><td>Pigtail „X“, rote Ader → Oszilloskop Kanal 1</td><td>Analogausgang DAC1: Spannung für die X-Ablenkung</td></tr>
+ <tr><td>P26 (GPIO26, DAC2)</td><td>über 220 Ω</td><td>Pigtail „Y“, rote Ader → Oszilloskop Kanal 2</td><td>Analogausgang DAC2: Spannung für die Y-Ablenkung</td></tr>
+ <tr><td>GND (linke Reihe)</td><td>direkt</td><td>braune Adern (Schirm) aller Pigtails</td><td>Masse – Bezug der Ablenkspannungen</td></tr>
+ <tr><td>3V3</td><td>direkt</td><td>OLED VCC</td><td>Versorgung 3,3 V für das OLED</td></tr>
+ <tr><td>GND (rechte Reihe)</td><td>direkt</td><td>OLED GND</td><td>Masse des OLED</td></tr>
+ <tr><td>P23</td><td>direkt</td><td>OLED DIN</td><td>SPI-Daten (VSPI MOSI): Bildinhalt zum Display</td></tr>
+ <tr><td>P18</td><td>direkt</td><td>OLED CLK</td><td>SPI-Takt (VSPI SCK)</td></tr>
+ <tr><td>P5</td><td>direkt</td><td>OLED CS</td><td>Chip-Auswahl, low = OLED angesprochen</td></tr>
+ <tr><td>P17</td><td>direkt</td><td>OLED DC</td><td>Daten/Befehl: high = Bilddaten, low = Befehl</td></tr>
+ <tr><td>P4</td><td>direkt</td><td>OLED RST</td><td>Reset des Displays (low-aktiv)</td></tr>
+ <tr><td>P21 / P22 · 3V3 · GND</td><td>direkt</td><td><i>optional:</i> Echtzeituhr DS3231 – SDA / SCL · VCC · GND</td><td>I²C-Daten / I²C-Takt · Versorgung · Masse</td></tr>
+ <tr><td>IPEX-Buchse am Modul</td><td>Antennen-Pigtail</td><td>SMA-Buchse in der gegenüberliegenden Seite → Antenne</td><td>WLAN-Signal 2,4 GHz</td></tr>
+ <tr><td>USB-C des DevKits</td><td>Flachbandkabel</td><td>USB-C-Einbaubuchse in der Anschlussseite</td><td>Versorgung 5 V, Hochladen der Firmware, serieller Monitor</td></tr>
 </table>
 <div class="warn"><b>Wichtig:</b> Klemme P0 (GPIO0) ist der BOOT-Taster – dort nichts anschließen. Das OLED an <b>3V3</b>,
 nicht an 5V. Das Modul -32U nie ohne Antenne im WLAN-Betrieb laufen lassen.</div>
