@@ -296,7 +296,11 @@ Brightness 0–100 %, seconds, rotation by 180° and pixel shifting against burn
 </div>
 <h3>BOOT button</h3>
 <p><b>Holding it for 3 seconds</b> switches the oscilloscope profile (DIGITAL ↔ ANALOG). The OLED shows the change with a countdown
-3, 2, 1; releasing earlier cancels. The setting is saved. <b>Do not press it while powering on</b> – otherwise the ESP32 starts in download mode.</p>
+3, 2, 1; releasing earlier cancels (Fig. 13 and 14). The setting is saved. <b>Do not press it while powering on</b> – otherwise the ESP32 starts in download mode.</p>
+<div class="two">
+ <figure><img src="images/oled_profil_en.png"><figcaption>Fig. 13 – Switching DIGITAL → ANALOG (BOOT button held, 2 s to go)</figcaption></figure>
+ <figure><img src="images/oled_profil_analog_digital_en.png"><figcaption>Fig. 14 – Switching ANALOG → DIGITAL (back to the profile for digital oscilloscopes)</figcaption></figure>
+</div>
 <p><b>Factory reset: hold for 10 seconds.</b> From 5 s the OLED counts down 5 … 1 (Fig. 12), then <b>all settings and networks are erased</b> and the clock restarts with the setup network. Releasing earlier cancels.</p>
 
 <h2>8 All settings at a glance</h2>
@@ -408,16 +412,79 @@ group has “Reset to defaults”; the change can then be undone with “Undo”
 <p>For a bug report tap “Download” in the debug section and pass on the text file.</p>
 
 <h2>10 Technology: how the clock works</h2>
-<figure><img src="images/software_en.svg" style="width:96%"><figcaption>Fig. 13 – Distribution of the firmware over the two processor cores</figcaption></figure>
-<p><b>Core 1</b> does nothing but guide the beam: without pauses, without locks, without Wi-Fi interruptions. Wi-Fi and the
-display are started on <b>core 0</b> so that their interrupts do not disturb the drawing path.</p>
-<p><b>Equal brightness:</b> the brightness of a line depends on how long the beam dwells on each piece of its path. The firmware
-therefore splits every line into steps of equal length and dwells equally long on each step (dwell time). This makes horizontal,
-vertical and diagonal lines equally bright. The narrow hands get 67 % because they would otherwise look brighter.</p>
-<p><b>Few retrace lines:</b> at start-up the dial and numerals are sorted into a round trip with jumps as short as possible.
-In profile ANALOG the beam jumps fast and brakes before the target; in profile DIGITAL it jumps instantly so that a digital
-oscilloscope shows no sample points along the way.</p>
-<p><b>Vector data:</b> dial, numerals, hands and test pattern are original drawings generated with <code>tools/gen_vectors.py</code>
+<figure><img src="images/software_en.svg" style="width:96%"><figcaption>Fig. 15 – Distribution of the firmware over the two processor cores</figcaption></figure>
+<h3>Two cores with separate jobs</h3>
+<p>The ESP32 has two processor cores. <b>Core 1</b> runs only the <code>scopeTask</code>: it draws frame after frame without a pause
+and never releases the core – any interruption would show up as a bright dot or a jerk on the screen. That is why the idle-task
+watchdog is switched off on core 1, and the whole drawing path lives in the fast internal RAM (IRAM) so that it never has to wait
+for the flash memory. <b>Core 0</b> does everything else: the <code>wifiTask</code> keeps the Wi-Fi connection, the
+<code>uiTask</code> handles time, BOOT button and web server every 10 ms, refreshes the OLED every 200 ms and measures frame rate
+and load every second. Wi-Fi and OLED are deliberately started only in the <code>uiTask</code>, so that their interrupts end up on
+core 0 as well.</p>
+<p>There are no locks between the cores. Core 0 places time, dial, brightness values and profile in a few variables that are read
+and written in a single step; the time is packed into one 32-bit value. Core 1 reads them once per frame – so all three hands are
+guaranteed to belong to the same second.</p>
+<h3>From number to deflection voltage</h3>
+<p>The two 8-bit DACs on GPIO25 (X) and GPIO26 (Y) each provide 256 voltage steps between about 0 and 3.2 V; one step is roughly
+12.5 mV. The firmware writes the values directly into the DAC registers instead of using the slower Arduino function
+<code>dacWrite()</code>, and writes X and Y immediately one after the other so that no intermediate dot becomes visible. A register
+is only written when its value changes. The 220 Ω resistors in the pigtails limit the current should a BNC plug ever be shorted.
+At 0.5 V/div the picture fills a good six divisions of the screen.</p>
+<h3>Cycle-exact beam control</h3>
+<p>The firmware measures how long the beam stays on a point with the CPU's cycle counter (240 MHz, i.e. to about 4 ns). Every point
+gets a fixed number of cycles, and the firmware waits actively until that moment – without <code>delay()</code>, which would be too
+coarse. The default is a <b>dwell time of 3 µs per DAC step</b>. A frame with the 1–12 dial consists of about 1,400 steps and takes
+about 4.3 ms: that gives about <b>230 frames per second</b>, about 160 with the Roman dial. Longer dwell times make the lines
+brighter but lower the frame rate (below about 60 frames per second it flickers). If core 1 is stopped briefly, for example for a
+flash access, the firmware does not catch up in fast motion but resets its schedule – otherwise a piece of a line would turn out
+too dark.</p>
+<h3>Equal brightness</h3>
+<p>The brightness of a line depends on how long the beam dwells on each piece of the path. The firmware therefore splits every line
+into steps of exactly one DAC step – it computes the length of diagonal lines with an integer square root, without floating point –
+and holds each step equally long. Horizontal, vertical and diagonal lines are thus equally bright. Individual parts can be set
+separately: hour and minute hands are at 67 % by default because the narrow needles would otherwise look brighter than the rest;
+minute marks and numerals are at 100 %. The second hand is drawn out and back, each time with half the dwell time, so it is just as
+bright as a single line.</p>
+<h3>One frame step by step</h3>
+<ol>
+ <li>Hour and minute hands from pre-computed tables (60 positions each). The hour hand moves on one step every 12 minutes and so
+ travels along like on a real clock.</li>
+ <li>Second hand from the centre to the tip.</li>
+ <li>The <b>round trip</b> over all minute marks and numerals – it starts at the stroke closest to the hand's tip.</li>
+ <li>Second hand from the tip back to the centre; the next frame starts there without a long jump.</li>
+</ol>
+<h3>Round trip and jumps</h3>
+<p>Between two strokes the beam has to jump, and every jump can leave a faint trace. At start-up and after every change of dial the
+firmware therefore sorts all strokes into a round trip with jumps as short as possible: first always to the nearest stroke (which may
+also be traced backwards), then sections are reversed as long as that saves jumping (2-opt method). The log reports the result, e.g.
+“round trip: 76 polylines, jumps total 1033 DAC units”.</p>
+<p>How the beam jumps depends on the <b>oscilloscope profile</b>. In the <b>ANALOG</b> profile (CRT oscilloscopes) the beam travels the
+jump at 24 times the drawing speed and brakes over the last steps, so that even a sluggish deflection arrives cleanly; the trace is
+only about 1/24 as bright as a line. In the <b>DIGITAL</b> profile the beam jumps hard in a single step – a digital oscilloscope would
+otherwise show the intermediate values as dots. If your oscilloscope has a Z input you can additionally enable <b>Z blanking</b> on
+GPIO27: during a jump the beam is blanked, and after the jump the firmware waits 5 µs for the deflection to settle.</p>
+<h3>Time</h3>
+<p>The time comes from the internet via <b>NTP</b> (by default <code>de.pool.ntp.org</code>, plus two fallback servers) and is
+re-synchronised every hour. Time zone and daylight-saving rule are stored in a POSIX time-zone string, e.g.
+<code>CET-1CEST,M3.5.0,M10.5.0/3</code> for Central Europe – the change-over is therefore automatic. Without internet the time can
+be set by hand in the web interface. With the optional <b>DS3231 real-time clock</b> the clock takes the time from the module after
+power-on (it keeps running in UTC, even without power); every NTP sync and every manual setting writes the time back, and without NTP
+the firmware corrects the system clock every 10 minutes from the more accurate DS3231.</p>
+<h3>Wi-Fi, web server and settings</h3>
+<p>The clock knows up to 10 Wi-Fi networks and connects to the strongest one in range (WiFiMulti). If none is reachable it opens the
+open setup network “ScopeClock-Setup”; a small DNS server redirects every address to the clock there, which is why the phone opens
+the setup page by itself. In the home network the clock is reachable via mDNS at <code>http://scope-clock.local</code>. The web page
+is stored gzip-compressed in flash and delivered that way; it fetches its data through a small JSON interface (<code>/api/…</code>,
+see appendix). The preview in the web interface draws the same vector data as the oscilloscope.</p>
+<p>All settings and networks are stored in the <b>NVS</b>, a separate area of the flash memory. They survive power-off, uploading new
+firmware and changing the partition scheme; only “factory reset” (BOOT button 10 s) erases them. Passwords are never sent back to
+the browser.</p>
+<h3>OLED and monitoring</h3>
+<p>The OLED is driven via hardware SPI; the U8g2 library builds the whole picture in RAM and transfers it in about 1 ms. Pixel
+shifting moves the display by one pixel every minute so that nothing burns in. For troubleshooting the <code>scopeTask</code> counts
+its frames (frame rate in the status), an idle hook measures the load of core 0, and all messages go into an 8 KB ring buffer shown in
+the debug section.</p>
+<p><b>Vector data:</b> dial, numerals, hands and test pattern are original drawings, generated with <code>tools/gen_vectors.py</code>
 (coordinates 0–255, 8 bits per axis).</p>
 <p><b>Memory:</b> program memory 1,238,554 bytes (94 % with the default partition scheme, approx. 39 % with “Huge APP”), global variables
 74,924 bytes (22 %). The web page is stored gzip-compressed in flash (21 KB), the font (Raleway, reduced to the characters needed) as WOFF2 (30 KB).</p>

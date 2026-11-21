@@ -297,7 +297,11 @@ Drehung um 180° und Pixelverschiebung gegen Einbrennen sind einstellbar.</p>
 </div>
 <h3>BOOT-Taster</h3>
 <p><b>3 Sekunden halten</b> schaltet das Oszilloskop-Profil um (DIGITAL ↔ ANALOG). Das OLED zeigt den Wechsel mit Countdown 3, 2, 1;
-vorher loslassen bricht ab. Die Einstellung wird gespeichert. <b>Nicht beim Einschalten drücken</b> – sonst startet der ESP32 im Download-Modus.</p>
+vorher loslassen bricht ab (Abb. 13 und 14). Die Einstellung wird gespeichert. <b>Nicht beim Einschalten drücken</b> – sonst startet der ESP32 im Download-Modus.</p>
+<div class="two">
+ <figure><img src="images/oled_profil.png"><figcaption>Abb. 13 – Umschalten DIGITAL → ANALOG (BOOT-Taster gehalten, noch 2 s)</figcaption></figure>
+ <figure><img src="images/oled_profil_analog_digital.png"><figcaption>Abb. 14 – Umschalten ANALOG → DIGITAL (zurück zum Profil für digitale Oszilloskope)</figcaption></figure>
+</div>
 <p><b>Werkseinstellungen: 10 Sekunden halten.</b> Ab 5 s zählt das OLED 5 … 1 herunter (Abb. 12), dann werden <b>alle Einstellungen und WLANs gelöscht</b> und die Uhr startet mit dem Setup-WLAN neu. Vorher loslassen bricht ab.</p>
 
 <h2>8 Alle Einstellungen im Überblick</h2>
@@ -408,15 +412,80 @@ beschrieben wird. Jede Gruppe hat „Auf Standardwerte zurücksetzen“; danach 
 <p>Für eine Fehlermeldung im Debug-Bereich „Herunterladen“ antippen und die Textdatei weitergeben.</p>
 
 <h2>10 Technik: wie die Uhr arbeitet</h2>
-<figure><img src="images/software.svg" style="width:96%"><figcaption>Abb. 13 – Aufteilung der Firmware auf die beiden Prozessorkerne</figcaption></figure>
-<p><b>Kern 1</b> tut nichts anderes, als den Strahl zu führen: ohne Pause, ohne Sperren, ohne WLAN-Unterbrechungen. WLAN und
-Display werden auf <b>Kern 0</b> gestartet, damit ihre Interrupts den Zeichenpfad nicht stören.</p>
-<p><b>Gleiche Helligkeit:</b> Die Helligkeit einer Linie hängt davon ab, wie lange der Strahl auf jedem Stück Weg verweilt. Die Firmware
-zerlegt jede Linie deshalb in gleich lange Schritte und hält auf jedem Schritt gleich lange (Verweilzeit). So sind waagerechte, senkrechte
-und schräge Linien gleich hell. Die schmalen Zeiger bekommen 67 %, weil sie sonst heller wirken.</p>
-<p><b>Wenig Rücklaufspuren:</b> Zifferblatt und Ziffern werden beim Start zu einer Rundtour mit möglichst kurzen Sprüngen sortiert.
-Im Profil ANALOG springt der Strahl schnell und bremst vor dem Ziel, im Profil DIGITAL springt er hart, damit ein digitales Oszilloskop
-unterwegs keine Abtastpunkte zeigt.</p>
+<figure><img src="images/software.svg" style="width:96%"><figcaption>Abb. 15 – Aufteilung der Firmware auf die beiden Prozessorkerne</figcaption></figure>
+<h3>Zwei Kerne mit getrennten Aufgaben</h3>
+<p>Der ESP32 hat zwei Prozessorkerne. <b>Kern 1</b> führt nur den <code>scopeTask</code> aus: Er zeichnet ohne Pause Bild für Bild
+und gibt den Kern nie frei – jede Unterbrechung wäre als heller Punkt oder Ruckeln auf dem Schirm zu sehen. Deshalb ist auf
+Kern 1 der Watchdog des Leerlauf-Tasks abgeschaltet, und der Zeichenpfad liegt vollständig im schnellen internen RAM (IRAM),
+damit er nicht auf den Flash-Speicher warten muss. <b>Kern 0</b> erledigt alles andere: der <code>wifiTask</code> hält die
+WLAN-Verbindung, der <code>uiTask</code> arbeitet alle 10 ms Uhrzeit, BOOT-Taster und Webserver ab, aktualisiert alle 200 ms
+das OLED und misst jede Sekunde Bildrate und Auslastung. WLAN und OLED werden bewusst erst im <code>uiTask</code> gestartet,
+damit auch ihre Interrupts auf Kern 0 landen.</p>
+<p>Zwischen den Kernen gibt es keine Sperren. Kern 0 legt Uhrzeit, Zifferblatt, Helligkeiten und Profil in wenigen
+Variablen ab, die in einem Schritt gelesen und geschrieben werden; die Uhrzeit steckt dabei gepackt in einem einzigen
+32-Bit-Wert. Kern 1 liest sie einmal pro Bild – so gehören alle drei Zeiger garantiert zur selben Sekunde.</p>
+<h3>Vom Zahlenwert zur Ablenkspannung</h3>
+<p>Die beiden 8-Bit-DACs an GPIO25 (X) und GPIO26 (Y) liefern je 256 Spannungsstufen zwischen etwa 0 und 3,2 V, eine Stufe sind
+rund 12,5 mV. Die Firmware schreibt die Werte direkt in die DAC-Register, statt die langsamere Arduino-Funktion
+<code>dacWrite()</code> zu benutzen, und beschreibt X und Y unmittelbar nacheinander, damit kein Zwischenpunkt sichtbar wird.
+Ein Register wird nur beschrieben, wenn sich der Wert ändert. Die 220-Ω-Widerstände in den Pigtails begrenzen den Strom, falls ein
+BNC-Stecker einmal einen Kurzschluss bekommt. Bei 0,5 V/Div füllt das Bild gut sechs Kästchen des Schirms.</p>
+<h3>Taktgenaue Strahlführung</h3>
+<p>Wie lange der Strahl auf einem Punkt bleibt, misst die Firmware am Taktzähler der CPU (240 MHz, also auf rund 4 ns genau).
+Jeder Punkt bekommt eine feste Anzahl Takte, und die Firmware wartet aktiv, bis dieser Zeitpunkt erreicht ist – ohne
+<code>delay()</code>, das zu ungenau wäre. Standard ist eine <b>Verweilzeit von 3 µs pro DAC-Stufe</b>. Ein Bild mit Zifferblatt
+1–12 besteht aus rund 1.400 Schritten und dauert damit etwa 4,3 ms: Das ergibt etwa <b>230 Bilder pro Sekunde</b>, das römische
+Zifferblatt etwa 160. Größere Verweilzeiten machen die Linien heller, senken aber die Bildrate (unter etwa 60 Bildern pro Sekunde
+flimmert es). Wird Kern 1 kurz angehalten, etwa für einen Flash-Zugriff, holt die Firmware die verlorene Zeit nicht im
+Zeitraffer nach, sondern setzt den Zeitplan neu – sonst würde ein Stück Linie zu dunkel.</p>
+<h3>Gleiche Helligkeit</h3>
+<p>Die Helligkeit einer Linie hängt davon ab, wie lange der Strahl auf jedem Stück Weg verweilt. Die Firmware zerlegt jede Linie
+deshalb in Schritte von genau einer DAC-Stufe Länge – die Länge schräger Linien berechnet sie mit einer ganzzahligen Wurzel,
+ohne Gleitkomma – und hält auf jedem Schritt gleich lange. So sind waagerechte, senkrechte und schräge Linien gleich hell.
+Einzelne Teile lassen sich getrennt abstufen: Stunden- und Minutenzeiger stehen ab Werk auf 67 %, weil die schmalen Nadeln sonst
+heller wirken als der Rest; Minutenstriche und Ziffern auf 100 %. Der Sekundenzeiger wird hin und zurück gezeichnet, jeweils mit
+halber Verweilzeit, und ist damit genauso hell wie eine einfache Linie.</p>
+<h3>Ein Bild im Ablauf</h3>
+<ol>
+ <li>Stunden- und Minutenzeiger aus vorberechneten Tabellen (je 60 Stellungen). Der Stundenzeiger rückt alle 12 Minuten einen
+ Schritt weiter und wandert so wie bei einer echten Uhr mit.</li>
+ <li>Sekundenzeiger von der Mitte zur Spitze.</li>
+ <li>Die <b>Rundtour</b> über alle Minutenstriche und Ziffern – sie beginnt bei dem Linienzug, der der Zeigerspitze am nächsten liegt.</li>
+ <li>Sekundenzeiger von der Spitze zurück zur Mitte; dort beginnt das nächste Bild ohne langen Rücksprung.</li>
+</ol>
+<h3>Rundtour und Sprünge</h3>
+<p>Zwischen zwei Linienzügen muss der Strahl springen, und jeder Sprung kann eine schwache Spur hinterlassen. Beim Start und nach
+jedem Wechsel des Zifferblatts sortiert die Firmware deshalb alle Linienzüge zu einer Rundtour mit möglichst kurzen Sprüngen:
+zuerst immer zum nächstgelegenen Linienzug (der auch umgedreht durchlaufen werden darf), danach werden Teilstücke umgedreht,
+solange das Sprünge spart (2-opt-Verfahren). Das Protokoll meldet das Ergebnis, etwa „Rundtour: 76 Linienzüge, Sprünge gesamt
+1033 DAC-Einheiten“.</p>
+<p>Wie gesprungen wird, bestimmt das <b>Oszilloskop-Profil</b>. Im Profil <b>ANALOG</b> (Röhren-Oszilloskope) fährt der Strahl den
+Sprung mit 24-facher Zeichengeschwindigkeit und bremst auf den letzten Stufen ab, damit auch eine träge Ablenkung sauber am Ziel
+ankommt; die Spur ist dabei nur etwa 1/24 so hell wie eine Linie. Im Profil <b>DIGITAL</b> springt der Strahl hart in einem Schritt –
+ein digitales Oszilloskop würde sonst die Zwischenwerte als Punkte anzeigen. Wer einen Z-Eingang am Oszilloskop hat, kann zusätzlich
+die <b>Dunkeltastung</b> an GPIO27 einschalten: Während eines Sprungs wird der Strahl dunkelgeschaltet, nach dem Sprung wartet die
+Firmware 5 µs, bis die Ablenkung sich beruhigt hat.</p>
+<h3>Uhrzeit</h3>
+<p>Die Zeit kommt per <b>NTP</b> aus dem Internet (ab Werk <code>de.pool.ntp.org</code>, dazu zwei Ersatzserver) und wird stündlich
+nachgestellt. Zeitzone und Sommerzeitregel stehen in einer POSIX-Zeitzonenangabe, etwa <code>CET-1CEST,M3.5.0,M10.5.0/3</code> für
+Mitteleuropa – die Umstellung passiert damit automatisch. Ohne Internet lässt sich die Zeit im Webinterface von Hand stellen. Mit der
+optionalen <b>Echtzeituhr DS3231</b> übernimmt die Uhr die Zeit nach dem Einschalten aus dem Modul (es läuft in UTC weiter, auch
+ohne Strom); jede NTP-Synchronisierung und jedes Stellen von Hand schreibt die Zeit zurück, und ohne NTP stellt die Firmware die
+Systemuhr alle 10 Minuten aus der genaueren DS3231 nach.</p>
+<h3>WLAN, Webserver und Einstellungen</h3>
+<p>Die Uhr kennt bis zu 10 WLANs und verbindet sich mit dem stärksten erreichbaren (WiFiMulti). Ist keines erreichbar, öffnet sie
+das offene Setup-WLAN „ScopeClock-Setup“; ein kleiner DNS-Server leitet dort jede Adresse auf die Uhr um, deshalb öffnet das Handy
+die Einrichtungsseite von selbst. Im Heimnetz ist die Uhr per mDNS unter <code>http://scope-clock.local</code> erreichbar. Die
+Webseite liegt gzip-komprimiert im Flash und wird so ausgeliefert; ihre Daten holt sie über eine kleine JSON-Schnittstelle
+(<code>/api/…</code>, siehe Anhang). Die Vorschau im Webinterface zeichnet dieselben Vektordaten wie das Oszilloskop.</p>
+<p>Alle Einstellungen und WLANs liegen im <b>NVS</b>, einem eigenen Bereich des Flash-Speichers. Sie bleiben beim Ausschalten, beim
+Hochladen neuer Firmware und beim Wechsel des Partitionsschemas erhalten; nur „Werkseinstellungen“ (BOOT-Taster 10 s) löscht sie.
+Passwörter werden nie an den Browser zurückgegeben.</p>
+<h3>OLED und Überwachung</h3>
+<p>Das OLED wird über Hardware-SPI angesteuert; die Bibliothek U8g2 baut das ganze Bild im RAM auf und überträgt es in etwa 1 ms.
+Die Pixelverschiebung versetzt die Anzeige jede Minute um einen Pixel, damit keine Stelle einbrennt. Für die Fehlersuche zählt der
+<code>scopeTask</code> seine Bilder (Bildrate im Status), ein Leerlauf-Hook misst die Auslastung von Kern 0, und alle Meldungen
+landen in einem 8-KB-Ringpuffer, den der Debug-Bereich anzeigt.</p>
 <p><b>Vektordaten:</b> Zifferblatt, Ziffern, Zeiger und Testbild sind eigene Zeichnungen, erzeugt mit <code>tools/gen_vectors.py</code>
 (Koordinaten 0–255, 8 Bit je Achse).</p>
 <p><b>Speicher:</b> Programmspeicher 1.238.554 Byte (94 % beim Standard-Partitionsschema, ca. 39 % mit „Huge APP“), globale Variablen
