@@ -122,7 +122,7 @@ der Leiste angeschlossen werden, die besser passt.
 ## Gehäuse (Abzweigdose 150 × 100 × 70 mm)
 - **Anschlussseite** (kurze Seite, 100 mm), von außen gesehen: Pigtail X bei 28 mm, **mittig die USB-C-Einbaubuchse** (Ø 16 mm bei 50 mm), Pigtail Y bei 72 mm. Kabelverschraubungen M6: Ø 5,0 bohren und M6-Gewinde schneiden (oder Ø 6,2 + Mutter).
 - **Gegenüberliegende Seite:** Antenne (SMA, Ø 6,5 mm, mittig).
-- DevKit um 180° gedreht im Breakout-Board (Modul zur Anschlussseite, USB-C zur Antennenseite); Antennenkabel und USB-Flachbandkabel laufen einmal unter dem Board durch zur jeweils gegenüberliegenden Seite.
+- DevKit richtig herum aufgesteckt (Pin „3V3“ an Klemme „3V3“), das Breakout-Board **samt DevKit um 180° gedreht** eingebaut (Modul zur Anschlussseite, USB-C zur Antennenseite, P25/P26 rechts). Das DevKit nie verdreht aufstecken, sonst stimmen die Klemmenaufdrucke nicht; Antennenkabel und USB-Flachbandkabel laufen einmal unter dem Board durch zur jeweils gegenüberliegenden Seite.
 - Deckel: Fenster für das OLED (aktive Fläche ca. 55 × 28 mm), Modul mit M2,5-Abstandsbolzen befestigen.
 - Breakout-Board auf der Montageplatte; die Pigtails in die Klemmen P25/P26 (rot, über 220 Ω) und GND (braun).
 - Bohrplan 1:1 zum Ausdrucken auf DIN A4: letzte Seite von `docs/ESP32_Oscilloscope_Clock_Dokumentation.pdf`.
