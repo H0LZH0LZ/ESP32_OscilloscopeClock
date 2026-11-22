@@ -10,11 +10,11 @@
 | [Waveshare 2,42inch OLED Display Module](https://www.amazon.de/dp/B0CL6WMHJN), weiß (SSD1309, 128×64, SPI/I²C), 61,5 × 39,5 mm – **optional**, im Prototyp verbaut | Lokale Textanzeige (die Uhr läuft auch ohne): Uhrzeit 24h und Datum/KW (7-Segment-Stil), SSID, Signal |
 | [WLAN-Antenne Bingfu](https://www.amazon.de/dp/B086JCJMSN) 2,4/5,8 GHz, 8 dBi, SMA-Stecker | Pflicht beim *-32U*: das Modul hat **keine** PCB-Antenne; SMA und RP-SMA nicht mischen |
 | [ESP32-Breakout-Board mit Schraubklemmen](https://www.amazon.de/dp/B0BCWBW4SR) | DevKit aufstecken, alle Leitungen in Schraubklemmen (Beschriftung P25, P26 …) – nichts am DevKit löten |
-| 2× [BNC-Pigtail](https://de.aliexpress.com/item/1005006318978533.html), BNC-Stecker auf 2,54-mm-DuPont-Stift, RG316 | X- und Y-Ausgang; der BNC-Stecker kommt direkt ins Oszilloskop (rot = Signal, braun = Schirm) |
+| 2× [BNC-Pigtail](https://de.aliexpress.com/item/1005006318978533.html), BNC-Stecker auf 2,54-mm-DuPont-Stift, RG316 | X- und Y-Ausgang; der BNC-Stecker kommt direkt ins Oszilloskop (rot = Signal, braun = Schirm). Die DuPont-Stecker werden abgeschnitten |
 | 2× [Kabelverschraubung Lapp SKINDICHT MINI](https://de.rs-online.com/web/p/kabelverschraubungen/4583953) M6×1 (52001860), Klemmbereich 2–3 mm | führt die Pigtails durch die Gehäusewand |
 | [USB-C-Einbauverlängerung](https://www.amazon.de/dp/B0FM7RLQTF) (IP67, 0,2 m, Einbauöffnung 16 mm) | Versorgung und Programmierung von außen |
 | [ABS-Abzweigdose 150 × 100 × 70 mm](https://www.amazon.de/dp/B0B5RGNNXV), IP67, Scharnierdeckel, Montageplatte | Gehäuse (funkdurchlässig) |
-| Kleinteile | 2× 220 Ω (in die rote Ader der Pigtails), Abstandsbolzen M2,5/M3 |
+| Kleinteile | 2× 220 Ω (an die rote Ader der Pigtails), Aderendhülsen (optional), Abstandsbolzen M2,5/M3 |
 
 Ausführliche Aufbauanleitung mit Bohrplan: [docs/ESP32_Oscilloscope_Clock_Dokumentation.pdf](docs/ESP32_Oscilloscope_Clock_Dokumentation.pdf).
 
@@ -124,8 +124,9 @@ der Leiste angeschlossen werden, die besser passt.
 - **Gegenüberliegende Seite:** Antenne (SMA, Ø 6,5 mm, mittig).
 - DevKit richtig herum aufgesteckt (Pin „3V3“ an Klemme „3V3“), das Breakout-Board **samt DevKit um 180° gedreht** eingebaut (Modul zur Anschlussseite, USB-C zur Antennenseite, P25/P26 rechts). Das DevKit nie verdreht aufstecken, sonst stimmen die Klemmenaufdrucke nicht; Antennenkabel und USB-Flachbandkabel laufen einmal unter dem Board durch zur jeweils gegenüberliegenden Seite.
 - Deckel: Fenster für das OLED (aktive Fläche ca. 55 × 28 mm), Modul mit M2,5-Abstandsbolzen befestigen.
-- Pigtails zuerst von außen durch die Kabelverschraubungen führen, erst dann innen den 220-Ω-Widerstand in die rote Ader löten –
-  mit Widerstand und Schrumpfschlauch passt das Kabel nicht mehr durch die Verschraubung.
+- Pigtails: die DuPont-Stecker abschneiden (sie passen nicht durch die Verschraubung), das Kabel von außen durch die
+  Kabelverschraubung führen, erst dann innen abisolieren und den 220-Ω-Widerstand an die rote Ader löten – mit Widerstand
+  und Schrumpfschlauch passt das Kabel nicht mehr durch. Das freie Widerstandsbein und die braune Ader kommen in die Klemmen.
 - Breakout-Board auf der Montageplatte; die Pigtails in die Klemmen P25/P26 (rot, über 220 Ω) und GND (braun).
 - Bohrplan 1:1 zum Ausdrucken auf DIN A4: letzte Seite von `docs/ESP32_Oscilloscope_Clock_Dokumentation.pdf`.
 

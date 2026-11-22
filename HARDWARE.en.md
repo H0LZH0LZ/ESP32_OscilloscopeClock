@@ -10,11 +10,11 @@
 | [Waveshare 2.42inch OLED display module](https://www.amazon.de/dp/B0CL6WMHJN), white (SSD1309, 128×64, SPI/I²C), 61.5 × 39.5 mm – **optional**, fitted in the prototype | Local text display (the clock also runs without it): time 24 h and date/calendar week (7-segment style), SSID, signal |
 | [WiFi antenna Bingfu](https://www.amazon.de/dp/B086JCJMSN) 2.4/5.8 GHz, 8 dBi, SMA plug | Mandatory with the *-32U*: the module has **no** PCB antenna; do not mix SMA and RP-SMA |
 | [ESP32 breakout board with screw terminals](https://www.amazon.de/dp/B0BCWBW4SR) | plug in the DevKit, all wires go into screw terminals (labelled P25, P26 …) – no soldering on the DevKit |
-| 2× [BNC pigtail](https://de.aliexpress.com/item/1005006318978533.html), BNC plug to 2.54 mm DuPont pin, RG316 | X and Y outputs; the BNC plug goes straight into the oscilloscope (red = signal, brown = shield) |
+| 2× [BNC pigtail](https://de.aliexpress.com/item/1005006318978533.html), BNC plug to 2.54 mm DuPont pin, RG316 | X and Y outputs; the BNC plug goes straight into the oscilloscope (red = signal, brown = shield). The DuPont plugs are cut off |
 | 2× [cable gland Lapp SKINDICHT MINI](https://de.rs-online.com/web/p/kabelverschraubungen/4583953) M6×1 (52001860), clamping range 2–3 mm | leads the pigtails through the enclosure wall |
 | [USB-C panel-mount extension](https://www.amazon.de/dp/B0FM7RLQTF) (IP67, 0.2 m, 16 mm cut-out) | power and programming from outside |
 | [ABS junction box 150 × 100 × 70 mm](https://www.amazon.de/dp/B0B5RGNNXV), IP67, hinged lid, mounting plate | Enclosure (RF-transparent) |
-| Small parts | 2× 220 Ω (in the red lead of the pigtails), standoffs M2.5/M3 |
+| Small parts | 2× 220 Ω (on the red lead of the pigtails), wire-end ferrules (optional), standoffs M2.5/M3 |
 
 Detailed assembly guide with drilling template: [docs/ESP32_Oscilloscope_Clock_Documentation.pdf](docs/ESP32_Oscilloscope_Clock_Documentation.pdf).
 
@@ -124,8 +124,9 @@ fits better.
 - **Opposite side:** antenna (SMA, Ø 6.5 mm, centred).
 - DevKit plugged in the right way round (pin “3V3” at terminal “3V3”), the breakout board **together with the DevKit rotated by 180°** (module towards the connector side, USB-C towards the antenna side, P25/P26 on the right). Never plug the DevKit in the wrong way round, otherwise the terminal labels no longer match; the antenna cable and the USB flat cable run once underneath the board to the opposite side.
 - Lid: window for the OLED (active area approx. 55 × 28 mm), mount the module on M2.5 standoffs.
-- Lead the pigtails from the outside through the cable glands first, only then solder the 220 Ω resistor into the red lead
-  on the inside – with the resistor and heat-shrink tubing the cable no longer fits through the gland.
+- Pigtails: cut off the DuPont plugs (they do not fit through the gland), lead the cable from the outside through the cable
+  gland, only then strip it on the inside and solder the 220 Ω resistor to the red lead – with the resistor and heat-shrink
+  tubing the cable no longer fits through. The free resistor leg and the brown lead go into the terminals.
 - Breakout board on the mounting plate; pigtails into terminals P25/P26 (red, via 220 Ω) and GND (brown).
 - Drilling template 1:1 for printing on A4: last page of `docs/ESP32_Oscilloscope_Clock_Documentation.pdf`.
 

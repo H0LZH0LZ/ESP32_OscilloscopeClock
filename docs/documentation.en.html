@@ -103,7 +103,7 @@ oscilloscope input; no additional BNC cable is needed.</p>
  <tr><th>Qty</th><th>Part</th><th>Note</th></tr>
  <tr><td>1</td><td><b><a href="https://www.amazon.de/dp/B0F65G3V81">ESP32-WROOM-32U DevKitC V4</a></b> with USB-C and antenna kit (DUBEUYEW, “2 pcs ESP32-WROOM-32U ESP32 DevKitC V4 USB-C with antenna kit”), 48.5 × 28.5 mm</td><td>Classic ESP32 with two 8-bit DACs on GPIO25/26, USB-serial converter CP2102. The antenna kit contains the IPEX→SMA pigtail. Other ESP32 variants (S2, S3, C3) have no or different DACs and do not fit.</td></tr>
  <tr><td>1</td><td><b><a href="https://www.amazon.de/dp/B0BCWBW4SR">ESP32 breakout board with screw terminals</a></b> (XTVTX, “ESP32 breakout board expansion board GPIO 1 in 2”, pack of 2)</td><td>The DevKit is plugged in and all wires go into screw terminals – nothing is soldered on the DevKit. The terminals are labelled like the pins (3V3, GND, P25, P26, P23 …).</td></tr>
- <tr><td>2</td><td><b><a href="https://de.aliexpress.com/item/1005006318978533.html">BNC pigtail cable</a></b>, BNC plug to 2.54 mm DuPont pin, RG316 (TEJIATE, “SMA to DuPont BNC/Q9/N … RG316”, variant <b>BNC-J to J</b>)</td><td>X and Y. Choose the length to suit the distance to the oscilloscope (30–80 cm available; 50 cm is a good choice). Red = core (signal), brown = shield (ground) – confirm with a continuity tester.</td></tr>
+ <tr><td>2</td><td><b><a href="https://de.aliexpress.com/item/1005006318978533.html">BNC pigtail cable</a></b>, BNC plug to 2.54 mm DuPont pin, RG316 (TEJIATE, “SMA to DuPont BNC/Q9/N … RG316”, variant <b>BNC-J to J</b>)</td><td>X and Y. Choose the length to suit the distance to the oscilloscope (30–80 cm available; 50 cm is a good choice). Red = core (signal), brown = shield (ground) – confirm with a continuity tester. The DuPont plugs are cut off during assembly.</td></tr>
  <tr><td>2</td><td><b><a href="https://de.rs-online.com/web/p/kabelverschraubungen/4583953">Cable gland Lapp SKINDICHT MINI</a></b> M6×1, nickel-plated brass, clamping range 2–3 mm, IP68 (Lapp 52001860, RS 458-3953)</td><td>One per pigtail; holds and seals the RG316 (approx. Ø 2.5 mm) in the enclosure wall.</td></tr>
  <tr><td>1</td><td><b><a href="https://www.amazon.de/dp/B0FM7RLQTF">USB-C panel-mount extension</a></b> USB 3.1, IP67, 0.2 m, plug to socket, FPC flat cable, 16 mm cut-out (Plinkwirekb)</td><td>USB-C socket in the enclosure wall; the flat cable plugs into the DevKit inside. It powers and programs the clock.</td></tr>
  <tr><td>1</td><td><b><a href="https://www.amazon.de/dp/B0B5RGNNXV">ABS junction box 150 × 100 × 70 mm</a></b>, IP67, with hinged lid, stainless steel latches and mounting plate (Yunseity)</td><td>Plastic so that the Wi-Fi signal gets through. The breakout board is screwed onto the perforated mounting plate.</td></tr>
@@ -111,7 +111,7 @@ oscilloscope input; no additional BNC cable is needed.</p>
  <tr><td>1</td><td><b><a href="https://www.amazon.de/dp/B086JCJMSN">Wi-Fi antenna Bingfu</a></b> 2.4/5.8 GHz, 8 dBi, SMA plug (variant “SMA”), angled</td><td>Mandatory: the -32U module has no built-in antenna. It screws onto the SMA socket of the IPEX pigtail from the antenna kit – do not mix SMA and RP-SMA (the antenna plug must match the pigtail socket).</td></tr>
  <tr><td>2</td><td>Resistor <b>220 Ω</b>, 0.25 W (recommended)</td><td>Soldered into the red lead of each pigtail; protects the DAC outputs if the BNC plug is short-circuited.</td></tr>
  <tr><td>(1)</td><td><i>Optional:</i> real-time clock <b><a href="https://www.amazon.de/dp/B01H5NAFUY">DS3231</a></b>, module ZS-042 (e.g. WINGONEER “Tiny DS3231 AT24C32”)</td><td>Keeps the time after a power failure without internet. VCC → 3V3, GND → GND, SDA → P21, SCL → P22. Coin cell: normal CR2032 – connect the module to 3V3 only (at 5 V its charging circuit would charge it). Switch on in the web interface.</td></tr>
- <tr><td>–</td><td>Small parts</td><td>7 wires for the OLED (DuPont cables or stranded wire), heat-shrink tubing, standoffs M2.5 (OLED) and M3 (breakout board), possibly 2–3 M6 nuts</td></tr>
+ <tr><td>–</td><td>Small parts</td><td>7 wires for the OLED (DuPont cables or stranded wire), heat-shrink tubing, wire-end ferrules 0.25–0.5 mm² (optional), standoffs M2.5 (OLED) and M3 (breakout board), possibly 2–3 M6 nuts</td></tr>
  <tr><td>1</td><td>USB power supply 5 V, ≥ 1 A, with USB-C cable</td><td>A normal, unearthed plug-in power supply avoids ground loops.</td></tr>
 </table>
 <h3>Articles used to build the prototype</h3>
@@ -166,12 +166,15 @@ the connector side and the opposite side.</div></div>
 <b>USB-C:</b> <b>16 mm</b> in the middle (50 mm, step drill).
 <b>Opposite side:</b> <b>6.5 mm</b> centred for the antenna's SMA socket.
 <b>Lid:</b> prepare the OLED window 55 × 28 mm with holes in the corners, cut it out with a utility knife and file it clean.</div></div>
-<div class="step"><b class="n">3</b><div><b>Lead the pigtails through the cable glands.</b> First confirm with the continuity tester that red goes to the centre pin and brown to the outer contact of the BNC plug. Screw the glands into the connector side, loosen the dome nut
-and push the pigtail from the outside, DuPont end first, through the dome nut, seal and enclosure. If the DuPont plug does
-not fit through the 3 mm opening, briefly pull off the small plastic housing of the pin and put it back on afterwards. Pull
-the BNC plug out as far as needed and tighten the dome nut. Label the pigtails “X” and “Y”.</div></div>
-<div class="step"><b class="n">4</b><div><b>Solder the resistors into the pigtails</b> – only now, on the inside: with the resistor and heat-shrink tubing the cable no longer fits through the gland. On each pigtail cut the red lead (core) about 5 cm before the
-DuPont pin, solder in the 220 Ω resistor and insulate it with heat-shrink tubing.</div></div>
+<div class="step"><b class="n">3</b><div><b>Lead the pigtails through the cable glands.</b> First confirm with the continuity tester
+that red goes to the centre pin and brown to the outer contact of the BNC plug. <b>Cut off the DuPont plugs</b> – they do not fit
+through the gland; the stripped leads go into the screw terminals later. Screw the glands into the connector side, loosen the dome nut
+and push the cable from the outside through the dome nut, seal and enclosure. Pull the BNC plug out as far as needed and tighten the
+dome nut. Label the pigtails “X” and “Y”.</div></div>
+<div class="step"><b class="n">4</b><div><b>Strip the leads and solder on the resistors</b> – only now, on the inside: with the resistor and
+heat-shrink tubing the cable no longer fits through the gland. Strip both leads by about 5 mm. Solder the 220 Ω resistor to the red
+lead (core) and insulate the joint with heat-shrink tubing; shorten the free leg of the resistor to about 8 mm – it goes into the
+terminal later. Twist and tin the brown lead (shield) or fit a wire-end ferrule.</div></div>
 <div class="step"><b class="n">5</b><div><b>Fit the USB-C panel socket and the antenna.</b> Insert the USB-C socket into the middle 16 mm hole of the connector side
 and screw it on from the inside. Screw the SMA socket of the antenna pigtail (from the DevKit's antenna kit) into the 6.5 mm hole
 of the opposite side and screw the Bingfu antenna on from the outside.</div></div>

@@ -104,7 +104,7 @@ kommt direkt in den Eingang des Oszilloskops, ein zusätzliches BNC-Kabel ist ni
  <tr><th>Anz.</th><th>Teil</th><th>Hinweis</th></tr>
  <tr><td>1</td><td><b><a href="https://www.amazon.de/dp/B0F65G3V81">ESP32-WROOM-32U DevKitC V4</a></b> mit USB-C und Antennen-Kit (DUBEUYEW, „2 Stück ESP32-WROOM-32U ESP32 DevKitC V4 USB-C mit Antennen-Kit“), 48,5 × 28,5 mm</td><td>Klassischer ESP32 mit zwei 8-Bit-DACs an GPIO25/26, USB-Seriell-Wandler CP2102. Das Antennen-Kit enthält das IPEX→SMA-Pigtail. Andere ESP32-Varianten (S2, S3, C3) haben keine bzw. andere DACs und passen nicht.</td></tr>
  <tr><td>1</td><td><b><a href="https://www.amazon.de/dp/B0BCWBW4SR">ESP32-Breakout-Board mit Schraubklemmen</a></b> (XTVTX, „ESP32 Breakout Board Erweiterungskarte GPIO 1 in 2“, 2er-Pack)</td><td>Das DevKit wird aufgesteckt, alle Leitungen kommen in Schraubklemmen – am DevKit wird nichts gelötet. Die Klemmen sind wie die Stifte beschriftet (3V3, GND, P25, P26, P23 …).</td></tr>
- <tr><td>2</td><td><b><a href="https://de.aliexpress.com/item/1005006318978533.html">BNC-Pigtail-Leitung</a></b> BNC-Stecker auf 2,54-mm-DuPont-Stift, RG316 (TEJIATE, „SMA to DuPont BNC/Q9/N … RG316“, Variante <b>BNC-J to J</b>)</td><td>X und Y. Länge passend zum Abstand zum Oszilloskop wählen (30–80 cm erhältlich; 50 cm ist ein guter Wert). Rot = Innenleiter (Signal), braun = Schirm (Masse) – mit dem Durchgangsprüfer bestätigen.</td></tr>
+ <tr><td>2</td><td><b><a href="https://de.aliexpress.com/item/1005006318978533.html">BNC-Pigtail-Leitung</a></b> BNC-Stecker auf 2,54-mm-DuPont-Stift, RG316 (TEJIATE, „SMA to DuPont BNC/Q9/N … RG316“, Variante <b>BNC-J to J</b>)</td><td>X und Y. Länge passend zum Abstand zum Oszilloskop wählen (30–80 cm erhältlich; 50 cm ist ein guter Wert). Rot = Innenleiter (Signal), braun = Schirm (Masse) – mit dem Durchgangsprüfer bestätigen. Die DuPont-Stecker werden beim Aufbau abgeschnitten.</td></tr>
  <tr><td>2</td><td><b><a href="https://de.rs-online.com/web/p/kabelverschraubungen/4583953">Kabelverschraubung Lapp SKINDICHT MINI</a></b> M6×1, Messing vernickelt, Klemmbereich 2–3 mm, IP68 (Lapp 52001860, RS 458-3953)</td><td>Je Pigtail eine; hält und dichtet das RG316 (Ø ca. 2,5 mm) in der Gehäusewand.</td></tr>
  <tr><td>1</td><td><b><a href="https://www.amazon.de/dp/B0FM7RLQTF">USB-C-Einbauverlängerung</a></b> USB 3.1, IP67, 0,2 m, Stecker auf Buchse, FPC-Flachbandkabel, Einbauöffnung 16 mm (Plinkwirekb)</td><td>USB-C-Buchse in der Gehäusewand; das Flachbandkabel steckt innen im DevKit. Darüber wird die Uhr versorgt und programmiert.</td></tr>
  <tr><td>1</td><td><b><a href="https://www.amazon.de/dp/B0B5RGNNXV">Abzweigdose ABS 150 × 100 × 70 mm</a></b>, IP67, mit Scharnierdeckel, Edelstahlverschlüssen und Montageplatte (Yunseity)</td><td>Kunststoff, damit das WLAN-Signal durchkommt. Das Breakout-Board wird auf die gelochte Montageplatte geschraubt.</td></tr>
@@ -112,7 +112,7 @@ kommt direkt in den Eingang des Oszilloskops, ein zusätzliches BNC-Kabel ist ni
  <tr><td>1</td><td><b><a href="https://www.amazon.de/dp/B086JCJMSN">WLAN-Antenne Bingfu</a></b> 2,4/5,8 GHz, 8 dBi, SMA-Stecker (Variante „SMA“), abwinkelbar</td><td>Pflicht: Das Modul -32U hat keine eingebaute Antenne. Sie wird auf die SMA-Buchse des IPEX-Pigtails aus dem Antennen-Kit geschraubt – SMA und RP-SMA nicht mischen (Stecker der Antenne muss zur Buchse des Pigtails passen).</td></tr>
  <tr><td>2</td><td>Widerstand <b>220 Ω</b>, 0,25 W (empfohlen)</td><td>In die rote Ader jedes Pigtails eingelötet; schützt die DAC-Ausgänge bei einem Kurzschluss am BNC-Stecker.</td></tr>
  <tr><td>(1)</td><td><i>Optional:</i> Echtzeituhr <b><a href="https://www.amazon.de/dp/B01H5NAFUY">DS3231</a></b>, Modul ZS-042 (z. B. WINGONEER „Tiny DS3231 AT24C32“)</td><td>Hält die Uhrzeit nach einem Stromausfall ohne Internet. VCC → 3V3, GND → GND, SDA → P21, SCL → P22. Knopfzelle: normale CR2032 – Modul nur an 3V3 (an 5 V würde die Ladeschaltung sie laden). Im Webinterface einschalten.</td></tr>
- <tr><td>–</td><td>Kleinteile</td><td>7 Leitungen für das OLED (DuPont-Kabel oder Litze), Schrumpfschlauch, Abstandsbolzen M2,5 (OLED) und M3 (Breakout-Board), ggf. 2–3 Muttern M6</td></tr>
+ <tr><td>–</td><td>Kleinteile</td><td>7 Leitungen für das OLED (DuPont-Kabel oder Litze), Schrumpfschlauch, Aderendhülsen 0,25–0,5 mm² (optional), Abstandsbolzen M2,5 (OLED) und M3 (Breakout-Board), ggf. 2–3 Muttern M6</td></tr>
  <tr><td>1</td><td>USB-Netzteil 5 V, ≥ 1 A, mit USB-C-Kabel</td><td>Ein normales, ungeerdetes Steckernetzteil vermeidet Brummschleifen.</td></tr>
 </table>
 <h3>Beim Bau des Prototyps verwendete Artikel</h3>
@@ -167,12 +167,15 @@ die Anschlussseite und die gegenüberliegende Seite kleben.</div></div>
 <b>USB-C:</b> <b>16 mm</b> in der Mitte (50 mm, Stufenbohrer).
 <b>Gegenüberliegende Seite:</b> <b>6,5 mm</b> mittig für die SMA-Buchse der Antenne.
 <b>Deckel:</b> OLED-Fenster 55 × 28 mm mit Bohrungen in den Ecken vorbereiten, mit dem Cuttermesser ausschneiden und sauber feilen.</div></div>
-<div class="step"><b class="n">3</b><div><b>Pigtails durch die Kabelverschraubungen führen.</b> Vorher mit dem Durchgangsprüfer bestätigen, dass Rot zum Mittelstift und Braun zum Außenkontakt des BNC-Steckers führt. Verschraubungen in die Anschlussseite schrauben, Hutmutter lösen
-und das Pigtail von außen mit dem DuPont-Ende voran durch Hutmutter, Dichteinsatz und Gehäuse schieben. Passt der DuPont-Stecker
-nicht durch die 3-mm-Öffnung, das kleine Kunststoffgehäuse des Stifts kurz abziehen und danach wieder aufstecken. Den
-BNC-Stecker außen so weit herausziehen wie nötig, Hutmutter festziehen. Pigtails mit „X“ und „Y“ beschriften.</div></div>
-<div class="step"><b class="n">4</b><div><b>Widerstände in die Pigtails löten</b> – erst jetzt, innen: Mit Widerstand und Schrumpfschlauch passt das Kabel nicht mehr durch die Verschraubung. Bei jedem Pigtail die rote Ader (Innenleiter) etwa 5 cm vor dem
-DuPont-Stift durchtrennen, den 220-Ω-Widerstand dazwischenlöten und mit Schrumpfschlauch isolieren.</div></div>
+<div class="step"><b class="n">3</b><div><b>Pigtails durch die Kabelverschraubungen führen.</b> Vorher mit dem Durchgangsprüfer
+bestätigen, dass Rot zum Mittelstift und Braun zum Außenkontakt des BNC-Steckers führt. Die <b>DuPont-Stecker abschneiden</b> – sie
+passen nicht durch die Verschraubung; an die Schraubklemmen kommen später die abisolierten Adern. Verschraubungen in die Anschlussseite
+schrauben, Hutmutter lösen und das Kabel von außen durch Hutmutter, Dichteinsatz und Gehäuse schieben. Den BNC-Stecker außen so weit
+herausziehen wie nötig, Hutmutter festziehen. Pigtails mit „X“ und „Y“ beschriften.</div></div>
+<div class="step"><b class="n">4</b><div><b>Adern abisolieren und Widerstände anlöten</b> – erst jetzt, innen: Mit Widerstand und Schrumpfschlauch
+passt das Kabel nicht mehr durch die Verschraubung. Beide Adern etwa 5 mm abisolieren. An die rote Ader (Innenleiter) den
+220-Ω-Widerstand anlöten und die Lötstelle mit Schrumpfschlauch isolieren; das freie Bein des Widerstands auf etwa 8 mm kürzen –
+es kommt später in die Klemme. Die braune Ader (Schirm) verdrillen und verzinnen oder mit einer Aderendhülse versehen.</div></div>
 <div class="step"><b class="n">5</b><div><b>USB-C-Einbaubuchse und Antenne einbauen.</b> USB-C-Buchse in das mittlere 16-mm-Loch der Anschlussseite setzen
 und von innen verschrauben. SMA-Buchse des Antennen-Pigtails (aus dem Antennen-Kit des DevKits) in das 6,5-mm-Loch der
 gegenüberliegenden Seite schrauben, die Bingfu-Antenne außen aufschrauben.</div></div>
