@@ -59,12 +59,12 @@ sind Screenshots der Seite. Fotos des fertigen Geräts folgen nach dem Bau des P
   (oder mit einem Fingertipp vom Handy übernehmen), wahlweise mit fester Sommer- oder Winterzeit.
   Ohne Zeitquelle zählt sie ab einer festen Startzeit hoch.
 - **Optional [Echtzeituhr DS3231](https://www.amazon.de/dp/B01H5NAFUY)** (I²C, GPIO21/22): hält Datum und Uhrzeit mit Knopfzelle auch nach einem
-  Stromausfall ohne Internet. Im Webinterface einschaltbar, ab Werk aus.
+  Stromausfall ohne Internet. Im Webinterface einschaltbar, standardmäßig aus.
 - Mehrere WLANs: Die Uhr verbindet sich automatisch mit dem stärksten bekannten Netz.
 - **Bildverschiebung gegen Einbrennen:** Das Oszilloskop-Bild wandert jede Minute um bis zu 2 Stufen weiter,
-  damit sich die Leuchtschicht einer Röhre nicht an denselben Stellen abnutzt (ab Werk an).
+  damit sich die Leuchtschicht einer Röhre nicht an denselben Stellen abnutzt (standardmäßig an).
 - **Zifferblatt automatisch wechseln:** jede Minute, alle 5/15 Minuten oder stündlich das nächste Zifferblatt; läuft nach dem
-  Einschalten weiter (ab Werk aus).
+  Einschalten weiter (standardmäßig aus).
 - **12- oder 24-Stunden-Format** für OLED und Webinterface (12 h mit AM/PM), umschaltbar im Webinterface.
 - **Sprache Deutsch oder Englisch** für Webinterface, OLED-Anzeige und Protokoll, umschaltbar im
   Webinterface (Seitenmenü) und gespeichert. Startwert `UI_LANG` in `config.h`.
@@ -80,7 +80,7 @@ sind Screenshots der Seite. Fotos des fertigen Geräts folgen nach dem Bau des P
   (Helligkeit 0–100 %, Sekunden, Pixelverschiebung, Drehung um 180°) online ändern. Dazu kommen ein **Testbild** zum Einstellen des Oszilloskops, der **Gerätename** und **Einstellungen sichern/laden** (als Datei). Die Änderungen wirken sofort und bleiben gespeichert. Das Webinterface ist immer
   erreichbar, sobald die Uhr im WLAN ist. Ohne bekanntes WLAN öffnet die Uhr das Setup-WLAN
   **„ScopeClock-Setup“**, das Handy zeigt dann automatisch die Einrichtungsseite.
-- Eine Firmware für alle Oszilloskope: Das Profil DIGITAL (ab Werk) bzw. ANALOG wird im Betrieb
+- Eine Firmware für alle Oszilloskope: Das Profil DIGITAL (Standard) bzw. ANALOG wird im Betrieb
   per BOOT-Taster umgeschaltet und bleibt gespeichert. Getestet werden soll an Tektronix TDS3012,
   HP 54200A und Digilent Analog Discovery 2.
 
@@ -103,7 +103,7 @@ sind Screenshots der Seite. Fotos des fertigen Geräts folgen nach dem Bau des P
    Die Uhr verbindet sich automatisch mit dem stärksten bekannten Netz in Reichweite.
 5. Oszilloskop in den X/Y-Modus schalten, 0,5 V/Div, DC-Kopplung. Bei digitalen Oszilloskopen die Zeitbasis
    auf ca. 1 ms/Div und den Trigger auf Auto stellen (Details in HARDWARE.md).
-6. **Oszilloskop-Profil per BOOT-Taster:** Ab Werk ist das Profil DIGITAL eingestellt (digitale
+6. **Oszilloskop-Profil per BOOT-Taster:** Standardmäßig ist das Profil DIGITAL eingestellt (digitale
    Oszilloskope). Für ein analoges Röhren-Oszilloskop den BOOT-Taster im Betrieb 3 s halten, das
    OLED zeigt dabei „DIGITAL > ANALOG“ mit Countdown 3, 2, 1. Die Einstellung bleibt gespeichert,
    es ist kein neues Hochladen nötig.

@@ -234,7 +234,7 @@ automatisch, sonst <code>http://192.168.4.1</code> aufrufen. Die Gruppe <b>WLAN<
 Das Webinterface ist danach unter <b>http://scope-clock.local</b> oder der IP-Adresse aus dem Status erreichbar.</div></div>
 <div class="step"><b class="n">4</b><div><b>Oszilloskop anschließen und einstellen</b> (Kapitel 6). Mit dem Testbild Position und Größe einstellen:
 „Einstellungen“ → „Oszilloskop“ → „Testbild“.</div></div>
-<div class="step"><b class="n">5</b><div><b>Profil wählen:</b> DIGITAL (ab Werk) für Speicher-Oszilloskope, ANALOG für Röhren-Oszilloskope –
+<div class="step"><b class="n">5</b><div><b>Profil wählen:</b> DIGITAL (Standard) für Speicher-Oszilloskope, ANALOG für Röhren-Oszilloskope –
 im Webinterface oder BOOT-Taster 3 s halten.</div></div>
 
 <h2>6 Oszilloskop einstellen</h2>
@@ -272,7 +272,7 @@ im Webinterface oder BOOT-Taster 3 s halten.</div></div>
 </ul>
 <div class="warn" style="break-inside:auto"><b>Röhre schonen (Einbrennen):</b> Ein Bild, das stundenlang an derselben Stelle steht, nutzt die Leuchtschicht
 einer Röhre dort ab, im X/Y-Betrieb besonders schnell. Intensität nur so hoch wie nötig, die <b>Bildverschiebung gegen
-Einbrennen</b> (Einstellungen → Oszilloskop, ab Werk an) eingeschaltet lassen und das Oszilloskop ausschalten, wenn niemand
+Einbrennen</b> (Einstellungen → Oszilloskop, standardmäßig an) eingeschaltet lassen und das Oszilloskop ausschalten, wenn niemand
 hinsieht. Dunkler machen kann die Firmware das Bild nicht – die Helligkeitsregler verteilen nur die Zeit des Strahls; echtes
 Abdunkeln geht nur mit dem Intensitätsregler oder der Dunkeltastung (Z-Eingang). Digitale Oszilloskope mit LCD brennen nicht ein;
 dort ist die Bildverschiebung unnötig, schadet aber nicht. Ältere digitale Geräte mit Bildröhre (z. B. HP 54200A) brauchen sie.</div>
@@ -293,7 +293,7 @@ oder verbundene Punkte dar. Daraus ergeben sich einige Unterschiede:</p>
 <h3>Helligkeit der Zeiger abgleichen</h3>
 <p>Stunden- und Minutenzeiger sind schmale Nadeln aus zwei dicht nebeneinander liegenden Kanten. Je nachdem, wie ein Oszilloskop
 Helligkeit darstellt, wirken sie heller oder gleich hell wie der Rest. Der Regler <b>Helligkeit Stunden-/Minutenzeiger</b>
-(Einstellungen → Oszilloskop, ab Werk 55 %) gleicht das aus. Richtwerte:</p>
+(Einstellungen → Oszilloskop, standardmäßig 55 %) gleicht das aus. Richtwerte:</p>
 <ul>
  <li><b>Analoge Röhren-Oszilloskope:</b> 55 %, bei sehr scharfem, dünnem Strahl bis 85 % – dann sind die beiden Kanten getrennt zu sehen.</li>
  <li><b>Digitale Oszilloskope mit Helligkeitsabstufung</b> (Digital Phosphor, Intensity Grading – z. B. Tektronix TDS3000): 50–65 %; die doppelt überfahrenen Zeiger leuchten dort stark.</li>
@@ -485,7 +485,7 @@ Zeitraffer nach, sondern setzt den Zeitplan neu – sonst würde ein Stück Lini
 <p>Die Helligkeit einer Linie hängt davon ab, wie lange der Strahl auf jedem Stück Weg verweilt. Die Firmware zerlegt jede Linie
 deshalb in Schritte von genau einer DAC-Stufe Länge – die Länge schräger Linien berechnet sie mit einer ganzzahligen Wurzel,
 ohne Gleitkomma – und hält auf jedem Schritt gleich lange. So sind waagerechte, senkrechte und schräge Linien gleich hell.
-Einzelne Teile lassen sich getrennt abstufen: Stunden- und Minutenzeiger stehen ab Werk auf 55 %, weil die schmalen Nadeln sonst
+Einzelne Teile lassen sich getrennt abstufen: Stunden- und Minutenzeiger stehen standardmäßig auf 55 %, weil die schmalen Nadeln sonst
 heller wirken als der Rest; Minutenstriche und Ziffern auf 100 %. Der Sekundenzeiger wird hin und zurück gezeichnet, jeweils mit
 halber Verweilzeit, und ist damit genauso hell wie eine einfache Linie.</p>
 <h3>Ein Bild im Ablauf</h3>
@@ -509,7 +509,7 @@ ein digitales Oszilloskop würde sonst die Zwischenwerte als Punkte anzeigen. We
 die <b>Dunkeltastung</b> an GPIO27 einschalten: Während eines Sprungs wird der Strahl dunkelgeschaltet, nach dem Sprung wartet die
 Firmware 5 µs, bis die Ablenkung sich beruhigt hat.</p>
 <h3>Uhrzeit</h3>
-<p>Die Zeit kommt per <b>NTP</b> aus dem Internet (ab Werk <code>de.pool.ntp.org</code>, dazu zwei Ersatzserver) und wird stündlich
+<p>Die Zeit kommt per <b>NTP</b> aus dem Internet (standardmäßig <code>de.pool.ntp.org</code>, dazu zwei Ersatzserver) und wird stündlich
 nachgestellt. Zeitzone und Sommerzeitregel stehen in einer POSIX-Zeitzonenangabe, etwa <code>CET-1CEST,M3.5.0,M10.5.0/3</code> für
 Mitteleuropa – die Umstellung passiert damit automatisch. Ohne Internet lässt sich die Zeit im Webinterface von Hand stellen. Mit der
 optionalen <b>Echtzeituhr DS3231</b> übernimmt die Uhr die Zeit nach dem Einschalten aus dem Modul (es läuft in UTC weiter, auch

@@ -101,7 +101,7 @@ Hält Datum und Uhrzeit mit Knopfzelle auch nach einem Stromausfall ohne Interne
 Die 6-polige und die 4-polige Stiftleiste des Moduls sind durchverbunden – jede Leitung kann an
 der Leiste angeschlossen werden, die besser passt.
 
-- Einschalten im Webinterface: „Einstellungen“ → „Uhrzeit“ → „Echtzeituhr (RTC)“ (ab Werk aus). Der Status
+- Einschalten im Webinterface: „Einstellungen“ → „Uhrzeit“ → „Echtzeituhr (RTC)“ (standardmäßig aus). Der Status
   zeigt dann „Läuft“, „Nicht gefunden“ oder „Zeit ungültig“.
 - **Knopfzelle: normale CR2032**, kein Ladegerät und kein Löten nötig. Die Ladeschaltung des ZS-042
   (Diode und 200 Ω) ist für 5 V gedacht. An **3V3** kommen nach der Diode nur etwa 2,7 V an – weniger als
@@ -156,7 +156,7 @@ automatisch für 10 s** (`BOOT_TEST_S`), danach läuft die Uhr – so sieht man 
 
 | Profil | für | Sprünge zwischen Linien |
 |---|---|---|
-| DIGITAL (ab Werk) | digitale Oszilloskope, Speicher-Oszilloskope | hart, damit keine Abtastpunkte unterwegs entstehen |
+| DIGITAL (Standard) | digitale Oszilloskope, Speicher-Oszilloskope | hart, damit keine Abtastpunkte unterwegs entstehen |
 | ANALOG | analoge Röhren-Oszilloskope | schnell und vor dem Ziel gebremst, schwache Rücklaufspur |
 
 ### Analoges Röhren-Oszilloskop (Profil ANALOG)
@@ -165,12 +165,12 @@ automatisch für 10 s** (`BOOT_TEST_S`), danach läuft die Uhr – so sieht man 
 - Mit den Position-Reglern auf Bildmitte schieben (DAC-Mitte ≈ 1,6 V).
 - Helligkeit/Intensität eher gering, Fokus nachstellen.
 - **Röhre schonen:** Im X/Y-Betrieb brennt ein stehendes Bild schnell in die Leuchtschicht ein. Intensität nur so hoch
-  wie nötig, die **Bildverschiebung gegen Einbrennen** (Webinterface → Oszilloskop, ab Werk an) eingeschaltet lassen und
+  wie nötig, die **Bildverschiebung gegen Einbrennen** (Webinterface → Oszilloskop, standardmäßig an) eingeschaltet lassen und
   das Oszilloskop ausschalten, wenn niemand hinsieht. Abdunkeln kann die Firmware das Bild nicht – nur der
   Intensitätsregler oder die Dunkeltastung über den Z-Eingang.
 - Statt der Pigtails Tastköpfe? Kurze Masseleitungen, 10:1-Tastköpfe vorher am Kalibrierausgang abgleichen.
 
-### Digitales Oszilloskop (Profil DIGITAL, ab Werk)
+### Digitales Oszilloskop (Profil DIGITAL, Standard)
 Ein digitales Oszilloskop zeigt im X/Y-Modus nur die Abtastwerte **einer Aufnahme**. Damit die ganze Uhr
 zu sehen ist, muss das Aufnahmefenster (10 × Zeitbasis) mindestens ein Uhrenbild abdecken.
 Ein Bild dauert ca. 4,3 ms, mit römischen Ziffern ca. 6,2 ms.
@@ -217,7 +217,7 @@ Ein Bild dauert ca. 4,3 ms, mit römischen Ziffern ca. 6,2 ms.
 
 ### Helligkeit der Zeiger abgleichen
 Stunden- und Minutenzeiger sind schmale Nadeln aus zwei dicht liegenden Kanten und wirken je nach Oszilloskop heller als der
-Rest. Der Regler „Helligkeit Stunden-/Minutenzeiger“ (Webinterface → Oszilloskop, ab Werk 55 %) gleicht das aus. Richtwerte:
+Rest. Der Regler „Helligkeit Stunden-/Minutenzeiger“ (Webinterface → Oszilloskop, standardmäßig 55 %) gleicht das aus. Richtwerte:
 
 - **Analoge Röhren-Oszilloskope:** 55 %, bei sehr scharfem, dünnem Strahl bis 85 %
 - **Digitale Oszilloskope mit Helligkeitsabstufung** (z. B. Tektronix TDS3000): 50–65 %
