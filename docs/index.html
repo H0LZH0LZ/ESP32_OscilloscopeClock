@@ -215,8 +215,8 @@ a.row>span:last-child{font-size:18px}
 <div class="grp"><h2 id="downloads-h" class="coll" role="button" tabindex="0" aria-expanded="true"><span data-l="de">0 Links &amp; Dokumente</span><span data-l="en">0 Links &amp; documents</span></h2>
 <section>
  <a class="row" target="_blank" rel="noopener" href="https://github.com/HolzHolz123/ESP32_OscilloscopeClock"><span><span data-l="de">GitHub – Version 2.0</span><span data-l="en">GitHub – version 2.0</span><small class="note" data-l="de">Diese Firmware mit Quellcode, Anleitung und Werkzeugen</small><small class="note" data-l="en">This firmware with source code, guide and tools</small></span><span>›</span></a>
- <a class="row" target="_blank" rel="noopener" data-l="de" href="ESP32_Oscilloscope_Clock_Dokumentation.pdf?v=395ba85e"><span>Dokumentation (PDF)<small class="note">Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small></span><span>›</span></a>
- <a class="row" target="_blank" rel="noopener" data-l="en" href="ESP32_Oscilloscope_Clock_Documentation.pdf?v=675dbb0f"><span>Documentation (PDF)<small class="note">Assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
+ <a class="row" target="_blank" rel="noopener" data-l="de" href="ESP32_Oscilloscope_Clock_Dokumentation.pdf?v=43366109"><span>Dokumentation (PDF)<small class="note">Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small></span><span>›</span></a>
+ <a class="row" target="_blank" rel="noopener" data-l="en" href="ESP32_Oscilloscope_Clock_Documentation.pdf?v=7a561ccc"><span>Documentation (PDF)<small class="note">Assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" href="demo/"><span><span data-l="de">Testseite</span><span data-l="en">Test page</span><small class="note" data-l="de">Das Webinterface der Uhr ausprobieren – läuft im Browser, alle Werte sind simuliert</small><small class="note" data-l="en">Try the clock's web interface – runs in the browser, all values are simulated</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" href="https://github.com/maurohh/ESP32_OscilloscopeClock"><span><span data-l="de">GitHub – Original</span><span data-l="en">GitHub – original</span><small class="note" data-l="de">Die ursprüngliche ESP32 Oscilloscope Clock von Mauro Pintus (2018), nach deren Idee diese Version entstand</small><small class="note" data-l="en">The original ESP32 Oscilloscope Clock by Mauro Pintus (2018) that inspired this version</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" href="https://fonts.google.com/specimen/Raleway"><span><span data-l="de">Schriftart Raleway</span><span data-l="en">Font Raleway</span><small class="note" data-l="de">Google Fonts – frei unter der SIL Open Font License 1.1</small><small class="note" data-l="en">Google Fonts – free under the SIL Open Font License 1.1</small></span><span>›</span></a>
@@ -396,10 +396,10 @@ Antennenkabels vorsichtig senkrecht auf die Buchse am Modul drücken, bis er ein
 sind etwas zu lang: beide <b>einmal unter dem Breakout-Board hindurch</b> zur jeweils gegenüberliegenden Seite führen –
 das Antennenkabel zur Antenne, das Flachbandkabel zur USB-C-Einbaubuchse – und vor dem Festschrauben des Boards einlegen.
 Das Flachbandkabel nicht scharf knicken.</div></div>
+<figure><img loading="lazy" src="images/aufbau.svg"><figcaption>Abb. 5 – Anordnung in der Abzweigdose (maßstäblich); gestrichelt: Kabel unter dem Board und die optionale RTC</figcaption></figure>
 <div class="step"><b class="n">7</b><div><b>Pigtails anklemmen:</b> rote Ader (mit Widerstand) von X in die Klemme <b>P25</b>, von Y in <b>P26</b>, beide braunen Adern (Schirm) in <b>GND</b>.</div></div>
 <div class="step"><b class="n">8</b><div><b>OLED in den Deckel</b> setzen: mit Abstandsbolzen M2,5 hinter dem Fenster befestigen und die 7 Leitungen
 nach der Tabelle oben in die Klemmen legen. Die Leitungen so lang lassen, dass sich der Scharnierdeckel ganz öffnen lässt.</div></div>
-<figure><img loading="lazy" src="images/aufbau.svg"><figcaption>Abb. 5 – Anordnung in der Abzweigdose (maßstäblich); gestrichelt: Kabel unter dem Board und die optionale RTC</figcaption></figure>
 <div class="step"><b class="n">9</b><div><b>Prüfen vor dem ersten Einschalten</b> (Multimeter): Kein Durchgang zwischen 3V3 und GND und zwischen 5V und GND.
 Zwischen dem Mittelstift jedes BNC-Steckers und der Klemme P25 bzw. P26 je ca. 220 Ω, zum Außenkontakt kein Durchgang.
 Der Außenkontakt hat Durchgang zu GND. Alle Schraubklemmen leicht nachziehen.</div></div>
@@ -453,10 +453,10 @@ the terminal labels would then no longer match. Carefully press the small IPEX p
 straight onto the socket on the module until it clicks. The antenna cable and the USB flat cable are a little too long: run both
 <b>once underneath the breakout board</b> to the opposite side – the antenna cable to the antenna, the flat cable to the USB-C
 panel socket – and lay them in place before screwing the board down. Do not kink the flat cable sharply.</div></div>
+<figure><img loading="lazy" src="images/aufbau_en.svg"><figcaption>Fig. 5 – Layout in the junction box (to scale); dashed: cables under the board and the optional RTC</figcaption></figure>
 <div class="step"><b class="n">7</b><div><b>Connect the pigtails:</b> red lead (with resistor) of X into terminal <b>P25</b>, of Y into <b>P26</b>, both brown leads (shield) into <b>GND</b>.</div></div>
 <div class="step"><b class="n">8</b><div><b>Fit the OLED in the lid:</b> mount it behind the window with M2.5 standoffs and put the 7 wires into the terminals
 according to the table above. Leave the wires long enough for the hinged lid to open fully.</div></div>
-<figure><img loading="lazy" src="images/aufbau_en.svg"><figcaption>Fig. 5 – Layout in the junction box (to scale); dashed: cables under the board and the optional RTC</figcaption></figure>
 <div class="step"><b class="n">9</b><div><b>Check before the first power-on</b> (multimeter): no continuity between 3V3 and GND and between 5V and GND.
 Approx. 220 Ω between the centre pin of each BNC plug and terminal P25 or P26, no continuity to the outer contact.
 The outer contact has continuity to GND. Retighten all screw terminals slightly.</div></div>
@@ -485,9 +485,6 @@ ist jederzeit möglich (Schema wählen, neu hochladen) – gespeicherte WLANs un
 Stelle und bleiben erhalten. Meldet die IDE beim Hochladen „Sketch too big“, ist Variante B eingestellt: auf A wechseln.</p>
 <div class="note"><b>Zugangsdaten stehen nie im Quelltext.</b> WLANs werden nach dem Hochladen über das Webinterface eingetragen
 (bis zu 10 Netze). Die Startwerte aller Einstellungen stehen in <code>config.h</code>; im Betrieb ist das Webinterface bequemer.</div>
-<h3>Wenn das Webinterface geändert wird</h3>
-<p>Die Quelle der Webseite ist <code>web/index.html</code>. Nach Änderungen <code>python3 tools/gen_webpage.py</code> ausführen:
-Das Skript entfernt Kommentare, komprimiert die Seite mit gzip und schreibt <code>webpage.h</code> (ca. 24 KB statt 82 KB im Flash).</p>
 </div><div data-l="en">
 <h3>With the Arduino IDE 2.x</h3>
 <ol>
@@ -509,52 +506,47 @@ the scheme, upload again) – saved networks and settings are stored at the same
 “Sketch too big” when uploading, variant B is selected: switch to A.</p>
 <div class="note"><b>Credentials are never stored in the source code.</b> Wi-Fi networks are entered in the web interface after
 uploading (up to 10 networks). The defaults of all settings are in <code>config.h</code>; during operation the web interface is more convenient.</div>
-<h3>If the web interface is changed</h3>
-<p>The source of the web page is <code>web/index.html</code>. After changes run <code>python3 tools/gen_webpage.py</code>:
-the script removes comments, compresses the page with gzip and writes <code>webpage.h</code> (approx. 24 KB instead of 82 KB in flash).</p>
 </div></section></div>
 
 <div class="grp closed"><h2 id="kap5" class="coll" role="button" tabindex="0" aria-expanded="false"><span data-l="de">5 Erste Inbetriebnahme</span><span data-l="en">5 First start-up</span></h2>
 <section class="doc"><div data-l="de">
-<div class="step"><b class="n">1</b><div><b>Einschalten</b> (USB-Netzteil). Das Oszilloskop zeigt 10 Sekunden lang das Testbild, danach die Uhr.
+<div class="step"><b class="n">1</b><div><b>Oszilloskop anschließen</b> und grob einstellen: X/Y-Betrieb, beide Kanäle DC, 0,5 V/Div (Kapitel 6).</div></div>
+<div class="step"><b class="n">2</b><div><b>Einschalten</b> (USB-Netzteil). Das Oszilloskop zeigt 10 Sekunden lang das Testbild, danach die Uhr.
 Das OLED zeigt die Uhrzeit (zunächst ab 10:08:37) und „Keine NTP-Verbindung“.</div></div>
-<div class="step"><b class="n">2</b><div><b>WLAN einrichten.</b> Ohne bekanntes Netz öffnet die Uhr nach kurzer Zeit das offene Setup-WLAN
+<div class="step"><b class="n">3</b><div><b>WLAN einrichten.</b> Ohne bekanntes Netz öffnet die Uhr nach kurzer Zeit das offene Setup-WLAN
 <b>„ScopeClock-Setup“</b>; das OLED zeigt es mit der Adresse an. Mit dem Handy verbinden – die Einrichtungsseite öffnet sich
 automatisch, sonst <code>http://192.168.4.1</code> aufrufen. Die Gruppe <b>WLAN</b> ist dann bereits aufgeklappt:
 „Netze in Reichweite suchen“, eigenes Netz antippen, Passwort eingeben, „Netz speichern“.</div></div>
-<div class="two">
- <figure><img loading="lazy" src="images/oled_setup.png"><figcaption>Abb. 6 – OLED im Setup-WLAN</figcaption></figure>
- <figure><img loading="lazy" src="images/oled_profil.png"><figcaption>Abb. 7 – OLED beim Umschalten des Profils (BOOT-Taster)</figcaption></figure>
-</div>
-<div class="step"><b class="n">3</b><div><b>Verbinden.</b> Die Uhr verbindet sich mit dem stärksten bekannten Netz, holt die Zeit und schließt das Setup-WLAN.
+<figure><img loading="lazy" style="width:48%" src="images/oled_setup.png"><figcaption>Abb. 6 – OLED im Setup-WLAN</figcaption></figure>
+<div class="step"><b class="n">4</b><div><b>Verbinden.</b> Die Uhr verbindet sich mit dem stärksten bekannten Netz, holt die Zeit und schließt das Setup-WLAN.
 Das Webinterface ist danach unter <b>http://scope-clock.local</b> oder der IP-Adresse aus dem Status erreichbar.</div></div>
-<div class="step"><b class="n">4</b><div><b>Oszilloskop anschließen und einstellen</b> (Kapitel 6). Mit dem Testbild Position und Größe einstellen:
-„Einstellungen“ → „Oszilloskop“ → „Testbild“.</div></div>
-<div class="step"><b class="n">5</b><div><b>Profil wählen:</b> DIGITAL (Standard) für Speicher-Oszilloskope, ANALOG für Röhren-Oszilloskope –
-im Webinterface oder BOOT-Taster 3 s halten.</div></div>
+<div class="step"><b class="n">5</b><div><b>Profil wählen und Bild einstellen:</b> DIGITAL (Standard) für Speicher-Oszilloskope, ANALOG für Röhren-Oszilloskope – im Webinterface oder BOOT-Taster 3 s halten (Kapitel 7). Position und Größe mit dem Testbild nachstellen: „Einstellungen“ → „Oszilloskop“ → „Testbild“.</div></div>
 </div><div data-l="en">
-<div class="step"><b class="n">1</b><div><b>Power on</b> (USB power supply). The oscilloscope shows the test pattern for 10 seconds, then the clock.
+<div class="step"><b class="n">1</b><div><b>Connect the oscilloscope</b> and set it up roughly: X/Y mode, both channels DC, 0.5 V/div (chapter 6).</div></div>
+<div class="step"><b class="n">2</b><div><b>Power on</b> (USB power supply). The oscilloscope shows the test pattern for 10 seconds, then the clock.
 The OLED shows the time (initially counting from 10:08:37) and “No NTP connection”.</div></div>
-<div class="step"><b class="n">2</b><div><b>Set up Wi-Fi.</b> Without a known network the clock opens the open setup network
+<div class="step"><b class="n">3</b><div><b>Set up Wi-Fi.</b> Without a known network the clock opens the open setup network
 <b>“ScopeClock-Setup”</b> after a short time; the OLED shows it together with the address. Connect with your phone – the setup page
 opens automatically, otherwise open <code>http://192.168.4.1</code>. The <b>Wi-Fi</b> group is then already expanded:
 “Search for networks in range”, tap your network, enter the password, “Save network”.</div></div>
-<div class="two">
- <figure><img loading="lazy" src="images/oled_setup_en.png"><figcaption>Fig. 6 – OLED in the setup network</figcaption></figure>
- <figure><img loading="lazy" src="images/oled_profil_en.png"><figcaption>Fig. 7 – OLED while switching the profile (BOOT button)</figcaption></figure>
-</div>
-<div class="step"><b class="n">3</b><div><b>Connect.</b> The clock connects to the strongest known network, fetches the time and closes the setup network.
+<figure><img loading="lazy" style="width:48%" src="images/oled_setup_en.png"><figcaption>Fig. 6 – OLED in the setup network</figcaption></figure>
+<div class="step"><b class="n">4</b><div><b>Connect.</b> The clock connects to the strongest known network, fetches the time and closes the setup network.
 The web interface is then reachable at <b>http://scope-clock.local</b> or at the IP address shown in the status.</div></div>
-<div class="step"><b class="n">4</b><div><b>Connect and adjust the oscilloscope</b> (chapter 6). Use the test pattern to set position and size:
-“Settings” → “Oscilloscope” → “Test pattern”.</div></div>
-<div class="step"><b class="n">5</b><div><b>Choose the profile:</b> DIGITAL (default) for storage oscilloscopes, ANALOG for CRT oscilloscopes –
-in the web interface or by holding the BOOT button for 3 s.</div></div>
+<div class="step"><b class="n">5</b><div><b>Choose the profile and adjust the picture:</b> DIGITAL (default) for storage oscilloscopes, ANALOG for CRT oscilloscopes – in the web interface or by holding the BOOT button for 3 s (chapter 7). Fine-tune position and size with the test pattern: “Settings” → “Oscilloscope” → “Test pattern”.</div></div>
 </div></section></div>
 
 <div class="grp closed"><h2 id="kap6" class="coll" role="button" tabindex="0" aria-expanded="false"><span data-l="de">6 Oszilloskop einstellen</span><span data-l="en">6 Setting up the oscilloscope</span></h2>
 <section class="doc"><div data-l="de">
+<h3>Anschließen</h3>
+<ul>
+ <li>Die Pigtails stecken direkt im Oszilloskop – das ist die beste Verbindung. Wer stattdessen <b>Tastköpfe</b> benutzt, nimmt
+ kurze Masseleitungen und stellt 10:1-Tastköpfe vorher am Kalibrierausgang des Oszilloskops sauber ein (Rechteck ohne Überschwinger);
+ ein verstellter Tastkopf verzerrt Ecken und Kreise. Die Empfindlichkeit dann entsprechend umrechnen (10:1 → 50 mV/Div).</li>
+ <li>Beide Kanäle auf <b>DC-Kopplung</b>: Bei AC-Kopplung kippt der Gleichanteil weg, das Bild verzerrt und wandert.</li>
+ <li><b>Brummschleife vermeiden:</b> Die BNC-Masse des Oszilloskops liegt am Schutzleiter; ein ebenfalls geerdeter PC am USB kann Brumm ins Bild bringen. Im Dauerbetrieb ein normales USB-Steckernetzteil verwenden.</li>
+</ul>
 <div class="two">
- <figure><img loading="lazy" src="images/oszilloskop_testbild.png"><figcaption>Abb. 8 – Testbild</figcaption></figure>
+ <figure><img loading="lazy" src="images/oszilloskop_testbild.png"><figcaption>Abb. 7 – Testbild</figcaption></figure>
  <div style="flex:1.3">
  <p><b>So wird das Testbild genutzt:</b></p>
  <ul>
@@ -577,20 +569,6 @@ in the web interface or by holding the BOOT button for 3 s.</div></div>
  <tr><td data-th="Einstellung">Nachleuchten</td><td data-th="Wert">kurz bis mittel, falls vorhanden</td><td data-th="Grund">beruhigt den Bildaufbau</td></tr>
  <tr><td data-th="Einstellung">Bandbreitenbegrenzung</td><td data-th="Wert">ein (z. B. 20 MHz)</td><td data-th="Grund">weniger Rauschen</td></tr>
 </table></div>
-<h3>Anschließen</h3>
-<ul>
- <li>Die Pigtails stecken direkt im Oszilloskop – das ist die beste Verbindung. Wer stattdessen <b>Tastköpfe</b> benutzt, nimmt
- kurze Masseleitungen und stellt 10:1-Tastköpfe vorher am Kalibrierausgang des Oszilloskops sauber ein (Rechteck ohne Überschwinger);
- ein verstellter Tastkopf verzerrt Ecken und Kreise. Die Empfindlichkeit dann entsprechend umrechnen (10:1 → 50 mV/Div).</li>
- <li>Beide Kanäle auf <b>DC-Kopplung</b>: Bei AC-Kopplung kippt der Gleichanteil weg, das Bild verzerrt und wandert.</li>
- <li><b>Brummschleife vermeiden:</b> Die BNC-Masse des Oszilloskops liegt am Schutzleiter; ein ebenfalls geerdeter PC am USB kann Brumm ins Bild bringen. Im Dauerbetrieb ein normales USB-Steckernetzteil verwenden.</li>
-</ul>
-<div class="warn" style="break-inside:auto"><b>Röhre schonen (Einbrennen):</b> Ein Bild, das stundenlang an derselben Stelle steht, nutzt die Leuchtschicht
-einer Röhre dort ab, im X/Y-Betrieb besonders schnell. Intensität nur so hoch wie nötig, die <b>Bildverschiebung gegen
-Einbrennen</b> (Einstellungen → Oszilloskop, standardmäßig an) eingeschaltet lassen und das Oszilloskop ausschalten, wenn niemand
-hinsieht. Dunkler machen kann die Firmware das Bild nicht – die Helligkeitsregler verteilen nur die Zeit des Strahls; echtes
-Abdunkeln geht nur mit dem Intensitätsregler oder der Dunkeltastung (Z-Eingang). Digitale Oszilloskope mit LCD brennen nicht ein;
-dort ist die Bildverschiebung unnötig, schadet aber nicht. Ältere digitale Geräte mit Bildröhre (z. B. HP 54200A) brauchen sie.</div>
 <h3>X/Y-Betrieb am digitalen Oszilloskop</h3>
 <p>Ein analoges Oszilloskop zeichnet in Echtzeit, ein digitales tastet beide Kanäle erst ab und stellt die Werte danach als Punkte
 oder verbundene Punkte dar. Daraus ergeben sich einige Unterschiede:</p>
@@ -617,6 +595,12 @@ Helligkeit darstellt, wirken sie heller oder gleich hell wie der Rest. Der Regle
 <p><b>Genau einstellen</b> (bei anderen Geräten mit 55 % beginnen): erst Fokus und Intensität am Oszilloskop einstellen. Dann auf die Kreuzungen von Zeigern und
 Minutenstrichen schauen und den Regler in 5-%-Schritten schieben, bis beide gleich hell wirken; kurz auf 100 % und zurück zeigt die
 Richtung. Der Wert gilt sofort und bleibt gespeichert.</p>
+<div class="warn" style="break-inside:auto"><b>Röhre schonen (Einbrennen):</b> Ein Bild, das stundenlang an derselben Stelle steht, nutzt die Leuchtschicht
+einer Röhre dort ab, im X/Y-Betrieb besonders schnell. Intensität nur so hoch wie nötig, die <b>Bildverschiebung gegen
+Einbrennen</b> (Einstellungen → Oszilloskop, standardmäßig an) eingeschaltet lassen und das Oszilloskop ausschalten, wenn niemand
+hinsieht. Dunkler machen kann die Firmware das Bild nicht – die Helligkeitsregler verteilen nur die Zeit des Strahls; echtes
+Abdunkeln geht nur mit dem Intensitätsregler oder der Dunkeltastung (Z-Eingang). Digitale Oszilloskope mit LCD brennen nicht ein;
+dort ist die Bildverschiebung unnötig, schadet aber nicht. Ältere digitale Geräte mit Bildröhre (z. B. HP 54200A) brauchen sie.</div>
 <h3>Beispiele für einzelne Geräte (andere sinngemäß)</h3>
 <ul>
  <li><b>Tektronix TDS3012:</b> CH1 = X, CH2 = Y, XY im Display-Menü; kurzes Nachleuchten (Persist) beruhigt das Bild.</li>
@@ -625,8 +609,16 @@ Richtung. Der Wert gilt sofort und bleibt gespeichert.</p>
  verbinden. WaveForms: 500 mV/Div, Offset −1,6 V, 1 ms/Div, Trigger Auto, View → XY.</li>
 </ul>
 </div><div data-l="en">
+<h3>Connecting</h3>
+<ul>
+ <li>The pigtails plug straight into the oscilloscope – that is the best connection. If you use <b>probes</b> instead, keep the ground
+ leads short and compensate 10:1 probes beforehand on the oscilloscope's calibration output (square wave without overshoot); a
+ misadjusted probe distorts corners and circles. Convert the sensitivity accordingly (10:1 → 50 mV/div).</li>
+ <li>Set both channels to <b>DC coupling</b>: with AC coupling the DC component drops away, the picture distorts and drifts.</li>
+ <li><b>Avoid ground loops:</b> the oscilloscope's BNC ground is connected to protective earth; an earthed PC on the USB can bring hum into the picture. For permanent use take a normal USB plug-in power supply.</li>
+</ul>
 <div class="two">
- <figure><img loading="lazy" src="images/oszilloskop_testbild.png"><figcaption>Fig. 8 – Test pattern</figcaption></figure>
+ <figure><img loading="lazy" src="images/oszilloskop_testbild.png"><figcaption>Fig. 7 – Test pattern</figcaption></figure>
  <div style="flex:1.3">
  <p><b>How to use the test pattern:</b></p>
  <ul>
@@ -649,21 +641,6 @@ Richtung. Der Wert gilt sofort und bleibt gespeichert.</p>
  <tr><td data-th="Setting">Persistence</td><td data-th="Value">short to medium, if available</td><td data-th="Reason">smooths the picture build-up</td></tr>
  <tr><td data-th="Setting">Bandwidth limit</td><td data-th="Value">on (e.g. 20 MHz)</td><td data-th="Reason">less noise</td></tr>
 </table></div>
-<h3>Connecting</h3>
-<ul>
- <li>The pigtails plug straight into the oscilloscope – that is the best connection. If you use <b>probes</b> instead, keep the ground
- leads short and compensate 10:1 probes beforehand on the oscilloscope's calibration output (square wave without overshoot); a
- misadjusted probe distorts corners and circles. Convert the sensitivity accordingly (10:1 → 50 mV/div).</li>
- <li>Set both channels to <b>DC coupling</b>: with AC coupling the DC component drops away, the picture distorts and drifts.</li>
- <li><b>Avoid ground loops:</b> the oscilloscope's BNC ground is connected to protective earth; an earthed PC on the USB can bring hum into the picture. For permanent use take a normal USB plug-in power supply.</li>
-</ul>
-<div class="warn" style="break-inside:auto"><b>Protect the CRT (burn-in):</b> a picture that stays at the same spot for hours wears the phosphor of a CRT
-there – particularly quickly in X/Y mode because the beam dwells on a few lines for a long time. Set the intensity only as high as
-necessary, leave the <b>image shift against burn-in</b> switched on (Settings → Oscilloscope, on by default) and switch the
-oscilloscope off when nobody is looking. The firmware cannot make the picture darker by itself: the beam is always somewhere on the
-screen, the brightness controls only distribute its time. Real dimming is only possible with the oscilloscope's intensity control or
-with Z blanking (Z input). Digital oscilloscopes with an LCD do not burn in;
-there the image shift is unnecessary but does no harm. Older digital instruments with a CRT (e.g. HP 54200A) do need it.</div>
 <h3>X/Y mode on a digital oscilloscope</h3>
 <p>An analogue oscilloscope draws in real time; a digital one first samples both channels and then displays the values as dots
 or connected dots. This leads to a few differences:</p>
@@ -691,6 +668,13 @@ Oscilloscope, 55 % by default) compensates for this. Guide values:</p>
 <p><b>How to set the value exactly</b> (with other devices start at 55 %): first set focus and intensity on the oscilloscope.
 Then look at where the hands cross the minute marks and move the slider in 5 % steps until both look equally bright; briefly going
 to 100 % and back shows the direction. The value is applied and saved immediately.</p>
+<div class="warn" style="break-inside:auto"><b>Protect the CRT (burn-in):</b> a picture that stays at the same spot for hours wears the phosphor of a CRT
+there – particularly quickly in X/Y mode because the beam dwells on a few lines for a long time. Set the intensity only as high as
+necessary, leave the <b>image shift against burn-in</b> switched on (Settings → Oscilloscope, on by default) and switch the
+oscilloscope off when nobody is looking. The firmware cannot make the picture darker by itself: the beam is always somewhere on the
+screen, the brightness controls only distribute its time. Real dimming is only possible with the oscilloscope's intensity control or
+with Z blanking (Z input). Digital oscilloscopes with an LCD do not burn in;
+there the image shift is unnecessary but does no harm. Older digital instruments with a CRT (e.g. HP 54200A) do need it.</div>
 <h3>Examples of individual devices (others likewise)</h3>
 <ul>
  <li><b>Tektronix TDS3012:</b> CH1 = X, CH2 = Y, XY in the display menu; short persistence (Persist) calms the picture.</li>
@@ -705,7 +689,7 @@ to 100 % and back shows the direction. The value is applied and saved immediatel
 <h3>Webinterface</h3>
 <p>Aufruf über <b>http://scope-clock.local</b> (Name unter Einstellungen → System änderbar) oder die IP-Adresse. Die Seite ist für das
 Handy gemacht und lässt sich über „Zum Startbildschirm hinzufügen“ wie eine App ablegen.</p>
-<figure><img loading="lazy" src="images/web_uebersicht.png"><figcaption>Abb. 9 – Webinterface: Startansicht hell und dunkel, Seitenmenü</figcaption></figure>
+<figure><img loading="lazy" src="images/web_uebersicht.png"><figcaption>Abb. 8 – Webinterface: Startansicht hell und dunkel, Seitenmenü</figcaption></figure>
 <ul>
  <li><b>Vorschau:</b> zeigt das Oszilloskop-Bild live. <b>Wischen nach links/rechts</b> (oder Punkte/Pfeile darunter, am PC Pfeiltasten) wechselt das Zifferblatt – auch am Oszilloskop.</li>
  <li><b>Beim Aufruf</b> ist nur <b>Status</b> aufgeklappt, alles andere ist eingeklappt. Ohne Zeitserver klappt „Uhrzeit“ von selbst auf, ohne WLAN-Verbindung die Gruppe „WLAN“; sobald alles wieder verbunden ist, klappen sie wieder zu.</li>
@@ -714,26 +698,26 @@ Handy gemacht und lässt sich über „Zum Startbildschirm hinzufügen“ wie ei
  <li><b>Debug:</b> Meldungen der Uhr mit Filter (WLAN, Zeit, Web, Oszilloskop, Warnungen), „Aktualisieren“, „Herunterladen“ (Textdatei) und „Leeren“.</li>
  <li><b>Seitenmenü (☰):</b> springt in die Bereiche, dazu Sprache (Deutsch/English) und Darstellung (automatisch/hell/dunkel). Der Bereich, in dem man gerade ist, ist im Menü grün markiert; der schmale grüne Balken am oberen Bildschirmrand zeigt, wie weit man gescrollt hat.</li>
 </ul>
-<figure><img loading="lazy" src="images/web_einstellungen.png"><figcaption>Abb. 10 – Gruppe Oszilloskop, Gruppe WLAN mit Netzsuche, Debug-Bereich</figcaption></figure>
+<figure><img loading="lazy" src="images/web_einstellungen.png"><figcaption>Abb. 9 – Gruppe Oszilloskop, Gruppe WLAN mit Netzsuche, Debug-Bereich</figcaption></figure>
 <h3>OLED-Anzeige</h3>
 <p>Oben die Uhrzeit im 7-Segment-Stil, darunter Kalenderwoche und Datum mit kleinen 7-Segment-Ziffern, dann das WLAN und die Signalstärke. Ohne gültige Zeit steht
 dort „Keine NTP-Verbindung“, im Setup-WLAN der Netzname „ScopeClock-Setup“ und die Adresse. Helligkeit 0–100 %, Sekunden,
 Drehung um 180° und Pixelverschiebung gegen Einbrennen sind einstellbar.</p>
-<figure><img loading="lazy" src="images/oled_englisch_12h.png"><figcaption>Abb. 11 – OLED auf Englisch im 12-Stunden-Format</figcaption></figure>
+<figure><img loading="lazy" src="images/oled_englisch_12h.png"><figcaption>Abb. 10 – OLED auf Englisch im 12-Stunden-Format</figcaption></figure>
 <h3>BOOT-Taster</h3>
 <p><b>3 Sekunden halten</b> schaltet das Oszilloskop-Profil um (DIGITAL ↔ ANALOG). Das OLED zeigt den Wechsel mit Countdown 3, 2, 1;
-vorher loslassen bricht ab (Abb. 12 und 13). Die Einstellung wird gespeichert. <b>Nicht beim Einschalten drücken</b> – sonst startet der ESP32 im Download-Modus.</p>
+vorher loslassen bricht ab (Abb. 11 und 12). Die Einstellung wird gespeichert. <b>Nicht beim Einschalten drücken</b> – sonst startet der ESP32 im Download-Modus.</p>
 <div class="two">
- <figure><img loading="lazy" src="images/oled_profil.png"><figcaption>Abb. 12 – Umschalten DIGITAL → ANALOG (BOOT-Taster gehalten, noch 2 s)</figcaption></figure>
- <figure><img loading="lazy" src="images/oled_profil_analog_digital.png"><figcaption>Abb. 13 – Umschalten ANALOG → DIGITAL (zurück zum Profil für digitale Oszilloskope)</figcaption></figure>
+ <figure><img loading="lazy" src="images/oled_profil.png"><figcaption>Abb. 11 – Umschalten DIGITAL → ANALOG (BOOT-Taster gehalten, noch 2 s)</figcaption></figure>
+ <figure><img loading="lazy" src="images/oled_profil_analog_digital.png"><figcaption>Abb. 12 – Umschalten ANALOG → DIGITAL (zurück zum Profil für digitale Oszilloskope)</figcaption></figure>
 </div>
-<p><b>Werkseinstellungen: 10 Sekunden halten.</b> Ab 5 s zählt das OLED 5 … 1 herunter (Abb. 14), dann werden <b>alle Einstellungen und WLANs gelöscht</b> und die Uhr startet mit dem Setup-WLAN neu. Vorher loslassen bricht ab.</p>
-<figure><img loading="lazy" src="images/oled_werksreset.png"><figcaption>Abb. 14 – OLED kurz vor den Werkseinstellungen (BOOT-Taster gehalten)</figcaption></figure>
+<p><b>Werkseinstellungen: 10 Sekunden halten.</b> Ab 5 s zählt das OLED 5 … 1 herunter (Abb. 13), dann werden <b>alle Einstellungen und WLANs gelöscht</b> und die Uhr startet mit dem Setup-WLAN neu. Vorher loslassen bricht ab.</p>
+<figure><img loading="lazy" src="images/oled_werksreset.png"><figcaption>Abb. 13 – OLED kurz vor den Werkseinstellungen (BOOT-Taster gehalten)</figcaption></figure>
 </div><div data-l="en">
 <h3>Web interface</h3>
 <p>Open <b>http://scope-clock.local</b> (name can be changed under Settings → System) or the IP address. The page is made for
 phones and can be added to the home screen like an app (“Add to home screen”).</p>
-<figure><img loading="lazy" src="images/web_uebersicht_en.png"><figcaption>Fig. 9 – Web interface: start view light and dark, side menu</figcaption></figure>
+<figure><img loading="lazy" src="images/web_uebersicht_en.png"><figcaption>Fig. 8 – Web interface: start view light and dark, side menu</figcaption></figure>
 <ul>
  <li><b>Preview:</b> shows the oscilloscope picture live. <b>Swiping left/right</b> (or the dots/arrows below it, arrow keys on a PC) changes the dial – on the oscilloscope as well.</li>
  <li><b>When the page opens</b> only <b>Status</b> is expanded, everything else is collapsed. Without a time server “Time” expands by itself, without a Wi-Fi connection the “Wi-Fi” group does; they collapse again once everything is connected.</li>
@@ -742,21 +726,21 @@ phones and can be added to the home screen like an app (“Add to home screen”
  <li><b>Debug:</b> messages of the clock with a filter (Wi-Fi, time, web, oscilloscope, warnings), “Refresh”, “Download” (text file) and “Clear”.</li>
  <li><b>Side menu (☰):</b> jumps to the sections, plus language (Deutsch/English) and appearance (automatic/light/dark). The section you are currently in is highlighted in green; the thin green bar at the top edge of the screen shows how far you have scrolled.</li>
 </ul>
-<figure><img loading="lazy" src="images/web_einstellungen_en.png"><figcaption>Fig. 10 – Oscilloscope group, Wi-Fi group with network scan, debug section</figcaption></figure>
+<figure><img loading="lazy" src="images/web_einstellungen_en.png"><figcaption>Fig. 9 – Oscilloscope group, Wi-Fi group with network scan, debug section</figcaption></figure>
 <h3>OLED display</h3>
 <p>At the top the time in 7-segment style, below it the calendar week and date with small 7-segment digits, then the Wi-Fi network and the signal strength.
 Without a valid time it shows “No NTP connection”; in the setup network it shows the network name “ScopeClock-Setup” and the address.
 Brightness 0–100 %, seconds, rotation by 180° and pixel shifting against burn-in can be set.</p>
-<figure><img loading="lazy" src="images/oled_englisch_12h.png"><figcaption>Fig. 11 – OLED in English in 12-hour format</figcaption></figure>
+<figure><img loading="lazy" src="images/oled_englisch_12h.png"><figcaption>Fig. 10 – OLED in English in 12-hour format</figcaption></figure>
 <h3>BOOT button</h3>
 <p><b>Holding it for 3 seconds</b> switches the oscilloscope profile (DIGITAL ↔ ANALOG). The OLED shows the change with a countdown
-3, 2, 1; releasing earlier cancels (Fig. 12 and 13). The setting is saved. <b>Do not press it while powering on</b> – otherwise the ESP32 starts in download mode.</p>
+3, 2, 1; releasing earlier cancels (Fig. 11 and 12). The setting is saved. <b>Do not press it while powering on</b> – otherwise the ESP32 starts in download mode.</p>
 <div class="two">
- <figure><img loading="lazy" src="images/oled_profil_en.png"><figcaption>Fig. 12 – Switching DIGITAL → ANALOG (BOOT button held, 2 s to go)</figcaption></figure>
- <figure><img loading="lazy" src="images/oled_profil_analog_digital_en.png"><figcaption>Fig. 13 – Switching ANALOG → DIGITAL (back to the profile for digital oscilloscopes)</figcaption></figure>
+ <figure><img loading="lazy" src="images/oled_profil_en.png"><figcaption>Fig. 11 – Switching DIGITAL → ANALOG (BOOT button held, 2 s to go)</figcaption></figure>
+ <figure><img loading="lazy" src="images/oled_profil_analog_digital_en.png"><figcaption>Fig. 12 – Switching ANALOG → DIGITAL (back to the profile for digital oscilloscopes)</figcaption></figure>
 </div>
-<p><b>Factory reset: hold for 10 seconds.</b> From 5 s the OLED counts down 5 … 1 (Fig. 14), then <b>all settings and networks are erased</b> and the clock restarts with the setup network. Releasing earlier cancels.</p>
-<figure><img loading="lazy" src="images/oled_werksreset_en.png"><figcaption>Fig. 14 – OLED shortly before the factory reset (BOOT button held)</figcaption></figure>
+<p><b>Factory reset: hold for 10 seconds.</b> From 5 s the OLED counts down 5 … 1 (Fig. 13), then <b>all settings and networks are erased</b> and the clock restarts with the setup network. Releasing earlier cancels.</p>
+<figure><img loading="lazy" src="images/oled_werksreset_en.png"><figcaption>Fig. 13 – OLED shortly before the factory reset (BOOT button held)</figcaption></figure>
 </div></section></div>
 
 <div class="grp closed"><h2 id="kap8" class="coll" role="button" tabindex="0" aria-expanded="false"><span data-l="de">8 Alle Einstellungen im Überblick</span><span data-l="en">8 All settings at a glance</span></h2>
@@ -943,7 +927,7 @@ group has “Reset to defaults”; the change can then be undone with “Undo”
 
 <div class="grp closed"><h2 id="kap9" class="coll" role="button" tabindex="0" aria-expanded="false"><span data-l="de">9 Fehlersuche</span><span data-l="en">9 Troubleshooting</span></h2>
 <section class="doc"><div data-l="de">
-<div class="tw"><table>
+<div class="tw"><table style="font-size:8pt">
  <tr><th>Beobachtung</th><th>Abhilfe</th></tr>
  <tr><td data-th="Beobachtung">Kein Bild auf dem Oszilloskop</td><td data-th="Abhilfe">X/Y-Betrieb, DC-Kopplung, 0,5 V/Div; Position auf Bildmitte; Pigtail X an Kanal 1, Y an Kanal 2; Testbild einschalten</td></tr>
  <tr><td data-th="Beobachtung">Bild gespiegelt oder gedreht</td><td data-th="Abhilfe">X und Y vertauscht, oder Kanal invertiert (Invert-Funktion ausschalten)</td></tr>
@@ -964,8 +948,16 @@ group has “Reset to defaults”; the change can then be undone with “Undo”
  <tr><td data-th="Beobachtung">Hochladen schlägt fehl</td><td data-th="Abhilfe">Partitionsschema „Huge APP“; ggf. BOOT-Taster beim Start des Hochladens drücken</td></tr>
 </table></div>
 <p>Für eine Fehlermeldung im Debug-Bereich „Herunterladen“ antippen und die Textdatei weitergeben.</p>
+
+<h3>Debug-Meldungen (Beispiel)</h3>
+<pre style="font-size:7.3pt;padding:1.5mm;line-height:1.3">+0s ESP32 Oscilloscope Clock v2.0
++0s [Scope] Profil: DIGITAL – BOOT-Taster 3 s halten zum Umschalten
++3s [WiFi] verbunden mit "Heimnetz", IP 192.168.1.23, RSSI -61 dBm
++3s [Web] erreichbar unter http://scope-clock.local und http://192.168.1.23
++10s [Scope] Start-Testbild beendet, Uhr laeuft
+21:15:06 [NTP] Sync 15.11.2026 21:15:06</pre>
 </div><div data-l="en">
-<div class="tw"><table>
+<div class="tw"><table style="font-size:8pt">
  <tr><th>Observation</th><th>Remedy</th></tr>
  <tr><td data-th="Observation">No picture on the oscilloscope</td><td data-th="Remedy">X/Y mode, DC coupling, 0.5 V/div; position at the centre; pigtail X to channel 1, Y to channel 2; switch on the test pattern</td></tr>
  <tr><td data-th="Observation">Picture mirrored or rotated</td><td data-th="Remedy">X and Y swapped, or a channel inverted (switch off the invert function)</td></tr>
@@ -986,11 +978,19 @@ group has “Reset to defaults”; the change can then be undone with “Undo”
  <tr><td data-th="Observation">Upload fails</td><td data-th="Remedy">partition scheme “Huge APP”; if necessary press the BOOT button when the upload starts</td></tr>
 </table></div>
 <p>For a bug report tap “Download” in the debug section and pass on the text file.</p>
+
+<h3>Debug messages (example, language English)</h3>
+<pre style="font-size:7.3pt;padding:1.5mm;line-height:1.3">+0s ESP32 Oscilloscope Clock v2.0
++0s [Scope] profile: DIGITAL – hold the BOOT button for 3 s to switch
++3s [WiFi] connected to "HomeNet", IP 192.168.1.23, RSSI -61 dBm
++3s [Web] reachable at http://scope-clock.local and http://192.168.1.23
++10s [Scope] start-up test pattern finished, clock running
+21:15:06 [NTP] Sync 2026-11-15 21:15:06</pre>
 </div></section></div>
 
 <div class="grp closed"><h2 id="kap10" class="coll" role="button" tabindex="0" aria-expanded="false"><span data-l="de">10 Technik: wie die Uhr arbeitet</span><span data-l="en">10 Technology: how the clock works</span></h2>
 <section class="doc"><div data-l="de">
-<figure><img loading="lazy" src="images/software.svg"><figcaption>Abb. 15 – Aufteilung der Firmware auf die beiden Prozessorkerne</figcaption></figure>
+<figure><img loading="lazy" src="images/software.svg"><figcaption>Abb. 14 – Aufteilung der Firmware auf die beiden Prozessorkerne</figcaption></figure>
 <h3>Zwei Kerne mit getrennten Aufgaben</h3>
 <p>Der ESP32 hat zwei Prozessorkerne. <b>Kern 1</b> führt nur den <code>scopeTask</code> aus: Er zeichnet ohne Pause Bild für Bild
 und gibt den Kern nie frei – jede Unterbrechung wäre als heller Punkt oder Ruckeln auf dem Schirm zu sehen. Deshalb ist auf
@@ -1068,17 +1068,8 @@ landen in einem 8-KB-Ringpuffer, den der Debug-Bereich anzeigt.</p>
 (Koordinaten 0–255, 8 Bit je Achse).</p>
 <p><b>Speicher:</b> Programmspeicher 1.241.106 Byte (94 % beim Standard-Partitionsschema, ca. 39 % mit „Huge APP“), globale Variablen
 74.940 Byte (22 %). Die Webseite liegt gzip-komprimiert im Flash (24 KB), die Schrift (Raleway, auf die benötigten Zeichen reduziert) als WOFF2 (30 KB).</p>
-<h3>Debug-Meldungen (Beispiel)</h3>
-<pre>+0s ESP32 Oscilloscope Clock v2.0
-+0s [Scope] Profil: DIGITAL – BOOT-Taster 3 s halten zum Umschalten
-+0s [Scope] Testbild fuer 10 s
-+0s [Scope] Rundtour: 76 Linienzuege, Spruenge gesamt 1033 DAC-Einheiten
-+3s [WiFi] verbunden mit "Heimnetz", IP 192.168.1.23, RSSI -61 dBm
-+3s [Web] erreichbar unter http://scope-clock.local und http://192.168.1.23
-+10s [Scope] Start-Testbild beendet, Uhr laeuft
-21:15:06 [NTP] Sync 15.11.2026 21:15:06</pre>
 </div><div data-l="en">
-<figure><img loading="lazy" src="images/software_en.svg"><figcaption>Fig. 15 – Distribution of the firmware over the two processor cores</figcaption></figure>
+<figure><img loading="lazy" src="images/software_en.svg"><figcaption>Fig. 14 – Distribution of the firmware over the two processor cores</figcaption></figure>
 <h3>Two cores with separate jobs</h3>
 <p>The ESP32 has two processor cores. <b>Core 1</b> runs only the <code>scopeTask</code>: it draws frame after frame without a pause
 and never releases the core – any interruption would show up as a bright dot or a jerk on the screen. That is why the idle-task
@@ -1154,15 +1145,6 @@ the debug section.</p>
 (coordinates 0–255, 8 bits per axis).</p>
 <p><b>Memory:</b> program memory 1,241,106 bytes (94 % with the default partition scheme, approx. 39 % with “Huge APP”), global variables
 74,940 bytes (22 %). The web page is stored gzip-compressed in flash (24 KB), the font (Raleway, reduced to the characters needed) as WOFF2 (30 KB).</p>
-<h3>Debug messages (example, language English)</h3>
-<pre>+0s ESP32 Oscilloscope Clock v2.0
-+0s [Scope] profile: DIGITAL – hold the BOOT button for 3 s to switch
-+0s [Scope] test pattern for 10 s
-+0s [Scope] round trip: 76 polylines, jumps total 1033 DAC units
-+3s [WiFi] connected to "HomeNet", IP 192.168.1.23, RSSI -61 dBm
-+3s [Web] reachable at http://scope-clock.local and http://192.168.1.23
-+10s [Scope] start-up test pattern finished, clock running
-21:15:06 [NTP] Sync 2026-11-15 21:15:06</pre>
 </div></section></div>
 
 <div class="grp closed"><h2 id="kap11" class="coll" role="button" tabindex="0" aria-expanded="false"><span data-l="de">11 Anhang</span><span data-l="en">11 Appendix</span></h2>
@@ -1211,7 +1193,7 @@ the debug section.</p>
  <tr><td data-th="Datei"><code>config.h</code></td><td data-th="Inhalt">Startwerte und Pins</td></tr>
  <tr><td data-th="Datei"><code>DataTable.h</code></td><td data-th="Inhalt">Vektordaten (aus <code>tools/gen_vectors.py</code>)</td></tr>
  <tr><td data-th="Datei"><code>vectors.h</code></td><td data-th="Inhalt">Vorschau-Daten für das Webinterface (aus <code>tools/gen_vectors.py --vectors</code>)</td></tr>
- <tr><td data-th="Datei"><code>webpage.h</code>, <code>font.h</code>, <code>icon.h</code></td><td data-th="Inhalt">Webseite (aus <code>web/index.html</code> mit <code>tools/gen_webpage.py</code>), Schrift, App-Symbol</td></tr>
+ <tr><td data-th="Datei"><code>webpage.h</code>, <code>font.h</code>, <code>icon.h</code></td><td data-th="Inhalt">Webseite: Quelle <code>web/index.html</code>; nach Änderungen <code>python3 tools/gen_webpage.py</code> ausführen (entfernt Kommentare, gzip, ca. 24 statt 82 KB). Schrift, App-Symbol</td></tr>
  <tr><td data-th="Datei"><code>docs/demo/index.html</code></td><td data-th="Inhalt">Testseite des Webinterfaces ohne Uhr, im Browser öffnen (erzeugt mit <code>tools/gen_demo.py</code>)</td></tr>
  <tr><td data-th="Datei"><code>docs/</code></td><td data-th="Inhalt">diese Dokumentation auf Deutsch und Englisch (Quellen <code>dokumentation.html</code>, <code>documentation.en.html</code>), Bilder</td></tr>
  <tr><td data-th="Datei"><code>README.md</code>, <code>HARDWARE.md</code>, <code>SOFTWARE.md</code></td><td data-th="Inhalt">Kurzfassung auf GitHub (Deutsch und Englisch)</td></tr>
@@ -1269,7 +1251,7 @@ OLED-Inhalt, BOOT-Taster und Webinterface wurden am PC simuliert bzw. im Browser
  <tr><td data-th="File"><code>config.h</code></td><td data-th="Content">Defaults and pins</td></tr>
  <tr><td data-th="File"><code>DataTable.h</code></td><td data-th="Content">Vector data (from <code>tools/gen_vectors.py</code>)</td></tr>
  <tr><td data-th="File"><code>vectors.h</code></td><td data-th="Content">Preview data for the web interface (from <code>tools/gen_vectors.py --vectors</code>)</td></tr>
- <tr><td data-th="File"><code>webpage.h</code>, <code>font.h</code>, <code>icon.h</code></td><td data-th="Content">Web page (from <code>web/index.html</code> with <code>tools/gen_webpage.py</code>), font, app icon</td></tr>
+ <tr><td data-th="File"><code>webpage.h</code>, <code>font.h</code>, <code>icon.h</code></td><td data-th="Content">Web page: source <code>web/index.html</code>; after changes run <code>python3 tools/gen_webpage.py</code> (removes comments, gzip, approx. 24 instead of 82 KB). Font, app icon</td></tr>
  <tr><td data-th="File"><code>docs/demo/index.html</code></td><td data-th="Content">test page of the web interface without a clock, open it in a browser (generated with <code>tools/gen_demo.py</code>)</td></tr>
  <tr><td data-th="File"><code>docs/</code></td><td data-th="Content">this documentation in German and English (sources <code>dokumentation.html</code>, <code>documentation.en.html</code>), images</td></tr>
  <tr><td data-th="File"><code>README.md</code>, <code>HARDWARE.md</code>, <code>SOFTWARE.md</code></td><td data-th="Content">Summary on GitHub (German and English)</td></tr>
