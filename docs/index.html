@@ -215,8 +215,8 @@ a.row>span:last-child{font-size:18px}
 <div class="grp"><h2 id="downloads-h" class="coll" role="button" tabindex="0" aria-expanded="true"><span data-l="de">0 Links &amp; Dokumente</span><span data-l="en">0 Links &amp; documents</span></h2>
 <section>
  <a class="row" target="_blank" rel="noopener" href="https://github.com/HolzHolz123/ESP32_OscilloscopeClock"><span><span data-l="de">GitHub – Version 2.0</span><span data-l="en">GitHub – version 2.0</span><small class="note" data-l="de">Diese Firmware mit Quellcode, Anleitung und Werkzeugen</small><small class="note" data-l="en">This firmware with source code, guide and tools</small></span><span>›</span></a>
- <a class="row" target="_blank" rel="noopener" data-l="de" href="ESP32_Oscilloscope_Clock_Dokumentation.pdf?v=0bcf9e12"><span>Dokumentation (PDF)<small class="note">Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small></span><span>›</span></a>
- <a class="row" target="_blank" rel="noopener" data-l="en" href="ESP32_Oscilloscope_Clock_Documentation.pdf?v=b9df796d"><span>Documentation (PDF)<small class="note">Assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
+ <a class="row" target="_blank" rel="noopener" data-l="de" href="ESP32_Oscilloscope_Clock_Dokumentation.pdf?v=395ba85e"><span>Dokumentation (PDF)<small class="note">Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small></span><span>›</span></a>
+ <a class="row" target="_blank" rel="noopener" data-l="en" href="ESP32_Oscilloscope_Clock_Documentation.pdf?v=675dbb0f"><span>Documentation (PDF)<small class="note">Assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" href="demo/"><span><span data-l="de">Testseite</span><span data-l="en">Test page</span><small class="note" data-l="de">Das Webinterface der Uhr ausprobieren – läuft im Browser, alle Werte sind simuliert</small><small class="note" data-l="en">Try the clock's web interface – runs in the browser, all values are simulated</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" href="https://github.com/maurohh/ESP32_OscilloscopeClock"><span><span data-l="de">GitHub – Original</span><span data-l="en">GitHub – original</span><small class="note" data-l="de">Die ursprüngliche ESP32 Oscilloscope Clock von Mauro Pintus (2018), nach deren Idee diese Version entstand</small><small class="note" data-l="en">The original ESP32 Oscilloscope Clock by Mauro Pintus (2018) that inspired this version</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" href="https://fonts.google.com/specimen/Raleway"><span><span data-l="de">Schriftart Raleway</span><span data-l="en">Font Raleway</span><small class="note" data-l="de">Google Fonts – frei unter der SIL Open Font License 1.1</small><small class="note" data-l="en">Google Fonts – free under the SIL Open Font License 1.1</small></span><span>›</span></a>
@@ -719,18 +719,16 @@ Handy gemacht und lässt sich über „Zum Startbildschirm hinzufügen“ wie ei
 <p>Oben die Uhrzeit im 7-Segment-Stil, darunter Kalenderwoche und Datum mit kleinen 7-Segment-Ziffern, dann das WLAN und die Signalstärke. Ohne gültige Zeit steht
 dort „Keine NTP-Verbindung“, im Setup-WLAN der Netzname „ScopeClock-Setup“ und die Adresse. Helligkeit 0–100 %, Sekunden,
 Drehung um 180° und Pixelverschiebung gegen Einbrennen sind einstellbar.</p>
-<div class="two">
- <figure><img loading="lazy" src="images/oled_englisch_12h.png"><figcaption>Abb. 11 – OLED auf Englisch im 12-Stunden-Format</figcaption></figure>
- <figure><img loading="lazy" src="images/oled_werksreset.png"><figcaption>Abb. 12 – OLED kurz vor den Werkseinstellungen (BOOT-Taster gehalten)</figcaption></figure>
-</div>
+<figure><img loading="lazy" src="images/oled_englisch_12h.png"><figcaption>Abb. 11 – OLED auf Englisch im 12-Stunden-Format</figcaption></figure>
 <h3>BOOT-Taster</h3>
 <p><b>3 Sekunden halten</b> schaltet das Oszilloskop-Profil um (DIGITAL ↔ ANALOG). Das OLED zeigt den Wechsel mit Countdown 3, 2, 1;
-vorher loslassen bricht ab (Abb. 13 und 14). Die Einstellung wird gespeichert. <b>Nicht beim Einschalten drücken</b> – sonst startet der ESP32 im Download-Modus.</p>
+vorher loslassen bricht ab (Abb. 12 und 13). Die Einstellung wird gespeichert. <b>Nicht beim Einschalten drücken</b> – sonst startet der ESP32 im Download-Modus.</p>
 <div class="two">
- <figure><img loading="lazy" src="images/oled_profil.png"><figcaption>Abb. 13 – Umschalten DIGITAL → ANALOG (BOOT-Taster gehalten, noch 2 s)</figcaption></figure>
- <figure><img loading="lazy" src="images/oled_profil_analog_digital.png"><figcaption>Abb. 14 – Umschalten ANALOG → DIGITAL (zurück zum Profil für digitale Oszilloskope)</figcaption></figure>
+ <figure><img loading="lazy" src="images/oled_profil.png"><figcaption>Abb. 12 – Umschalten DIGITAL → ANALOG (BOOT-Taster gehalten, noch 2 s)</figcaption></figure>
+ <figure><img loading="lazy" src="images/oled_profil_analog_digital.png"><figcaption>Abb. 13 – Umschalten ANALOG → DIGITAL (zurück zum Profil für digitale Oszilloskope)</figcaption></figure>
 </div>
-<p><b>Werkseinstellungen: 10 Sekunden halten.</b> Ab 5 s zählt das OLED 5 … 1 herunter (Abb. 12), dann werden <b>alle Einstellungen und WLANs gelöscht</b> und die Uhr startet mit dem Setup-WLAN neu. Vorher loslassen bricht ab.</p>
+<p><b>Werkseinstellungen: 10 Sekunden halten.</b> Ab 5 s zählt das OLED 5 … 1 herunter (Abb. 14), dann werden <b>alle Einstellungen und WLANs gelöscht</b> und die Uhr startet mit dem Setup-WLAN neu. Vorher loslassen bricht ab.</p>
+<figure><img loading="lazy" src="images/oled_werksreset.png"><figcaption>Abb. 14 – OLED kurz vor den Werkseinstellungen (BOOT-Taster gehalten)</figcaption></figure>
 </div><div data-l="en">
 <h3>Web interface</h3>
 <p>Open <b>http://scope-clock.local</b> (name can be changed under Settings → System) or the IP address. The page is made for
@@ -749,18 +747,16 @@ phones and can be added to the home screen like an app (“Add to home screen”
 <p>At the top the time in 7-segment style, below it the calendar week and date with small 7-segment digits, then the Wi-Fi network and the signal strength.
 Without a valid time it shows “No NTP connection”; in the setup network it shows the network name “ScopeClock-Setup” and the address.
 Brightness 0–100 %, seconds, rotation by 180° and pixel shifting against burn-in can be set.</p>
-<div class="two">
- <figure><img loading="lazy" src="images/oled_englisch_12h.png"><figcaption>Fig. 11 – OLED in English in 12-hour format</figcaption></figure>
- <figure><img loading="lazy" src="images/oled_werksreset_en.png"><figcaption>Fig. 12 – OLED shortly before the factory reset (BOOT button held)</figcaption></figure>
-</div>
+<figure><img loading="lazy" src="images/oled_englisch_12h.png"><figcaption>Fig. 11 – OLED in English in 12-hour format</figcaption></figure>
 <h3>BOOT button</h3>
 <p><b>Holding it for 3 seconds</b> switches the oscilloscope profile (DIGITAL ↔ ANALOG). The OLED shows the change with a countdown
-3, 2, 1; releasing earlier cancels (Fig. 13 and 14). The setting is saved. <b>Do not press it while powering on</b> – otherwise the ESP32 starts in download mode.</p>
+3, 2, 1; releasing earlier cancels (Fig. 12 and 13). The setting is saved. <b>Do not press it while powering on</b> – otherwise the ESP32 starts in download mode.</p>
 <div class="two">
- <figure><img loading="lazy" src="images/oled_profil_en.png"><figcaption>Fig. 13 – Switching DIGITAL → ANALOG (BOOT button held, 2 s to go)</figcaption></figure>
- <figure><img loading="lazy" src="images/oled_profil_analog_digital_en.png"><figcaption>Fig. 14 – Switching ANALOG → DIGITAL (back to the profile for digital oscilloscopes)</figcaption></figure>
+ <figure><img loading="lazy" src="images/oled_profil_en.png"><figcaption>Fig. 12 – Switching DIGITAL → ANALOG (BOOT button held, 2 s to go)</figcaption></figure>
+ <figure><img loading="lazy" src="images/oled_profil_analog_digital_en.png"><figcaption>Fig. 13 – Switching ANALOG → DIGITAL (back to the profile for digital oscilloscopes)</figcaption></figure>
 </div>
-<p><b>Factory reset: hold for 10 seconds.</b> From 5 s the OLED counts down 5 … 1 (Fig. 12), then <b>all settings and networks are erased</b> and the clock restarts with the setup network. Releasing earlier cancels.</p>
+<p><b>Factory reset: hold for 10 seconds.</b> From 5 s the OLED counts down 5 … 1 (Fig. 14), then <b>all settings and networks are erased</b> and the clock restarts with the setup network. Releasing earlier cancels.</p>
+<figure><img loading="lazy" src="images/oled_werksreset_en.png"><figcaption>Fig. 14 – OLED shortly before the factory reset (BOOT button held)</figcaption></figure>
 </div></section></div>
 
 <div class="grp closed"><h2 id="kap8" class="coll" role="button" tabindex="0" aria-expanded="false"><span data-l="de">8 Alle Einstellungen im Überblick</span><span data-l="en">8 All settings at a glance</span></h2>

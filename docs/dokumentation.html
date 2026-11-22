@@ -328,18 +328,16 @@ Handy gemacht und lässt sich über „Zum Startbildschirm hinzufügen“ wie ei
 <p>Oben die Uhrzeit im 7-Segment-Stil, darunter Kalenderwoche und Datum mit kleinen 7-Segment-Ziffern, dann das WLAN und die Signalstärke. Ohne gültige Zeit steht
 dort „Keine NTP-Verbindung“, im Setup-WLAN der Netzname „ScopeClock-Setup“ und die Adresse. Helligkeit 0–100 %, Sekunden,
 Drehung um 180° und Pixelverschiebung gegen Einbrennen sind einstellbar.</p>
-<div class="two">
- <figure><img src="images/oled_englisch_12h.png"><figcaption>Abb. 11 – OLED auf Englisch im 12-Stunden-Format</figcaption></figure>
- <figure><img src="images/oled_werksreset.png"><figcaption>Abb. 12 – OLED kurz vor den Werkseinstellungen (BOOT-Taster gehalten)</figcaption></figure>
-</div>
+<figure><img src="images/oled_englisch_12h.png" style="width:48%"><figcaption>Abb. 11 – OLED auf Englisch im 12-Stunden-Format</figcaption></figure>
 <h3>BOOT-Taster</h3>
 <p><b>3 Sekunden halten</b> schaltet das Oszilloskop-Profil um (DIGITAL ↔ ANALOG). Das OLED zeigt den Wechsel mit Countdown 3, 2, 1;
-vorher loslassen bricht ab (Abb. 13 und 14). Die Einstellung wird gespeichert. <b>Nicht beim Einschalten drücken</b> – sonst startet der ESP32 im Download-Modus.</p>
+vorher loslassen bricht ab (Abb. 12 und 13). Die Einstellung wird gespeichert. <b>Nicht beim Einschalten drücken</b> – sonst startet der ESP32 im Download-Modus.</p>
 <div class="two">
- <figure><img src="images/oled_profil.png"><figcaption>Abb. 13 – Umschalten DIGITAL → ANALOG (BOOT-Taster gehalten, noch 2 s)</figcaption></figure>
- <figure><img src="images/oled_profil_analog_digital.png"><figcaption>Abb. 14 – Umschalten ANALOG → DIGITAL (zurück zum Profil für digitale Oszilloskope)</figcaption></figure>
+ <figure><img src="images/oled_profil.png"><figcaption>Abb. 12 – Umschalten DIGITAL → ANALOG (BOOT-Taster gehalten, noch 2 s)</figcaption></figure>
+ <figure><img src="images/oled_profil_analog_digital.png"><figcaption>Abb. 13 – Umschalten ANALOG → DIGITAL (zurück zum Profil für digitale Oszilloskope)</figcaption></figure>
 </div>
-<p><b>Werkseinstellungen: 10 Sekunden halten.</b> Ab 5 s zählt das OLED 5 … 1 herunter (Abb. 12), dann werden <b>alle Einstellungen und WLANs gelöscht</b> und die Uhr startet mit dem Setup-WLAN neu. Vorher loslassen bricht ab.</p>
+<p><b>Werkseinstellungen: 10 Sekunden halten.</b> Ab 5 s zählt das OLED 5 … 1 herunter (Abb. 14), dann werden <b>alle Einstellungen und WLANs gelöscht</b> und die Uhr startet mit dem Setup-WLAN neu. Vorher loslassen bricht ab.</p>
+<figure><img src="images/oled_werksreset.png" style="width:48%"><figcaption>Abb. 14 – OLED kurz vor den Werkseinstellungen (BOOT-Taster gehalten)</figcaption></figure>
 
 <h2>8 Alle Einstellungen im Überblick</h2>
 <p>Alle Einstellungen wirken <b>sofort</b> – am Oszilloskop, auf dem OLED und in der Vorschau – und werden dauerhaft auf der

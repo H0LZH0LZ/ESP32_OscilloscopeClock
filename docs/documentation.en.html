@@ -329,18 +329,16 @@ phones and can be added to the home screen like an app (“Add to home screen”
 <p>At the top the time in 7-segment style, below it the calendar week and date with small 7-segment digits, then the Wi-Fi network and the signal strength.
 Without a valid time it shows “No NTP connection”; in the setup network it shows the network name “ScopeClock-Setup” and the address.
 Brightness 0–100 %, seconds, rotation by 180° and pixel shifting against burn-in can be set.</p>
-<div class="two">
- <figure><img src="images/oled_englisch_12h.png"><figcaption>Fig. 11 – OLED in English in 12-hour format</figcaption></figure>
- <figure><img src="images/oled_werksreset_en.png"><figcaption>Fig. 12 – OLED shortly before the factory reset (BOOT button held)</figcaption></figure>
-</div>
+<figure><img src="images/oled_englisch_12h.png" style="width:48%"><figcaption>Fig. 11 – OLED in English in 12-hour format</figcaption></figure>
 <h3>BOOT button</h3>
 <p><b>Holding it for 3 seconds</b> switches the oscilloscope profile (DIGITAL ↔ ANALOG). The OLED shows the change with a countdown
-3, 2, 1; releasing earlier cancels (Fig. 13 and 14). The setting is saved. <b>Do not press it while powering on</b> – otherwise the ESP32 starts in download mode.</p>
+3, 2, 1; releasing earlier cancels (Fig. 12 and 13). The setting is saved. <b>Do not press it while powering on</b> – otherwise the ESP32 starts in download mode.</p>
 <div class="two">
- <figure><img src="images/oled_profil_en.png"><figcaption>Fig. 13 – Switching DIGITAL → ANALOG (BOOT button held, 2 s to go)</figcaption></figure>
- <figure><img src="images/oled_profil_analog_digital_en.png"><figcaption>Fig. 14 – Switching ANALOG → DIGITAL (back to the profile for digital oscilloscopes)</figcaption></figure>
+ <figure><img src="images/oled_profil_en.png"><figcaption>Fig. 12 – Switching DIGITAL → ANALOG (BOOT button held, 2 s to go)</figcaption></figure>
+ <figure><img src="images/oled_profil_analog_digital_en.png"><figcaption>Fig. 13 – Switching ANALOG → DIGITAL (back to the profile for digital oscilloscopes)</figcaption></figure>
 </div>
-<p><b>Factory reset: hold for 10 seconds.</b> From 5 s the OLED counts down 5 … 1 (Fig. 12), then <b>all settings and networks are erased</b> and the clock restarts with the setup network. Releasing earlier cancels.</p>
+<p><b>Factory reset: hold for 10 seconds.</b> From 5 s the OLED counts down 5 … 1 (Fig. 14), then <b>all settings and networks are erased</b> and the clock restarts with the setup network. Releasing earlier cancels.</p>
+<figure><img src="images/oled_werksreset_en.png" style="width:48%"><figcaption>Fig. 14 – OLED shortly before the factory reset (BOOT button held)</figcaption></figure>
 
 <h2>8 All settings at a glance</h2>
 <p>All settings take effect <b>immediately</b> – on the oscilloscope, on the OLED and in the preview – and are saved permanently on
