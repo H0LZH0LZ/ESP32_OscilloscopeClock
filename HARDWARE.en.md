@@ -250,7 +250,7 @@ the oscilloscope. The values in `config.h` are then only the start values.
 | `OLED_BRIGHT_PCT` | OLED brightness 0–100 % (default 50 %, 0 = off) |
 | `OLED_SECONDS` | 1 = OLED time with seconds, 0 = HH:MM only |
 | `USE_FAST_DAC` | `1` = direct register access (default). `0` = `dacWrite()`, only as a fallback |
-| `DIAL_STYLE` | Start dial: 0 = 1–12, 1 = 12/3/6/9, 2 = Roman I–XII, 3 = Roman XII/III/VI/IX, 4 = ticks only (no numbers). Switchable in the web interface by swiping over the preview, the choice is saved |
+| `DIAL_STYLE` | Start dial: 0 = 1–12, 1 = 12/3/6/9, 2 = Roman I–XII, 3 = Roman XII/III/VI/IX, 4 = station clock (hour bars instead of numbers). Switchable in the web interface by swiping over the preview, the choice is saved |
 | `TZ_INFO` | Time zone incl. daylight saving rule (default: Central Europe) |
 | `DIAL_AUTO_MIN` | change the dial automatically every n minutes (0 = off, default; 1, 5, 15, 60); continues after power-on |
 | `SCOPE_SHIFT`, `SCOPE_SHIFT_EVERY_S` | image shift against burn-in (on by default, next position every 60 s) |

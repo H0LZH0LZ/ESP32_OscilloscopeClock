@@ -86,7 +86,7 @@ Zifferblatt, Ziffern und Zeiger etwa 230-mal pro Sekunde nach.</p>
 <h3>Funktionen</h3>
 <ul>
  <li><b>Genaue Zeit</b> aus dem Internet (NTP), stündlich abgeglichen, Sommer-/Winterzeit automatisch. Ohne Internet lässt sich die Zeit im Webinterface stellen.</li>
- <li><b>Fünf Zifferblätter:</b> Ziffern 1–12, nur 12·3·6·9, nur Striche, römisch XII·III·VI·IX, römisch I–XII. Umschalten durch Wischen über die Vorschau im Webinterface.</li>
+ <li><b>Fünf Zifferblätter:</b> Ziffern 1–12, nur 12·3·6·9, Bahnhof (Stundenbalken statt Ziffern), römisch XII·III·VI·IX, römisch I–XII. Umschalten durch Wischen über die Vorschau im Webinterface.</li>
  <li><b>Gleich helle Linien</b> durch konstante Strahlgeschwindigkeit, kaum sichtbare Rücklaufspuren.</li>
  <li><b>Ein Gerät für alle Oszilloskope:</b> Profil DIGITAL (Speicher-Oszilloskope) oder ANALOG (Röhre), umschaltbar per BOOT-Taster oder Webinterface.</li>
  <li><b>OLED-Anzeige</b> am Gerät (optional, im Prototyp verbaut): Uhrzeit, Kalenderwoche, Datum, WLAN und Signalstärke.</li>
@@ -214,7 +214,7 @@ Der Außenkontakt hat Durchgang zu GND. Alle Schraubklemmen leicht nachziehen.</
 <table style="break-inside:avoid">
  <tr><th>Variante</th><th>Arduino IDE: Partition Scheme</th><th>PlatformIO</th><th>Programmspeicher</th></tr>
  <tr><td><b>A – Huge APP</b> (empfohlen)</td><td>„Huge APP (3MB No OTA/1MB SPIFFS)“</td><td><code>pio run -t upload</code></td><td>1.241.138 von 3.145.728 Byte (<b>39 %</b>)</td></tr>
- <tr><td><b>B – Standard</b></td><td>„Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)“ – Voreinstellung, nichts umstellen</td><td><code>pio run -e standard -t upload</code></td><td>1.241.106 von 1.310.720 Byte (<b>94 %</b>)</td></tr>
+ <tr><td><b>B – Standard</b></td><td>„Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)“ – Voreinstellung, nichts umstellen</td><td><code>pio run -e standard -t upload</code></td><td>1.241.998 von 1.310.720 Byte (<b>94 %</b>)</td></tr>
 </table>
 <p>Beide Varianten laufen gleich. <b>A</b> lässt rund 1,9 MB Platz für Erweiterungen; die Uhr nutzt weder OTA-Updates noch
 SPIFFS, deshalb fehlt dabei nichts. <b>B</b> funktioniert ohne Umstellen, hat aber nur noch etwa 70 KB Reserve. Ein Wechsel
@@ -354,7 +354,7 @@ beschrieben wird. Jede Gruppe hat „Auf Standardwerte zurücksetzen“; danach 
  <tr><td>Testbild</td><td>an / aus (aus)</td><td>Zeigt statt der Uhr einen Rahmen mit Marken, einen Kreis und ein Mittelkreuz. Damit werden Position,
  Größe, gleiche Verstärkung von X und Y (Kreis rund statt oval) und Fokus eingestellt. Wird nicht gespeichert; nach dem
  Einschalten erscheint es automatisch für 10 Sekunden.</td></tr>
- <tr><td>Zifferblatt</td><td>5 Stile (Ziffern 1–12)</td><td>Ziffern 1–12, nur 12·3·6·9, nur Striche, römisch XII·III·VI·IX oder römisch I–XII. Wechselt
+ <tr><td>Zifferblatt</td><td>5 Stile (Ziffern 1–12)</td><td>Ziffern 1–12, nur 12·3·6·9, Bahnhof (Stundenbalken statt Ziffern), römisch XII·III·VI·IX oder römisch I–XII. Wechselt
  sofort am Oszilloskop; auch durch Wischen über die Vorschau. Weniger Ziffern bedeuten ein kürzeres Bild und damit
  eine höhere Bildrate (weniger Flimmern).</td></tr>
  <tr><td>Zifferblatt automatisch wechseln</td><td>aus, jede Minute, alle 5 / 15 Minuten, jede Stunde (aus)</td><td>Zeigt nacheinander alle fünf Zifferblätter.
@@ -370,7 +370,7 @@ beschrieben wird. Jede Gruppe hat „Auf Standardwerte zurücksetzen“; danach 
  0 % blendet die Zeiger aus. Der Sekundenzeiger ist davon nicht betroffen.</td></tr>
  <tr><td>Helligkeit Minutenstriche</td><td>0–100 % (100 %)</td><td>Helligkeit der 60 Striche am Rand. Weniger Helligkeit lässt die Zeiger stärker hervortreten und
  verkürzt das Bild etwas; 0 % blendet die Striche ganz aus.</td></tr>
- <tr><td>Helligkeit Ziffern</td><td>0–100 % (100 %)</td><td>Helligkeit der Zahlen auf dem Zifferblatt. 0 % blendet sie aus – das entspricht dann dem Stil „nur Striche“.</td></tr>
+ <tr><td>Helligkeit Ziffern</td><td>0–100 % (100 %)</td><td>Helligkeit der Zahlen auf dem Zifferblatt. 0 % blendet sie aus, dann bleiben nur die Minutenstriche.</td></tr>
  <tr><td>Rücklauf-Tempo</td><td>0–48 (24)</td><td>Nur im Profil ANALOG: wie schnell der Strahl zwischen zwei Linien springt (Vielfaches des Zeichentempos).
  <b>Schneller</b> = schwächere Rücklaufspur; ist das Oszilloskop dafür zu langsam, entstehen kleine „Haken“ an den
  Linienanfängen – dann Wert verringern (z. B. 12). 0 = harter Sprung. Im Profil DIGITAL und bei Dunkeltastung ausgegraut, der Wert bleibt gespeichert.</td></tr>
@@ -553,8 +553,8 @@ Die Pixelverschiebung versetzt die Anzeige jede Minute um einen Pixel, damit kei
 landen in einem 8-KB-Ringpuffer, den der Debug-Bereich anzeigt.</p>
 <p><b>Vektordaten:</b> Zifferblatt, Ziffern, Zeiger und Testbild sind eigene Zeichnungen, erzeugt mit <code>tools/gen_vectors.py</code>
 (Koordinaten 0–255, 8 Bit je Achse).</p>
-<p><b>Speicher:</b> Programmspeicher 1.241.106 Byte (94 % beim Standard-Partitionsschema, ca. 39 % mit „Huge APP“), globale Variablen
-74.940 Byte (22 %). Die Webseite liegt gzip-komprimiert im Flash (24 KB), die Schrift (Raleway, auf die benötigten Zeichen reduziert) als WOFF2 (30 KB).</p>
+<p><b>Speicher:</b> Programmspeicher 1.241.998 Byte (94 % beim Standard-Partitionsschema, ca. 39 % mit „Huge APP“), globale Variablen
+75.308 Byte (22 %). Die Webseite liegt gzip-komprimiert im Flash (24 KB), die Schrift (Raleway, auf die benötigten Zeichen reduziert) als WOFF2 (30 KB).</p>
 
 <h2>11 Anhang</h2>
 <h3>Startwerte in <code>config.h</code></h3>
@@ -567,7 +567,7 @@ landen in einem 8-KB-Ringpuffer, den der Debug-Bereich anzeigt.</p>
  <tr><td><code>BEAM_NS_PER_UNIT</code></td><td>3000</td><td>Verweilzeit pro Schritt in ns (≈ 230 Bilder/s)</td></tr>
  <tr><td><code>JUMP_SPEED</code>, <code>JUMP_LANDING</code>, <code>JUMP_RAMP</code></td><td>24, 8, 4</td><td>Sprünge im Profil ANALOG</td></tr>
  <tr><td><code>HAND/TICK/DIGIT_BRIGHT_PCT</code></td><td>67, 100, 100</td><td>Helligkeiten</td></tr>
- <tr><td><code>DIAL_STYLE</code></td><td>0</td><td>0 = 1–12, 1 = 12/3/6/9, 2 = I–XII, 3 = XII/III/VI/IX, 4 = nur Striche</td></tr>
+ <tr><td><code>DIAL_STYLE</code></td><td>0</td><td>0 = 1–12, 1 = 12/3/6/9, 2 = I–XII, 3 = XII/III/VI/IX, 4 = Bahnhof (Stundenbalken)</td></tr>
  <tr><td><code>DIAL_AUTO_MIN</code></td><td>0</td><td>Zifferblatt automatisch wechseln alle n Minuten (0 = aus; 1, 5, 15, 60)</td></tr>
  <tr><td><code>SCOPE_SHIFT</code>, <code>SCOPE_SHIFT_EVERY_S</code></td><td>1, 60</td><td>Bildverschiebung gegen Einbrennen an, alle n Sekunden weiter</td></tr>
  <tr><td><code>RTC_ENABLE</code>, <code>RTC_SDA_PIN</code>, <code>RTC_SCL_PIN</code></td><td>0, 21, 22</td><td>Optionale Echtzeituhr DS3231 (im Webinterface umschaltbar)</td></tr>

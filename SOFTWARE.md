@@ -166,8 +166,8 @@ gezeichnet; der Sekundenzeiger springt wie am Oszilloskop von Sekunde zu Sekunde
 nach links zum nächsten, nach rechts zum vorigen (Pointer-Events, ab 40 px waagerecht; senkrechtes
 Wischen scrollt weiter die Seite, `touch-action: pan-y`). Am PC gehen auch die Pfeiltasten, wenn die
 Vorschau den Fokus hat. Tippen allein wechselt nicht. Reihenfolge beim Wischen und in der
-Auswahlliste: Ziffern 1–12 → Ziffern 12 · 3 · 6 · 9 → Nur Striche → Römisch XII · III · VI · IX → Römisch I–XII
-(Stil 0, 1, 4, 3, 2 – „Nur Striche“ steht in der Mitte):
+Auswahlliste: Ziffern 1–12 → Ziffern 12 · 3 · 6 · 9 → Bahnhof → Römisch XII · III · VI · IX → Römisch I–XII
+(Stil 0, 1, 4, 3, 2 – „Bahnhof“ steht in der Mitte):
 
 | Stil | Ziffern | Tabelle |
 |---|---|---|
@@ -175,12 +175,12 @@ Auswahlliste: Ziffern 1–12 → Ziffern 12 · 3 · 6 · 9 → Nur Striche → R
 | 1 | nur 12, 3, 6, 9, 7-Segment-Stil | `DialDigitsMin` |
 | 2 | römisch I–XII, serifenlos, 4 als IIII | `DialDigitsRoman` |
 | 3 | nur XII, III, VI, IX | `DialDigitsRoman4` |
-| 4 | keine Ziffern, nur Minutenstriche | `DialDigitsNone` (leer) |
+| 4 | Bahnhof: keine Ziffern, 12 Stundenbalken (Umriss, 34 × 6) und dünne Minutenstriche – ersetzt die Striche aus `DialData` | `DialStation` |
  Die Vorschau zeigt den neuen Stil sofort.
 `POST /api/dial` setzt `g_dialStyle`. Der `scopeTask` erkennt den Wechsel vor dem nächsten Bild
 und berechnet die Rundtour neu. Das dauert einige zehn Millisekunden, so lange steht der Strahl
 (kurzer Lichtpunkt). Die Auswahl wird im NVS gespeichert (Schlüssel `dial`), `DIAL_STYLE` in
-`config.h` ist nur der Startwert. Alle Ziffernsätze liegen deshalb im RAM (zusammen ca. 0,7 KB).
+`config.h` ist nur der Startwert. Alle Ziffernsätze und die Bahnhof-Striche liegen deshalb im RAM (zusammen ca. 1 KB).
 
 Darunter folgen drei Bereiche. **Status** und **Protokoll** sind einklappbar (Pfeil V): Status ist anfangs offen, Protokoll zu
 (bei jedem Aufruf: Status offen, alles andere zu – nichts wird gespeichert; ein Sprung aus dem Menü klappt sie auf). Jede Einstellung und jede Schaltfläche hat eine kurze Beschreibung:
@@ -254,7 +254,7 @@ eingesetzt (`textContent`), nie als HTML.
 | `GET /api/settings` | aktuelle Einstellungen, Standardwerte (`defaults`) und Zeitzonen-Liste |
 | `POST /api/settings` | beliebige Felder `profile`, `dial`, `beamNs`, `handPct`, `tickPct`, `digitPct`, `jumpSpeed`, `tz`, `ntp`, `oledPct`, `oledSec`, `oledShift`, `oledFlip`, `lang` (`de`/`en`), `h12` (0/1), `host` (Gerätename), `test` (0/1, Testbild, nicht gespeichert): prüfen, sofort anwenden, speichern. Antwort `{ok, msg, settings}` |
 | `POST /api/settings/reset` | `group` = `scope` (Oszilloskop), `time` (Uhrzeit) oder `display`: nur diese Gruppe auf die Werte aus `config.h`; ohne `group` alles inkl. Sprache und Gerätename, Testbild aus. WLANs bleiben immer erhalten |
-| `POST /api/dial` | `style` 0 = 1–12, 1 = 12/3/6/9, 2 = römisch I–XII, 3 = römisch XII/III/VI/IX, 4 = nur Striche: Zifferblatt umschalten (Oszilloskop und Vorschau), wird gespeichert |
+| `POST /api/dial` | `style` 0 = 1–12, 1 = 12/3/6/9, 2 = römisch I–XII, 3 = römisch XII/III/VI/IX, 4 = Bahnhof (Stundenbalken statt Ziffern): Zifferblatt umschalten (Oszilloskop und Vorschau), wird gespeichert |
 | `POST /api/time` | `epoch` (Unix-Sekunden, UTC) **oder** `local` (`JJJJ-MM-TTTHH:MM[:SS]`, Ortszeit), optional `dst` (-1 automatisch, 1 Sommerzeit, 0 Winterzeit): Uhrzeit von Hand stellen, 2024–2099. Antwort `msg` nennt die gestellte Zeit, die Seite zeigt sie mit ✓ direkt unter dem gedrückten Knopf |
 
 **Gespeicherte WLANs:** bis zu `WEB_MAX_NETWORKS` (10) Netze im NVS (Namensraum `scopeclock`,
@@ -298,7 +298,7 @@ Knopf „Auf Standardwerte zurücksetzen“: Er löscht nur die gespeicherten We
 | Zifferblatt | `dial` | 5 Stile | `g_dialStyle`, synchron mit dem Wischen über die Vorschau |
 | Verweilzeit des Strahls | `beam` | 1.000–10.000 ns pro Schritt | `g_beamNs`, `scopeTask` berechnet das Timing zwischen zwei Bildern neu (`beamTiming()`) |
 | Helligkeit Stunden-/Minutenzeiger | `hand` | 0–100 % (0 = aus) | `g_handPct` |
-| Helligkeit Minutenstriche | `tick` | 0–100 % (0 = aus) | `g_tickPct`: Verweilzeit der Striche (Tabelle `DialData`) in der Rundtour, in Prozent der normalen Verweilzeit |
+| Helligkeit Minutenstriche | `tick` | 0–100 % (0 = aus) | `g_tickPct`: Verweilzeit der Striche (Tabelle `DialData`, beim Bahnhof `DialStation`) in der Rundtour, in Prozent der normalen Verweilzeit |
 | Helligkeit Ziffern | `digit` | 0–100 % (0 = aus) | `g_digitPct`: Verweilzeit der Ziffern in der Rundtour |
 | Dunkeltastung (Z-Eingang) | `zbl`, `zhi` | an/aus; High oder Low = dunkel | `g_zblank`, `g_zblankHigh`: `zblankApply()` schaltet GPIO `ZBLANK_PIN` (27) als Ausgang bzw. hochohmig; `beamJump()` springt dann im Dunkeln. Nur mit drittem Kabel zum Z-Eingang |
 | Rücklauf-Tempo | `jump` | 0 (sofortiger Sprung) – 48 (× Zeichentempo) | `g_jumpSpeed`, nur im Profil ANALOG wirksam. Bei DIGITAL zeigt der Regler ausgegraut 0 (sofortiger Sprung); der ANALOG-Wert bleibt gespeichert und erscheint beim Zurückschalten wieder |

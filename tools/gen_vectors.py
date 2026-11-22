@@ -2,11 +2,12 @@
 """
 gen_vectors.py – erzeugt alle Vektortabellen für DataTable.h in eigener Gestaltung
 
-  DialData          Minutenstriche (60), Stunden länger, Viertelstunden am längsten
+  DialData          Minutenstriche (60), Stunden länger, Viertelstunden am längsten (Zifferblatt 0–3)
   DialDigits12      Ziffern 1–12        (7-Segment-Stil; Alternativen: --font)
   DialDigitsMin     nur 12, 3, 6, 9
   DialDigitsRoman   römisch I–XII       (serifenlos, 4 als "IIII")
   DialDigitsRoman4  nur XII, III, VI, IX
+  DialStation       Bahnhofsuhr: 12 Stundenbalken + 48 Minutenstriche (ersetzt DialData)
   HrPtrData         Stundenzeiger, 60 Stellungen × 9 Byte (Nadel, 4 Punkte + 0xFF)
   MinPtrData        Minutenzeiger, 60 Stellungen × 9 Byte
   SecPtrData        Sekundenzeiger, 60 Stellungen × 5 Byte
@@ -61,6 +62,23 @@ def dial():
         elif i % 5 == 0:  r0 = 113          # Stunden
         else:             r0 = 121          # Minuten
         polys.append([pt(125, deg), pt(r0, deg)])
+    return polys
+
+
+def dial_station():
+    """Bahnhofsuhr-Zifferblatt (DIAL_STYLE 4, ersetzt die Striche aus DialData):
+    12 Stundenbalken als Umriss (Radius 88–122, Breite 6) und 48 dünne Minutenstriche
+    (Radius 111–122). Jeder Balken ist ein geschlossener Linienzug aus 5 Punkten."""
+    def side(r, deg, off):                     # Punkt auf Radius r, seitlich um off versetzt
+        a = math.radians(deg)
+        return (round(C + r * math.sin(a) + off * math.cos(a)), round(C + r * math.cos(a) - off * math.sin(a)))
+    polys = []
+    for i in range(60):
+        deg = i * 6
+        if i % 5 == 0:
+            polys.append([side(88, deg, -3), side(122, deg, -3), side(122, deg, 3), side(88, deg, 3), side(88, deg, -3)])
+        else:
+            polys.append([pt(122, deg), pt(111, deg)])
     return polys
 
 
@@ -217,7 +235,7 @@ TABLES = {
     'DialDigitsMin':    table(arabic([12, 3, 6, 9])),
     'DialDigitsRoman':  table(roman(range(1, 13))),
     'DialDigitsRoman4': table(roman([12, 3, 6, 9])),
-    'DialDigitsNone':   [0xFF],                       # Zifferblatt nur mit Strichen (keine Ziffern)
+    'DialStation':      table(dial_station()),        # Bahnhofsuhr: ersetzt DialData, ohne Ziffern
     'TestData':         table(test_pattern()),
     'HrPtrData':        hand_table(hand_needle(60, 2)),
     'MinPtrData':       hand_table(hand_needle(100, 2)),
@@ -249,12 +267,13 @@ HEADER = """/*******************************************************************
   Tabellen
   --------
   DialData         60 Minutenstriche, Stunden länger, Viertelstunden am längsten.
-                   Wird immer gezeichnet.
+                   Wird bei DIAL_STYLE 0–3 gezeichnet.
   DialDigits12     Ziffern 1–12, 7-Segment-Stil              (DIAL_STYLE 0, Standard)
   DialDigitsMin    nur 12, 3, 6, 9, 7-Segment-Stil           (DIAL_STYLE 1)
   DialDigitsRoman  römisch I–XII, serifenlos, 4 als "IIII"   (DIAL_STYLE 2)
   DialDigitsRoman4 nur XII, III, VI, IX                      (DIAL_STYLE 3)
-  DialDigitsNone   keine Ziffern, nur Minutenstriche          (DIAL_STYLE 4)
+  DialStation      Bahnhofsuhr: 12 Stundenbalken (Umriss) und  (DIAL_STYLE 4)
+                   48 Minutenstriche, keine Ziffern – ersetzt DialData
   TestData         Testbild: Rahmen, Kreis, Mittelkreuz, Marken (Einstellungen → Testbild)
   HrPtrData        Stundenzeiger: 60 Stellungen × 9 Byte
                    = schmale Nadel, 4 Punkte (Basis links an der Mitte, Spitze,
@@ -299,7 +318,8 @@ def preview():
     hand = lambda name, stride: [strokes(TABLES[name], 0xFF, p * stride, True)[0] for p in range(60)]
     return {'dial': strokes(TABLES['DialData'], 0x00),
             'digits': [strokes(TABLES[k], 0x00) for k in
-                       ('DialDigits12', 'DialDigitsMin', 'DialDigitsRoman', 'DialDigitsRoman4', 'DialDigitsNone')],
+                       ('DialDigits12', 'DialDigitsMin', 'DialDigitsRoman', 'DialDigitsRoman4')] + [[]],
+            'station': strokes(TABLES['DialStation'], 0x00),
             'hr': hand('HrPtrData', 9), 'min': hand('MinPtrData', 9), 'sec': hand('SecPtrData', 5)}
 
 

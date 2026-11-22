@@ -435,7 +435,7 @@ log.push(f(0)+'ESP32 Oscilloscope Clock v2.0 (Idee nach Mauro Pintus 2018)',f(0)
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
  hms(st.lastSync)+' [NTP] Sync '+pad(st.lastSync.getDate())+'.'+pad(st.lastSync.getMonth()+1)+'.'+st.lastSync.getFullYear()+' '+hms(st.lastSync));
-const DN=['1-12','12/3/6/9','I-XII','XII/III/VI/IX','nur Striche'];
+const DN=['1-12','12/3/6/9','I-XII','XII/III/VI/IX','Bahnhof'];
 function status(){const d=new Date(Date.now()+(st.off||0));const conn=!st.setup;const ls=st.lastSync;const ok=conn||!!st.manual;
  return {time:hms(d),date:ok?pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear():null,kw:ok?isoWeek(d):null,
   ntp:{synced:conn,overdue:false,manual:!conn&&!!st.manual,last:conn?pad(ls.getDate())+'.'+pad(ls.getMonth()+1)+'. '+hms(ls):null,server:'de.pool.ntp.org'},

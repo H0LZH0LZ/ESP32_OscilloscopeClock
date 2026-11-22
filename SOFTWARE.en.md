@@ -168,7 +168,7 @@ time keeps running in the browser to the second.
 right for the previous one (pointer events, at least 40 px horizontally; vertical swiping still
 scrolls the page, `touch-action: pan-y`). On a PC the arrow keys work too when the preview has
 focus. A plain tap does not change the dial. Order when swiping and in the drop-down list:
-numbers 1–12 → numbers 12 · 3 · 6 · 9 → ticks only → Roman XII · III · VI · IX → Roman I–XII (style 0, 1, 4, 3, 2 – “ticks only” sits in the middle):
+numbers 1–12 → numbers 12 · 3 · 6 · 9 → station clock → Roman XII · III · VI · IX → Roman I–XII (style 0, 1, 4, 3, 2 – “station clock” sits in the middle):
 
 | Style | Digits | Table |
 |---|---|---|
@@ -176,13 +176,13 @@ numbers 1–12 → numbers 12 · 3 · 6 · 9 → ticks only → Roman XII · III
 | 1 | only 12, 3, 6, 9, 7-segment style | `DialDigitsMin` |
 | 2 | Roman I–XII, sans serif, 4 as IIII | `DialDigitsRoman` |
 | 3 | only XII, III, VI, IX | `DialDigitsRoman4` |
-| 4 | no numbers, tick marks only | `DialDigitsNone` (empty) |
+| 4 | station clock: no numbers, 12 hour bars (outline, 34 × 6) and thin minute marks – replaces the marks from `DialData` | `DialStation` |
 
 The preview shows the new style immediately. `POST /api/dial` sets
 `g_dialStyle`. The `scopeTask` detects the change before the next frame and recomputes the round
 trip. This takes a few tens of milliseconds, during which the beam stands still (short bright
 dot). The choice is stored in NVS (key `dial`); `DIAL_STYLE` in `config.h` is only the start
-value. All four digit sets are therefore kept in RAM (approx. 0.7 KB in total).
+value. All digit sets and the station-clock marks are therefore kept in RAM (approx. 1 KB in total).
 
 Below follow three sections. Every setting and every button has a short description:
 - **Status:** large time, calendar week and date, Wi-Fi, signal
@@ -259,7 +259,7 @@ inserted as text (`textContent`), never as HTML.
 | `GET /api/settings` | current settings, default values (`defaults`) and time zone list |
 | `POST /api/settings` | any of the fields `profile`, `dial`, `beamNs`, `handPct`, `tickPct`, `digitPct`, `jumpSpeed`, `tz`, `ntp`, `oledPct`, `oledSec`, `oledShift`, `oledFlip`, `lang` (`de`/`en`), `h12` (0/1), `host` (device name), `test` (0/1, test pattern, not saved): validate, apply immediately, save. Answer `{ok, msg, settings}` |
 | `POST /api/settings/reset` | `group` = `scope` (oscilloscope), `time` or `display`: reset only this group to the values from `config.h`; without `group` everything incl. language and device name, test pattern off. Wi-Fi networks are always kept |
-| `POST /api/dial` | `style` 0 = 1–12, 1 = 12/3/6/9, 2 = Roman I–XII, 3 = Roman XII/III/VI/IX, 4 = ticks only: change the dial (oscilloscope and preview), saved |
+| `POST /api/dial` | `style` 0 = 1–12, 1 = 12/3/6/9, 2 = Roman I–XII, 3 = Roman XII/III/VI/IX, 4 = station clock (hour bars instead of numerals): change the dial (oscilloscope and preview), saved |
 | `POST /api/time` | `epoch` (Unix seconds, UTC) **or** `local` (`YYYY-MM-DDTHH:MM[:SS]`, local time), optional `dst` (-1 automatic, 1 summer time, 0 winter time): set the time by hand, 2024–2099. The answer `msg` contains the time that was set; the page shows it with ✓ right below the pressed button |
 
 Messages returned by the interfaces (`msg`) are in the selected language.
@@ -305,7 +305,7 @@ that group; Wi-Fi networks are kept.
 | Dial („Zifferblatt“) | `dial` | 5 styles | `g_dialStyle`, in sync with swiping over the preview |
 | Beam dwell time („Verweilzeit des Strahls“) | `beam` | 1,000–10,000 ns per step | `g_beamNs`, `scopeTask` recalculates the timing between two frames (`beamTiming()`) |
 | Hour/minute hand brightness („Helligkeit Stunden-/Minutenzeiger“) | `hand` | 0–100 % (0 = off) | `g_handPct` |
-| Tick mark brightness („Helligkeit Minutenstriche“) | `tick` | 0–100 % (0 = off) | `g_tickPct`: dwell time of the marks (table `DialData`) in the round trip, in percent of the normal dwell time |
+| Tick mark brightness („Helligkeit Minutenstriche“) | `tick` | 0–100 % (0 = off) | `g_tickPct`: dwell time of the marks (table `DialData`, `DialStation` for the station clock) in the round trip, in percent of the normal dwell time |
 | Numeral brightness („Helligkeit Ziffern“) | `digit` | 0–100 % (0 = off) | `g_digitPct`: dwell time of the numerals in the round trip |
 | Z blanking („Dunkeltastung (Z-Eingang)“) | `zbl`, `zhi` | on/off; high or low = dark | `g_zblank`, `g_zblankHigh`: `zblankApply()` switches GPIO `ZBLANK_PIN` (27) to output or high impedance; `beamJump()` then jumps in the dark. Only with a third wire to the Z input |
 | Retrace speed („Rücklauf-Tempo“) | `jump` | 0 (instant jump) – 48 (× drawing speed) | `g_jumpSpeed`, only effective in profile ANALOG. With DIGITAL the slider shows a greyed-out 0 (instant jump); the ANALOG value stays saved and reappears when switching back |

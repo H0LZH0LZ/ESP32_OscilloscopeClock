@@ -85,7 +85,7 @@ built-in digital-to-analogue converters (DACs) and traces the dial, numerals and
 <h3>Features</h3>
 <ul>
  <li><b>Accurate time</b> from the internet (NTP), synchronised every hour, automatic daylight saving time. Without internet the time can be set in the web interface.</li>
- <li><b>Five dials:</b> numerals 1–12, only 12·3·6·9, ticks only, Roman XII·III·VI·IX, Roman I–XII. Switch by swiping over the preview in the web interface.</li>
+ <li><b>Five dials:</b> numerals 1–12, only 12·3·6·9, station clock (hour bars instead of numerals), Roman XII·III·VI·IX, Roman I–XII. Switch by swiping over the preview in the web interface.</li>
  <li><b>Equally bright lines</b> thanks to a constant beam speed, hardly visible retrace lines.</li>
  <li><b>One device for all oscilloscopes:</b> profile DIGITAL (storage oscilloscopes) or ANALOG (CRT), switchable with the BOOT button or in the web interface.</li>
  <li><b>OLED display</b> on the device (optional, fitted in the prototype): time, calendar week, date, Wi-Fi and signal strength.</li>
@@ -213,7 +213,7 @@ The outer contact has continuity to GND. Retighten all screw terminals slightly.
 <table style="break-inside:avoid">
  <tr><th>Variant</th><th>Arduino IDE: Partition Scheme</th><th>PlatformIO</th><th>Program memory</th></tr>
  <tr><td><b>A – Huge APP</b> (recommended)</td><td>“Huge APP (3MB No OTA/1MB SPIFFS)”</td><td><code>pio run -t upload</code></td><td>1,241,138 of 3,145,728 bytes (<b>39 %</b>)</td></tr>
- <tr><td><b>B – Standard</b></td><td>“Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)” – the default, nothing to change</td><td><code>pio run -e standard -t upload</code></td><td>1,241,106 of 1,310,720 bytes (<b>94 %</b>)</td></tr>
+ <tr><td><b>B – Standard</b></td><td>“Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)” – the default, nothing to change</td><td><code>pio run -e standard -t upload</code></td><td>1,241,998 of 1,310,720 bytes (<b>94 %</b>)</td></tr>
 </table>
 <p>Both variants work the same. <b>A</b> leaves about 1.9 MB for extensions; the clock uses neither OTA updates nor SPIFFS,
 so nothing is lost. <b>B</b> works without changing anything but leaves only about 70 KB. You can switch at any time (choose
@@ -353,7 +353,7 @@ group has “Reset to defaults”; the change can then be undone with “Undo”
  retrace line on a CRT. Can also be switched with the BOOT button (hold for 3 s).</td></tr>
  <tr><td>Test pattern</td><td>on / off (off)</td><td>Shows a frame with marks, a circle and a centre cross instead of the clock. Used to set position,
  size, equal gain of X and Y (circle round instead of oval) and focus. Not saved; appears automatically for 10 seconds after power-on.</td></tr>
- <tr><td>Dial</td><td>5 styles (numerals 1–12)</td><td>Numerals 1–12, only 12·3·6·9, ticks only, Roman XII·III·VI·IX or Roman I–XII. Changes immediately
+ <tr><td>Dial</td><td>5 styles (numerals 1–12)</td><td>Numerals 1–12, only 12·3·6·9, station clock (hour bars instead of numerals), Roman XII·III·VI·IX or Roman I–XII. Changes immediately
  on the oscilloscope; also by swiping over the preview. Fewer numerals mean a shorter frame and therefore a higher frame rate (less flicker).</td></tr>
  <tr><td>Change dial automatically</td><td>off, every minute, every 5 / 15 minutes, every hour (off)</td><td>Shows all five dials one after the other.
  The setting and the dial shown are saved: after power-on the change continues with the dial shown last.</td></tr>
@@ -367,7 +367,7 @@ group has “Reset to defaults”; the change can then be undone with “Undo”
  hands otherwise look brighter than the dial and numerals. Guide values per oscilloscope and how to set it: chapter 6. 0 % hides the hands. The second hand is not affected.</td></tr>
  <tr><td>Tick mark brightness</td><td>0–100 % (100 %)</td><td>Brightness of the 60 marks around the edge. Less brightness makes the hands stand out more and
  shortens the frame slightly; 0 % hides the marks completely.</td></tr>
- <tr><td>Numeral brightness</td><td>0–100 % (100 %)</td><td>Brightness of the numbers on the dial. 0 % hides them – equivalent to the style “ticks only”.</td></tr>
+ <tr><td>Numeral brightness</td><td>0–100 % (100 %)</td><td>Brightness of the numbers on the dial. 0 % hides them, leaving only the minute marks.</td></tr>
  <tr><td>Retrace speed</td><td>0–48 (24)</td><td>Only in profile ANALOG: how fast the beam jumps between two lines (multiple of the drawing speed).
  <b>Faster</b> = fainter retrace line; if the oscilloscope is too slow for it, small “hooks” appear at the start of lines – then reduce
  the value (e.g. 12). 0 = instant jump. Greyed out in profile DIGITAL and with Z blanking; the value stays saved.</td></tr>
@@ -553,8 +553,8 @@ its frames (frame rate in the status), an idle hook measures the load of core 0,
 the debug section.</p>
 <p><b>Vector data:</b> dial, numerals, hands and test pattern are original drawings, generated with <code>tools/gen_vectors.py</code>
 (coordinates 0–255, 8 bits per axis).</p>
-<p><b>Memory:</b> program memory 1,241,106 bytes (94 % with the default partition scheme, approx. 39 % with “Huge APP”), global variables
-74,940 bytes (22 %). The web page is stored gzip-compressed in flash (24 KB), the font (Raleway, reduced to the characters needed) as WOFF2 (30 KB).</p>
+<p><b>Memory:</b> program memory 1,241,998 bytes (94 % with the default partition scheme, approx. 39 % with “Huge APP”), global variables
+75,308 bytes (22 %). The web page is stored gzip-compressed in flash (24 KB), the font (Raleway, reduced to the characters needed) as WOFF2 (30 KB).</p>
 
 <h2>11 Appendix</h2>
 <h3>Defaults in <code>config.h</code></h3>
@@ -567,7 +567,7 @@ the debug section.</p>
  <tr><td><code>BEAM_NS_PER_UNIT</code></td><td>3000</td><td>Dwell time per step in ns (≈ 230 frames/s)</td></tr>
  <tr><td><code>JUMP_SPEED</code>, <code>JUMP_LANDING</code>, <code>JUMP_RAMP</code></td><td>24, 8, 4</td><td>Jumps in profile ANALOG</td></tr>
  <tr><td><code>HAND/TICK/DIGIT_BRIGHT_PCT</code></td><td>67, 100, 100</td><td>Brightness values</td></tr>
- <tr><td><code>DIAL_STYLE</code></td><td>0</td><td>0 = 1–12, 1 = 12/3/6/9, 2 = I–XII, 3 = XII/III/VI/IX, 4 = ticks only</td></tr>
+ <tr><td><code>DIAL_STYLE</code></td><td>0</td><td>0 = 1–12, 1 = 12/3/6/9, 2 = I–XII, 3 = XII/III/VI/IX, 4 = station clock (hour bars)</td></tr>
  <tr><td><code>DIAL_AUTO_MIN</code></td><td>0</td><td>change the dial automatically every n minutes (0 = off; 1, 5, 15, 60)</td></tr>
  <tr><td><code>SCOPE_SHIFT</code>, <code>SCOPE_SHIFT_EVERY_S</code></td><td>1, 60</td><td>image shift against burn-in on, next position every n seconds</td></tr>
  <tr><td><code>RTC_ENABLE</code>, <code>RTC_SDA_PIN</code>, <code>RTC_SCL_PIN</code></td><td>0, 21, 22</td><td>Optional DS3231 real-time clock (switchable in the web interface)</td></tr>

@@ -74,7 +74,7 @@ sind Screenshots der Seite. Fotos des fertigen Geräts folgen nach dem Bau des P
   darunter den Status (Zeitabgleich, WLAN, Signalstärke, Profil, Bildrate, Laufzeit, Arbeitsspeicher,
   Prozessorlast, Grund des letzten Neustarts) und das Protokoll. Außerdem dient es zum Eintragen von
   WLANs. Ein einklappbares Seitenmenü (☰) springt in die Abschnitte und markiert den aktuellen Abschnitt grün, ein schmaler Balken oben zeigt die Scrollposition. **Wischen über die Vorschau
-  (nach links oder rechts) wechselt das Zifferblatt**: 1–12, nur 12/3/6/9, nur Striche (ohne Zahlen), römisch XII/III/VI/IX oder römisch I–XII. Das gilt auch am Oszilloskop und bleibt
+  (nach links oder rechts) wechselt das Zifferblatt**: 1–12, nur 12/3/6/9, Bahnhof (Stundenbalken statt Zahlen), römisch XII/III/VI/IX oder römisch I–XII. Das gilt auch am Oszilloskop und bleibt
   gespeichert. Unter **Einstellungen** lassen sich Oszilloskop-Profil, Zifferblatt,
   Verweilzeit des Strahls, Helligkeit von Zeigern, Minutenstrichen und Ziffern, Rücklauf-Tempo, Zeitzone, Zeitserver (NTP) und OLED
   (Helligkeit 0–100 %, Sekunden, Pixelverschiebung, Drehung um 180°) online ändern. Dazu kommen ein **Testbild** zum Einstellen des Oszilloskops, der **Gerätename** und **Einstellungen sichern/laden** (als Datei). Die Änderungen wirken sofort und bleiben gespeichert. Das Webinterface ist immer
@@ -139,12 +139,12 @@ stehen in `ESP32_OscilloscopeClock_v2.0/config.h`. Im Betrieb ändert man sie be
 
 | Board-Paket | Programmspeicher | Globale Variablen (RAM) |
 |---|---|---|
-| esp32 3.3.12 | 1.241.106 Byte (94 %) | 74.940 Byte (22 %) |
+| esp32 3.3.12 | 1.241.998 Byte (94 %) | 75.308 Byte (22 %) |
 | esp32 2.0.17 | 866.053 Byte (66 %) | 61.048 Byte (18 %) – Stand vor Menü und Zifferblatt-Umschaltung |
 
 Die Konfigurationsvarianten (Profil ANALOG/DIGITAL, Z-Dunkeltastung, Zifferblatt 0/1/2,
 `USE_FAST_DAC 0`, EXCEL-Modus) wurden vor dem Webinterface ebenfalls ohne Warnungen gebaut.
-Mit dem empfohlenen Partitionsschema **Huge APP** belegt dieselbe Firmware 1.241.106 von 3.145.728 Byte
+Mit dem empfohlenen Partitionsschema **Huge APP** belegt dieselbe Firmware 1.241.998 von 3.145.728 Byte
 (**39 %**), mit „Minimal SPIFFS“ 62 %.
 
 Zusätzlich auf dem PC simuliert: Strahlverlauf (Helligkeit, Rücklaufspuren, Bildrate),

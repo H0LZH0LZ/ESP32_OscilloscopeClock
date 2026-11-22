@@ -82,7 +82,7 @@ pictures are screenshots of the page. Photos of the finished device will follow 
   light theme), below that the status (time sync, Wi-Fi, signal strength, profile, frame rate,
   uptime, memory, CPU load, reason for the last restart) and the log („Protokoll“). It is also used
   to add Wi-Fi networks. A collapsible side menu (☰) jumps to the sections and highlights the current one in green; a thin bar at the top shows the scroll position. **Swiping left or right
-  over the preview changes the dial**: 1–12, only 12/3/6/9, ticks only (no numbers), only Roman XII/III/VI/IX or Roman I–XII. This
+  over the preview changes the dial**: 1–12, only 12/3/6/9, station clock (hour bars instead of numbers), only Roman XII/III/VI/IX or Roman I–XII. This
   also applies to the oscilloscope and is saved. Under „Einstellungen“ (settings) you can change
   the oscilloscope profile, dial, beam dwell time, brightness of hands, tick marks and numerals, retrace speed, time zone, time
   server (NTP) and OLED (brightness 0–100 %, seconds, pixel shift, 180° rotation) online. In addition there is a **test pattern** for adjusting the oscilloscope, the **device name** and **back up/load settings** (as a file). Changes apply immediately
@@ -148,12 +148,12 @@ interface.
 
 | Board package | Program memory | Global variables (RAM) |
 |---|---|---|
-| esp32 3.3.12 | 1,241,106 bytes (94 %) | 74,940 bytes (22 %) |
+| esp32 3.3.12 | 1,241,998 bytes (94 %) | 75,308 bytes (22 %) |
 | esp32 2.0.17 | 866,053 bytes (66 %) | 61,048 bytes (18 %) – state before the menu and dial switching |
 
 The configuration variants (profile ANALOG/DIGITAL, Z blanking, dial 0/1/2, `USE_FAST_DAC 0`,
 EXCEL mode) were also built without warnings before the web interface was added. With the
-recommended partition scheme **Huge APP** the same firmware uses 1,241,106 of 3,145,728
+recommended partition scheme **Huge APP** the same firmware uses 1,241,998 of 3,145,728
 bytes (**39 %**), with “Minimal SPIFFS” 62 %.
 
 Also simulated on a PC: beam path (brightness, retrace lines, frame rate), OLED content, BOOT

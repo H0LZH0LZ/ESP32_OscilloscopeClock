@@ -54,7 +54,7 @@
   Webinterface: http://scope-clock.local (oder IP-Adresse der Uhr) – Live-
   Vorschau, Status, Debug-Protokoll, WLAN-Einrichtung, Seitenmenü; für Handys
   optimiert, ohne Passwort. Wischen über die Vorschau wechselt das Zifferblatt
-  (1–12 / 12-3-6-9 / nur Striche / XII-III-VI-IX / römisch I–XII) – auch am
+  (1–12 / 12-3-6-9 / Bahnhof / XII-III-VI-IX / römisch I–XII) – auch am
   Oszilloskop, wird gespeichert. Unter "Einstellungen" lassen sich alle Werte
   online ändern (sofort wirksam, gespeichert; config.h liefert nur die
   Startwerte). Ohne bekanntes WLAN öffnet die Uhr das offene Setup-WLAN
@@ -158,7 +158,7 @@ static inline uint32_t packTime(int h, int m, int s) {
 static volatile uint8_t g_scopeProfile = SCOPE_PROFILE;
 
 // Zifferblatt: 0 = Ziffern 1–12, 1 = nur 12/3/6/9, 2 = römisch I–XII,
-// 3 = nur XII/III/VI/IX, 4 = nur Striche (siehe dialDigits). Startwert aus dem
+// 3 = nur XII/III/VI/IX, 4 = Bahnhof (siehe dialDigits). Startwert aus dem
 // Flash (NVS), im Betrieb über das Webinterface umschaltbar (Wischen über die
 // Vorschau). Schreiber: uiTask, Leser: scopeTask (baut dann die Rundtour neu).
 static volatile uint8_t g_dialStyle = DIAL_STYLE;
@@ -638,7 +638,7 @@ static void IRAM_ATTR PlotTable(const byte *table, int size, byte sep, int offse
 // Liefert die Ziffern-Tabelle zum Zifferblatt-Stil und ihre Größe in Bytes:
 //   0 = Ziffern 1–12          1 = nur 12, 3, 6, 9
 //   2 = römisch I–XII         3 = nur XII, III, VI, IX
-//   4 = keine Ziffern, nur Minutenstriche
+//   4 = Bahnhof: Stundenbalken statt Ziffern (eigene Striche-Tabelle DialStation)
 static const int DIAL_STYLES = 5;                         // Anzahl der Zifferblätter
 
 static const uint8_t *dialDigits(int style, int &size)
@@ -647,7 +647,7 @@ static const uint8_t *dialDigits(int style, int &size)
     case 1:  size = sizeof(DialDigitsMin);    return DialDigitsMin;
     case 2:  size = sizeof(DialDigitsRoman);  return DialDigitsRoman;
     case 3:  size = sizeof(DialDigitsRoman4); return DialDigitsRoman4;
-    case 4:  size = sizeof(DialDigitsNone);   return DialDigitsNone;
+    case 4:  size = 0;                        return nullptr;   // Bahnhof: keine Ziffern
     default: size = sizeof(DialDigits12);    return DialDigits12;
   }
 }
@@ -658,7 +658,7 @@ static const char *dialName(int style)
     case 1:  return "12/3/6/9";
     case 2:  return "I-XII";
     case 3:  return "XII/III/VI/IX";
-    case 4:  return tr("nur Striche", "ticks only");
+    case 4:  return tr("Bahnhof", "station");
     default: return "1-12";
   }
 }
@@ -699,8 +699,12 @@ static void reverseStroke(Stroke &st) { const int16_t tmp = st.a; st.a = st.b; s
 static void buildTour(const uint8_t *digits, int digitsSize)
 {
   s_tourLen = 0;
-  tourAdd(DialData, sizeof(DialData));
-  tourAdd(digits, digitsSize);
+  if (digits) {                                  // Zifferblatt 0–3: Striche + Ziffern
+    tourAdd(DialData, sizeof(DialData));
+    tourAdd(digits, digitsSize);
+  } else {                                       // Bahnhof: eigene Striche mit Stundenbalken
+    tourAdd(DialStation, sizeof(DialStation));
+  }
   const int n = s_tourLen;
   if (n < 3) return;
 
@@ -838,13 +842,13 @@ static void IRAM_ATTR scopeTask(void *)
       const int dx = strokeX(s_tour[k], 0) - lastx, dy = strokeY(s_tour[k], 0) - lasty;
       if (dx * dx + dy * dy < bestD) { bestD = dx * dx + dy * dy; start = k; }
     }
-    // Minutenstriche (Tabelle DialData) und Ziffern mit eigener Helligkeit:
+    // Striche (Tabelle DialData bzw. DialStation) und Ziffern mit eigener Helligkeit:
     // 0–100 % der normalen Verweilzeit pro Schritt, 0 % = ausgeblendet
     const uint32_t tickCycles  = (uint32_t)((uint64_t)s_stepCycles * g_tickPct  / 100);
     const uint32_t digitCycles = (uint32_t)((uint64_t)s_stepCycles * g_digitPct / 100);
     for (int k = 0; k < s_tourLen; k++) {
       const Stroke &st = s_tour[(start + k) % s_tourLen];
-      const uint32_t c = st.t == DialData ? tickCycles : digitCycles;
+      const uint32_t c = (st.t == DialData || st.t == DialStation) ? tickCycles : digitCycles;
       if (c) drawStroke(st, c);
     }
 

@@ -212,7 +212,7 @@ static_assert(BUTTON_FACTORY_MS >= BUTTON_LONG_MS + 5000, "config.h: BUTTON_FACT
 //   1 = nur die vier Hauptziffern 12, 3, 6, 9
 //   2 = römische Ziffern I–XII
 //   3 = nur die vier römischen Hauptziffern XII, III, VI, IX
-//   4 = keine Ziffern, nur Minutenstriche
+//   4 = Bahnhof: Stundenbalken statt Ziffern, dünne Minutenstriche
 #define DIAL_STYLE 0
 
 // Zifferblatt automatisch wechseln (Startwert – im Webinterface einstellbar):

@@ -327,7 +327,7 @@ button,input,.set select,.logsel,#nav select,pre,.scope,#nav a{border-radius:var
  <div class="set"><label class="sw"><span>Testbild</span><input type="checkbox" id="sTest"></label>
   <div class="sub">Zeigt statt der Uhr Rahmen, Kreis und Mittelkreuz zum Einstellen von Position, Größe und Fokus. Der Kreis muss rund sein (X und Y gleich groß). Wird nicht gespeichert; nach dem Einschalten erscheint es automatisch für 10 s.</div></div>
  <div class="set"><div class="head"><label for="sDial">Zifferblatt</label></div>
-  <select id="sDial"><option value="0">Ziffern 1–12</option><option value="1">Ziffern 12 · 3 · 6 · 9</option><option value="4">Nur Striche</option>
+  <select id="sDial"><option value="0">Ziffern 1–12</option><option value="1">Ziffern 12 · 3 · 6 · 9</option><option value="4">Bahnhof</option>
    <option value="3">Römisch XII · III · VI · IX</option><option value="2">Römisch I–XII</option></select>
   <div class="sub">Ziffern auf dem Oszilloskop. Geht auch durch Wischen über die Vorschau oben.</div></div>
  <!-- Zifferblatt automatisch wechseln (Standard: aus) -->
@@ -346,7 +346,7 @@ button,input,.set select,.logsel,#nav select,pre,.scope,#nav a{border-radius:var
  <div class="set"><div class="head"><label for="sHand">Helligkeit Stunden-/Minutenzeiger</label><span class="val" id="vHand"></span></div>
   <input type="range" id="sHand" min="0" max="100" step="1">
   <div class="sub">Richtwerte: Röhren-Oszilloskope 55 % (bei scharfem, dünnem Strahl bis 85 %), digitale mit Helligkeitsabstufung (z. B. Tektronix TDS3000) 50–65 %, Geräte ohne Helligkeitsabstufung (z. B. HP 54200A, Analog Discovery) 100 %, sonst mit 55 % beginnen. So einstellen: auf die Stellen schauen, an denen die Zeiger die Minutenstriche kreuzen, und den Regler schieben, bis beide gleich hell wirken. 0 % blendet die Zeiger aus.</div></div>
- <!-- Helligkeit der Minutenstriche (Tabelle DialData) -->
+ <!-- Helligkeit der Minutenstriche (Tabelle DialData bzw. DialStation) -->
  <div class="set"><div class="head"><label for="sTick">Helligkeit Minutenstriche</label><span class="val" id="vTick"></span></div>
   <input type="range" id="sTick" min="0" max="100" step="1">
   <div class="sub">Die 60 Striche am Rand. 0 % blendet sie aus.</div></div>
@@ -525,7 +525,7 @@ Object.assign(EN,{"Helligkeit Minutenstriche": "Tick mark brightness", "Helligke
 Object.assign(EN,{"Richtwerte: Röhren-Oszilloskope 55 % (bei scharfem, dünnem Strahl bis 85 %), digitale mit Helligkeitsabstufung (z. B. Tektronix TDS3000) 50–65 %, Geräte ohne Helligkeitsabstufung (z. B. HP 54200A, Analog Discovery) 100 %, sonst mit 55 % beginnen. So einstellen: auf die Stellen schauen, an denen die Zeiger die Minutenstriche kreuzen, und den Regler schieben, bis beide gleich hell wirken. 0 % blendet die Zeiger aus.": "Guide values: CRT oscilloscopes 55 % (up to 85 % with a sharp, thin beam), digital ones with intensity grading (e.g. Tektronix TDS3000) 50–65 %, devices without intensity grading (e.g. HP 54200A, Analog Discovery) 100 %, otherwise start at 55 %. How to set: look at the spots where the hands cross the minute marks and move the slider until both look equally bright. 0 % hides the hands.", "Die 60 Striche am Rand. 0 % blendet sie aus.": "The 60 marks around the edge. 0 % hides them.", "Die Zahlen auf dem Zifferblatt. 0 % blendet sie aus.": "The numerals on the dial. 0 % hides them.", "Helligkeit des kleinen Displays an der Uhr. 0 % schaltet es aus; niedrige Werte schonen das OLED.": "Brightness of the small display on the clock. 0 % switches it off; low values protect the OLED.", "Sekunden anzeigen": "Show seconds", "Uhrzeit auf dem OLED als HH:MM:SS oder nur HH:MM.": "Time on the OLED as HH:MM:SS or just HH:MM.", "aus": "off"});
 Object.assign(EN,{"WLAN zurücksetzen": "Reset Wi-Fi", "Löscht alle gespeicherten Netze. Die Uhr startet danach neu und öffnet das Setup-WLAN „ScopeClock-Setup“.": "Deletes all saved networks. The clock then restarts and opens the setup network “ScopeClock-Setup”."});
 Object.assign(EN,{"Menü schließen": "Close menu", "Darstellung": "Appearance", "Hell": "Light", "Dunkel": "Dark", "Voriges Zifferblatt": "Previous dial", "Nächstes Zifferblatt": "Next dial", "Alle": "All", "Zeit": "Time", "Warnungen": "Warnings", "Zeigt nur Meldungen eines Bereichs; „Warnungen“ zeigt Probleme wie Verbindungsabbrüche.": "Shows only messages of one area; “Warnings” shows problems such as connection losses.", "Rückgängig": "Undo", "Wiederhergestellt": "Restored", "von Hand": "manual"});
-Object.assign(EN,{"Nur Striche": "Ticks only", "Testbild": "Test pattern", "Zeigt statt der Uhr Rahmen, Kreis und Mittelkreuz zum Einstellen von Position, Größe und Fokus. Der Kreis muss rund sein (X und Y gleich groß). Wird nicht gespeichert; nach dem Einschalten erscheint es automatisch für 10 s.": "Shows a frame, circle and centre cross instead of the clock to adjust position, size and focus. The circle must be round (X and Y equal). Not saved; after power-on it appears automatically for 10 s.", "Gerätename": "Device name", "Name im Router und Adresse im Browser:": "Name in the router and address in the browser:", "nur a–z, 0–9 und Bindestrich.": "only a–z, 0–9 and hyphen.", "Einstellungen sichern": "Back up settings", "Sichern (Datei)": "Save (file)", "Laden": "Load", "Speichert alle Einstellungen außer WLANs in einer Datei und spielt sie wieder ein – etwa nach einem Tausch des ESP32.": "Saves all settings except Wi-Fi networks to a file and loads them back – e.g. after replacing the ESP32.", "„Aktualisieren“ lädt sofort neu. „Herunterladen“ speichert das ganze Protokoll als Textdatei, etwa für eine Fehlermeldung. „Leeren“ löscht den Protokollspeicher der Uhr, etwa vor einem Test. Die Uhr speichert die letzten 8 KB (ca. 120 Zeilen).": "“Refresh” reloads immediately. “Download” saves the whole log as a text file, e.g. for a bug report. “Clear” deletes the log memory of the clock, e.g. before a test. The clock keeps the last 8 KB (approx. 120 lines).", "verbunden": "connected", "Datei ungültig": "Invalid file", "Geladen": "Loaded"});
+Object.assign(EN,{"Bahnhof": "Station clock", "Testbild": "Test pattern", "Zeigt statt der Uhr Rahmen, Kreis und Mittelkreuz zum Einstellen von Position, Größe und Fokus. Der Kreis muss rund sein (X und Y gleich groß). Wird nicht gespeichert; nach dem Einschalten erscheint es automatisch für 10 s.": "Shows a frame, circle and centre cross instead of the clock to adjust position, size and focus. The circle must be round (X and Y equal). Not saved; after power-on it appears automatically for 10 s.", "Gerätename": "Device name", "Name im Router und Adresse im Browser:": "Name in the router and address in the browser:", "nur a–z, 0–9 und Bindestrich.": "only a–z, 0–9 and hyphen.", "Einstellungen sichern": "Back up settings", "Sichern (Datei)": "Save (file)", "Laden": "Load", "Speichert alle Einstellungen außer WLANs in einer Datei und spielt sie wieder ein – etwa nach einem Tausch des ESP32.": "Saves all settings except Wi-Fi networks to a file and loads them back – e.g. after replacing the ESP32.", "„Aktualisieren“ lädt sofort neu. „Herunterladen“ speichert das ganze Protokoll als Textdatei, etwa für eine Fehlermeldung. „Leeren“ löscht den Protokollspeicher der Uhr, etwa vor einem Test. Die Uhr speichert die letzten 8 KB (ca. 120 Zeilen).": "“Refresh” reloads immediately. “Download” saves the whole log as a text file, e.g. for a bug report. “Clear” deletes the log memory of the clock, e.g. before a test. The clock keeps the last 8 KB (approx. 120 lines).", "verbunden": "connected", "Datei ungültig": "Invalid file", "Geladen": "Loaded"});
 Object.assign(EN,{"Alle Einstellungen zurücksetzen": "Reset all settings", "Setzt alle Gruppen, Sprache und Gerätename auf die Werte aus config.h zurück und schaltet das Testbild aus. WLANs bleiben erhalten.": "Resets all groups, language and device name to the values from config.h and switches the test pattern off. Wi-Fi networks are kept.", "Leeren": "Clear", "Protokoll auf der Uhr löschen?": "Clear the log on the clock?", "Gelöscht": "Cleared", "Fehler": "Error"});
 Object.assign(EN,{"Herunterladen":"Download","protokoll":"log"});
 Object.assign(EN,{"Wird gestellt …":"Setting …"});
@@ -573,8 +573,8 @@ let V=null,tBase=null,tAt=0,dial=0;
 function scopeColors(){const c=getComputedStyle(document.documentElement),v=n=>c.getPropertyValue(n).trim();
  return {bg:v('--scope-bg')||'transparent',trace:v('--scope-trace')||'#0b7a3e',glow:v('--scope-glow')||'rgba(11,122,62,.12)',
   halo:v('--scope-halo')||'rgba(11,122,62,.35)',grid:v('--scope-grid')||'rgba(0,0,0,.07)'}}
-const DIALS=['Ziffern 1–12','Ziffern 12 · 3 · 6 · 9','Römisch I–XII','Römisch XII · III · VI · IX','Nur Striche'];   // Index = Stil-Nummer der Uhr
-// Reihenfolge beim Wischen und in der Auswahlliste: 1–12, 12·3·6·9, nur Striche, römisch XII·III·VI·IX, römisch I–XII
+const DIALS=['Ziffern 1–12','Ziffern 12 · 3 · 6 · 9','Römisch I–XII','Römisch XII · III · VI · IX','Bahnhof'];   // Index = Stil-Nummer der Uhr
+// Reihenfolge beim Wischen und in der Auswahlliste: 1–12, 12·3·6·9, Bahnhof, römisch XII·III·VI·IX, römisch I–XII
 const DIAL_ORDER=[0,1,4,3,2];
 // Oszilloskop-Vorschau zeichnen: Raster, Zifferblatt, Ziffern, drei Zeiger
 function drawScope(){
@@ -590,7 +590,8 @@ function drawScope(){
  // Drei Gruppen mit eigener Helligkeit wie am Oszilloskop (Einstellungen, 100 % = normal):
  // Minutenstriche, Ziffern, Zeiger. Die Vorschau bildet das über die Deckkraft nach.
  const a=v=>v===undefined||v===null?1:(+v===0?0:Math.max(.25,Math.min(1,v/100*.8+.2)));
- const groups=[[V.dial,a(S&&S.tickPct)],[V.digits[dial]||[],a(S&&S.digitPct)],
+ const ticks=dial===4&&V.station?V.station:V.dial;   // Bahnhof: eigene Striche mit Stundenbalken
+ const groups=[[ticks,a(S&&S.tickPct)],[V.digits[dial]||[],a(S&&S.digitPct)],
   [[V.hr[(h%12)*5+Math.floor(m/12)],V.min[m]],S&&S.handPct!==undefined?a(S.handPct/0.67>100?100:S.handPct/0.67):1],[[V.sec[s]],1]];
  // Verweilzeit des Strahls: länger = heller (Vorschau ändert sich schon beim Ziehen)
  const bf=S&&S.beamNs?Math.max(.4,Math.min(1,S.beamNs/3000)):1;
@@ -603,7 +604,7 @@ function drawScope(){
    g.stroke()}}
  // Rücklaufspuren wie am Röhren-Oszilloskop: nur im Profil ANALOG mit gebremstem Sprung,
  // umso schwächer, je schneller gesprungen wird (Rücklauf-Tempo)
- if(S&&S.profile===0&&S.jumpSpeed>0){const tr=[...V.dial,...(V.digits[dial]||[])].filter(p=>p&&p.length>=4);
+ if(S&&S.profile===0&&S.jumpSpeed>0){const tr=[...ticks,...(V.digits[dial]||[])].filter(p=>p&&p.length>=4);
   g.globalAlpha=Math.min(.45,4/S.jumpSpeed)*.6*bf;g.lineWidth=.8*k;g.strokeStyle=SC.trace;g.shadowBlur=0;g.beginPath();
   for(let i=1;i<tr.length;i++){const a=tr[i-1],b=tr[i];g.moveTo(a[a.length-2]*k,(255-a[a.length-1])*k);g.lineTo(b[0]*k,(255-b[1])*k)}
   g.stroke()}
