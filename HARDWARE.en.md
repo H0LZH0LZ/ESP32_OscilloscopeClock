@@ -124,6 +124,8 @@ fits better.
 - **Opposite side:** antenna (SMA, Ø 6.5 mm, centred).
 - DevKit plugged in the right way round (pin “3V3” at terminal “3V3”), the breakout board **together with the DevKit rotated by 180°** (module towards the connector side, USB-C towards the antenna side, P25/P26 on the right). Never plug the DevKit in the wrong way round, otherwise the terminal labels no longer match; the antenna cable and the USB flat cable run once underneath the board to the opposite side.
 - Lid: window for the OLED (active area approx. 55 × 28 mm), mount the module on M2.5 standoffs.
+- Lead the pigtails from the outside through the cable glands first, only then solder the 220 Ω resistor into the red lead
+  on the inside – with the resistor and heat-shrink tubing the cable no longer fits through the gland.
 - Breakout board on the mounting plate; pigtails into terminals P25/P26 (red, via 220 Ω) and GND (brown).
 - Drilling template 1:1 for printing on A4: last page of `docs/ESP32_Oscilloscope_Clock_Documentation.pdf`.
 

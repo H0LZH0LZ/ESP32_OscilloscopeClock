@@ -124,6 +124,8 @@ der Leiste angeschlossen werden, die besser passt.
 - **Gegenüberliegende Seite:** Antenne (SMA, Ø 6,5 mm, mittig).
 - DevKit richtig herum aufgesteckt (Pin „3V3“ an Klemme „3V3“), das Breakout-Board **samt DevKit um 180° gedreht** eingebaut (Modul zur Anschlussseite, USB-C zur Antennenseite, P25/P26 rechts). Das DevKit nie verdreht aufstecken, sonst stimmen die Klemmenaufdrucke nicht; Antennenkabel und USB-Flachbandkabel laufen einmal unter dem Board durch zur jeweils gegenüberliegenden Seite.
 - Deckel: Fenster für das OLED (aktive Fläche ca. 55 × 28 mm), Modul mit M2,5-Abstandsbolzen befestigen.
+- Pigtails zuerst von außen durch die Kabelverschraubungen führen, erst dann innen den 220-Ω-Widerstand in die rote Ader löten –
+  mit Widerstand und Schrumpfschlauch passt das Kabel nicht mehr durch die Verschraubung.
 - Breakout-Board auf der Montageplatte; die Pigtails in die Klemmen P25/P26 (rot, über 220 Ω) und GND (braun).
 - Bohrplan 1:1 zum Ausdrucken auf DIN A4: letzte Seite von `docs/ESP32_Oscilloscope_Clock_Dokumentation.pdf`.
 

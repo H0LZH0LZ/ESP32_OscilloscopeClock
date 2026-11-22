@@ -215,8 +215,8 @@ a.row>span:last-child{font-size:18px}
 <div class="grp"><h2 id="downloads-h" class="coll" role="button" tabindex="0" aria-expanded="true"><span data-l="de">0 Links &amp; Dokumente</span><span data-l="en">0 Links &amp; documents</span></h2>
 <section>
  <a class="row" target="_blank" rel="noopener" href="https://github.com/HolzHolz123/ESP32_OscilloscopeClock"><span><span data-l="de">GitHub – Version 2.0</span><span data-l="en">GitHub – version 2.0</span><small class="note" data-l="de">Diese Firmware mit Quellcode, Anleitung und Werkzeugen</small><small class="note" data-l="en">This firmware with source code, guide and tools</small></span><span>›</span></a>
- <a class="row" target="_blank" rel="noopener" data-l="de" href="ESP32_Oscilloscope_Clock_Dokumentation.pdf?v=43366109"><span>Dokumentation (PDF)<small class="note">Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small></span><span>›</span></a>
- <a class="row" target="_blank" rel="noopener" data-l="en" href="ESP32_Oscilloscope_Clock_Documentation.pdf?v=7a561ccc"><span>Documentation (PDF)<small class="note">Assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
+ <a class="row" target="_blank" rel="noopener" data-l="de" href="ESP32_Oscilloscope_Clock_Dokumentation.pdf?v=f2e23f4c"><span>Dokumentation (PDF)<small class="note">Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small></span><span>›</span></a>
+ <a class="row" target="_blank" rel="noopener" data-l="en" href="ESP32_Oscilloscope_Clock_Documentation.pdf?v=0ff2a2dd"><span>Documentation (PDF)<small class="note">Assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" href="demo/"><span><span data-l="de">Testseite</span><span data-l="en">Test page</span><small class="note" data-l="de">Das Webinterface der Uhr ausprobieren – läuft im Browser, alle Werte sind simuliert</small><small class="note" data-l="en">Try the clock's web interface – runs in the browser, all values are simulated</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" href="https://github.com/maurohh/ESP32_OscilloscopeClock"><span><span data-l="de">GitHub – Original</span><span data-l="en">GitHub – original</span><small class="note" data-l="de">Die ursprüngliche ESP32 Oscilloscope Clock von Mauro Pintus (2018), nach deren Idee diese Version entstand</small><small class="note" data-l="en">The original ESP32 Oscilloscope Clock by Mauro Pintus (2018) that inspired this version</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" href="https://fonts.google.com/specimen/Raleway"><span><span data-l="de">Schriftart Raleway</span><span data-l="en">Font Raleway</span><small class="note" data-l="de">Google Fonts – frei unter der SIL Open Font License 1.1</small><small class="note" data-l="en">Google Fonts – free under the SIL Open Font License 1.1</small></span><span>›</span></a>
@@ -378,13 +378,12 @@ die Anschlussseite und die gegenüberliegende Seite kleben.</div></div>
 <b>USB-C:</b> <b>16 mm</b> in der Mitte (50 mm, Stufenbohrer).
 <b>Gegenüberliegende Seite:</b> <b>6,5 mm</b> mittig für die SMA-Buchse der Antenne.
 <b>Deckel:</b> OLED-Fenster 55 × 28 mm mit Bohrungen in den Ecken vorbereiten, mit dem Cuttermesser ausschneiden und sauber feilen.</div></div>
-<div class="step"><b class="n">3</b><div><b>Widerstände in die Pigtails löten.</b> Bei jedem Pigtail die rote Ader (Innenleiter) etwa 5 cm vor dem
-DuPont-Stift durchtrennen, den 220-Ω-Widerstand dazwischenlöten und mit Schrumpfschlauch isolieren. Vorher mit dem
-Durchgangsprüfer bestätigen, dass Rot zum Mittelstift und Braun zum Außenkontakt des BNC-Steckers führt.</div></div>
-<div class="step"><b class="n">4</b><div><b>Pigtails durch die Kabelverschraubungen führen.</b> Verschraubungen in die Anschlussseite schrauben, Hutmutter lösen
+<div class="step"><b class="n">3</b><div><b>Pigtails durch die Kabelverschraubungen führen.</b> Vorher mit dem Durchgangsprüfer bestätigen, dass Rot zum Mittelstift und Braun zum Außenkontakt des BNC-Steckers führt. Verschraubungen in die Anschlussseite schrauben, Hutmutter lösen
 und das Pigtail von außen mit dem DuPont-Ende voran durch Hutmutter, Dichteinsatz und Gehäuse schieben. Passt der DuPont-Stecker
 nicht durch die 3-mm-Öffnung, das kleine Kunststoffgehäuse des Stifts kurz abziehen und danach wieder aufstecken. Den
 BNC-Stecker außen so weit herausziehen wie nötig, Hutmutter festziehen. Pigtails mit „X“ und „Y“ beschriften.</div></div>
+<div class="step"><b class="n">4</b><div><b>Widerstände in die Pigtails löten</b> – erst jetzt, innen: Mit Widerstand und Schrumpfschlauch passt das Kabel nicht mehr durch die Verschraubung. Bei jedem Pigtail die rote Ader (Innenleiter) etwa 5 cm vor dem
+DuPont-Stift durchtrennen, den 220-Ω-Widerstand dazwischenlöten und mit Schrumpfschlauch isolieren.</div></div>
 <div class="step"><b class="n">5</b><div><b>USB-C-Einbaubuchse und Antenne einbauen.</b> USB-C-Buchse in das mittlere 16-mm-Loch der Anschlussseite setzen
 und von innen verschrauben. SMA-Buchse des Antennen-Pigtails (aus dem Antennen-Kit des DevKits) in das 6,5-mm-Loch der
 gegenüberliegenden Seite schrauben, die Bingfu-Antenne außen aufschrauben.</div></div>
@@ -435,13 +434,12 @@ the connector side and the opposite side.</div></div>
 <b>USB-C:</b> <b>16 mm</b> in the middle (50 mm, step drill).
 <b>Opposite side:</b> <b>6.5 mm</b> centred for the antenna's SMA socket.
 <b>Lid:</b> prepare the OLED window 55 × 28 mm with holes in the corners, cut it out with a utility knife and file it clean.</div></div>
-<div class="step"><b class="n">3</b><div><b>Solder the resistors into the pigtails.</b> On each pigtail cut the red lead (core) about 5 cm before the
-DuPont pin, solder in the 220 Ω resistor and insulate it with heat-shrink tubing. Before that, confirm with the
-continuity tester that red goes to the centre pin and brown to the outer contact of the BNC plug.</div></div>
-<div class="step"><b class="n">4</b><div><b>Lead the pigtails through the cable glands.</b> Screw the glands into the connector side, loosen the dome nut
+<div class="step"><b class="n">3</b><div><b>Lead the pigtails through the cable glands.</b> First confirm with the continuity tester that red goes to the centre pin and brown to the outer contact of the BNC plug. Screw the glands into the connector side, loosen the dome nut
 and push the pigtail from the outside, DuPont end first, through the dome nut, seal and enclosure. If the DuPont plug does
 not fit through the 3 mm opening, briefly pull off the small plastic housing of the pin and put it back on afterwards. Pull
 the BNC plug out as far as needed and tighten the dome nut. Label the pigtails “X” and “Y”.</div></div>
+<div class="step"><b class="n">4</b><div><b>Solder the resistors into the pigtails</b> – only now, on the inside: with the resistor and heat-shrink tubing the cable no longer fits through the gland. On each pigtail cut the red lead (core) about 5 cm before the
+DuPont pin, solder in the 220 Ω resistor and insulate it with heat-shrink tubing.</div></div>
 <div class="step"><b class="n">5</b><div><b>Fit the USB-C panel socket and the antenna.</b> Insert the USB-C socket into the middle 16 mm hole of the connector side
 and screw it on from the inside. Screw the SMA socket of the antenna pigtail (from the DevKit's antenna kit) into the 6.5 mm hole
 of the opposite side and screw the Bingfu antenna on from the outside.</div></div>
