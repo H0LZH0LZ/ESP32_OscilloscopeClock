@@ -215,8 +215,8 @@ a.row>span:last-child{font-size:18px}
 <div class="grp"><h2 id="downloads-h" class="coll" role="button" tabindex="0" aria-expanded="true"><span data-l="de">0 Links &amp; Dokumente</span><span data-l="en">0 Links &amp; documents</span></h2>
 <section>
  <a class="row" target="_blank" rel="noopener" href="https://github.com/HolzHolz123/ESP32_OscilloscopeClock"><span><span data-l="de">GitHub – Version 2.0</span><span data-l="en">GitHub – version 2.0</span><small class="note" data-l="de">Diese Firmware mit Quellcode, Anleitung und Werkzeugen</small><small class="note" data-l="en">This firmware with source code, guide and tools</small></span><span>›</span></a>
- <a class="row" target="_blank" rel="noopener" data-l="de" href="ESP32_Oscilloscope_Clock_Dokumentation.pdf?v=fac48553"><span>Dokumentation (PDF)<small class="note">Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small></span><span>›</span></a>
- <a class="row" target="_blank" rel="noopener" data-l="en" href="ESP32_Oscilloscope_Clock_Documentation.pdf?v=f629e4e5"><span>Documentation (PDF)<small class="note">Assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
+ <a class="row" target="_blank" rel="noopener" data-l="de" href="ESP32_Oscilloscope_Clock_Dokumentation.pdf?v=c8ee800c"><span>Dokumentation (PDF)<small class="note">Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small></span><span>›</span></a>
+ <a class="row" target="_blank" rel="noopener" data-l="en" href="ESP32_Oscilloscope_Clock_Documentation.pdf?v=0532b289"><span>Documentation (PDF)<small class="note">Assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" href="demo/"><span><span data-l="de">Testseite</span><span data-l="en">Test page</span><small class="note" data-l="de">Das Webinterface der Uhr ausprobieren – läuft im Browser, alle Werte sind simuliert</small><small class="note" data-l="en">Try the clock's web interface – runs in the browser, all values are simulated</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" href="https://github.com/maurohh/ESP32_OscilloscopeClock"><span><span data-l="de">GitHub – Original</span><span data-l="en">GitHub – original</span><small class="note" data-l="de">Die ursprüngliche ESP32 Oscilloscope Clock von Mauro Pintus (2018), nach deren Idee diese Version entstand</small><small class="note" data-l="en">The original ESP32 Oscilloscope Clock by Mauro Pintus (2018) that inspired this version</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" href="https://fonts.google.com/specimen/Raleway"><span><span data-l="de">Schriftart Raleway</span><span data-l="en">Font Raleway</span><small class="note" data-l="de">Google Fonts – frei unter der SIL Open Font License 1.1</small><small class="note" data-l="en">Google Fonts – free under the SIL Open Font License 1.1</small></span><span>›</span></a>
@@ -244,6 +244,9 @@ Zifferblatt, Ziffern und Zeiger etwa 230-mal pro Sekunde nach.</p>
  <figure><img loading="lazy" src="images/oled_normal.png"><figcaption>Abb. 2 – OLED im Betrieb</figcaption></figure>
  <figure><img loading="lazy" src="images/web_pc_dunkel.png"><figcaption>Abb. 3 – Webinterface am PC (dunkles Design)</figcaption></figure>
 </div>
+
+<div class="note"><b>Stand der Tests:</b> Die Firmware baut fehlerfrei und ohne Warnungen (Arduino-CLI, esp32 3.3.12). Strahlführung,
+OLED-Inhalt, BOOT-Taster und Webinterface wurden am PC simuliert bzw. im Browser getestet. Der Test an echter Hardware steht noch aus.</div>
 </div><div data-l="en">
 <p>The <b>ESP32 Oscilloscope Clock</b> draws an analogue clock on the screen of an oscilloscope. The oscilloscope works in
 <b>X/Y mode</b>: two voltages deflect the beam horizontally and vertically. An ESP32 generates these two voltages with its
@@ -263,6 +266,9 @@ built-in digital-to-analogue converters (DACs) and traces the dial, numerals and
  <figure><img loading="lazy" src="images/oled_normal_en.png"><figcaption>Fig. 2 – OLED in operation</figcaption></figure>
  <figure><img loading="lazy" src="images/web_pc_dunkel_en.png"><figcaption>Fig. 3 – Web interface on a PC (dark theme)</figcaption></figure>
 </div>
+
+<div class="note"><b>Test status:</b> the firmware builds without errors and without warnings (Arduino CLI, esp32 3.3.12). Beam path,
+OLED content, BOOT button and web interface were simulated on a PC or tested in the browser. The test on real hardware is still pending.</div>
 </div></section></div>
 
 <div class="grp closed"><h2 id="kap2" class="coll" role="button" tabindex="0" aria-expanded="false"><span data-l="de">2 Teileliste und Werkzeug</span><span data-l="en">2 Parts list and tools</span></h2>
@@ -270,7 +276,7 @@ built-in digital-to-analogue converters (DACs) and traces the dial, numerals and
 <p>Die Liste entspricht dem Aufbau des Prototyps. Die Signale verlassen das Gehäuse nicht über Einbaubuchsen, sondern über
 <b>BNC-Pigtail-Leitungen</b>, die mit <b>Kabelverschraubungen</b> durch die Gehäusewand geführt werden. Der BNC-Stecker am Ende
 kommt direkt in den Eingang des Oszilloskops, ein zusätzliches BNC-Kabel ist nicht nötig.</p>
-<div class="tw"><table>
+<div class="tw"><table class="eng">
  <tr><th>Anz.</th><th>Teil</th><th>Hinweis</th></tr>
  <tr><td class="qty" data-th="Anz.">1</td><td data-qty="1 ×" data-th="Teil"><b><a href="https://www.amazon.de/dp/B0F65G3V81" target="_blank" rel="noopener">ESP32-WROOM-32U DevKitC V4</a></b> mit USB-C und Antennen-Kit (DUBEUYEW, „2 Stück ESP32-WROOM-32U ESP32 DevKitC V4 USB-C mit Antennen-Kit“), 48,5 × 28,5 mm</td><td data-th="Hinweis">Klassischer ESP32 mit zwei 8-Bit-DACs an GPIO25/26, USB-Seriell-Wandler CP2102. Das Antennen-Kit enthält das IPEX→SMA-Pigtail. Andere ESP32-Varianten (S2, S3, C3) haben keine bzw. andere DACs und passen nicht.</td></tr>
  <tr><td class="qty" data-th="Anz.">1</td><td data-qty="1 ×" data-th="Teil"><b><a href="https://www.amazon.de/dp/B0BCWBW4SR" target="_blank" rel="noopener">ESP32-Breakout-Board mit Schraubklemmen</a></b> (XTVTX, „ESP32 Breakout Board Erweiterungskarte GPIO 1 in 2“, 2er-Pack)</td><td data-th="Hinweis">Das DevKit wird aufgesteckt, alle Leitungen kommen in Schraubklemmen – am DevKit wird nichts gelötet. Die Klemmen sind wie die Stifte beschriftet (3V3, GND, P25, P26, P23 …).</td></tr>
@@ -309,7 +315,7 @@ kommt direkt in den Eingang des Oszilloskops, ein zusätzliches BNC-Kabel ist ni
 <p>The list matches the prototype. The signals do not leave the enclosure through panel sockets but through <b>BNC pigtail
 cables</b> that are led through the enclosure wall with <b>cable glands</b>. The BNC plug at the end goes straight into the
 oscilloscope input; no additional BNC cable is needed.</p>
-<div class="tw"><table>
+<div class="tw"><table class="eng">
  <tr><th>Qty</th><th>Part</th><th>Note</th></tr>
  <tr><td class="qty" data-th="Qty">1</td><td data-qty="1 ×" data-th="Part"><b><a href="https://www.amazon.de/dp/B0F65G3V81" target="_blank" rel="noopener">ESP32-WROOM-32U DevKitC V4</a></b> with USB-C and antenna kit (DUBEUYEW, “2 pcs ESP32-WROOM-32U ESP32 DevKitC V4 USB-C with antenna kit”), 48.5 × 28.5 mm</td><td data-th="Note">Classic ESP32 with two 8-bit DACs on GPIO25/26, USB-serial converter CP2102. The antenna kit contains the IPEX→SMA pigtail. Other ESP32 variants (S2, S3, C3) have no or different DACs and do not fit.</td></tr>
  <tr><td class="qty" data-th="Qty">1</td><td data-qty="1 ×" data-th="Part"><b><a href="https://www.amazon.de/dp/B0BCWBW4SR" target="_blank" rel="noopener">ESP32 breakout board with screw terminals</a></b> (XTVTX, “ESP32 breakout board expansion board GPIO 1 in 2”, pack of 2)</td><td data-th="Note">The DevKit is plugged in and all wires go into screw terminals – nothing is soldered on the DevKit. The terminals are labelled like the pins (3V3, GND, P25, P26, P23 …).</td></tr>
@@ -599,7 +605,7 @@ Helligkeit darstellt, wirken sie heller oder gleich hell wie der Rest. Der Regle
 <p><b>Genau einstellen</b> (bei anderen Geräten mit 55 % beginnen): erst Fokus und Intensität am Oszilloskop einstellen. Dann auf die Kreuzungen von Zeigern und
 Minutenstrichen schauen und den Regler in 5-%-Schritten schieben, bis beide gleich hell wirken; kurz auf 100 % und zurück zeigt die
 Richtung. Der Wert gilt sofort und bleibt gespeichert.</p>
-<div class="warn" style="break-inside:auto"><b>Röhre schonen (Einbrennen):</b> Ein Bild, das stundenlang an derselben Stelle steht, nutzt die Leuchtschicht
+<div class="warn"><b>Röhre schonen (Einbrennen):</b> Ein Bild, das stundenlang an derselben Stelle steht, nutzt die Leuchtschicht
 einer Röhre dort ab, im X/Y-Betrieb besonders schnell. Intensität nur so hoch wie nötig, die <b>Bildverschiebung gegen
 Einbrennen</b> (Einstellungen → Oszilloskop, standardmäßig an) eingeschaltet lassen und das Oszilloskop ausschalten, wenn niemand
 hinsieht. Dunkler machen kann die Firmware das Bild nicht – die Helligkeitsregler verteilen nur die Zeit des Strahls; echtes
@@ -672,7 +678,7 @@ Oscilloscope, 55 % by default) compensates for this. Guide values:</p>
 <p><b>How to set the value exactly</b> (with other devices start at 55 %): first set focus and intensity on the oscilloscope.
 Then look at where the hands cross the minute marks and move the slider in 5 % steps until both look equally bright; briefly going
 to 100 % and back shows the direction. The value is applied and saved immediately.</p>
-<div class="warn" style="break-inside:auto"><b>Protect the CRT (burn-in):</b> a picture that stays at the same spot for hours wears the phosphor of a CRT
+<div class="warn"><b>Protect the CRT (burn-in):</b> a picture that stays at the same spot for hours wears the phosphor of a CRT
 there – particularly quickly in X/Y mode because the beam dwells on a few lines for a long time. Set the intensity only as high as
 necessary, leave the <b>image shift against burn-in</b> switched on (Settings → Oscilloscope, on by default) and switch the
 oscilloscope off when nobody is looking. The firmware cannot make the picture darker by itself: the beam is always somewhere on the
@@ -931,7 +937,7 @@ group has “Reset to defaults”; the change can then be undone with “Undo”
 
 <div class="grp closed"><h2 id="kap9" class="coll" role="button" tabindex="0" aria-expanded="false"><span data-l="de">9 Fehlersuche</span><span data-l="en">9 Troubleshooting</span></h2>
 <section class="doc"><div data-l="de">
-<div class="tw"><table style="font-size:8pt">
+<div class="tw"><table>
  <tr><th>Beobachtung</th><th>Abhilfe</th></tr>
  <tr><td data-th="Beobachtung">Kein Bild auf dem Oszilloskop</td><td data-th="Abhilfe">X/Y-Betrieb, DC-Kopplung, 0,5 V/Div; Position auf Bildmitte; Pigtail X an Kanal 1, Y an Kanal 2; Testbild einschalten</td></tr>
  <tr><td data-th="Beobachtung">Bild gespiegelt oder gedreht</td><td data-th="Abhilfe">X und Y vertauscht, oder Kanal invertiert (Invert-Funktion ausschalten)</td></tr>
@@ -954,14 +960,31 @@ group has “Reset to defaults”; the change can then be undone with “Undo”
 <p>Für eine Fehlermeldung im Debug-Bereich „Herunterladen“ antippen und die Textdatei weitergeben.</p>
 
 <h3>Debug-Meldungen (Beispiel)</h3>
-<pre style="font-size:7.3pt;padding:1.5mm;line-height:1.3">+0s ESP32 Oscilloscope Clock v2.0
+<pre>+0s ESP32 Oscilloscope Clock v2.0
 +0s [Scope] Profil: DIGITAL – BOOT-Taster 3 s halten zum Umschalten
++0s [Scope] Rundtour: 76 Linienzuege, Spruenge gesamt 1033 DAC-Einheiten
++0s [Scope] laeuft auf Core 1
++0s [UI] laeuft auf Core 0
++0s [RTC] DS3231 gefunden, Uhrzeit uebertragen
++0s [WiFi] bekanntes Netz: "Heimnetz"
 +3s [WiFi] verbunden mit "Heimnetz", IP 192.168.1.23, RSSI -61 dBm
 +3s [Web] erreichbar unter http://scope-clock.local und http://192.168.1.23
 +10s [Scope] Start-Testbild beendet, Uhr laeuft
 21:15:06 [NTP] Sync 15.11.2026 21:15:06</pre>
+<p>Jede Zeile beginnt mit der Zeit seit dem Einschalten („+3s“) oder – sobald die Uhrzeit bekannt ist – mit der Uhrzeit. In eckigen
+Klammern steht der Teil der Firmware, von dem die Meldung kommt:</p>
+<ul>
+ <li><b>[Scope]</b> – Bildausgabe: Profil, berechnete Rundtour, Zifferblatt- und Profilwechsel.</li>
+ <li><b>[UI]</b> – Bedienung auf Kern 0: BOOT-Taster, OLED, Uhrzeit.</li>
+ <li><b>[RTC]</b> – Echtzeituhr DS3231: gefunden, nicht gefunden oder Uhrzeit ungültig (Batterie leer oder neu).</li>
+ <li><b>[WiFi]</b> – Verbindungsaufbau, Signalstärke (RSSI; besser als −70 dBm ist gut) und Verbindungsabbrüche.</li>
+ <li><b>[Web]</b> – Adresse des Webinterface und jede Änderung, die über das Webinterface gemacht wird.</li>
+ <li><b>[NTP]</b> – jeder Zeitabgleich; eine Warnung, wenn der letzte Abgleich mehr als zwei Intervalle zurückliegt.</li>
+</ul>
+<p>Fehlt nach dem Einschalten die Zeile „[WiFi] verbunden“, stimmt meist das Passwort nicht oder das Netz ist zu weit entfernt.
+Steht dort „[RTC] kein DS3231 gefunden“, obwohl das Modul eingebaut ist, die Leitungen SDA und SCL prüfen.</p>
 </div><div data-l="en">
-<div class="tw"><table style="font-size:8pt">
+<div class="tw"><table>
  <tr><th>Observation</th><th>Remedy</th></tr>
  <tr><td data-th="Observation">No picture on the oscilloscope</td><td data-th="Remedy">X/Y mode, DC coupling, 0.5 V/div; position at the centre; pigtail X to channel 1, Y to channel 2; switch on the test pattern</td></tr>
  <tr><td data-th="Observation">Picture mirrored or rotated</td><td data-th="Remedy">X and Y swapped, or a channel inverted (switch off the invert function)</td></tr>
@@ -984,12 +1007,29 @@ group has “Reset to defaults”; the change can then be undone with “Undo”
 <p>For a bug report tap “Download” in the debug section and pass on the text file.</p>
 
 <h3>Debug messages (example, language English)</h3>
-<pre style="font-size:7.3pt;padding:1.5mm;line-height:1.3">+0s ESP32 Oscilloscope Clock v2.0
-+0s [Scope] profile: DIGITAL – hold the BOOT button for 3 s to switch
+<pre>+0s ESP32 Oscilloscope Clock v2.0
++0s [Scope] profile: DIGITAL – hold BOOT button 3 s to switch
++0s [Scope] round trip: 76 polylines, jumps total 1033 DAC units
++0s [Scope] running on core 1
++0s [UI] running on core 0
++0s [RTC] DS3231 found, time transferred
++0s [WiFi] known network: "HomeNet"
 +3s [WiFi] connected to "HomeNet", IP 192.168.1.23, RSSI -61 dBm
 +3s [Web] reachable at http://scope-clock.local and http://192.168.1.23
 +10s [Scope] start-up test pattern finished, clock running
-21:15:06 [NTP] Sync 2026-11-15 21:15:06</pre>
+21:15:06 [NTP] Sync 15.11.2026 21:15:06</pre>
+<p>Every line starts with the time since power-on (“+3s”) or – as soon as the time is known – with the time of day. The part of the
+firmware the message comes from is shown in square brackets:</p>
+<ul>
+ <li><b>[Scope]</b> – picture output: profile, computed round trip, changes of dial and profile.</li>
+ <li><b>[UI]</b> – operation on core 0: BOOT button, OLED, time.</li>
+ <li><b>[RTC]</b> – DS3231 real-time clock: found, not found or time invalid (battery empty or new).</li>
+ <li><b>[WiFi]</b> – connecting, signal strength (RSSI; better than −70 dBm is good) and lost connections.</li>
+ <li><b>[Web]</b> – address of the web interface and every change made through the web interface.</li>
+ <li><b>[NTP]</b> – every time sync; a warning if the last sync is more than two intervals ago.</li>
+</ul>
+<p>If the line “[WiFi] connected” is missing after power-on, the password is usually wrong or the network is too far away. If it
+says “[RTC] no DS3231 found” although the module is fitted, check the SDA and SCL wires.</p>
 </div></section></div>
 
 <div class="grp closed"><h2 id="kap10" class="coll" role="button" tabindex="0" aria-expanded="false"><span data-l="de">10 Technik: wie die Uhr arbeitet</span><span data-l="en">10 Technology: how the clock works</span></h2>
@@ -1208,8 +1248,6 @@ github.com/maurohh/ESP32_OscilloscopeClock) – vielen Dank! Diese Version ist e
 Webinterface und alle Vektorgrafiken sind neu. Die Schrift des Webinterfaces ist eine verkleinerte Fassung von
 <b>Raleway</b> (Copyright 2010 The Raleway Project Authors, SIL Open Font License 1.1, Lizenztext in <code>fonts/OFL.txt</code>),
 hier unter dem Namen „ScopeClock Sans“.</p>
-<div class="note"><b>Stand der Tests:</b> Die Firmware baut fehlerfrei und ohne Warnungen (Arduino-CLI, esp32 3.3.12). Strahlführung,
-OLED-Inhalt, BOOT-Taster und Webinterface wurden am PC simuliert bzw. im Browser getestet. Der Test an echter Hardware steht noch aus.</div>
 </div><div data-l="en">
 <h3>Defaults in <code>config.h</code></h3>
 <p class="small">Almost everything can be changed in the web interface; <code>config.h</code> only provides the defaults and fixed pins.</p>
@@ -1266,8 +1304,6 @@ github.com/maurohh/ESP32_OscilloscopeClock) – many thanks! This version is an 
 web interface and all vector graphics are new. The font of the web interface is a reduced version of
 <b>Raleway</b> (Copyright 2010 The Raleway Project Authors, SIL Open Font License 1.1, licence text in <code>fonts/OFL.txt</code>),
 called “ScopeClock Sans” here.</p>
-<div class="note"><b>Test status:</b> the firmware builds without errors and without warnings (Arduino CLI, esp32 3.3.12). Beam path,
-OLED content, BOOT button and web interface were simulated on a PC or tested in the browser. The test on real hardware is still pending.</div>
 </div></section></div>
 <!-- /KAPITEL -->
 

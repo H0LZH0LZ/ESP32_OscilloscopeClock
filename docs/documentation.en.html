@@ -12,13 +12,15 @@ h1{font-size:22pt;font-weight:700;margin:0 0 4mm;color:#0a5c33}
 h2{break-before:page;font-size:15pt;font-weight:700;color:#0a5c33;border-bottom:1.5px solid #0a5c33;padding-bottom:1.5mm;margin:9mm 0 3mm;break-after:avoid}
 h3{font-size:11.5pt;font-weight:700;margin:5mm 0 1.5mm;padding-left:2.2mm;border-left:2.5px solid #0a7d44;line-height:1.25;break-after:avoid}
 a{color:#0a7d44;text-decoration-thickness:.5px;text-underline-offset:1.5px}
-p{margin:0 0 2.2mm}
-ul,ol{margin:0 0 2.5mm;padding-left:6mm}li{margin:0 0 1mm}
-table{border-collapse:collapse;width:100%;margin:1mm 0 3.5mm;font-size:8.4pt;break-inside:auto}
+p{margin:0 0 2.2mm;break-inside:avoid;orphans:3;widows:3}
+ul,ol{margin:0 0 2.5mm;padding-left:6mm}li{margin:0 0 1mm;break-inside:avoid}
+table{border-collapse:collapse;width:100%;margin:1mm 0 3.5mm;font-size:8.4pt}
+thead{display:table-header-group}
 th,td{border:1px solid #c9ccd1;padding:1.3mm 2mm;vertical-align:top;text-align:left}
 th{background:#eef4f0}
 .small a{overflow-wrap:anywhere}
 tr{break-inside:avoid}
+table.eng td,table.eng th{padding:.8mm 2mm}
 code{font:9pt Menlo,Consolas,monospace;background:#f2f3f5;padding:0 1mm;border-radius:2px}
 pre{font:8.3pt/1.4 Menlo,Consolas,monospace;background:#f5f6f8;border:1px solid #dde0e4;border-radius:1mm;padding:2.5mm;white-space:pre-wrap;break-inside:avoid}
 figure{margin:3mm 0 4mm;text-align:center;break-inside:avoid}
@@ -95,11 +97,14 @@ built-in digital-to-analogue converters (DACs) and traces the dial, numerals and
  <figure><img src="images/web_pc_dunkel_en.png"><figcaption>Fig. 3 – Web interface on a PC (dark theme)</figcaption></figure>
 </div>
 
+<div class="note"><b>Test status:</b> the firmware builds without errors and without warnings (Arduino CLI, esp32 3.3.12). Beam path,
+OLED content, BOOT button and web interface were simulated on a PC or tested in the browser. The test on real hardware is still pending.</div>
+
 <h2>2 Parts list and tools</h2>
 <p>The list matches the prototype. The signals do not leave the enclosure through panel sockets but through <b>BNC pigtail
 cables</b> that are led through the enclosure wall with <b>cable glands</b>. The BNC plug at the end goes straight into the
 oscilloscope input; no additional BNC cable is needed.</p>
-<table>
+<table class="eng">
  <tr><th>Qty</th><th>Part</th><th>Note</th></tr>
  <tr><td>1</td><td><b><a href="https://www.amazon.de/dp/B0F65G3V81">ESP32-WROOM-32U DevKitC V4</a></b> with USB-C and antenna kit (DUBEUYEW, “2 pcs ESP32-WROOM-32U ESP32 DevKitC V4 USB-C with antenna kit”), 48.5 × 28.5 mm</td><td>Classic ESP32 with two 8-bit DACs on GPIO25/26, USB-serial converter CP2102. The antenna kit contains the IPEX→SMA pigtail. Other ESP32 variants (S2, S3, C3) have no or different DACs and do not fit.</td></tr>
  <tr><td>1</td><td><b><a href="https://www.amazon.de/dp/B0BCWBW4SR">ESP32 breakout board with screw terminals</a></b> (XTVTX, “ESP32 breakout board expansion board GPIO 1 in 2”, pack of 2)</td><td>The DevKit is plugged in and all wires go into screw terminals – nothing is soldered on the DevKit. The terminals are labelled like the pins (3V3, GND, P25, P26, P23 …).</td></tr>
@@ -290,7 +295,7 @@ Oscilloscope, 55 % by default) compensates for this. Guide values:</p>
 <p><b>How to set the value exactly</b> (with other devices start at 55 %): first set focus and intensity on the oscilloscope.
 Then look at where the hands cross the minute marks and move the slider in 5 % steps until both look equally bright; briefly going
 to 100 % and back shows the direction. The value is applied and saved immediately.</p>
-<div class="warn" style="break-inside:auto"><b>Protect the CRT (burn-in):</b> a picture that stays at the same spot for hours wears the phosphor of a CRT
+<div class="warn"><b>Protect the CRT (burn-in):</b> a picture that stays at the same spot for hours wears the phosphor of a CRT
 there – particularly quickly in X/Y mode because the beam dwells on a few lines for a long time. Set the intensity only as high as
 necessary, leave the <b>image shift against burn-in</b> switched on (Settings → Oscilloscope, on by default) and switch the
 oscilloscope off when nobody is looking. The firmware cannot make the picture darker by itself: the beam is always somewhere on the
@@ -426,7 +431,7 @@ group has “Reset to defaults”; the change can then be undone with “Undo”
 </table>
 
 <h2>9 Troubleshooting</h2>
-<table style="font-size:8pt">
+<table>
  <tr><th>Observation</th><th>Remedy</th></tr>
  <tr><td>No picture on the oscilloscope</td><td>X/Y mode, DC coupling, 0.5 V/div; position at the centre; pigtail X to channel 1, Y to channel 2; switch on the test pattern</td></tr>
  <tr><td>Picture mirrored or rotated</td><td>X and Y swapped, or a channel inverted (switch off the invert function)</td></tr>
@@ -449,12 +454,29 @@ group has “Reset to defaults”; the change can then be undone with “Undo”
 <p>For a bug report tap “Download” in the debug section and pass on the text file.</p>
 
 <h3>Debug messages (example, language English)</h3>
-<pre style="font-size:7.3pt;padding:1.5mm;line-height:1.3">+0s ESP32 Oscilloscope Clock v2.0
-+0s [Scope] profile: DIGITAL – hold the BOOT button for 3 s to switch
+<pre>+0s ESP32 Oscilloscope Clock v2.0
++0s [Scope] profile: DIGITAL – hold BOOT button 3 s to switch
++0s [Scope] round trip: 76 polylines, jumps total 1033 DAC units
++0s [Scope] running on core 1
++0s [UI] running on core 0
++0s [RTC] DS3231 found, time transferred
++0s [WiFi] known network: "HomeNet"
 +3s [WiFi] connected to "HomeNet", IP 192.168.1.23, RSSI -61 dBm
 +3s [Web] reachable at http://scope-clock.local and http://192.168.1.23
 +10s [Scope] start-up test pattern finished, clock running
-21:15:06 [NTP] Sync 2026-11-15 21:15:06</pre>
+21:15:06 [NTP] Sync 15.11.2026 21:15:06</pre>
+<p>Every line starts with the time since power-on (“+3s”) or – as soon as the time is known – with the time of day. The part of the
+firmware the message comes from is shown in square brackets:</p>
+<ul>
+ <li><b>[Scope]</b> – picture output: profile, computed round trip, changes of dial and profile.</li>
+ <li><b>[UI]</b> – operation on core 0: BOOT button, OLED, time.</li>
+ <li><b>[RTC]</b> – DS3231 real-time clock: found, not found or time invalid (battery empty or new).</li>
+ <li><b>[WiFi]</b> – connecting, signal strength (RSSI; better than −70 dBm is good) and lost connections.</li>
+ <li><b>[Web]</b> – address of the web interface and every change made through the web interface.</li>
+ <li><b>[NTP]</b> – every time sync; a warning if the last sync is more than two intervals ago.</li>
+</ul>
+<p>If the line “[WiFi] connected” is missing after power-on, the password is usually wrong or the network is too far away. If it
+says “[RTC] no DS3231 found” although the module is fitted, check the SDA and SCL wires.</p>
 
 <h2>10 Technology: how the clock works</h2>
 <figure><img src="images/software_en.svg" style="width:96%"><figcaption>Fig. 14 – Distribution of the firmware over the two processor cores</figcaption></figure>
@@ -590,7 +612,5 @@ github.com/maurohh/ESP32_OscilloscopeClock) – many thanks! This version is an 
 web interface and all vector graphics are new. The font of the web interface is a reduced version of
 <b>Raleway</b> (Copyright 2010 The Raleway Project Authors, SIL Open Font License 1.1, licence text in <code>fonts/OFL.txt</code>),
 called “ScopeClock Sans” here.</p>
-<div class="note"><b>Test status:</b> the firmware builds without errors and without warnings (Arduino CLI, esp32 3.3.12). Beam path,
-OLED content, BOOT button and web interface were simulated on a PC or tested in the browser. The test on real hardware is still pending.</div>
 <section class="bohrseite"><img src="images/bohrplan_en.svg" alt="Drilling template 1:1"></section>
 </body></html>

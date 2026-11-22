@@ -18,6 +18,16 @@ const DOCS = {
     const d = DOCS[l];
     const p = await b.newPage();
     await p.goto('file://' + path.join(root, 'docs', d.src), { waitUntil: 'networkidle' });
+    // Umbruchregeln: Absätze, Kästen, Schritte und Abbildungen nie teilen (CSS). Tabellen und Listen nur dann
+    // zwischen ihren Zeilen bzw. Punkten umbrechen, wenn sie nicht auf eine Seite passen – sonst bleiben
+    // sie zusammen. Gemessen wird bei Druckbreite (A4 abzüglich der Ränder).
+    await p.emulateMedia({ media: 'print' });
+    await p.setViewportSize({ width: Math.round(176 / 25.4 * 96), height: 1000 });
+    await p.evaluate(() => {
+      const page = 259 / 25.4 * 96;
+      for (const e of document.querySelectorAll('table,ul,ol'))
+        e.style.breakInside = e.getBoundingClientRect().height > 0.97 * page ? 'auto' : 'avoid';
+    });
     await p.pdf({
       path: path.join(root, 'docs', d.out),
       format: 'A4', printBackground: true, preferCSSPageSize: true,
