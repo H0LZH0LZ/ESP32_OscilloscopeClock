@@ -152,7 +152,7 @@ siehe Handbuch des Oszilloskops). Ausgeschaltet ist GPIO27 hochohmig.
 
 **Testbild:** „Einstellungen“ → „Oszilloskop“ → „Testbild“ zeigt statt der Uhr einen Rahmen mit
 Marken, einen Kreis und ein Mittelkreuz. Damit lassen sich Position (Kreuz in der Bildmitte), Größe
-(Rahmen füllt 8 × 8 Teilungen fast aus), gleiche Verstärkung von X und Y (der Kreis ist rund, nicht oval)
+(der Rahmen zeigt genau den Umriss der Uhr, bei 0,5 V/Div gut 6 × 6 Teilungen), gleiche Verstärkung von X und Y (der Kreis ist rund, nicht oval)
 und Fokus einstellen. Das Testbild wird nicht gespeichert. **Nach jedem Einschalten erscheint es
 automatisch für 10 s** (`BOOT_TEST_S`), danach läuft die Uhr – so sieht man gleich, ob alles sitzt.
 

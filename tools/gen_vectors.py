@@ -223,11 +223,13 @@ def test_pattern():
     """Testbild zum Einstellen des Oszilloskops: Rahmen (Bildgrenzen), Kreis
     (Seitenverhältnis X/Y: muss rund sein), Mittelkreuz (Position) und je eine
     kurze Marke an den Viertelpunkten des Rahmens."""
-    polys = [[(8, 8), (247, 8), (247, 247), (8, 247), (8, 8)]]              # Rahmen
-    polys.append([pt(100, a * 5) for a in range(73)])                       # Kreis r = 100
+    # Rahmen und Kreis haben genau die Größe der Uhr (Striche enden bei Radius 124):
+    # Wer Position und Größe nach dem Testbild einstellt, hat danach die Uhr passend.
+    polys = [[(4, 4), (252, 4), (252, 252), (4, 252), (4, 4)]]              # Rahmen = Umriss der Uhr
+    polys.append([pt(124, a * 5) for a in range(73)])                       # Kreis r = 124
     polys += [[(98, 128), (158, 128)], [(128, 98), (128, 158)]]             # Mittelkreuz
-    for v in (68, 188):                                                     # Marken auf dem Rahmen
-        polys += [[(v, 8), (v, 20)], [(v, 247), (v, 235)], [(8, v), (20, v)], [(247, v), (235, v)]]
+    for v in (66, 190):                                                     # Marken auf dem Rahmen
+        polys += [[(v, 4), (v, 16)], [(v, 252), (v, 240)], [(4, v), (16, v)], [(252, v), (240, v)]]
     return polys
 
 

@@ -151,7 +151,7 @@ When switched off, GPIO27 is high impedance.
 
 **Test pattern:** „Einstellungen“ → „Oszilloskop“ → „Testbild“ shows a frame with marks, a circle
 and a centre cross instead of the clock. Use it to adjust position (cross in the centre of the screen),
-size (the frame almost fills 8 × 8 divisions), equal X and Y gain (the circle is round, not oval) and
+size (the frame shows exactly the outline of the clock, a good 6 × 6 divisions at 0.5 V/div), equal X and Y gain (the circle is round, not oval) and
 focus. The test pattern is not saved. **After every power-on it appears automatically for 10 s**
 (`BOOT_TEST_S`), then the clock runs – so you see right away whether everything fits.
 
