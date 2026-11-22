@@ -136,9 +136,11 @@ static_assert(BUTTON_FACTORY_MS >= BUTTON_LONG_MS + 5000, "config.h: BUTTON_FACT
 // Stunden- und Minutenzeiger sind schmale Nadeln: Ihre beiden Kanten liegen
 // nur 0–4 DAC-Einheiten auseinander und verschmelzen auf dem Schirm zu einer
 // Linie, die bei voller Helligkeit deutlich heller wäre als der Rest.
-// 67 % gleicht das aus (im Webinterface unter Einstellungen nachstellbar).
-// 100 = Zeiger heller hervorheben.
-#define HAND_BRIGHT_PCT 67
+// 55 % gleicht das bei den meisten Oszilloskopen aus (im Webinterface unter
+// Einstellungen nachstellbar). Richtwerte: Röhre 55 % (scharfer, dünner Strahl
+// bis 85 %), Tektronix TDS3000 50–65 %, Geräte ohne Helligkeitsabstufung
+// (HP 54200A, Analog Discovery) 100 %. 100 = Zeiger heller hervorheben.
+#define HAND_BRIGHT_PCT 55
 
 // Helligkeit der Minutenstriche und der Ziffern: 0–100 % der normalen Verweilzeit
 // (0 = ausgeblendet). Im Webinterface regelbar.

@@ -205,8 +205,8 @@ The outer contact has continuity to GND. Retighten all screw terminals slightly.
 <h3>Partition scheme: two variants</h3>
 <table style="break-inside:avoid">
  <tr><th>Variant</th><th>Arduino IDE: Partition Scheme</th><th>PlatformIO</th><th>Program memory</th></tr>
- <tr><td><b>A – Huge APP</b> (recommended)</td><td>“Huge APP (3MB No OTA/1MB SPIFFS)”</td><td><code>pio run -t upload</code></td><td>1,240,722 of 3,145,728 bytes (<b>39 %</b>)</td></tr>
- <tr><td><b>B – Standard</b></td><td>“Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)” – the default, nothing to change</td><td><code>pio run -e standard -t upload</code></td><td>1,240,690 of 1,310,720 bytes (<b>94 %</b>)</td></tr>
+ <tr><td><b>A – Huge APP</b> (recommended)</td><td>“Huge APP (3MB No OTA/1MB SPIFFS)”</td><td><code>pio run -t upload</code></td><td>1,241,010 of 3,145,728 bytes (<b>39 %</b>)</td></tr>
+ <tr><td><b>B – Standard</b></td><td>“Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)” – the default, nothing to change</td><td><code>pio run -e standard -t upload</code></td><td>1,240,978 of 1,310,720 bytes (<b>94 %</b>)</td></tr>
 </table>
 <p>Both variants work the same. <b>A</b> leaves about 1.9 MB for extensions; the clock uses neither OTA updates nor SPIFFS,
 so nothing is lost. <b>B</b> works without changing anything but leaves only about 70 KB. You can switch at any time (choose
@@ -291,6 +291,21 @@ differences:</p>
  <li><b>Display refresh rate:</b> many digital oscilloscopes update the screen only a few times per second – the second hand then
  visibly jumps, and the picture does not flicker but “pulses”. That is normal.</li>
 </ul>
+<h3>Matching the brightness of the hands</h3>
+<p>The hour and minute hands are narrow needles made of two closely spaced edges. Depending on how an oscilloscope displays
+brightness, they look brighter than or as bright as the rest. The <b>hour/minute hand brightness</b> slider (Settings →
+Oscilloscope, 55 % by default) compensates for this. Guide values:</p>
+<table>
+ <tr><th>Oscilloscope</th><th>Guide value</th><th>Reason</th></tr>
+ <tr><td>CRT oscilloscope (profile ANALOG)</td><td>55 %, up to 85 % with a sharp, thin beam</td><td>The CRT shows the dwell time directly as brightness; with a very sharp beam the two edges are seen separately and need more</td></tr>
+ <tr><td>Tektronix TDS3012 (TDS3000)</td><td>50–65 %</td><td>Brightness by hit frequency (Digital Phosphor) – the hands, traced twice, glow particularly strongly</td></tr>
+ <tr><td>HP 54200A</td><td>100 %</td><td>All sample points equally bright; fewer percent only makes the hands patchy</td></tr>
+ <tr><td>Digilent Analog Discovery 2</td><td>100 %</td><td>X/Y view without intensity grading, as with the HP</td></tr>
+</table>
+<p><b>How to set the value exactly:</b> first set focus and intensity on the oscilloscope – otherwise the right value changes
+again afterwards. Then look at the spots where the hands cross the minute marks and move the slider in 5 % steps until hands and
+marks look equally bright there. As a check, briefly go to 100 % and back: the difference shows which way to go. The value is
+applied and saved immediately.</p>
 <h3>Notes on individual devices</h3>
 <ul>
  <li><b>Tektronix TDS3012:</b> CH1 = X, CH2 = Y, XY in the display menu; short persistence (Persist) calms the picture.</li>
@@ -356,8 +371,8 @@ group has “Reset to defaults”; the change can then be undone with “Undo”
  <tr><td>Beam dwell time</td><td>1.00–10.00 µs per step (3.00 µs)</td><td>How long the beam dwells on each piece of its path. <b>Longer</b> = brighter, stronger lines and
  cleaner corners, but fewer frames per second (more flicker). <b>Shorter</b> = calmer picture but darker lines; a slow oscilloscope
  then rounds the corners. The estimated frame rate is shown while dragging (default approx. 230 frames/s).</td></tr>
- <tr><td>Hour/minute hand brightness</td><td>0–100 % (67 %)</td><td>Dwell time on the two hands relative to the rest. The narrow, closely spaced double lines of the
- hands otherwise look brighter than the dial and numerals; at 67 % they appear equally bright. 0 % hides the hands. The second hand is not affected.</td></tr>
+ <tr><td>Hour/minute hand brightness</td><td>0–100 % (55 %)</td><td>Dwell time on the two hands relative to the rest. The narrow, closely spaced double lines of the
+ hands otherwise look brighter than the dial and numerals. Guide values per oscilloscope and how to set it: chapter 6. 0 % hides the hands. The second hand is not affected.</td></tr>
  <tr><td>Tick mark brightness</td><td>0–100 % (100 %)</td><td>Brightness of the 60 marks around the edge. Less brightness makes the hands stand out more and
  shortens the frame slightly; 0 % hides the marks completely.</td></tr>
  <tr><td>Numeral brightness</td><td>0–100 % (100 %)</td><td>Brightness of the numbers on the dial. 0 % hides them – equivalent to the style “ticks only”.</td></tr>
@@ -477,7 +492,7 @@ too dark.</p>
 <p>The brightness of a line depends on how long the beam dwells on each piece of the path. The firmware therefore splits every line
 into steps of exactly one DAC step – it computes the length of diagonal lines with an integer square root, without floating point –
 and holds each step equally long. Horizontal, vertical and diagonal lines are thus equally bright. Individual parts can be set
-separately: hour and minute hands are at 67 % by default because the narrow needles would otherwise look brighter than the rest;
+separately: hour and minute hands are at 55 % by default because the narrow needles would otherwise look brighter than the rest;
 minute marks and numerals are at 100 %. The second hand is drawn out and back, each time with half the dwell time, so it is just as
 bright as a single line.</p>
 <h3>One frame step by step</h3>
@@ -521,7 +536,7 @@ its frames (frame rate in the status), an idle hook measures the load of core 0,
 the debug section.</p>
 <p><b>Vector data:</b> dial, numerals, hands and test pattern are original drawings, generated with <code>tools/gen_vectors.py</code>
 (coordinates 0–255, 8 bits per axis).</p>
-<p><b>Memory:</b> program memory 1,240,690 bytes (94 % with the default partition scheme, approx. 39 % with “Huge APP”), global variables
+<p><b>Memory:</b> program memory 1,240,978 bytes (94 % with the default partition scheme, approx. 39 % with “Huge APP”), global variables
 74,940 bytes (22 %). The web page is stored gzip-compressed in flash (24 KB), the font (Raleway, reduced to the characters needed) as WOFF2 (30 KB).</p>
 <h3>Debug messages (example, language English)</h3>
 <pre>+0s ESP32 Oscilloscope Clock v2.0

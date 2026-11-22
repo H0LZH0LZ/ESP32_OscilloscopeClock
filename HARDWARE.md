@@ -210,6 +210,21 @@ Ein Bild dauert ca. 4,3 ms, mit römischen Ziffern ca. 6,2 ms.
   Dann in den Ansichtsoptionen auf Punktdarstellung umstellen, falls angeboten.
 - Beide Geräte hängen am selben PC, damit haben sie gemeinsame Masse, das ist unkritisch.
 
+### Helligkeit der Zeiger abgleichen
+Stunden- und Minutenzeiger sind schmale Nadeln aus zwei dicht liegenden Kanten und wirken je nach Oszilloskop heller als der
+Rest. Der Regler „Helligkeit Stunden-/Minutenzeiger“ (Webinterface → Oszilloskop, ab Werk 55 %) gleicht das aus:
+
+| Oszilloskop | Richtwert |
+|---|---|
+| Röhren-Oszilloskop | 55 %, bei scharfem, dünnem Strahl bis 85 % |
+| Tektronix TDS3012 (TDS3000) | 50–65 % (Helligkeit nach Trefferhäufigkeit) |
+| HP 54200A | 100 % (alle Punkte gleich hell) |
+| Digilent Analog Discovery 2 | 100 % (X/Y-Ansicht ohne Helligkeitsabstufung) |
+
+**Genau einstellen:** erst Fokus und Intensität am Oszilloskop einstellen. Dann auf die Kreuzungen von Zeigern und
+Minutenstrichen schauen und den Regler in 5-%-Schritten schieben, bis beide dort gleich hell wirken. Kurz auf 100 % und zurück
+zeigt, in welche Richtung es geht. Der Wert wird sofort übernommen und gespeichert.
+
 ## Feinabstimmung in `config.h`
 Profil, Zifferblatt, Verweilzeit des Strahls, Helligkeit von Zeigern, Minutenstrichen und Ziffern, Rücklauf-Tempo, Zeitzone, Zeitserver (NTP)
 und OLED lassen sich bequemer im **Webinterface unter „Einstellungen“** ändern, mit sofortiger Wirkung
@@ -224,7 +239,7 @@ am Oszilloskop. Die Werte in `config.h` sind dann nur die Startwerte.
 | `JUMP_SPEED` | Geschwindigkeit der Sprünge zwischen Linien im Profil ANALOG (Standard 24; DIGITAL springt immer hart). Größer = schwächere Rücklaufspur, kleiner (12) für sehr alte Oszilloskope, 0 = harter Sprung |
 | `JUMP_LANDING`, `JUMP_RAMP` | Abbremsen vor dem Linienanfang (Standard 8 und 4). Kleinere `JUMP_LANDING` bei „Haken“ an Linienanfängen |
 | `ZBLANK_PIN`, `ZBLANK_ENABLE`, `ZBLANK_ACTIVE_HIGH` | Optionale Dunkeltastung über den Z-Eingang: GPIO (Standard 27), Startwert aus/an und Pegel. Im beschriebenen Aufbau nicht verdrahtet; ein- und ausschalten im Webinterface (Einstellungen → Oszilloskop) |
-| `HAND_BRIGHT_PCT` | Helligkeit von Stunden- und Minutenzeiger im Verhältnis zum Rest (Standard 67 %, wirkt dann gleich hell) |
+| `HAND_BRIGHT_PCT` | Helligkeit von Stunden- und Minutenzeiger im Verhältnis zum Rest (Standard 55 %; Richtwerte: Röhre 55–85 %, TDS3000 50–65 %, HP 54200A und Analog Discovery 100 %) |
 | `TICK_BRIGHT_PCT`, `DIGIT_BRIGHT_PCT` | Helligkeit von Minutenstrichen und Ziffern, 0–100 % (Standard 100 %, 0 = ausgeblendet). Im Webinterface regelbar |
 | `OLED_BRIGHT_PCT` | OLED-Helligkeit 0–100 % (Standard 50 %, 0 = aus) |
 | `OLED_SECONDS` | 1 = OLED-Uhrzeit mit Sekunden, 0 = nur HH:MM |

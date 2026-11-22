@@ -431,7 +431,7 @@ brightness differences. v2.0 replaces it with a vector engine with constant beam
 | Second hand | drawn out and back (centre ↔ tip) at half brightness each, which removes the long jump from the edge to the centre | – |
 | Direction | every polyline is drawn from the nearer end | always from the start of the table |
 | Blanking | optional via the oscilloscope's Z input (third wire to `ZBLANK_PIN` = GPIO27, switch on in the web interface), then there is no retrace line at all | – |
-| Needle hands | hour and minute hands at `HAND_BRIGHT_PCT` (67 %), because their two closely spaced edges merge | twice as bright |
+| Needle hands | hour and minute hands at `HAND_BRIGHT_PCT` (55 %), because their two closely spaced edges merge | twice as bright |
 | Table bounds | always checked | reads past the end of the table if an end marker is missing |
 
 Simulation result (trace with approx. 2.4 units beam diameter, brightness relative to the dial

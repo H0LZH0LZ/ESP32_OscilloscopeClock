@@ -210,6 +210,21 @@ takes approx. 4.3 ms, with Roman numerals approx. 6.2 ms.
   to point display in the view options, if offered.
 - Both devices are connected to the same PC and therefore share ground, which is fine.
 
+### Matching the brightness of the hands
+The hour and minute hands are narrow needles made of two closely spaced edges and, depending on the oscilloscope, look brighter
+than the rest. The slider “hour/minute hand brightness” (web interface → Oscilloscope, 55 % by default) compensates for this:
+
+| Oscilloscope | Guide value |
+|---|---|
+| CRT oscilloscope | 55 %, up to 85 % with a sharp, thin beam |
+| Tektronix TDS3012 (TDS3000) | 50–65 % (brightness by hit frequency) |
+| HP 54200A | 100 % (all dots equally bright) |
+| Digilent Analog Discovery 2 | 100 % (X/Y view without intensity grading) |
+
+**Setting it exactly:** first set focus and intensity on the oscilloscope. Then look at where the hands cross the minute marks
+and move the slider in 5 % steps until both look equally bright there. Briefly going to 100 % and back shows which way to go.
+The value is applied and saved immediately.
+
 ## Fine tuning in `config.h`
 Profile, dial, beam dwell time, brightness of hands, tick marks and numerals, retrace speed, time zone, time server (NTP) and
 OLED are easier to change in the **web interface under „Einstellungen“**, with immediate effect on
@@ -224,7 +239,7 @@ the oscilloscope. The values in `config.h` are then only the start values.
 | `JUMP_SPEED` | Speed of the jumps between lines in profile ANALOG (default 24; DIGITAL always jumps instantly). Larger = fainter retrace line, smaller (12) for very old oscilloscopes, 0 = instant jump |
 | `JUMP_LANDING`, `JUMP_RAMP` | Braking before the start of a line (default 8 and 4). Smaller `JUMP_LANDING` if lines start with small “hooks” |
 | `ZBLANK_PIN`, `ZBLANK_ENABLE`, `ZBLANK_ACTIVE_HIGH` | Optional blanking via the Z input: GPIO (default 27), start value off/on and level. Not wired in the described build; switch on and off in the web interface (Settings → Oscilloscope) |
-| `HAND_BRIGHT_PCT` | Brightness of hour and minute hand relative to the rest (default 67 %, then they look equally bright) |
+| `HAND_BRIGHT_PCT` | Brightness of hour and minute hand relative to the rest (default 55 %; guide values: CRT 55–85 %, TDS3000 50–65 %, HP 54200A and Analog Discovery 100 %) |
 | `TICK_BRIGHT_PCT`, `DIGIT_BRIGHT_PCT` | Brightness of tick marks and numerals, 0–100 % (default 100 %, 0 = hidden). Adjustable in the web interface |
 | `OLED_BRIGHT_PCT` | OLED brightness 0–100 % (default 50 %, 0 = off) |
 | `OLED_SECONDS` | 1 = OLED time with seconds, 0 = HH:MM only |

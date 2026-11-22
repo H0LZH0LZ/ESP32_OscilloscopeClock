@@ -206,8 +206,8 @@ Der Außenkontakt hat Durchgang zu GND. Alle Schraubklemmen leicht nachziehen.</
 <h3>Partitionsschema: zwei Varianten</h3>
 <table style="break-inside:avoid">
  <tr><th>Variante</th><th>Arduino IDE: Partition Scheme</th><th>PlatformIO</th><th>Programmspeicher</th></tr>
- <tr><td><b>A – Huge APP</b> (empfohlen)</td><td>„Huge APP (3MB No OTA/1MB SPIFFS)“</td><td><code>pio run -t upload</code></td><td>1.240.722 von 3.145.728 Byte (<b>39 %</b>)</td></tr>
- <tr><td><b>B – Standard</b></td><td>„Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)“ – Voreinstellung, nichts umstellen</td><td><code>pio run -e standard -t upload</code></td><td>1.240.690 von 1.310.720 Byte (<b>94 %</b>)</td></tr>
+ <tr><td><b>A – Huge APP</b> (empfohlen)</td><td>„Huge APP (3MB No OTA/1MB SPIFFS)“</td><td><code>pio run -t upload</code></td><td>1.241.010 von 3.145.728 Byte (<b>39 %</b>)</td></tr>
+ <tr><td><b>B – Standard</b></td><td>„Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)“ – Voreinstellung, nichts umstellen</td><td><code>pio run -e standard -t upload</code></td><td>1.240.978 von 1.310.720 Byte (<b>94 %</b>)</td></tr>
 </table>
 <p>Beide Varianten laufen gleich. <b>A</b> lässt rund 1,9 MB Platz für Erweiterungen; die Uhr nutzt weder OTA-Updates noch
 SPIFFS, deshalb fehlt dabei nichts. <b>B</b> funktioniert ohne Umstellen, hat aber nur noch etwa 70 KB Reserve. Ein Wechsel
@@ -292,6 +292,21 @@ Punkte dar. Daraus ergeben sich einige Unterschiede:</p>
  <li><b>Bildrate des Displays:</b> Viele digitale Oszilloskope erneuern den Schirm nur einige Male pro Sekunde – der Sekundenzeiger
  springt dann sichtbar, und das Bild flackert nicht, sondern „pulsiert“. Das ist normal.</li>
 </ul>
+<h3>Helligkeit der Zeiger abgleichen</h3>
+<p>Stunden- und Minutenzeiger sind schmale Nadeln aus zwei dicht nebeneinander liegenden Kanten. Je nachdem, wie ein Oszilloskop
+Helligkeit darstellt, wirken sie heller oder gleich hell wie der Rest. Der Regler <b>Helligkeit Stunden-/Minutenzeiger</b>
+(Einstellungen → Oszilloskop, ab Werk 55 %) gleicht das aus. Richtwerte:</p>
+<table>
+ <tr><th>Oszilloskop</th><th>Richtwert</th><th>Grund</th></tr>
+ <tr><td>Röhren-Oszilloskop (Profil ANALOG)</td><td>55 %, bei scharfem, dünnem Strahl bis 85 %</td><td>Die Röhre zeigt die Verweilzeit direkt als Helligkeit; bei sehr scharfem Strahl sind die beiden Kanten getrennt zu sehen und brauchen mehr</td></tr>
+ <tr><td>Tektronix TDS3012 (TDS3000)</td><td>50–65 %</td><td>Helligkeit nach Trefferhäufigkeit (Digital Phosphor) – die doppelt überfahrenen Zeiger leuchten besonders stark</td></tr>
+ <tr><td>HP 54200A</td><td>100 %</td><td>Alle Abtastpunkte gleich hell; weniger Prozent macht die Zeiger nur lückenhaft</td></tr>
+ <tr><td>Digilent Analog Discovery 2</td><td>100 %</td><td>X/Y-Ansicht ohne Helligkeitsabstufung, wie beim HP</td></tr>
+</table>
+<p><b>So wird der Wert genau eingestellt:</b> Zuerst Fokus und Intensität am Oszilloskop einstellen – danach ändert sich der
+passende Wert sonst wieder. Dann auf die Stellen schauen, an denen die Zeiger die Minutenstriche kreuzen, und den Regler in
+5-%-Schritten verschieben, bis Zeiger und Striche dort gleich hell wirken. Zur Kontrolle kurz auf 100 % und wieder zurück: Der
+Unterschied zeigt, in welche Richtung es geht. Der Wert wird sofort übernommen und gespeichert.</p>
 <h3>Hinweise zu einzelnen Geräten</h3>
 <ul>
  <li><b>Tektronix TDS3012:</b> CH1 = X, CH2 = Y, XY im Display-Menü; kurzes Nachleuchten (Persist) beruhigt das Bild.</li>
@@ -361,9 +376,9 @@ beschrieben wird. Jede Gruppe hat „Auf Standardwerte zurücksetzen“; danach 
  <tr><td>Verweilzeit des Strahls</td><td>1,00–10,00 µs pro Schritt (3,00 µs)</td><td>Wie lange der Strahl auf jedem Wegstück verweilt. <b>Länger</b> = hellere, kräftigere Linien und
  sauberere Ecken, aber weniger Bilder pro Sekunde (mehr Flimmern). <b>Kürzer</b> = ruhigeres Bild, aber dunklere Linien; ein
  langsames Oszilloskop rundet dann Ecken ab. Die geschätzte Bildrate wird beim Ziehen angezeigt (Standard ca. 230 Bilder/s).</td></tr>
- <tr><td>Helligkeit Stunden-/Minutenzeiger</td><td>0–100 % (67 %)</td><td>Verweilzeit auf den beiden Zeigern im Verhältnis zum Rest. Die schmalen, eng beieinander liegenden
- Doppellinien der Zeiger wirken sonst heller als Zifferblatt und Ziffern; mit 67 % erscheinen sie gleich hell. 0 % blendet die
- Zeiger aus. Der Sekundenzeiger ist davon nicht betroffen.</td></tr>
+ <tr><td>Helligkeit Stunden-/Minutenzeiger</td><td>0–100 % (55 %)</td><td>Verweilzeit auf den beiden Zeigern im Verhältnis zum Rest. Die schmalen, eng beieinander liegenden
+ Doppellinien der Zeiger wirken sonst heller als Zifferblatt und Ziffern. Richtwerte je Oszilloskop und Einstellanleitung: Kapitel 6.
+ 0 % blendet die Zeiger aus. Der Sekundenzeiger ist davon nicht betroffen.</td></tr>
  <tr><td>Helligkeit Minutenstriche</td><td>0–100 % (100 %)</td><td>Helligkeit der 60 Striche am Rand. Weniger Helligkeit lässt die Zeiger stärker hervortreten und
  verkürzt das Bild etwas; 0 % blendet die Striche ganz aus.</td></tr>
  <tr><td>Helligkeit Ziffern</td><td>0–100 % (100 %)</td><td>Helligkeit der Zahlen auf dem Zifferblatt. 0 % blendet sie aus – das entspricht dann dem Stil „nur Striche“.</td></tr>
@@ -478,7 +493,7 @@ Zeitraffer nach, sondern setzt den Zeitplan neu – sonst würde ein Stück Lini
 <p>Die Helligkeit einer Linie hängt davon ab, wie lange der Strahl auf jedem Stück Weg verweilt. Die Firmware zerlegt jede Linie
 deshalb in Schritte von genau einer DAC-Stufe Länge – die Länge schräger Linien berechnet sie mit einer ganzzahligen Wurzel,
 ohne Gleitkomma – und hält auf jedem Schritt gleich lange. So sind waagerechte, senkrechte und schräge Linien gleich hell.
-Einzelne Teile lassen sich getrennt abstufen: Stunden- und Minutenzeiger stehen ab Werk auf 67 %, weil die schmalen Nadeln sonst
+Einzelne Teile lassen sich getrennt abstufen: Stunden- und Minutenzeiger stehen ab Werk auf 55 %, weil die schmalen Nadeln sonst
 heller wirken als der Rest; Minutenstriche und Ziffern auf 100 %. Der Sekundenzeiger wird hin und zurück gezeichnet, jeweils mit
 halber Verweilzeit, und ist damit genauso hell wie eine einfache Linie.</p>
 <h3>Ein Bild im Ablauf</h3>
@@ -524,7 +539,7 @@ Die Pixelverschiebung versetzt die Anzeige jede Minute um einen Pixel, damit kei
 landen in einem 8-KB-Ringpuffer, den der Debug-Bereich anzeigt.</p>
 <p><b>Vektordaten:</b> Zifferblatt, Ziffern, Zeiger und Testbild sind eigene Zeichnungen, erzeugt mit <code>tools/gen_vectors.py</code>
 (Koordinaten 0–255, 8 Bit je Achse).</p>
-<p><b>Speicher:</b> Programmspeicher 1.240.690 Byte (94 % beim Standard-Partitionsschema, ca. 39 % mit „Huge APP“), globale Variablen
+<p><b>Speicher:</b> Programmspeicher 1.240.978 Byte (94 % beim Standard-Partitionsschema, ca. 39 % mit „Huge APP“), globale Variablen
 74.940 Byte (22 %). Die Webseite liegt gzip-komprimiert im Flash (24 KB), die Schrift (Raleway, auf die benötigten Zeichen reduziert) als WOFF2 (30 KB).</p>
 <h3>Debug-Meldungen (Beispiel)</h3>
 <pre>+0s ESP32 Oscilloscope Clock v2.0

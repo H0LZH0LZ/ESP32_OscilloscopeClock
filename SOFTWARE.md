@@ -424,7 +424,7 @@ Strahlgeschwindigkeit:
 | Sekundenzeiger | hin und zurück (Mitte ↔ Spitze) mit je halber Helligkeit gezeichnet, dadurch entfällt der lange Sprung vom Rand zur Mitte | – |
 | Richtung | jeder Linienzug wird vom näheren Ende aus gezeichnet | immer vom Tabellenanfang |
 | Dunkeltastung | optional über den Z-Eingang des Oszilloskops (drittes Kabel an `ZBLANK_PIN` = GPIO27, im Webinterface einschalten), dann gibt es gar keine Rücklaufspur mehr | – |
-| Zeiger-Nadeln | Stunden- und Minutenzeiger mit `HAND_BRIGHT_PCT` (67 %), weil ihre zwei dicht liegenden Kanten verschmelzen | doppelt so hell |
+| Zeiger-Nadeln | Stunden- und Minutenzeiger mit `HAND_BRIGHT_PCT` (55 %), weil ihre zwei dicht liegenden Kanten verschmelzen | doppelt so hell |
 | Tabellengrenzen | immer geprüft | Lesezugriff hinter das Tabellenende, wenn ein Endzeichen fehlt |
 
 Ergebnis der Simulation (Leuchtspur mit ca. 2,4 Einheiten Strahldurchmesser, Helligkeit relativ
