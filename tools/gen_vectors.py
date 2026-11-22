@@ -6,7 +6,7 @@ gen_vectors.py – erzeugt alle Vektortabellen für DataTable.h in eigener Gesta
   DialHours         12 Stundenstriche (ab 111, Viertelstunden ab 108), Zifferblatt 0–3
   DialDigits12      Ziffern 1–12        (7-Segment-Stil; Alternativen: --font)
   DialDigitsMin     nur 12, 3, 6, 9
-  DialDigitsRoman   römisch I–XII       (serifenlos, 4 als "IIII")
+  DialDigitsRoman   römisch I–XII       (serifenlos, 4 als "IV")
   DialDigitsRoman4  nur XII, III, VI, IX
   DialStation       Bahnhofsuhr: 12 Stundenbalken (Umriss, Radius 90–124, Breite 6), Zifferblatt 4
   HrPtrData         Stundenzeiger, 60 Stellungen × 9 Byte (Nadel, 4 Punkte + 0xFF)
@@ -153,13 +153,13 @@ for i, a in enumerate(sys.argv):
 
 # ---------------------------------------------------------------- römisch, serifenlos
 RH = 20                                   # gleiche Höhe wie die 7-Segment-Ziffern
-ROMAN_GAP = 5                             # Abstand zwischen den Zeichen (3 wirkte am Schirm gedrängt)
+ROMAN_GAP = 4                             # Abstand zwischen den Zeichen (3 wirkte am Schirm gedrängt)
 ROMAN = {
     'I': (0, [[(0, 0), (0, RH)]]),
     'V': (10, [[(0, RH), (5, 0), (10, RH)]]),
     'X': (10, [[(0, 0), (10, RH)], [(0, RH), (10, 0)]]),
 }
-ROMAN_NUM = {1: 'I', 2: 'II', 3: 'III', 4: 'IIII', 5: 'V', 6: 'VI', 7: 'VII',
+ROMAN_NUM = {1: 'I', 2: 'II', 3: 'III', 4: 'IV', 5: 'V', 6: 'VI', 7: 'VII',
              8: 'VIII', 9: 'IX', 10: 'X', 11: 'XI', 12: 'XII'}
 
 
@@ -274,7 +274,7 @@ HEADER = """/*******************************************************************
   DialHours        12 Stundenstriche, Viertelstunden länger           (DIAL_STYLE 0–3)
   DialDigits12     Ziffern 1–12, 7-Segment-Stil              (DIAL_STYLE 0, Standard)
   DialDigitsMin    nur 12, 3, 6, 9, 7-Segment-Stil           (DIAL_STYLE 1)
-  DialDigitsRoman  römisch I–XII, serifenlos, 4 als "IIII"   (DIAL_STYLE 2)
+  DialDigitsRoman  römisch I–XII, serifenlos, 4 als "IV"     (DIAL_STYLE 2)
   DialDigitsRoman4 nur XII, III, VI, IX                      (DIAL_STYLE 3)
   DialStation      Bahnhofsuhr: 12 Stundenbalken als Umriss,          (DIAL_STYLE 4)
                    Radius 90–124, Breite 6, keine Ziffern

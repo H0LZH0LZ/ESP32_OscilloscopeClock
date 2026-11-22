@@ -173,7 +173,7 @@ Auswahlliste: Ziffern 1–12 → Ziffern 12 · 3 · 6 · 9 → Bahnhof → Römi
 |---|---|---|
 | 0 | 1–12, 7-Segment-Stil | `DialDigits12` |
 | 1 | nur 12, 3, 6, 9, 7-Segment-Stil | `DialDigitsMin` |
-| 2 | römisch I–XII, serifenlos, 4 als IIII | `DialDigitsRoman` |
+| 2 | römisch I–XII, serifenlos, 4 als IV | `DialDigitsRoman` |
 | 3 | nur XII, III, VI, IX | `DialDigitsRoman4` |
 | 4 | Bahnhof: keine Ziffern, statt der Stundenstriche 12 Stundenbalken (Umriss, Radius 90–124, Breite 6) | `DialStation` |
 

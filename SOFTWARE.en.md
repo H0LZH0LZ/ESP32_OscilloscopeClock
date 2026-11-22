@@ -174,7 +174,7 @@ numbers 1–12 → numbers 12 · 3 · 6 · 9 → station clock → Roman XII · 
 |---|---|---|
 | 0 | 1–12, 7-segment style | `DialDigits12` |
 | 1 | only 12, 3, 6, 9, 7-segment style | `DialDigitsMin` |
-| 2 | Roman I–XII, sans serif, 4 as IIII | `DialDigitsRoman` |
+| 2 | Roman I–XII, sans serif, 4 as IV | `DialDigitsRoman` |
 | 3 | only XII, III, VI, IX | `DialDigitsRoman4` |
 | 4 | station clock: no numbers, 12 hour bars (outline, radius 90–124, width 6) instead of the hour marks | `DialStation` |
 
