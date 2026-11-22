@@ -35,6 +35,8 @@ h1>span{white-space:nowrap;font-size:clamp(12px,3.7vw,15px)}
 @media (max-width:340px){h1>span{letter-spacing:.02em}}
 h1 .ver{text-transform:none;letter-spacing:.02em}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top);background:var(--bg);z-index:25}
+/* Fortschrittsbalken oben (wie im Webinterface): zeigt, wie weit die Seite gelesen ist */
+#prog{position:fixed;top:env(safe-area-inset-top);left:0;right:0;height:3px;z-index:36;background:var(--acc);transform:scaleX(0);transform-origin:0 0;pointer-events:none}
 /* Abschnitte: Überschrift in Großbuchstaben (bleibt unter der Titelleiste stehen), Inhalt als Karte */
 h2{display:flex;align-items:center;min-height:44px;margin:0;padding:0 4px;scroll-margin-top:calc(env(safe-area-inset-top) + 64px);
  font-size:13px;font-weight:600;color:var(--mute);text-transform:uppercase;letter-spacing:.06em}
@@ -174,6 +176,7 @@ a.row>span:last-child{font-size:18px}
 </style>
 </head>
 <body>
+<div id="prog" aria-hidden="true"></div>
 <button id="menuBtn" aria-label="Menü / Menu" aria-controls="nav" aria-expanded="false">☰</button>
 <nav id="nav" aria-hidden="true">
  <button type="button" id="navClose" aria-label="Menü schließen / Close menu">✕</button>
@@ -1329,8 +1332,10 @@ document.querySelectorAll('#nav a').forEach(a=>a.addEventListener('click',()=>{m
 function spy(){const lim=document.querySelector('h1').getBoundingClientRect().bottom+100;let k=0;navT.forEach((t,i)=>{if(t.getBoundingClientRect().top<=lim)k=i});
  const se=document.scrollingElement;if(se.scrollTop+innerHeight>=se.scrollHeight-2)k=navT.length-1;   // ganz unten: letzter Abschnitt
  if(jumped>=0&&Date.now()-jumpAt<800)k=jumped;
- navA.forEach((a,i)=>a.classList.toggle('cur',i===k))}
+ navA.forEach((a,i)=>a.classList.toggle('cur',i===k));
+ const max=se.scrollHeight-se.clientHeight;$('prog').style.transform='scaleX('+(max>0?Math.min(1,se.scrollTop/max):0)+')'}
 addEventListener('scroll',spy,{passive:true});addEventListener('resize',spy);spy();
+document.addEventListener('click',()=>setTimeout(spy,350));   // Auf-/Zuklappen ändert die Seitenlänge
 // Sprache und Darstellung (im Browser gemerkt)
 // Auswahl "Darstellung" nur in der gewählten Sprache beschriften
 const THEME={de:['Automatisch','Hell','Dunkel'],en:['Automatic','Light','Dark']};
