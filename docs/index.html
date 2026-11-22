@@ -215,8 +215,8 @@ a.row>span:last-child{font-size:18px}
 <div class="grp"><h2 id="downloads-h" class="coll" role="button" tabindex="0" aria-expanded="true"><span data-l="de">0 Links &amp; Dokumente</span><span data-l="en">0 Links &amp; documents</span></h2>
 <section>
  <a class="row" target="_blank" rel="noopener" href="https://github.com/HolzHolz123/ESP32_OscilloscopeClock"><span><span data-l="de">GitHub – Version 2.0</span><span data-l="en">GitHub – version 2.0</span><small class="note" data-l="de">Diese Firmware mit Quellcode, Anleitung und Werkzeugen</small><small class="note" data-l="en">This firmware with source code, guide and tools</small></span><span>›</span></a>
- <a class="row" target="_blank" rel="noopener" data-l="de" href="ESP32_Oscilloscope_Clock_Dokumentation.pdf?v=123cdf99"><span>Dokumentation (PDF)<small class="note">Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small></span><span>›</span></a>
- <a class="row" target="_blank" rel="noopener" data-l="en" href="ESP32_Oscilloscope_Clock_Documentation.pdf?v=340402bd"><span>Documentation (PDF)<small class="note">Assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
+ <a class="row" target="_blank" rel="noopener" data-l="de" href="ESP32_Oscilloscope_Clock_Dokumentation.pdf?v=16ad1724"><span>Dokumentation (PDF)<small class="note">Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small></span><span>›</span></a>
+ <a class="row" target="_blank" rel="noopener" data-l="en" href="ESP32_Oscilloscope_Clock_Documentation.pdf?v=c1a97749"><span>Documentation (PDF)<small class="note">Assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" href="demo/"><span><span data-l="de">Testseite</span><span data-l="en">Test page</span><small class="note" data-l="de">Das Webinterface der Uhr ausprobieren – läuft im Browser, alle Werte sind simuliert</small><small class="note" data-l="en">Try the clock's web interface – runs in the browser, all values are simulated</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" href="https://github.com/maurohh/ESP32_OscilloscopeClock"><span><span data-l="de">GitHub – Original</span><span data-l="en">GitHub – original</span><small class="note" data-l="de">Die ursprüngliche ESP32 Oscilloscope Clock von Mauro Pintus (2018), nach deren Idee diese Version entstand</small><small class="note" data-l="en">The original ESP32 Oscilloscope Clock by Mauro Pintus (2018) that inspired this version</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" href="https://fonts.google.com/specimen/Raleway"><span><span data-l="de">Schriftart Raleway</span><span data-l="en">Font Raleway</span><small class="note" data-l="de">Google Fonts – frei unter der SIL Open Font License 1.1</small><small class="note" data-l="en">Google Fonts – free under the SIL Open Font License 1.1</small></span><span>›</span></a>
@@ -476,8 +476,8 @@ The outer contact has continuity to GND. Retighten all screw terminals slightly.
 <h3>Partitionsschema: zwei Varianten</h3>
 <div class="tw"><table style="break-inside:avoid">
  <tr><th>Variante</th><th>Arduino IDE: Partition Scheme</th><th>PlatformIO</th><th>Programmspeicher</th></tr>
- <tr><td data-th="Variante"><b>A – Huge APP</b> (empfohlen)</td><td data-th="Arduino IDE: Partition Scheme">„Huge APP (3MB No OTA/1MB SPIFFS)“</td><td data-th="PlatformIO"><code>pio run -t upload</code></td><td data-th="Programmspeicher">1.240.682 von 3.145.728 Byte (<b>39 %</b>)</td></tr>
- <tr><td data-th="Variante"><b>B – Standard</b></td><td data-th="Arduino IDE: Partition Scheme">„Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)“ – Voreinstellung, nichts umstellen</td><td data-th="PlatformIO"><code>pio run -e standard -t upload</code></td><td data-th="Programmspeicher">1.240.666 von 1.310.720 Byte (<b>94 %</b>)</td></tr>
+ <tr><td data-th="Variante"><b>A – Huge APP</b> (empfohlen)</td><td data-th="Arduino IDE: Partition Scheme">„Huge APP (3MB No OTA/1MB SPIFFS)“</td><td data-th="PlatformIO"><code>pio run -t upload</code></td><td data-th="Programmspeicher">1.240.722 von 3.145.728 Byte (<b>39 %</b>)</td></tr>
+ <tr><td data-th="Variante"><b>B – Standard</b></td><td data-th="Arduino IDE: Partition Scheme">„Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)“ – Voreinstellung, nichts umstellen</td><td data-th="PlatformIO"><code>pio run -e standard -t upload</code></td><td data-th="Programmspeicher">1.240.690 von 1.310.720 Byte (<b>94 %</b>)</td></tr>
 </table></div>
 <p>Beide Varianten laufen gleich. <b>A</b> lässt rund 1,9 MB Platz für Erweiterungen; die Uhr nutzt weder OTA-Updates noch
 SPIFFS, deshalb fehlt dabei nichts. <b>B</b> funktioniert ohne Umstellen, hat aber nur noch etwa 70 KB Reserve. Ein Wechsel
@@ -500,8 +500,8 @@ Das Skript entfernt Kommentare, komprimiert die Seite mit gzip und schreibt <cod
 <h3>Partition scheme: two variants</h3>
 <div class="tw"><table style="break-inside:avoid">
  <tr><th>Variant</th><th>Arduino IDE: Partition Scheme</th><th>PlatformIO</th><th>Program memory</th></tr>
- <tr><td data-th="Variant"><b>A – Huge APP</b> (recommended)</td><td data-th="Arduino IDE: Partition Scheme">“Huge APP (3MB No OTA/1MB SPIFFS)”</td><td data-th="PlatformIO"><code>pio run -t upload</code></td><td data-th="Program memory">1,240,682 of 3,145,728 bytes (<b>39 %</b>)</td></tr>
- <tr><td data-th="Variant"><b>B – Standard</b></td><td data-th="Arduino IDE: Partition Scheme">“Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)” – the default, nothing to change</td><td data-th="PlatformIO"><code>pio run -e standard -t upload</code></td><td data-th="Program memory">1,240,666 of 1,310,720 bytes (<b>94 %</b>)</td></tr>
+ <tr><td data-th="Variant"><b>A – Huge APP</b> (recommended)</td><td data-th="Arduino IDE: Partition Scheme">“Huge APP (3MB No OTA/1MB SPIFFS)”</td><td data-th="PlatformIO"><code>pio run -t upload</code></td><td data-th="Program memory">1,240,722 of 3,145,728 bytes (<b>39 %</b>)</td></tr>
+ <tr><td data-th="Variant"><b>B – Standard</b></td><td data-th="Arduino IDE: Partition Scheme">“Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)” – the default, nothing to change</td><td data-th="PlatformIO"><code>pio run -e standard -t upload</code></td><td data-th="Program memory">1,240,690 of 1,310,720 bytes (<b>94 %</b>)</td></tr>
 </table></div>
 <p>Both variants work the same. <b>A</b> leaves about 1.9 MB for extensions; the clock uses neither OTA updates nor SPIFFS,
 so nothing is lost. <b>B</b> works without changing anything but leaves only about 70 KB. You can switch at any time (choose
@@ -768,7 +768,7 @@ beschrieben wird. Jede Gruppe hat „Auf Standardwerte zurücksetzen“; danach 
  sofort am Oszilloskop; auch durch Wischen über die Vorschau. Weniger Ziffern bedeuten ein kürzeres Bild und damit
  eine höhere Bildrate (weniger Flimmern).</td></tr>
  <tr><td data-th="Einstellung">Zifferblatt automatisch wechseln</td><td data-th="Bereich (Standard)">aus, jede Minute, alle 5 / 15 Minuten, jede Stunde (aus)</td><td data-th="Wirkung">Zeigt nacheinander alle fünf Zifferblätter.
- Der Wechsel wird nicht gespeichert – nach einem Neustart erscheint wieder das eingestellte Zifferblatt.</td></tr>
+ Einstellung und gezeigtes Zifferblatt bleiben gespeichert: Nach dem Einschalten geht der Wechsel beim zuletzt gezeigten weiter.</td></tr>
  <tr><td data-th="Einstellung">Bildverschiebung gegen Einbrennen</td><td data-th="Bereich (Standard)">an / aus (an)</td><td data-th="Wirkung">Das ganze Bild wandert jede Minute um bis zu 2 Stufen (etwa 0,4 mm)
  auf einem kleinen Kreis weiter. So nutzt sich die Leuchtschicht einer Röhre nicht an immer denselben Stellen ab. Das Testbild
  steht immer still.</td></tr>
@@ -854,7 +854,7 @@ group has “Reset to defaults”; the change can then be undone with “Undo”
  <tr><td data-th="Setting">Dial</td><td data-th="Range (default)">5 styles (numerals 1–12)</td><td data-th="Effect">Numerals 1–12, only 12·3·6·9, ticks only, Roman XII·III·VI·IX or Roman I–XII. Changes immediately
  on the oscilloscope; also by swiping over the preview. Fewer numerals mean a shorter frame and therefore a higher frame rate (less flicker).</td></tr>
  <tr><td data-th="Setting">Change dial automatically</td><td data-th="Range (default)">off, every minute, every 5 / 15 minutes, every hour (off)</td><td data-th="Effect">Shows all five dials one after the other.
- The change is not saved – after a restart the selected dial appears again.</td></tr>
+ The setting and the dial shown are saved: after power-on the change continues with the dial shown last.</td></tr>
  <tr><td data-th="Setting">Image shift against burn-in</td><td data-th="Range (default)">on / off (on)</td><td data-th="Effect">Every minute the whole picture moves on by up to 2 steps (about 0.4 mm)
  on a small circle, so that the phosphor of a CRT does not always wear at the same spots. The test pattern always stays still.</td></tr>
  <tr><td data-th="Setting">Beam dwell time</td><td data-th="Range (default)">1.00–10.00 µs per step (3.00 µs)</td><td data-th="Effect">How long the beam dwells on each piece of its path. <b>Longer</b> = brighter, stronger lines and
@@ -1053,7 +1053,7 @@ Die Pixelverschiebung versetzt die Anzeige jede Minute um einen Pixel, damit kei
 landen in einem 8-KB-Ringpuffer, den der Debug-Bereich anzeigt.</p>
 <p><b>Vektordaten:</b> Zifferblatt, Ziffern, Zeiger und Testbild sind eigene Zeichnungen, erzeugt mit <code>tools/gen_vectors.py</code>
 (Koordinaten 0–255, 8 Bit je Achse).</p>
-<p><b>Speicher:</b> Programmspeicher 1.240.666 Byte (94 % beim Standard-Partitionsschema, ca. 39 % mit „Huge APP“), globale Variablen
+<p><b>Speicher:</b> Programmspeicher 1.240.690 Byte (94 % beim Standard-Partitionsschema, ca. 39 % mit „Huge APP“), globale Variablen
 74.940 Byte (22 %). Die Webseite liegt gzip-komprimiert im Flash (24 KB), die Schrift (Raleway, auf die benötigten Zeichen reduziert) als WOFF2 (30 KB).</p>
 <h3>Debug-Meldungen (Beispiel)</h3>
 <pre>+0s ESP32 Oscilloscope Clock v2.0
@@ -1139,7 +1139,7 @@ its frames (frame rate in the status), an idle hook measures the load of core 0,
 the debug section.</p>
 <p><b>Vector data:</b> dial, numerals, hands and test pattern are original drawings, generated with <code>tools/gen_vectors.py</code>
 (coordinates 0–255, 8 bits per axis).</p>
-<p><b>Memory:</b> program memory 1,240,666 bytes (94 % with the default partition scheme, approx. 39 % with “Huge APP”), global variables
+<p><b>Memory:</b> program memory 1,240,690 bytes (94 % with the default partition scheme, approx. 39 % with “Huge APP”), global variables
 74,940 bytes (22 %). The web page is stored gzip-compressed in flash (24 KB), the font (Raleway, reduced to the characters needed) as WOFF2 (30 KB).</p>
 <h3>Debug messages (example, language English)</h3>
 <pre>+0s ESP32 Oscilloscope Clock v2.0

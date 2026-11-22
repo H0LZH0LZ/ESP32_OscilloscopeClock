@@ -231,7 +231,7 @@ the oscilloscope. The values in `config.h` are then only the start values.
 | `USE_FAST_DAC` | `1` = direct register access (default). `0` = `dacWrite()`, only as a fallback |
 | `DIAL_STYLE` | Start dial: 0 = 1–12, 1 = 12/3/6/9, 2 = Roman I–XII, 3 = Roman XII/III/VI/IX, 4 = ticks only (no numbers). Switchable in the web interface by swiping over the preview, the choice is saved |
 | `TZ_INFO` | Time zone incl. daylight saving rule (default: Central Europe) |
-| `DIAL_AUTO_MIN` | change the dial automatically every n minutes (0 = off, default; 1, 5, 15, 60) |
+| `DIAL_AUTO_MIN` | change the dial automatically every n minutes (0 = off, default; 1, 5, 15, 60); continues after power-on |
 | `SCOPE_SHIFT`, `SCOPE_SHIFT_EVERY_S` | image shift against burn-in (on by default, next position every 60 s) |
 | `RTC_ENABLE`, `RTC_SDA_PIN`, `RTC_SCL_PIN` | Optional DS3231 real-time clock: start value off, I²C on GPIO21/22 (switchable in the web interface) |
 | `NTP_SERVER_1` … `_3` | Time servers (the first one can be changed in the web interface) |

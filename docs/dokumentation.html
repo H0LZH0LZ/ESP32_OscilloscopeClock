@@ -206,8 +206,8 @@ Der Außenkontakt hat Durchgang zu GND. Alle Schraubklemmen leicht nachziehen.</
 <h3>Partitionsschema: zwei Varianten</h3>
 <table style="break-inside:avoid">
  <tr><th>Variante</th><th>Arduino IDE: Partition Scheme</th><th>PlatformIO</th><th>Programmspeicher</th></tr>
- <tr><td><b>A – Huge APP</b> (empfohlen)</td><td>„Huge APP (3MB No OTA/1MB SPIFFS)“</td><td><code>pio run -t upload</code></td><td>1.240.682 von 3.145.728 Byte (<b>39 %</b>)</td></tr>
- <tr><td><b>B – Standard</b></td><td>„Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)“ – Voreinstellung, nichts umstellen</td><td><code>pio run -e standard -t upload</code></td><td>1.240.666 von 1.310.720 Byte (<b>94 %</b>)</td></tr>
+ <tr><td><b>A – Huge APP</b> (empfohlen)</td><td>„Huge APP (3MB No OTA/1MB SPIFFS)“</td><td><code>pio run -t upload</code></td><td>1.240.722 von 3.145.728 Byte (<b>39 %</b>)</td></tr>
+ <tr><td><b>B – Standard</b></td><td>„Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)“ – Voreinstellung, nichts umstellen</td><td><code>pio run -e standard -t upload</code></td><td>1.240.690 von 1.310.720 Byte (<b>94 %</b>)</td></tr>
 </table>
 <p>Beide Varianten laufen gleich. <b>A</b> lässt rund 1,9 MB Platz für Erweiterungen; die Uhr nutzt weder OTA-Updates noch
 SPIFFS, deshalb fehlt dabei nichts. <b>B</b> funktioniert ohne Umstellen, hat aber nur noch etwa 70 KB Reserve. Ein Wechsel
@@ -354,7 +354,7 @@ beschrieben wird. Jede Gruppe hat „Auf Standardwerte zurücksetzen“; danach 
  sofort am Oszilloskop; auch durch Wischen über die Vorschau. Weniger Ziffern bedeuten ein kürzeres Bild und damit
  eine höhere Bildrate (weniger Flimmern).</td></tr>
  <tr><td>Zifferblatt automatisch wechseln</td><td>aus, jede Minute, alle 5 / 15 Minuten, jede Stunde (aus)</td><td>Zeigt nacheinander alle fünf Zifferblätter.
- Der Wechsel wird nicht gespeichert – nach einem Neustart erscheint wieder das eingestellte Zifferblatt.</td></tr>
+ Einstellung und gezeigtes Zifferblatt bleiben gespeichert: Nach dem Einschalten geht der Wechsel beim zuletzt gezeigten weiter.</td></tr>
  <tr><td>Bildverschiebung gegen Einbrennen</td><td>an / aus (an)</td><td>Das ganze Bild wandert jede Minute um bis zu 2 Stufen (etwa 0,4 mm)
  auf einem kleinen Kreis weiter. So nutzt sich die Leuchtschicht einer Röhre nicht an immer denselben Stellen ab. Das Testbild
  steht immer still.</td></tr>
@@ -524,7 +524,7 @@ Die Pixelverschiebung versetzt die Anzeige jede Minute um einen Pixel, damit kei
 landen in einem 8-KB-Ringpuffer, den der Debug-Bereich anzeigt.</p>
 <p><b>Vektordaten:</b> Zifferblatt, Ziffern, Zeiger und Testbild sind eigene Zeichnungen, erzeugt mit <code>tools/gen_vectors.py</code>
 (Koordinaten 0–255, 8 Bit je Achse).</p>
-<p><b>Speicher:</b> Programmspeicher 1.240.666 Byte (94 % beim Standard-Partitionsschema, ca. 39 % mit „Huge APP“), globale Variablen
+<p><b>Speicher:</b> Programmspeicher 1.240.690 Byte (94 % beim Standard-Partitionsschema, ca. 39 % mit „Huge APP“), globale Variablen
 74.940 Byte (22 %). Die Webseite liegt gzip-komprimiert im Flash (24 KB), die Schrift (Raleway, auf die benötigten Zeichen reduziert) als WOFF2 (30 KB).</p>
 <h3>Debug-Meldungen (Beispiel)</h3>
 <pre>+0s ESP32 Oscilloscope Clock v2.0

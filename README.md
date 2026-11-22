@@ -63,7 +63,8 @@ sind Screenshots der Seite. Fotos des fertigen Geräts folgen nach dem Bau des P
 - Mehrere WLANs: Die Uhr verbindet sich automatisch mit dem stärksten bekannten Netz.
 - **Bildverschiebung gegen Einbrennen:** Das Oszilloskop-Bild wandert jede Minute um bis zu 2 Stufen weiter,
   damit sich die Leuchtschicht einer Röhre nicht an denselben Stellen abnutzt (ab Werk an).
-- **Zifferblatt automatisch wechseln:** jede Minute, alle 5/15 Minuten oder stündlich das nächste Zifferblatt (ab Werk aus).
+- **Zifferblatt automatisch wechseln:** jede Minute, alle 5/15 Minuten oder stündlich das nächste Zifferblatt; läuft nach dem
+  Einschalten weiter (ab Werk aus).
 - **12- oder 24-Stunden-Format** für OLED und Webinterface (12 h mit AM/PM), umschaltbar im Webinterface.
 - **Sprache Deutsch oder Englisch** für Webinterface, OLED-Anzeige und Protokoll, umschaltbar im
   Webinterface (Seitenmenü) und gespeichert. Startwert `UI_LANG` in `config.h`.
@@ -138,12 +139,12 @@ stehen in `ESP32_OscilloscopeClock_v2.0/config.h`. Im Betrieb ändert man sie be
 
 | Board-Paket | Programmspeicher | Globale Variablen (RAM) |
 |---|---|---|
-| esp32 3.3.12 | 1.240.666 Byte (94 %) | 74.940 Byte (22 %) |
+| esp32 3.3.12 | 1.240.690 Byte (94 %) | 74.940 Byte (22 %) |
 | esp32 2.0.17 | 866.053 Byte (66 %) | 61.048 Byte (18 %) – Stand vor Menü und Zifferblatt-Umschaltung |
 
 Die Konfigurationsvarianten (Profil ANALOG/DIGITAL, Z-Dunkeltastung, Zifferblatt 0/1/2,
 `USE_FAST_DAC 0`, EXCEL-Modus) wurden vor dem Webinterface ebenfalls ohne Warnungen gebaut.
-Mit dem empfohlenen Partitionsschema **Huge APP** belegt dieselbe Firmware 1.240.666 von 3.145.728 Byte
+Mit dem empfohlenen Partitionsschema **Huge APP** belegt dieselbe Firmware 1.240.690 von 3.145.728 Byte
 (**39 %**), mit „Minimal SPIFFS“ 62 %.
 
 Zusätzlich auf dem PC simuliert: Strahlverlauf (Helligkeit, Rücklaufspuren, Bildrate),

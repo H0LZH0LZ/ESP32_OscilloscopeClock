@@ -215,8 +215,8 @@ static_assert(BUTTON_FACTORY_MS >= BUTTON_LONG_MS + 5000, "config.h: BUTTON_FACT
 
 // Zifferblatt automatisch wechseln (Startwert – im Webinterface einstellbar):
 // alle n Minuten das nächste der fünf Zifferblätter zeigen, 0 = aus (Standard).
-// Erlaubt: 0, 1, 5, 15, 60. Der automatische Wechsel wird nicht gespeichert –
-// nach einem Neustart erscheint wieder das eingestellte Zifferblatt.
+// Erlaubt: 0, 1, 5, 15, 60. Einstellung und zuletzt gezeigtes Zifferblatt werden
+// gespeichert – nach dem Einschalten geht der Wechsel dort weiter.
 #define DIAL_AUTO_MIN 0
 
 // Bildverschiebung gegen Einbrennen auf der Röhre (Startwert, im Webinterface

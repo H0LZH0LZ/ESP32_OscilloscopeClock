@@ -2568,8 +2568,11 @@ static void scopeShiftUpdate()
 }
 
 // Zifferblatt automatisch wechseln (s_dialAutoMin > 0): alle n Minuten das
-// nächste Zifferblatt. Nicht gespeichert – nach einem Neustart gilt wieder
-// das eingestellte. Wischen in der Vorschau bleibt jederzeit möglich.
+// nächste Zifferblatt. Das gezeigte Zifferblatt wird jedes Mal gespeichert, so
+// geht der Wechsel nach dem Einschalten beim zuletzt gezeigten weiter. (Höchstens
+// ein kleiner NVS-Eintrag pro Minute – der NVS verteilt die Schreibvorgänge über
+// mehrere Flash-Seiten, das hält bei Dauerbetrieb viele Jahrzehnte.)
+// Wischen in der Vorschau bleibt jederzeit möglich.
 static void dialAutoUpdate()
 {
   static uint32_t last = 0;
@@ -2578,6 +2581,7 @@ static void dialAutoUpdate()
   if (now - last < (uint32_t)s_dialAutoMin * 60000UL) return;
   last = now;
   g_dialStyle = (uint8_t)((g_dialStyle + 1) % DIAL_STYLES);
+  saveSetting("dial", g_dialStyle);
 }
 
 static void uiTask(void *)
