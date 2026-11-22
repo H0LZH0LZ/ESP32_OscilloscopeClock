@@ -212,14 +212,11 @@ takes approx. 4.3 ms, with Roman numerals approx. 6.2 ms.
 
 ### Matching the brightness of the hands
 The hour and minute hands are narrow needles made of two closely spaced edges and, depending on the oscilloscope, look brighter
-than the rest. The slider “hour/minute hand brightness” (web interface → Oscilloscope, 55 % by default) compensates for this:
+than the rest. The slider “hour/minute hand brightness” (web interface → Oscilloscope, 55 % by default) compensates for this. Guide values:
 
-| Oscilloscope | Guide value |
-|---|---|
-| CRT oscilloscope | 55 %, up to 85 % with a sharp, thin beam |
-| Tektronix TDS3012 (TDS3000) | 50–65 % (brightness by hit frequency) |
-| HP 54200A | 100 % (all dots equally bright) |
-| Digilent Analog Discovery 2 | 100 % (X/Y view without intensity grading) |
+- **CRT oscilloscope:** 55 %, up to 85 % with a very sharp, thin beam
+- **Tektronix TDS3012 (TDS3000):** 50–65 % (brightness by hit frequency)
+- **HP 54200A** and **Digilent Analog Discovery 2:** 100 % (all dots equally bright)
 
 **Setting it exactly:** first set focus and intensity on the oscilloscope. Then look at where the hands cross the minute marks
 and move the slider in 5 % steps until both look equally bright there. Briefly going to 100 % and back shows which way to go.

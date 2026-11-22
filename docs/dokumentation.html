@@ -239,7 +239,7 @@ im Webinterface oder BOOT-Taster 3 s halten.</div></div>
 
 <h2>6 Oszilloskop einstellen</h2>
 <div class="two">
- <figure><img src="images/oszilloskop_testbild.png" style="width:78%"><figcaption>Abb. 8 – Testbild</figcaption></figure>
+ <figure><img src="images/oszilloskop_testbild.png" style="width:60%"><figcaption>Abb. 8 – Testbild</figcaption></figure>
  <div style="flex:1.3">
  <p><b>So wird das Testbild genutzt:</b></p>
  <ul>
@@ -270,11 +270,10 @@ im Webinterface oder BOOT-Taster 3 s halten.</div></div>
  <li>Beide Kanäle auf <b>DC-Kopplung</b>: Bei AC-Kopplung kippt der Gleichanteil weg, das Bild verzerrt und wandert.</li>
 </ul>
 <div class="warn"><b>Röhre schonen (Einbrennen):</b> Ein Bild, das stundenlang an derselben Stelle steht, nutzt die Leuchtschicht
-einer Röhre dort ab – im X/Y-Betrieb besonders schnell, weil der Strahl sehr lange auf wenigen Linien verweilt. Die Intensität nur
-so hoch wie nötig stellen, die <b>Bildverschiebung gegen Einbrennen</b> (Einstellungen → Oszilloskop, ab Werk an) eingeschaltet lassen
-und das Oszilloskop ausschalten, wenn niemand hinsieht. Die Firmware kann das Bild selbst nicht dunkler machen: Der Strahl ist immer
-irgendwo auf dem Schirm, die Helligkeitsregler verteilen nur seine Zeit. Echtes Abdunkeln geht nur über den Intensitätsregler des
-Oszilloskops oder die Dunkeltastung (Z-Eingang).</div>
+einer Röhre dort ab, im X/Y-Betrieb besonders schnell. Intensität nur so hoch wie nötig, die <b>Bildverschiebung gegen
+Einbrennen</b> (Einstellungen → Oszilloskop, ab Werk an) eingeschaltet lassen und das Oszilloskop ausschalten, wenn niemand
+hinsieht. Dunkler machen kann die Firmware das Bild nicht – die Helligkeitsregler verteilen nur die Zeit des Strahls; echtes
+Abdunkeln geht nur mit dem Intensitätsregler oder der Dunkeltastung (Z-Eingang).</div>
 <h3>X/Y-Betrieb am digitalen Oszilloskop</h3>
 <p>Ein analoges Oszilloskop zeichnet den Strahl in Echtzeit: Die Linien entstehen genau so, wie die Spannungen sich ändern. Ein
 digitales Oszilloskop tastet beide Kanäle dagegen erst ab, speichert die Werte und stellt sie danach als Punkte oder verbundene
@@ -289,31 +288,26 @@ Punkte dar. Daraus ergeben sich einige Unterschiede:</p>
  längere Verweilzeiten (Einstellungen → Oszilloskop) helfen ebenfalls.</li>
  <li><b>Nachleuchten</b> (Persistence) kurz bis mittel einstellen: Es sammelt mehrere Aufnahmen und beruhigt das Bild. Unendliches
  Nachleuchten zeigt auch die Bewegung des Sekundenzeigers als Fächer.</li>
- <li><b>Bildrate des Displays:</b> Viele digitale Oszilloskope erneuern den Schirm nur einige Male pro Sekunde – der Sekundenzeiger
- springt dann sichtbar, und das Bild flackert nicht, sondern „pulsiert“. Das ist normal.</li>
+ <li><b>Bildrate des Displays:</b> Viele digitale Oszilloskope erneuern den Schirm nur einige Male pro Sekunde; das Bild „pulsiert“ dann leicht – normal.</li>
 </ul>
 <h3>Helligkeit der Zeiger abgleichen</h3>
 <p>Stunden- und Minutenzeiger sind schmale Nadeln aus zwei dicht nebeneinander liegenden Kanten. Je nachdem, wie ein Oszilloskop
 Helligkeit darstellt, wirken sie heller oder gleich hell wie der Rest. Der Regler <b>Helligkeit Stunden-/Minutenzeiger</b>
 (Einstellungen → Oszilloskop, ab Werk 55 %) gleicht das aus. Richtwerte:</p>
-<table>
- <tr><th>Oszilloskop</th><th>Richtwert</th><th>Grund</th></tr>
- <tr><td>Röhren-Oszilloskop (Profil ANALOG)</td><td>55 %, bei scharfem, dünnem Strahl bis 85 %</td><td>Die Röhre zeigt die Verweilzeit direkt als Helligkeit; bei sehr scharfem Strahl sind die beiden Kanten getrennt zu sehen und brauchen mehr</td></tr>
- <tr><td>Tektronix TDS3012 (TDS3000)</td><td>50–65 %</td><td>Helligkeit nach Trefferhäufigkeit (Digital Phosphor) – die doppelt überfahrenen Zeiger leuchten besonders stark</td></tr>
- <tr><td>HP 54200A</td><td>100 %</td><td>Alle Abtastpunkte gleich hell; weniger Prozent macht die Zeiger nur lückenhaft</td></tr>
- <tr><td>Digilent Analog Discovery 2</td><td>100 %</td><td>X/Y-Ansicht ohne Helligkeitsabstufung, wie beim HP</td></tr>
-</table>
-<p><b>So wird der Wert genau eingestellt:</b> Zuerst Fokus und Intensität am Oszilloskop einstellen – danach ändert sich der
-passende Wert sonst wieder. Dann auf die Stellen schauen, an denen die Zeiger die Minutenstriche kreuzen, und den Regler in
-5-%-Schritten verschieben, bis Zeiger und Striche dort gleich hell wirken. Zur Kontrolle kurz auf 100 % und wieder zurück: Der
-Unterschied zeigt, in welche Richtung es geht. Der Wert wird sofort übernommen und gespeichert.</p>
+<ul>
+ <li><b>Röhren-Oszilloskop:</b> 55 %, bei sehr scharfem, dünnem Strahl bis 85 % – dann sind die beiden Kanten getrennt zu sehen.</li>
+ <li><b>Tektronix TDS3012 (TDS3000):</b> 50–65 % – Helligkeit nach Trefferhäufigkeit, die doppelt überfahrenen Zeiger leuchten stark.</li>
+ <li><b>HP 54200A</b> und <b>Digilent Analog Discovery 2:</b> 100 % – alle Punkte gleich hell; weniger Prozent macht die Zeiger nur lückenhaft.</li>
+</ul>
+<p><b>Genau einstellen:</b> erst Fokus und Intensität am Oszilloskop einstellen. Dann auf die Kreuzungen von Zeigern und
+Minutenstrichen schauen und den Regler in 5-%-Schritten schieben, bis beide gleich hell wirken; kurz auf 100 % und zurück zeigt die
+Richtung. Der Wert gilt sofort und bleibt gespeichert.</p>
 <h3>Hinweise zu einzelnen Geräten</h3>
 <ul>
  <li><b>Tektronix TDS3012:</b> CH1 = X, CH2 = Y, XY im Display-Menü; kurzes Nachleuchten (Persist) beruhigt das Bild.</li>
  <li><b>HP 54200A:</b> X/Y-Möglichkeiten im Handbuch prüfen; unendliches Nachleuchten sammelt das Bild über mehrere Aufnahmen.</li>
  <li><b>Digilent Analog Discovery 2:</b> Eingänge sind differenziell – 1+ an X, 1− an GND, 2+ an Y, 2− an GND, zusätzlich GND
  verbinden. WaveForms: 500 mV/Div, Offset −1,6 V, 1 ms/Div, Trigger Auto, View → XY.</li>
- <li><b>Röhren-Oszilloskop:</b> Profil ANALOG, Intensität eher gering; sichtbare Rücklaufspuren mit dem Rücklauf-Tempo verringern.</li>
 </ul>
 <div class="warn"><b>Brummschleife vermeiden:</b> Die Masse der BNC-Eingänge des Oszilloskops liegt am Schutzleiter. Ein ebenfalls geerdeter PC am
 USB kann Brumm ins Bild bringen. Im Dauerbetrieb ein normales USB-Steckernetzteil verwenden.</div>

@@ -212,14 +212,11 @@ Ein Bild dauert ca. 4,3 ms, mit römischen Ziffern ca. 6,2 ms.
 
 ### Helligkeit der Zeiger abgleichen
 Stunden- und Minutenzeiger sind schmale Nadeln aus zwei dicht liegenden Kanten und wirken je nach Oszilloskop heller als der
-Rest. Der Regler „Helligkeit Stunden-/Minutenzeiger“ (Webinterface → Oszilloskop, ab Werk 55 %) gleicht das aus:
+Rest. Der Regler „Helligkeit Stunden-/Minutenzeiger“ (Webinterface → Oszilloskop, ab Werk 55 %) gleicht das aus. Richtwerte:
 
-| Oszilloskop | Richtwert |
-|---|---|
-| Röhren-Oszilloskop | 55 %, bei scharfem, dünnem Strahl bis 85 % |
-| Tektronix TDS3012 (TDS3000) | 50–65 % (Helligkeit nach Trefferhäufigkeit) |
-| HP 54200A | 100 % (alle Punkte gleich hell) |
-| Digilent Analog Discovery 2 | 100 % (X/Y-Ansicht ohne Helligkeitsabstufung) |
+- **Röhren-Oszilloskop:** 55 %, bei sehr scharfem, dünnem Strahl bis 85 %
+- **Tektronix TDS3012 (TDS3000):** 50–65 % (Helligkeit nach Trefferhäufigkeit)
+- **HP 54200A** und **Digilent Analog Discovery 2:** 100 % (alle Punkte gleich hell)
 
 **Genau einstellen:** erst Fokus und Intensität am Oszilloskop einstellen. Dann auf die Kreuzungen von Zeigern und
 Minutenstrichen schauen und den Regler in 5-%-Schritten schieben, bis beide dort gleich hell wirken. Kurz auf 100 % und zurück

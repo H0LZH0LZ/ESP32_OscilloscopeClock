@@ -238,7 +238,7 @@ in the web interface or by holding the BOOT button for 3 s.</div></div>
 
 <h2>6 Setting up the oscilloscope</h2>
 <div class="two">
- <figure><img src="images/oszilloskop_testbild.png" style="width:78%"><figcaption>Fig. 8 – Test pattern</figcaption></figure>
+ <figure><img src="images/oszilloskop_testbild.png" style="width:60%"><figcaption>Fig. 8 – Test pattern</figcaption></figure>
  <div style="flex:1.3">
  <p><b>How to use the test pattern:</b></p>
  <ul>
@@ -295,13 +295,11 @@ differences:</p>
 <p>The hour and minute hands are narrow needles made of two closely spaced edges. Depending on how an oscilloscope displays
 brightness, they look brighter than or as bright as the rest. The <b>hour/minute hand brightness</b> slider (Settings →
 Oscilloscope, 55 % by default) compensates for this. Guide values:</p>
-<table>
- <tr><th>Oscilloscope</th><th>Guide value</th><th>Reason</th></tr>
- <tr><td>CRT oscilloscope (profile ANALOG)</td><td>55 %, up to 85 % with a sharp, thin beam</td><td>The CRT shows the dwell time directly as brightness; with a very sharp beam the two edges are seen separately and need more</td></tr>
- <tr><td>Tektronix TDS3012 (TDS3000)</td><td>50–65 %</td><td>Brightness by hit frequency (Digital Phosphor) – the hands, traced twice, glow particularly strongly</td></tr>
- <tr><td>HP 54200A</td><td>100 %</td><td>All sample points equally bright; fewer percent only makes the hands patchy</td></tr>
- <tr><td>Digilent Analog Discovery 2</td><td>100 %</td><td>X/Y view without intensity grading, as with the HP</td></tr>
-</table>
+<ul>
+ <li><b>CRT oscilloscope:</b> 55 %, up to 85 % with a very sharp, thin beam – the two edges are then seen separately.</li>
+ <li><b>Tektronix TDS3012 (TDS3000):</b> 50–65 % – brightness by hit frequency, the hands traced twice glow strongly.</li>
+ <li><b>HP 54200A</b> and <b>Digilent Analog Discovery 2:</b> 100 % – all dots equally bright; fewer percent only makes the hands patchy.</li>
+</ul>
 <p><b>How to set the value exactly:</b> first set focus and intensity on the oscilloscope – otherwise the right value changes
 again afterwards. Then look at the spots where the hands cross the minute marks and move the slider in 5 % steps until hands and
 marks look equally bright there. As a check, briefly go to 100 % and back: the difference shows which way to go. The value is
@@ -312,7 +310,6 @@ applied and saved immediately.</p>
  <li><b>HP 54200A:</b> check the X/Y options in the manual; infinite persistence collects the picture over several acquisitions.</li>
  <li><b>Digilent Analog Discovery 2:</b> the inputs are differential – 1+ to X, 1− to GND, 2+ to Y, 2− to GND, also connect
  GND. WaveForms: 500 mV/div, offset −1.6 V, 1 ms/div, trigger Auto, View → XY.</li>
- <li><b>CRT oscilloscope:</b> profile ANALOG, rather low intensity; reduce visible retrace lines with the retrace speed.</li>
 </ul>
 <div class="warn"><b>Avoid ground loops:</b> the ground of the oscilloscope's BNC inputs is connected to protective earth. An
 earthed PC on the USB can bring hum into the picture. For permanent use take a normal USB plug-in power supply.</div>
