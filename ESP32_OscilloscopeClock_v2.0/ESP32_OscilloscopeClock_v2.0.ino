@@ -17,7 +17,7 @@
   (GPIO25 = X, GPIO26 = Y, je 0…255 ≙ ca. 0…3,2 V) und "fährt" damit das
   Zifferblatt und die Zeiger Punkt für Punkt ab. Weil das Bild auf dem
   Schirm nur kurz nachleuchtet, muss es ohne Pause immer wieder neu
-  gezeichnet werden (~230×/s) – sonst flimmert es oder es entstehen helle
+  gezeichnet werden (~205×/s) – sonst flimmert es oder es entstehen helle
   Punkte. Wie hell eine Linie leuchtet, hängt davon ab, wie lange der Strahl
   auf ihr verweilt; die Vektor-Engine sorgt deshalb für überall gleiche
   Strahlgeschwindigkeit.
@@ -638,7 +638,7 @@ static void IRAM_ATTR PlotTable(const byte *table, int size, byte sep, int offse
 // Liefert die Ziffern-Tabelle zum Zifferblatt-Stil und ihre Größe in Bytes:
 //   0 = Ziffern 1–12          1 = nur 12, 3, 6, 9
 //   2 = römisch I–XII         3 = nur XII, III, VI, IX
-//   4 = Bahnhof: Stundenbalken statt Ziffern (eigene Striche-Tabelle DialStation)
+//   4 = Bahnhof: Stundenbalken (DialStation) statt Stundenstrichen und Ziffern
 static const int DIAL_STYLES = 5;                         // Anzahl der Zifferblätter
 
 static const uint8_t *dialDigits(int style, int &size)
@@ -699,10 +699,11 @@ static void reverseStroke(Stroke &st) { const int16_t tmp = st.a; st.a = st.b; s
 static void buildTour(const uint8_t *digits, int digitsSize)
 {
   s_tourLen = 0;
-  if (digits) {                                  // Zifferblatt 0–3: Striche + Ziffern
-    tourAdd(DialData, sizeof(DialData));
+  tourAdd(DialData, sizeof(DialData));           // Minutenstriche: bei allen Zifferblättern gleich
+  if (digits) {                                  // Zifferblatt 0–3: Stundenstriche + Ziffern
+    tourAdd(DialHours, sizeof(DialHours));
     tourAdd(digits, digitsSize);
-  } else {                                       // Bahnhof: eigene Striche mit Stundenbalken
+  } else {                                       // Bahnhof: Stundenbalken, keine Ziffern
     tourAdd(DialStation, sizeof(DialStation));
   }
   const int n = s_tourLen;
@@ -842,13 +843,13 @@ static void IRAM_ATTR scopeTask(void *)
       const int dx = strokeX(s_tour[k], 0) - lastx, dy = strokeY(s_tour[k], 0) - lasty;
       if (dx * dx + dy * dy < bestD) { bestD = dx * dx + dy * dy; start = k; }
     }
-    // Striche (Tabelle DialData bzw. DialStation) und Ziffern mit eigener Helligkeit:
+    // Striche (Tabellen DialData, DialHours, DialStation) und Ziffern mit eigener Helligkeit:
     // 0–100 % der normalen Verweilzeit pro Schritt, 0 % = ausgeblendet
     const uint32_t tickCycles  = (uint32_t)((uint64_t)s_stepCycles * g_tickPct  / 100);
     const uint32_t digitCycles = (uint32_t)((uint64_t)s_stepCycles * g_digitPct / 100);
     for (int k = 0; k < s_tourLen; k++) {
       const Stroke &st = s_tour[(start + k) % s_tourLen];
-      const uint32_t c = (st.t == DialData || st.t == DialStation) ? tickCycles : digitCycles;
+      const uint32_t c = (st.t == DialData || st.t == DialHours || st.t == DialStation) ? tickCycles : digitCycles;
       if (c) drawStroke(st, c);
     }
 

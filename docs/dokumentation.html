@@ -81,7 +81,7 @@ h2+*,h3+*{break-before:avoid}
 <p>Die <b>ESP32 Oscilloscope Clock</b> zeichnet eine analoge Uhr auf den Bildschirm eines Oszilloskops. Das
 Oszilloskop arbeitet dabei im <b>X/Y-Betrieb</b>: Zwei Spannungen lenken den Strahl waagerecht und senkrecht ab.
 Ein ESP32 erzeugt diese beiden Spannungen mit seinen eingebauten Digital-Analog-Wandlern (DAC) und fährt so
-Zifferblatt, Ziffern und Zeiger etwa 230-mal pro Sekunde nach.</p>
+Zifferblatt, Ziffern und Zeiger etwa 200-mal pro Sekunde nach.</p>
 <figure><img src="images/oszilloskop_zifferblaetter.png" style="width:100%"><figcaption>Abb. 1 – Die fünf Zifferblätter und das Testbild, wie sie auf dem Oszilloskop erscheinen (Darstellung aus den Vektordaten der Firmware)</figcaption></figure>
 <h3>Funktionen</h3>
 <ul>
@@ -214,7 +214,7 @@ Der Außenkontakt hat Durchgang zu GND. Alle Schraubklemmen leicht nachziehen.</
 <table style="break-inside:avoid">
  <tr><th>Variante</th><th>Arduino IDE: Partition Scheme</th><th>PlatformIO</th><th>Programmspeicher</th></tr>
  <tr><td><b>A – Huge APP</b> (empfohlen)</td><td>„Huge APP (3MB No OTA/1MB SPIFFS)“</td><td><code>pio run -t upload</code></td><td>1.241.138 von 3.145.728 Byte (<b>39 %</b>)</td></tr>
- <tr><td><b>B – Standard</b></td><td>„Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)“ – Voreinstellung, nichts umstellen</td><td><code>pio run -e standard -t upload</code></td><td>1.241.998 von 1.310.720 Byte (<b>94 %</b>)</td></tr>
+ <tr><td><b>B – Standard</b></td><td>„Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)“ – Voreinstellung, nichts umstellen</td><td><code>pio run -e standard -t upload</code></td><td>1.241.566 von 1.310.720 Byte (<b>94 %</b>)</td></tr>
 </table>
 <p>Beide Varianten laufen gleich. <b>A</b> lässt rund 1,9 MB Platz für Erweiterungen; die Uhr nutzt weder OTA-Updates noch
 SPIFFS, deshalb fehlt dabei nichts. <b>B</b> funktioniert ohne Umstellen, hat aber nur noch etwa 70 KB Reserve. Ein Wechsel
@@ -264,7 +264,7 @@ Das Webinterface ist danach unter <b>http://scope-clock.local</b> oder der IP-Ad
  <tr><td>Kopplung</td><td>DC, beide Kanäle</td><td>Die Signale haben einen Gleichanteil (0–3,2 V)</td></tr>
  <tr><td>Empfindlichkeit</td><td>0,5 V/Div, beide gleich</td><td>8 Teilungen = 4 V, das 3,2-V-Bild passt hinein</td></tr>
  <tr><td>Position/Offset</td><td>Bildmitte, ca. −1,6 V</td><td>DAC-Mitte ≈ 1,6 V</td></tr>
- <tr><td>Zeitbasis (digital)</td><td>1 ms/Div</td><td>Ein Aufnahmefenster deckt ganze Uhrenbilder ab (ca. 4,3 ms je Bild)</td></tr>
+ <tr><td>Zeitbasis (digital)</td><td>1 ms/Div</td><td>Ein Aufnahmefenster deckt ganze Uhrenbilder ab (ca. 5 ms je Bild)</td></tr>
  <tr><td>Trigger (digital)</td><td>Auto</td><td>Die Uhr liefert kein Triggerereignis</td></tr>
  <tr><td>Nachleuchten</td><td>kurz bis mittel, falls vorhanden</td><td>beruhigt den Bildaufbau</td></tr>
  <tr><td>Bandbreitenbegrenzung</td><td>ein (z. B. 20 MHz)</td><td>weniger Rauschen</td></tr>
@@ -364,7 +364,7 @@ beschrieben wird. Jede Gruppe hat „Auf Standardwerte zurücksetzen“; danach 
  digitalen Geräten mit Bildröhre; bei LCD unnötig, aber unschädlich. Das Testbild steht immer still.</td></tr>
  <tr><td>Verweilzeit des Strahls</td><td>1,00–10,00 µs pro Schritt (3,00 µs)</td><td>Wie lange der Strahl auf jedem Wegstück verweilt. <b>Länger</b> = hellere, kräftigere Linien und
  sauberere Ecken, aber weniger Bilder pro Sekunde (mehr Flimmern). <b>Kürzer</b> = ruhigeres Bild, aber dunklere Linien; ein
- langsames Oszilloskop rundet dann Ecken ab. Die geschätzte Bildrate wird beim Ziehen angezeigt (Standard ca. 230 Bilder/s).</td></tr>
+ langsames Oszilloskop rundet dann Ecken ab. Die geschätzte Bildrate wird beim Ziehen angezeigt (Standard ca. 205 Bilder/s).</td></tr>
  <tr><td>Helligkeit Stunden-/Minutenzeiger</td><td>0–100 % (55 %)</td><td>Verweilzeit auf den beiden Zeigern im Verhältnis zum Rest. Die schmalen, eng beieinander liegenden
  Doppellinien der Zeiger wirken sonst heller als Zifferblatt und Ziffern. Richtwerte je Oszilloskop und Einstellanleitung: Kapitel 6.
  0 % blendet die Zeiger aus. Der Sekundenzeiger ist davon nicht betroffen.</td></tr>
@@ -454,7 +454,7 @@ beschrieben wird. Jede Gruppe hat „Auf Standardwerte zurücksetzen“; danach 
 <h3>Debug-Meldungen (Beispiel)</h3>
 <pre>+0s ESP32 Oscilloscope Clock v2.0
 +0s [Scope] Profil: DIGITAL – BOOT-Taster 3 s halten zum Umschalten
-+0s [Scope] Rundtour: 76 Linienzuege, Spruenge gesamt 1033 DAC-Einheiten
++0s [Scope] Rundtour: 122 Linienzuege, Spruenge gesamt 1348 DAC-Einheiten
 +0s [Scope] laeuft auf Core 1
 +0s [UI] laeuft auf Core 0
 +0s [RTC] DS3231 gefunden, Uhrzeit uebertragen
@@ -499,8 +499,8 @@ BNC-Stecker einmal einen Kurzschluss bekommt. Bei 0,5 V/Div füllt das Bild gut 
 <p>Wie lange der Strahl auf einem Punkt bleibt, misst die Firmware am Taktzähler der CPU (240 MHz, also auf rund 4 ns genau).
 Jeder Punkt bekommt eine feste Anzahl Takte, und die Firmware wartet aktiv, bis dieser Zeitpunkt erreicht ist – ohne
 <code>delay()</code>, das zu ungenau wäre. Standard ist eine <b>Verweilzeit von 3 µs pro DAC-Stufe</b>. Ein Bild mit Zifferblatt
-1–12 besteht aus rund 1.400 Schritten und dauert damit etwa 4,3 ms: Das ergibt etwa <b>230 Bilder pro Sekunde</b>, das römische
-Zifferblatt etwa 160. Größere Verweilzeiten machen die Linien heller, senken aber die Bildrate (unter etwa 60 Bildern pro Sekunde
+1–12 besteht aus rund 1.600 Schritten und dauert damit etwa 4,9 ms: Das ergibt etwa <b>205 Bilder pro Sekunde</b>, das römische
+Zifferblatt etwa 145, das Bahnhof-Zifferblatt etwa 180. Größere Verweilzeiten machen die Linien heller, senken aber die Bildrate (unter etwa 60 Bildern pro Sekunde
 flimmert es). Wird Kern 1 kurz angehalten, etwa für einen Flash-Zugriff, holt die Firmware die verlorene Zeit nicht im
 Zeitraffer nach, sondern setzt den Zeitplan neu – sonst würde ein Stück Linie zu dunkel.</p>
 <h3>Gleiche Helligkeit</h3>
@@ -522,8 +522,8 @@ halber Verweilzeit, und ist damit genauso hell wie eine einfache Linie.</p>
 <p>Zwischen zwei Linienzügen muss der Strahl springen, und jeder Sprung kann eine schwache Spur hinterlassen. Beim Start und nach
 jedem Wechsel des Zifferblatts sortiert die Firmware deshalb alle Linienzüge zu einer Rundtour mit möglichst kurzen Sprüngen:
 zuerst immer zum nächstgelegenen Linienzug (der auch umgedreht durchlaufen werden darf), danach werden Teilstücke umgedreht,
-solange das Sprünge spart (2-opt-Verfahren). Das Protokoll meldet das Ergebnis, etwa „Rundtour: 76 Linienzüge, Sprünge gesamt
-1033 DAC-Einheiten“.</p>
+solange das Sprünge spart (2-opt-Verfahren). Das Protokoll meldet das Ergebnis, etwa „Rundtour: 122 Linienzüge, Sprünge gesamt
+1348 DAC-Einheiten“.</p>
 <p>Wie gesprungen wird, bestimmt das <b>Oszilloskop-Profil</b>. Im Profil <b>ANALOG</b> (Röhren-Oszilloskope) fährt der Strahl den
 Sprung mit 24-facher Zeichengeschwindigkeit und bremst auf den letzten Stufen ab, damit auch eine träge Ablenkung sauber am Ziel
 ankommt; die Spur ist dabei nur etwa 1/24 so hell wie eine Linie. Im Profil <b>DIGITAL</b> springt der Strahl hart in einem Schritt –
@@ -553,8 +553,8 @@ Die Pixelverschiebung versetzt die Anzeige jede Minute um einen Pixel, damit kei
 landen in einem 8-KB-Ringpuffer, den der Debug-Bereich anzeigt.</p>
 <p><b>Vektordaten:</b> Zifferblatt, Ziffern, Zeiger und Testbild sind eigene Zeichnungen, erzeugt mit <code>tools/gen_vectors.py</code>
 (Koordinaten 0–255, 8 Bit je Achse).</p>
-<p><b>Speicher:</b> Programmspeicher 1.241.998 Byte (94 % beim Standard-Partitionsschema, ca. 39 % mit „Huge APP“), globale Variablen
-75.308 Byte (22 %). Die Webseite liegt gzip-komprimiert im Flash (24 KB), die Schrift (Raleway, auf die benötigten Zeichen reduziert) als WOFF2 (30 KB).</p>
+<p><b>Speicher:</b> Programmspeicher 1.241.566 Byte (94 % beim Standard-Partitionsschema, ca. 39 % mit „Huge APP“), globale Variablen
+75.068 Byte (22 %). Die Webseite liegt gzip-komprimiert im Flash (24 KB), die Schrift (Raleway, auf die benötigten Zeichen reduziert) als WOFF2 (30 KB).</p>
 
 <h2>11 Anhang</h2>
 <h3>Startwerte in <code>config.h</code></h3>
@@ -564,7 +564,7 @@ landen in einem 8-KB-Ringpuffer, den der Debug-Bereich anzeigt.</p>
  <tr><td><code>DAC_X_PIN</code>, <code>DAC_Y_PIN</code></td><td>25, 26</td><td>DAC-Ausgänge (fest)</td></tr>
  <tr><td><code>OLED_CS/DC/RST_PIN</code></td><td>5, 17, 4</td><td>OLED-Anschlüsse; CLK 18 und DIN 23 sind fest (Hardware-SPI)</td></tr>
  <tr><td><code>SCOPE_PROFILE</code></td><td>1</td><td>0 = ANALOG, 1 = DIGITAL</td></tr>
- <tr><td><code>BEAM_NS_PER_UNIT</code></td><td>3000</td><td>Verweilzeit pro Schritt in ns (≈ 230 Bilder/s)</td></tr>
+ <tr><td><code>BEAM_NS_PER_UNIT</code></td><td>3000</td><td>Verweilzeit pro Schritt in ns (≈ 205 Bilder/s)</td></tr>
  <tr><td><code>JUMP_SPEED</code>, <code>JUMP_LANDING</code>, <code>JUMP_RAMP</code></td><td>24, 8, 4</td><td>Sprünge im Profil ANALOG</td></tr>
  <tr><td><code>HAND/TICK/DIGIT_BRIGHT_PCT</code></td><td>67, 100, 100</td><td>Helligkeiten</td></tr>
  <tr><td><code>DIAL_STYLE</code></td><td>0</td><td>0 = 1–12, 1 = 12/3/6/9, 2 = I–XII, 3 = XII/III/VI/IX, 4 = Bahnhof (Stundenbalken)</td></tr>

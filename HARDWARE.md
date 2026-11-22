@@ -176,7 +176,7 @@ automatisch für 10 s** (`BOOT_TEST_S`), danach läuft die Uhr – so sieht man 
 ### Digitales Oszilloskop (Profil DIGITAL, Standard)
 Ein digitales Oszilloskop zeigt im X/Y-Modus nur die Abtastwerte **einer Aufnahme**. Damit die ganze Uhr
 zu sehen ist, muss das Aufnahmefenster (10 × Zeitbasis) mindestens ein Uhrenbild abdecken.
-Ein Bild dauert ca. 4,3 ms, mit römischen Ziffern ca. 6,2 ms.
+Ein Bild dauert ca. 4,9 ms, mit römischen Ziffern ca. 7 ms.
 
 **Einbrennen:** Digitale Oszilloskope mit LCD brennen nicht ein – die Bildverschiebung ist dort unnötig, schadet aber nicht.
 Ältere digitale Geräte mit Bildröhre (z. B. HP 54200A) sollten sie eingeschaltet lassen.
@@ -238,7 +238,7 @@ am Oszilloskop. Die Werte in `config.h` sind dann nur die Startwerte.
 
 | Parameter | Wirkung |
 |---|---|
-| `BEAM_NS_PER_UNIT` | Verweilzeit des Strahls pro Schritt in ns. Größer = hellere Linien, weniger Bilder/s (Standard 3000 ≈ 230 Bilder/s) |
+| `BEAM_NS_PER_UNIT` | Verweilzeit des Strahls pro Schritt in ns. Größer = hellere Linien, weniger Bilder/s (Standard 3000 ≈ 205 Bilder/s) |
 | `SCOPE_PROFILE` | Start-Profil, solange keins gespeichert ist: 0 = ANALOG, 1 = DIGITAL (Standard). Im Betrieb per BOOT-Taster umschaltbar |
 | `BUTTON_LONG_MS` | Haltedauer des BOOT-Tasters zum Umschalten (Standard 3000 ms) |
 | `BUTTON_FACTORY_MS` | Haltedauer für die Werkseinstellungen (Standard 10000 ms; die letzten 5 s Countdown auf dem OLED) |

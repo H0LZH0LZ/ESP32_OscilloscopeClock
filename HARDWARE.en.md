@@ -176,7 +176,7 @@ focus. The test pattern is not saved. **After every power-on it appears automati
 ### Digital oscilloscope (profile DIGITAL, default)
 In X/Y mode a digital oscilloscope only shows the samples of **one acquisition**. To see the whole
 clock, the acquisition window (10 × time base) must cover at least one clock frame. One frame
-takes approx. 4.3 ms, with Roman numerals approx. 6.2 ms.
+takes approx. 4.9 ms, with Roman numerals approx. 7 ms.
 
 **Burn-in:** digital oscilloscopes with an LCD do not burn in – the image shift is unnecessary there but does no harm.
 Older digital instruments with a CRT (e.g. HP 54200A) should leave it switched on.
@@ -238,7 +238,7 @@ the oscilloscope. The values in `config.h` are then only the start values.
 
 | Parameter | Effect |
 |---|---|
-| `BEAM_NS_PER_UNIT` | Beam dwell time per step in ns. Larger = brighter lines, fewer frames/s (default 3000 ≈ 230 frames/s) |
+| `BEAM_NS_PER_UNIT` | Beam dwell time per step in ns. Larger = brighter lines, fewer frames/s (default 3000 ≈ 205 frames/s) |
 | `SCOPE_PROFILE` | Start profile as long as none is saved: 0 = ANALOG, 1 = DIGITAL (default). Switchable at run time with the BOOT button |
 | `BUTTON_LONG_MS` | Hold time of the BOOT button for switching (default 3000 ms) |
 | `BUTTON_FACTORY_MS` | Hold time for the factory reset (default 10000 ms; countdown on the OLED during the last 5 s) |

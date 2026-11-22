@@ -80,7 +80,7 @@ h2+*,h3+*{break-before:avoid}
 <h2>1 Overview</h2>
 <p>The <b>ESP32 Oscilloscope Clock</b> draws an analogue clock on the screen of an oscilloscope. The oscilloscope works in
 <b>X/Y mode</b>: two voltages deflect the beam horizontally and vertically. An ESP32 generates these two voltages with its
-built-in digital-to-analogue converters (DACs) and traces the dial, numerals and hands about 230 times per second.</p>
+built-in digital-to-analogue converters (DACs) and traces the dial, numerals and hands about 200 times per second.</p>
 <figure><img src="images/oszilloskop_zifferblaetter_en.png" style="width:100%"><figcaption>Fig. 1 – The five dials and the test pattern as they appear on the oscilloscope (rendered from the firmware's vector data)</figcaption></figure>
 <h3>Features</h3>
 <ul>
@@ -213,7 +213,7 @@ The outer contact has continuity to GND. Retighten all screw terminals slightly.
 <table style="break-inside:avoid">
  <tr><th>Variant</th><th>Arduino IDE: Partition Scheme</th><th>PlatformIO</th><th>Program memory</th></tr>
  <tr><td><b>A – Huge APP</b> (recommended)</td><td>“Huge APP (3MB No OTA/1MB SPIFFS)”</td><td><code>pio run -t upload</code></td><td>1,241,138 of 3,145,728 bytes (<b>39 %</b>)</td></tr>
- <tr><td><b>B – Standard</b></td><td>“Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)” – the default, nothing to change</td><td><code>pio run -e standard -t upload</code></td><td>1,241,998 of 1,310,720 bytes (<b>94 %</b>)</td></tr>
+ <tr><td><b>B – Standard</b></td><td>“Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)” – the default, nothing to change</td><td><code>pio run -e standard -t upload</code></td><td>1,241,566 of 1,310,720 bytes (<b>94 %</b>)</td></tr>
 </table>
 <p>Both variants work the same. <b>A</b> leaves about 1.9 MB for extensions; the clock uses neither OTA updates nor SPIFFS,
 so nothing is lost. <b>B</b> works without changing anything but leaves only about 70 KB. You can switch at any time (choose
@@ -263,7 +263,7 @@ The web interface is then reachable at <b>http://scope-clock.local</b> or at the
  <tr><td>Coupling</td><td>DC, both channels</td><td>The signals have a DC component (0–3.2 V)</td></tr>
  <tr><td>Sensitivity</td><td>0.5 V/div, both the same</td><td>8 divisions = 4 V, the 3.2 V picture fits</td></tr>
  <tr><td>Position/offset</td><td>centre of the screen, approx. −1.6 V</td><td>DAC centre ≈ 1.6 V</td></tr>
- <tr><td>Time base (digital)</td><td>1 ms/div</td><td>One acquisition window covers whole clock frames (approx. 4.3 ms per frame)</td></tr>
+ <tr><td>Time base (digital)</td><td>1 ms/div</td><td>One acquisition window covers whole clock frames (approx. 5 ms per frame)</td></tr>
  <tr><td>Trigger (digital)</td><td>Auto</td><td>The clock provides no trigger event</td></tr>
  <tr><td>Persistence</td><td>short to medium, if available</td><td>smooths the picture build-up</td></tr>
  <tr><td>Bandwidth limit</td><td>on (e.g. 20 MHz)</td><td>less noise</td></tr>
@@ -362,7 +362,7 @@ group has “Reset to defaults”; the change can then be undone with “Undo”
  unnecessary but harmless with an LCD. The test pattern always stays still.</td></tr>
  <tr><td>Beam dwell time</td><td>1.00–10.00 µs per step (3.00 µs)</td><td>How long the beam dwells on each piece of its path. <b>Longer</b> = brighter, stronger lines and
  cleaner corners, but fewer frames per second (more flicker). <b>Shorter</b> = calmer picture but darker lines; a slow oscilloscope
- then rounds the corners. The estimated frame rate is shown while dragging (default approx. 230 frames/s).</td></tr>
+ then rounds the corners. The estimated frame rate is shown while dragging (default approx. 205 frames/s).</td></tr>
  <tr><td>Hour/minute hand brightness</td><td>0–100 % (55 %)</td><td>Dwell time on the two hands relative to the rest. The narrow, closely spaced double lines of the
  hands otherwise look brighter than the dial and numerals. Guide values per oscilloscope and how to set it: chapter 6. 0 % hides the hands. The second hand is not affected.</td></tr>
  <tr><td>Tick mark brightness</td><td>0–100 % (100 %)</td><td>Brightness of the 60 marks around the edge. Less brightness makes the hands stand out more and
@@ -456,7 +456,7 @@ group has “Reset to defaults”; the change can then be undone with “Undo”
 <h3>Debug messages (example, language English)</h3>
 <pre>+0s ESP32 Oscilloscope Clock v2.0
 +0s [Scope] profile: DIGITAL – hold BOOT button 3 s to switch
-+0s [Scope] round trip: 76 polylines, jumps total 1033 DAC units
++0s [Scope] round trip: 122 polylines, jumps total 1348 DAC units
 +0s [Scope] running on core 1
 +0s [UI] running on core 0
 +0s [RTC] DS3231 found, time transferred
@@ -500,8 +500,8 @@ At 0.5 V/div the picture fills a good six divisions of the screen.</p>
 <h3>Cycle-exact beam control</h3>
 <p>The firmware measures how long the beam stays on a point with the CPU's cycle counter (240 MHz, i.e. to about 4 ns). Every point
 gets a fixed number of cycles, and the firmware waits actively until that moment – without <code>delay()</code>, which would be too
-coarse. The default is a <b>dwell time of 3 µs per DAC step</b>. A frame with the 1–12 dial consists of about 1,400 steps and takes
-about 4.3 ms: that gives about <b>230 frames per second</b>, about 160 with the Roman dial. Longer dwell times make the lines
+coarse. The default is a <b>dwell time of 3 µs per DAC step</b>. A frame with the 1–12 dial consists of about 1,600 steps and takes
+about 4.9 ms: that gives about <b>205 frames per second</b>, about 145 with the Roman dial and about 180 with the station clock. Longer dwell times make the lines
 brighter but lower the frame rate (below about 60 frames per second it flickers). If core 1 is stopped briefly, for example for a
 flash access, the firmware does not catch up in fast motion but resets its schedule – otherwise a piece of a line would turn out
 too dark.</p>
@@ -524,7 +524,7 @@ bright as a single line.</p>
 <p>Between two strokes the beam has to jump, and every jump can leave a faint trace. At start-up and after every change of dial the
 firmware therefore sorts all strokes into a round trip with jumps as short as possible: first always to the nearest stroke (which may
 also be traced backwards), then sections are reversed as long as that saves jumping (2-opt method). The log reports the result, e.g.
-“round trip: 76 polylines, jumps total 1033 DAC units”.</p>
+“round trip: 122 polylines, jumps total 1348 DAC units”.</p>
 <p>How the beam jumps depends on the <b>oscilloscope profile</b>. In the <b>ANALOG</b> profile (CRT oscilloscopes) the beam travels the
 jump at 24 times the drawing speed and brakes over the last steps, so that even a sluggish deflection arrives cleanly; the trace is
 only about 1/24 as bright as a line. In the <b>DIGITAL</b> profile the beam jumps hard in a single step – a digital oscilloscope would
@@ -553,8 +553,8 @@ its frames (frame rate in the status), an idle hook measures the load of core 0,
 the debug section.</p>
 <p><b>Vector data:</b> dial, numerals, hands and test pattern are original drawings, generated with <code>tools/gen_vectors.py</code>
 (coordinates 0–255, 8 bits per axis).</p>
-<p><b>Memory:</b> program memory 1,241,998 bytes (94 % with the default partition scheme, approx. 39 % with “Huge APP”), global variables
-75,308 bytes (22 %). The web page is stored gzip-compressed in flash (24 KB), the font (Raleway, reduced to the characters needed) as WOFF2 (30 KB).</p>
+<p><b>Memory:</b> program memory 1,241,566 bytes (94 % with the default partition scheme, approx. 39 % with “Huge APP”), global variables
+75,068 bytes (22 %). The web page is stored gzip-compressed in flash (24 KB), the font (Raleway, reduced to the characters needed) as WOFF2 (30 KB).</p>
 
 <h2>11 Appendix</h2>
 <h3>Defaults in <code>config.h</code></h3>
@@ -564,7 +564,7 @@ the debug section.</p>
  <tr><td><code>DAC_X_PIN</code>, <code>DAC_Y_PIN</code></td><td>25, 26</td><td>DAC outputs (fixed)</td></tr>
  <tr><td><code>OLED_CS/DC/RST_PIN</code></td><td>5, 17, 4</td><td>OLED connections; CLK 18 and DIN 23 are fixed (hardware SPI)</td></tr>
  <tr><td><code>SCOPE_PROFILE</code></td><td>1</td><td>0 = ANALOG, 1 = DIGITAL</td></tr>
- <tr><td><code>BEAM_NS_PER_UNIT</code></td><td>3000</td><td>Dwell time per step in ns (≈ 230 frames/s)</td></tr>
+ <tr><td><code>BEAM_NS_PER_UNIT</code></td><td>3000</td><td>Dwell time per step in ns (≈ 205 frames/s)</td></tr>
  <tr><td><code>JUMP_SPEED</code>, <code>JUMP_LANDING</code>, <code>JUMP_RAMP</code></td><td>24, 8, 4</td><td>Jumps in profile ANALOG</td></tr>
  <tr><td><code>HAND/TICK/DIGIT_BRIGHT_PCT</code></td><td>67, 100, 100</td><td>Brightness values</td></tr>
  <tr><td><code>DIAL_STYLE</code></td><td>0</td><td>0 = 1–12, 1 = 12/3/6/9, 2 = I–XII, 3 = XII/III/VI/IX, 4 = station clock (hour bars)</td></tr>

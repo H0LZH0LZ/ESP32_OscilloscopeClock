@@ -56,7 +56,7 @@ pictures are screenshots of the page. Photos of the finished device will follow 
 - NTP via the ESP32's built-in SNTP client (no `NTPtimeESP` library). Time zone with automatic
   daylight saving time, re-sync every hour.
 - New drawing engine with constant beam speed: all lines and hands are equally bright, including
-  diagonals. The speed is chosen for older CRT oscilloscopes (approx. 230 frames/s, adjustable).
+  diagonals. The speed is chosen for older CRT oscilloscopes (approx. 205 frames/s, adjustable).
 - Hardly visible retrace lines: optimised drawing order, fast braked jumps, second hand drawn out
   and back.
 - Optional OLED (fitted in the prototype; the clock also runs without it) as a pure text display: time (24 h) in 7-segment style, calendar week and date with small 7-segment digits, network name
@@ -148,12 +148,12 @@ interface.
 
 | Board package | Program memory | Global variables (RAM) |
 |---|---|---|
-| esp32 3.3.12 | 1,241,998 bytes (94 %) | 75,308 bytes (22 %) |
+| esp32 3.3.12 | 1,241,566 bytes (94 %) | 75,068 bytes (22 %) |
 | esp32 2.0.17 | 866,053 bytes (66 %) | 61,048 bytes (18 %) – state before the menu and dial switching |
 
 The configuration variants (profile ANALOG/DIGITAL, Z blanking, dial 0/1/2, `USE_FAST_DAC 0`,
 EXCEL mode) were also built without warnings before the web interface was added. With the
-recommended partition scheme **Huge APP** the same firmware uses 1,241,998 of 3,145,728
+recommended partition scheme **Huge APP** the same firmware uses 1,241,566 of 3,145,728
 bytes (**39 %**), with “Minimal SPIFFS” 62 %.
 
 Also simulated on a PC: beam path (brightness, retrace lines, frame rate), OLED content, BOOT

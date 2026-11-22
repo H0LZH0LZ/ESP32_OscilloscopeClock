@@ -86,14 +86,14 @@ static_assert(BUTTON_FACTORY_MS >= BUTTON_LONG_MS + 5000, "config.h: BUTTON_FACT
 // ---- Strahlgeschwindigkeit (gleichmäßige Helligkeit) -----------------------
 // Der Strahl bewegt sich auf ALLEN Linien gleich schnell: 1 DAC-Einheit
 // (≈ 12,5 mV, 1/255 des Bildes) pro BEAM_NS_PER_UNIT Nanosekunden.
-// Ein Bild dauert ca. 1.400 Schrittzeiten (römisches Zifferblatt ca. 2.100).
+// Ein Bild dauert ca. 1.600 Schrittzeiten (römisches Zifferblatt ca. 2.300).
 //
 //   BEAM_NS_PER_UNIT   Bildfrequenz          Hinweis
 //                      (1–12 / römisch)
-//        2000          ~350 Hz / ~240 Hz     moderne/schnelle Oszilloskope
-//        3000          ~230 Hz / ~160 Hz     Standard, passt für fast alle Röhren
-//        5000          ~140 Hz / ~100 Hz     sehr alte/langsame Röhren, hellere Spur
-//        8000           ~90 Hz /  ~60 Hz     Untergrenze – darunter flimmert es
+//        2000          ~300 Hz / ~210 Hz     moderne/schnelle Oszilloskope
+//        3000          ~205 Hz / ~145 Hz     Standard, passt für fast alle Röhren
+//        5000          ~125 Hz /  ~85 Hz     sehr alte/langsame Röhren, hellere Spur
+//        8000           ~80 Hz /  ~55 Hz     Untergrenze – römisch flimmert es schon leicht
 //
 // Größer = langsamer = hellere Linien, aber niedrigere Bildfrequenz.
 #define BEAM_NS_PER_UNIT 3000

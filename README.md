@@ -51,7 +51,7 @@ sind Screenshots der Seite. Fotos des fertigen Geräts folgen nach dem Bau des P
   Interrupts den Zeichenpfad nicht stören.
 - NTP über das eingebaute SNTP des ESP32. Die `NTPtimeESP`-Bibliothek entfällt.
   Zeitzone mit automatischer Sommer-/Winterzeit, stündliches Nachsynchronisieren.
-- Neue Zeichenroutine mit konstanter Strahlgeschwindigkeit: Alle Linien und Zeiger sind gleich hell, auch schräge. Die Geschwindigkeit ist für ältere Röhrenoszilloskope ausgelegt (ca. 230 Bilder/s, einstellbar).
+- Neue Zeichenroutine mit konstanter Strahlgeschwindigkeit: Alle Linien und Zeiger sind gleich hell, auch schräge. Die Geschwindigkeit ist für ältere Röhrenoszilloskope ausgelegt (ca. 205 Bilder/s, einstellbar).
 - Kaum sichtbare Rücklaufspuren: optimierte Zeichenreihenfolge, schnelle gebremste Sprünge, Sekundenzeiger als Hin- und Rückweg.
 - Optionales OLED (im Prototyp verbaut; die Uhr läuft auch ohne) als reine Textanzeige: Uhrzeit (24h) im 7-Segment-Stil, Kalenderwoche und Datum mit kleinen 7-Segment-Ziffern, Netzwerkname und Signalstärke (dBm), alles horizontal und vertikal zentriert, mit Pixel-Shift gegen Einbrennen.
 - Jede NTP-Synchronisierung wird mit Datum und Uhrzeit auf der seriellen Konsole (115200 Baud) gemeldet, ebenso eine Warnung, falls sie ausbleibt.
@@ -139,12 +139,12 @@ stehen in `ESP32_OscilloscopeClock_v2.0/config.h`. Im Betrieb ändert man sie be
 
 | Board-Paket | Programmspeicher | Globale Variablen (RAM) |
 |---|---|---|
-| esp32 3.3.12 | 1.241.998 Byte (94 %) | 75.308 Byte (22 %) |
+| esp32 3.3.12 | 1.241.566 Byte (94 %) | 75.068 Byte (22 %) |
 | esp32 2.0.17 | 866.053 Byte (66 %) | 61.048 Byte (18 %) – Stand vor Menü und Zifferblatt-Umschaltung |
 
 Die Konfigurationsvarianten (Profil ANALOG/DIGITAL, Z-Dunkeltastung, Zifferblatt 0/1/2,
 `USE_FAST_DAC 0`, EXCEL-Modus) wurden vor dem Webinterface ebenfalls ohne Warnungen gebaut.
-Mit dem empfohlenen Partitionsschema **Huge APP** belegt dieselbe Firmware 1.241.998 von 3.145.728 Byte
+Mit dem empfohlenen Partitionsschema **Huge APP** belegt dieselbe Firmware 1.241.566 von 3.145.728 Byte
 (**39 %**), mit „Minimal SPIFFS“ 62 %.
 
 Zusätzlich auf dem PC simuliert: Strahlverlauf (Helligkeit, Rücklaufspuren, Bildrate),

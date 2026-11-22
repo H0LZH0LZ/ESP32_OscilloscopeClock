@@ -3,7 +3,7 @@
   Nicht von Hand bearbeiten: web/index.html ändern und das Skript ausführen.
 
   Webinterface der Uhr, gzip-komprimiert: 24538 Byte (unkomprimiert 82878 Byte,
-  Quelle mit Kommentaren 100209 Byte). Ausgeliefert unter "/" mit
+  Quelle mit Kommentaren 100210 Byte). Ausgeliefert unter "/" mit
   Content-Encoding: gzip.
 ******************************************************************************/
 #pragma once

@@ -175,7 +175,12 @@ Auswahlliste: Ziffern 1–12 → Ziffern 12 · 3 · 6 · 9 → Bahnhof → Römi
 | 1 | nur 12, 3, 6, 9, 7-Segment-Stil | `DialDigitsMin` |
 | 2 | römisch I–XII, serifenlos, 4 als IIII | `DialDigitsRoman` |
 | 3 | nur XII, III, VI, IX | `DialDigitsRoman4` |
-| 4 | Bahnhof: keine Ziffern, 12 Stundenbalken (Umriss, 34 × 6) und dünne Minutenstriche – ersetzt die Striche aus `DialData` | `DialStation` |
+| 4 | Bahnhof: keine Ziffern, statt der Stundenstriche 12 Stundenbalken (Umriss, Radius 90–124, Breite 6) | `DialStation` |
+
+Die 48 Minutenstriche (`DialData`, Radius 116–124) sind bei allen Zifferblättern gleich. Die Stile 0–3
+zeichnen dazu die 12 Stundenstriche aus `DialHours` (ab Radius 111, Viertelstunden ab 108), der Stil 4
+stattdessen die Stundenbalken aus `DialStation`. Alle Striche enden außen bei Radius 124.
+
  Die Vorschau zeigt den neuen Stil sofort.
 `POST /api/dial` setzt `g_dialStyle`. Der `scopeTask` erkennt den Wechsel vor dem nächsten Bild
 und berechnet die Rundtour neu. Das dauert einige zehn Millisekunden, so lange steht der Strahl
@@ -298,7 +303,7 @@ Knopf „Auf Standardwerte zurücksetzen“: Er löscht nur die gespeicherten We
 | Zifferblatt | `dial` | 5 Stile | `g_dialStyle`, synchron mit dem Wischen über die Vorschau |
 | Verweilzeit des Strahls | `beam` | 1.000–10.000 ns pro Schritt | `g_beamNs`, `scopeTask` berechnet das Timing zwischen zwei Bildern neu (`beamTiming()`) |
 | Helligkeit Stunden-/Minutenzeiger | `hand` | 0–100 % (0 = aus) | `g_handPct` |
-| Helligkeit Minutenstriche | `tick` | 0–100 % (0 = aus) | `g_tickPct`: Verweilzeit der Striche (Tabelle `DialData`, beim Bahnhof `DialStation`) in der Rundtour, in Prozent der normalen Verweilzeit |
+| Helligkeit Minutenstriche | `tick` | 0–100 % (0 = aus) | `g_tickPct`: Verweilzeit der Striche (Tabellen `DialData`, `DialHours`, `DialStation`) in der Rundtour, in Prozent der normalen Verweilzeit |
 | Helligkeit Ziffern | `digit` | 0–100 % (0 = aus) | `g_digitPct`: Verweilzeit der Ziffern in der Rundtour |
 | Dunkeltastung (Z-Eingang) | `zbl`, `zhi` | an/aus; High oder Low = dunkel | `g_zblank`, `g_zblankHigh`: `zblankApply()` schaltet GPIO `ZBLANK_PIN` (27) als Ausgang bzw. hochohmig; `beamJump()` springt dann im Dunkeln. Nur mit drittem Kabel zum Z-Eingang |
 | Rücklauf-Tempo | `jump` | 0 (sofortiger Sprung) – 48 (× Zeichentempo) | `g_jumpSpeed`, nur im Profil ANALOG wirksam. Bei DIGITAL zeigt der Regler ausgegraut 0 (sofortiger Sprung); der ANALOG-Wert bleibt gespeichert und erscheint beim Zurückschalten wieder |
@@ -365,7 +370,7 @@ Beide zeigen dieselben Zeilen, mit Zeitstempel (`+<s>s` bis zum ersten NTP-Sync)
 +0s [Scope] Profil: DIGITAL – BOOT-Taster 3 s halten zum Umschalten
 +0s [UI] laeuft auf Core 0
 +0s [Scope] laeuft auf Core 1
-+0s [Scope] Rundtour: 76 Linienzuege, Spruenge gesamt 1033 DAC-Einheiten
++0s [Scope] Rundtour: 122 Linienzuege, Spruenge gesamt 1348 DAC-Einheiten
 +0s [WiFi] bekanntes Netz: "Gastzugang"
 +0s [WiFi] bekanntes Netz: "Werkstatt"
 +0s [Web] Webserver gestartet (Port 80)
@@ -441,8 +446,8 @@ zu den Zifferblatt-Strichen, mehrere Uhrzeiten; gemessen mit den früheren Vekto
 
 Liegen zwei Zeiger genau übereinander, ist die Stelle naturgemäß heller.
 
-**Geschwindigkeit und alte Röhren:** Ein Bild dauert ca. 1.400 Schrittzeiten, bei 3 µs pro Schritt sind
-das etwa 230 Bilder/s (römisch ca. 160). Beim Schreiben bewegt sich der Strahl mit
+**Geschwindigkeit und alte Röhren:** Ein Bild dauert ca. 1.600 Schrittzeiten, bei 3 µs pro Schritt sind
+das etwa 205 Bilder/s (römisch ca. 145). Beim Schreiben bewegt sich der Strahl mit
 ca. 4 mV/µs, bei Sprüngen mit bis zu ca. 100 mV/µs, beim Ankommen mit ca. 33 mV/µs. Dazu kommt
 am Linienanfang ein voller Schritt (3 µs) Verweilzeit, in dem der Strahl sich setzen kann. Das reicht
 für Oszilloskope ab etwa 0,5 MHz X/Y-Bandbreite. Bei sehr alten Geräten `JUMP_SPEED` auf 12 senken,
@@ -460,6 +465,8 @@ bei Bedarf `BEAM_NS_PER_UNIT` erhöhen (hellere Spur, weniger Bilder/s).
   (schmale Nadel aus 4 Punkten).
   Der Offset `Stellung × Länge` wählt die Stellung aus. Der Stundenzeiger rückt alle 12 Minuten
   einen Schritt weiter: `hpos = (h % 12) * 5 + m / 12`.
+- Zifferblatt: `DialData` (48 Minutenstriche, alle Zifferblätter), dazu `DialHours` (Stundenstriche,
+  Stil 0–3) oder `DialStation` (Stundenbalken, Stil 4). Ein Balken ist ein geschlossener Linienzug aus 5 Punkten.
 - Alle Tabellen erzeugt `tools/gen_vectors.py`: Zifferblatt, Ziffern (Schrift wählbar mit
   `--font segment|kante|raleway`, Standard 7-Segment) und Zeiger. Formen ändern = Skript anpassen
   und `python3 tools/gen_vectors.py > ESP32_OscilloscopeClock_v2.0/DataTable.h` ausführen.

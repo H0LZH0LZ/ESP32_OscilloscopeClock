@@ -11,7 +11,7 @@ const log=[];
 function L(msg){const up=Math.floor((Date.now()-t0)/1000);log.push(hms(new Date())+' '+msg)}
 const b=new Date(t0-180000), f=s=>'+'+s+'s ';
 log.push(f(0)+'ESP32 Oscilloscope Clock v2.0 (Idee nach Mauro Pintus 2018)',f(0)+'CPU: 240 MHz',f(0)+'[Scope] Profil: DIGITAL – BOOT-Taster 3 s halten zum Umschalten',
- f(0)+'[UI] laeuft auf Core 0',f(0)+'[Scope] laeuft auf Core 1',f(0)+'[Scope] Rundtour: 76 Linienzuege, Spruenge gesamt 1033 DAC-Einheiten',
+ f(0)+'[UI] laeuft auf Core 0',f(0)+'[Scope] laeuft auf Core 1',f(0)+'[Scope] Rundtour: 122 Linienzuege, Spruenge gesamt 1348 DAC-Einheiten',
  f(0)+'[WiFi] bekanntes Netz: "Heimnetz"',f(0)+'[WiFi] bekanntes Netz: "Werkstatt"',f(0)+'[Web] Webserver gestartet (Port 80)',
  f(3)+'[WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -61 dBm',f(3)+'[Web] erreichbar unter http://scope-clock.local und http://192.168.178.42',
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
@@ -440,7 +440,7 @@ function status(){const d=new Date(Date.now()+(st.off||0));const conn=!st.setup;
  return {time:hms(d),date:ok?pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear():null,kw:ok?isoWeek(d):null,
   ntp:{synced:conn,overdue:false,manual:!conn&&!!st.manual,last:conn?pad(ls.getDate())+'.'+pad(ls.getMonth()+1)+'. '+hms(ls):null,server:'de.pool.ntp.org'},
   wifi:{configured:conn,connected:conn,ssid:conn?st.ssid:'',rssi:conn?st.rssi+Math.round(Math.random()*4-2):0,ip:conn?'192.168.178.42':'',host:'scope-clock.local'},
-  ap:{active:st.setup,ssid:'ScopeClock-Setup',ip:'192.168.4.1'},profile:'DIGITAL',dial,fps:230+Math.round(Math.random()*8),
+  ap:{active:st.setup,ssid:'ScopeClock-Setup',ip:'192.168.4.1'},profile:'DIGITAL',dial,fps:205+Math.round(Math.random()*8),
   uptime:Math.floor((Date.now()-t0)/1000)+180,heap:186000+Math.round(Math.random()*3000),fw:'2.0'}}
 const J=(o)=>Promise.resolve(new Response(JSON.stringify(o),{status:200,headers:{'Content-Type':'application/json'}}));
 const R=(ok,msg)=>J({ok,msg});
