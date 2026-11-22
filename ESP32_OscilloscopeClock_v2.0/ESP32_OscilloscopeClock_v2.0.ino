@@ -173,6 +173,11 @@ static volatile uint8_t  g_digitPct  = DIGIT_BRIGHT_PCT;   // Helligkeit Ziffern
 static volatile uint8_t  g_jumpSpeed = JUMP_SPEED;         // Rücklauf-Tempo (Profil ANALOG), 0 = hart
 static volatile bool     g_zblank    = ZBLANK_ENABLE;      // Dunkeltastung über den Z-Eingang an (GPIO ZBLANK_PIN)
 static volatile bool     g_zblankHigh = ZBLANK_ACTIVE_HIGH; // true = High-Pegel macht dunkel, false = Low-Pegel
+// Bildverschiebung gegen Einbrennen: Versatz des ganzen Bildes in DAC-Stufen.
+// Schreiber: uiTask (alle SCOPE_SHIFT_EVERY_S s), Leser: scopeTask einmal pro Bild.
+static volatile int8_t   g_shiftX = 0, g_shiftY = 0;
+static bool              s_scopeShift = SCOPE_SHIFT;          // Einstellung (nur Core 0)
+static uint8_t           s_dialAutoMin = DIAL_AUTO_MIN;       // Zifferblatt-Wechsel alle n min, 0 = aus (nur Core 0)
 
 // Einstellungen, die nur Core 0 nutzt (Zeit, OLED)
 static char    s_tz[48]        = TZ_INFO;                  // POSIX-Zeitzone
@@ -353,10 +358,23 @@ static uint32_t s_jumpCycles[JUMP_RAMP + 1];
 static uint32_t s_settleCycles = 0; // Einschwingzeit bei Dunkeltastung
 static uint32_t s_deadline   = 0;   // Zieltermin des aktuellen Schritts
 
+// Bildverschiebung gegen Einbrennen: Versatz des laufenden Bildes in DAC-Stufen
+// (nur Core 1, einmal pro Bild aus g_shiftX/Y übernommen). Er wird erst beim
+// Schreiben auf die DACs addiert – die gesamte Zeichenlogik (lastx/lasty,
+// Sprünge, Rundtour) rechnet weiter in den Koordinaten der Vektordaten.
+// Höchstens ±2 Stufen; die Vektordaten nutzen 3…253, es wird also nie etwas
+// abgeschnitten. Das Begrenzen auf 0…255 ist nur eine Sicherung.
+static int s_ox = 0, s_oy = 0;
+static inline uint8_t IRAM_ATTR shifted(int v, int o) {
+  v += o;
+  return (uint8_t)(v < 0 ? 0 : v > 255 ? 255 : v);
+}
+
 // Schreibt einen 8-Bit-Wert auf den X-DAC (GPIO25).
 // USE_FAST_DAC: direkter Registerzugriff, nur wenige CPU-Takte.
 // Sonst: Arduino-dacWrite(), deutlich langsamer (Treiberaufruf).
 static inline void IRAM_ATTR dacOutX(uint8_t v) {
+  v = shifted(v, s_ox);
 #if USE_FAST_DAC
   SET_PERI_REG_BITS(RTC_IO_PAD_DAC1_REG, RTC_IO_PDAC1_DAC, v, RTC_IO_PDAC1_DAC_S);
 #else
@@ -366,6 +384,7 @@ static inline void IRAM_ATTR dacOutX(uint8_t v) {
 
 // Schreibt einen 8-Bit-Wert auf den Y-DAC (GPIO26).
 static inline void IRAM_ATTR dacOutY(uint8_t v) {
+  v = shifted(v, s_oy);
 #if USE_FAST_DAC
   SET_PERI_REG_BITS(RTC_IO_PAD_DAC2_REG, RTC_IO_PDAC2_DAC, v, RTC_IO_PDAC2_DAC_S);
 #else
@@ -768,6 +787,10 @@ static void IRAM_ATTR scopeTask(void *)
       beamTiming(builtNs, builtJump);
       secCycles = s_stepCycles / 2;
     }
+
+    // Bildverschiebung einmal pro Bild übernehmen; das Testbild bleibt fest stehen
+    s_ox = g_testPattern ? 0 : g_shiftX;
+    s_oy = g_testPattern ? 0 : g_shiftY;
 
     const int dial = g_dialStyle;
     if (dial != builtDial) {
@@ -1603,6 +1626,8 @@ static void handleDial()
 //   digit      Helligkeit Ziffern            0…100 %
 //   jump       Rücklauf-Tempo                0 (hart) … 48 (nur Profil ANALOG)
 //   zbl, zhi   Dunkeltastung an / High = dunkel   0/1
+//   sshift     Bildverschiebung Oszilloskop  0/1
+//   dauto      Zifferblatt-Wechsel           0 (aus), 1, 5, 15, 60 Minuten
 //   tz         Zeitzone                      eine aus TIMEZONES[] bzw. TZ_INFO
 //   ntp        erster NTP-Server             Hostname, max. 63 Zeichen
 //   h12        12-Stunden-Format             0/1
@@ -1671,6 +1696,9 @@ static void loadSettings()
   g_jumpSpeed = jump <= 48 ? jump : JUMP_SPEED;
   g_zblank     = p.getUChar("zbl", ZBLANK_ENABLE) != 0;
   g_zblankHigh = p.getUChar("zhi", ZBLANK_ACTIVE_HIGH) != 0;
+  s_scopeShift = p.getUChar("sshift", SCOPE_SHIFT) != 0;
+  const uint8_t da = p.getUChar("dauto", DIAL_AUTO_MIN);
+  s_dialAutoMin = (da == 0 || da == 1 || da == 5 || da == 15 || da == 60) ? da : DIAL_AUTO_MIN;
   char buf[64];
   if (p.getString("tz", buf, sizeof(buf)) && tzAllowed(buf)) strlcpy(s_tz, buf, sizeof(s_tz));
   if (p.getString("ntp", buf, sizeof(buf)) && hostnameValid(String(buf))) strlcpy(s_ntpServer, buf, sizeof(s_ntpServer));
@@ -1701,6 +1729,8 @@ static void settingsJson(String &o)
   o += ",\"zblank\":";       o += g_zblank ? "true" : "false";
   o += ",\"zblankHigh\":";   o += g_zblankHigh ? "true" : "false";
   o += ",\"zblankPin\":";    o += ZBLANK_PIN;
+  o += ",\"scopeShift\":";   o += s_scopeShift ? "true" : "false";
+  o += ",\"dialAuto\":";     o += (int)s_dialAutoMin;
   o += ",\"tz\":";           jsonStr(o, s_tz);
   o += ",\"ntp\":";          jsonStr(o, s_ntpServer);
   o += ",\"oledPct\":";      o += (int)s_oledPct;
@@ -1723,6 +1753,8 @@ static void settingsJson(String &o)
   o += ",\"jumpSpeed\":";    o += JUMP_SPEED;
   o += ",\"zblank\":";       o += ZBLANK_ENABLE ? "true" : "false";
   o += ",\"zblankHigh\":";   o += ZBLANK_ACTIVE_HIGH ? "true" : "false";
+  o += ",\"scopeShift\":";   o += SCOPE_SHIFT ? "true" : "false";
+  o += ",\"dialAuto\":";     o += DIAL_AUTO_MIN;
   o += ",\"tz\":";           jsonStr(o, TZ_INFO);
   o += ",\"ntp\":";          jsonStr(o, NTP_SERVER_1);
   o += ",\"oledPct\":";      o += OLED_BRIGHT_PCT;
@@ -1826,6 +1858,18 @@ static void handleSettingsPost()
     logMsg(tr("[Web] Dunkeltastung (GPIO%d): %s", "[Web] Z blanking (GPIO%d): %s"), ZBLANK_PIN,
            !on ? tr("aus", "off") : hi ? tr("an, High = dunkel", "on, high = dark") : tr("an, Low = dunkel", "on, low = dark"));
   }
+  if (web.hasArg("scopeShift")) {
+    const bool on = web.arg("scopeShift") == "1" || web.arg("scopeShift") == "true";
+    s_scopeShift = on; p.putUChar("sshift", on); changed++;
+    logMsg(tr("[Web] Bildverschiebung Oszilloskop: %s", "[Web] oscilloscope image shift: %s"), on ? tr("an", "on") : tr("aus", "off"));
+  }
+  if (web.hasArg("dialAuto")) {
+    const int v = web.arg("dialAuto").toInt();
+    if (v == 0 || v == 1 || v == 5 || v == 15 || v == 60) { s_dialAutoMin = v; p.putUChar("dauto", v); changed++;
+      if (v) logMsg(tr("[Web] Zifferblatt-Wechsel: alle %d min", "[Web] dial change: every %d min"), v);
+      else   logMsg("%s", tr("[Web] Zifferblatt-Wechsel: aus", "[Web] dial change: off")); }
+    else bad(tr("Zifferblatt-Wechsel: 0, 1, 5, 15 oder 60 Minuten", "Dial change: 0, 1, 5, 15 or 60 minutes"));
+  }
   bool timeChanged = false;
   if (web.hasArg("tz")) {
     const String v = web.arg("tz");
@@ -1917,7 +1961,7 @@ static void handleSettingsReset()
   if (!scope && !tim && !disp) { sendSettings(false, tr("Unbekannte Gruppe", "Unknown group")); return; }
   Preferences p;
   if (p.begin("scopeclock", false)) {
-    if (scope) for (const char *k : { "profile", "dial", "beam", "hand", "tick", "digit", "jump", "zbl", "zhi" }) p.remove(k);
+    if (scope) for (const char *k : { "profile", "dial", "beam", "hand", "tick", "digit", "jump", "zbl", "zhi", "sshift", "dauto" }) p.remove(k);
     if (tim)   for (const char *k : { "tz", "ntp", "h12", "rtc" }) p.remove(k);
     if (disp)  for (const char *k : { "oled", "oledp", "osec", "night", "nfrom", "nto", "npct", "shift", "flip" }) p.remove(k);
     if (all)   { p.remove("lang"); p.remove("host"); }
@@ -1927,6 +1971,7 @@ static void handleSettingsReset()
     g_scopeProfile = SCOPE_PROFILE;  g_dialStyle = DIAL_STYLE;
     g_beamNs = BEAM_NS_PER_UNIT;     g_handPct = HAND_BRIGHT_PCT;   g_jumpSpeed = JUMP_SPEED;
     g_tickPct = TICK_BRIGHT_PCT;     g_digitPct = DIGIT_BRIGHT_PCT;
+    s_scopeShift = SCOPE_SHIFT;      s_dialAutoMin = DIAL_AUTO_MIN;
     zblankApply(ZBLANK_ENABLE, ZBLANK_ACTIVE_HIGH);
   }
   if (tim) {
@@ -2512,6 +2557,29 @@ static void oledUpdate()
 //   alle   1 s   Bildrate, CPU-Last Core 0
 //                wifiLogChanges() → Statusmeldungen ins Log
 //                webApManage()    → Setup-WLAN ein/aus
+// Bildverschiebung gegen Einbrennen: alle SCOPE_SHIFT_EVERY_S Sekunden die
+// nächste von neun Lagen (Mitte und acht Punkte auf einem Kreis mit 2 Stufen).
+static void scopeShiftUpdate()
+{
+  static const int8_t POS[9][2] = { {0,0}, {2,0}, {1,1}, {0,2}, {-1,1}, {-2,0}, {-1,-1}, {0,-2}, {1,-1} };
+  const int i = s_scopeShift ? (int)((millis() / 1000UL / SCOPE_SHIFT_EVERY_S) % 9) : 0;
+  g_shiftX = POS[i][0];
+  g_shiftY = POS[i][1];
+}
+
+// Zifferblatt automatisch wechseln (s_dialAutoMin > 0): alle n Minuten das
+// nächste Zifferblatt. Nicht gespeichert – nach einem Neustart gilt wieder
+// das eingestellte. Wischen in der Vorschau bleibt jederzeit möglich.
+static void dialAutoUpdate()
+{
+  static uint32_t last = 0;
+  const uint32_t now = millis();
+  if (!s_dialAutoMin) { last = now; return; }
+  if (now - last < (uint32_t)s_dialAutoMin * 60000UL) return;
+  last = now;
+  g_dialStyle = (uint8_t)((g_dialStyle + 1) % DIAL_STYLES);
+}
+
 static void uiTask(void *)
 {
   // WICHTIG: OLED (SPI) und WLAN werden HIER initialisiert, nicht in setup():
@@ -2551,6 +2619,8 @@ static void uiTask(void *)
       lastLog = now;
       wifiLogChanges();
       webApManage();
+      scopeShiftUpdate();
+      dialAutoUpdate();
       // Ohne NTP: Systemuhr alle 10 min aus der genaueren RTC nachstellen
       static uint32_t lastRtc = 0;
       if (s_rtcEnabled && !g_ntpSynced && now - lastRtc >= 600000UL) { lastRtc = now; rtcToSystem(); }

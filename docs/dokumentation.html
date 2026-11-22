@@ -14,7 +14,7 @@ h3{font-size:11.5pt;font-weight:700;margin:5mm 0 1.5mm;padding-left:2.2mm;border
 a{color:#0a7d44;text-decoration-thickness:.5px;text-underline-offset:1.5px}
 p{margin:0 0 2.2mm}
 ul,ol{margin:0 0 2.5mm;padding-left:6mm}li{margin:0 0 1mm}
-table{border-collapse:collapse;width:100%;margin:1mm 0 3.5mm;font-size:9pt;break-inside:auto}
+table{border-collapse:collapse;width:100%;margin:1mm 0 3.5mm;font-size:8.7pt;break-inside:auto}
 th,td{border:1px solid #c9ccd1;padding:1.3mm 2mm;vertical-align:top;text-align:left}
 th{background:#eef4f0}
 .small a{overflow-wrap:anywhere}
@@ -206,8 +206,8 @@ Der Außenkontakt hat Durchgang zu GND. Alle Schraubklemmen leicht nachziehen.</
 <h3>Partitionsschema: zwei Varianten</h3>
 <table style="break-inside:avoid">
  <tr><th>Variante</th><th>Arduino IDE: Partition Scheme</th><th>PlatformIO</th><th>Programmspeicher</th></tr>
- <tr><td><b>A – Huge APP</b> (empfohlen)</td><td>„Huge APP (3MB No OTA/1MB SPIFFS)“</td><td><code>pio run -t upload</code></td><td>1.238.586 von 3.145.728 Byte (<b>39 %</b>)</td></tr>
- <tr><td><b>B – Standard</b></td><td>„Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)“ – Voreinstellung, nichts umstellen</td><td><code>pio run -e standard -t upload</code></td><td>1.238.554 von 1.310.720 Byte (<b>94 %</b>)</td></tr>
+ <tr><td><b>A – Huge APP</b> (empfohlen)</td><td>„Huge APP (3MB No OTA/1MB SPIFFS)“</td><td><code>pio run -t upload</code></td><td>1.240.682 von 3.145.728 Byte (<b>39 %</b>)</td></tr>
+ <tr><td><b>B – Standard</b></td><td>„Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)“ – Voreinstellung, nichts umstellen</td><td><code>pio run -e standard -t upload</code></td><td>1.240.666 von 1.310.720 Byte (<b>94 %</b>)</td></tr>
 </table>
 <p>Beide Varianten laufen gleich. <b>A</b> lässt rund 1,9 MB Platz für Erweiterungen; die Uhr nutzt weder OTA-Updates noch
 SPIFFS, deshalb fehlt dabei nichts. <b>B</b> funktioniert ohne Umstellen, hat aber nur noch etwa 70 KB Reserve. Ein Wechsel
@@ -217,7 +217,7 @@ Stelle und bleiben erhalten. Meldet die IDE beim Hochladen „Sketch too big“,
 (bis zu 10 Netze). Die Startwerte aller Einstellungen stehen in <code>config.h</code>; im Betrieb ist das Webinterface bequemer.</div>
 <h3>Wenn das Webinterface geändert wird</h3>
 <p>Die Quelle der Webseite ist <code>web/index.html</code>. Nach Änderungen <code>python3 tools/gen_webpage.py</code> ausführen:
-Das Skript entfernt Kommentare, komprimiert die Seite mit gzip und schreibt <code>webpage.h</code> (ca. 21 KB statt 80 KB im Flash).</p>
+Das Skript entfernt Kommentare, komprimiert die Seite mit gzip und schreibt <code>webpage.h</code> (ca. 24 KB statt 82 KB im Flash).</p>
 
 <h2>5 Erste Inbetriebnahme</h2>
 <div class="step"><b class="n">1</b><div><b>Einschalten</b> (USB-Netzteil). Das Oszilloskop zeigt 10 Sekunden lang das Testbild, danach die Uhr.
@@ -262,6 +262,36 @@ im Webinterface oder BOOT-Taster 3 s halten.</div></div>
  <tr><td>Nachleuchten</td><td>kurz bis mittel, falls vorhanden</td><td>beruhigt den Bildaufbau</td></tr>
  <tr><td>Bandbreitenbegrenzung</td><td>ein (z. B. 20 MHz)</td><td>weniger Rauschen</td></tr>
 </table>
+<h3>Anschließen</h3>
+<ul>
+ <li>Die Pigtails stecken direkt im Oszilloskop – das ist die beste Verbindung. Wer stattdessen <b>Tastköpfe</b> benutzt, nimmt
+ kurze Masseleitungen und stellt 10:1-Tastköpfe vorher am Kalibrierausgang des Oszilloskops sauber ein (Rechteck ohne Überschwinger);
+ ein verstellter Tastkopf verzerrt Ecken und Kreise. Die Empfindlichkeit dann entsprechend umrechnen (10:1 → 50 mV/Div).</li>
+ <li>Beide Kanäle auf <b>DC-Kopplung</b>: Bei AC-Kopplung kippt der Gleichanteil weg, das Bild verzerrt und wandert.</li>
+</ul>
+<div class="warn"><b>Röhre schonen (Einbrennen):</b> Ein Bild, das stundenlang an derselben Stelle steht, nutzt die Leuchtschicht
+einer Röhre dort ab – im X/Y-Betrieb besonders schnell, weil der Strahl sehr lange auf wenigen Linien verweilt. Die Intensität nur
+so hoch wie nötig stellen, die <b>Bildverschiebung gegen Einbrennen</b> (Einstellungen → Oszilloskop, ab Werk an) eingeschaltet lassen
+und das Oszilloskop ausschalten, wenn niemand hinsieht. Die Firmware kann das Bild selbst nicht dunkler machen: Der Strahl ist immer
+irgendwo auf dem Schirm, die Helligkeitsregler verteilen nur seine Zeit. Echtes Abdunkeln geht nur über den Intensitätsregler des
+Oszilloskops oder die Dunkeltastung (Z-Eingang).</div>
+<h3>X/Y-Betrieb am digitalen Oszilloskop</h3>
+<p>Ein analoges Oszilloskop zeichnet den Strahl in Echtzeit: Die Linien entstehen genau so, wie die Spannungen sich ändern. Ein
+digitales Oszilloskop tastet beide Kanäle dagegen erst ab, speichert die Werte und stellt sie danach als Punkte oder verbundene
+Punkte dar. Daraus ergeben sich einige Unterschiede:</p>
+<ul>
+ <li><b>Profil DIGITAL</b> verwenden: Der Strahl springt dann hart von Linie zu Linie. Bei gebremsten Sprüngen würde das digitale
+ Oszilloskop die Zwischenwerte als Punktspur mitten durchs Bild zeigen.</li>
+ <li><b>Darstellung „Punkte“</b> statt „Vektoren“: Verbundene Punkte ziehen Linien über jeden Sprung. Bei Punkten bleiben die Sprünge
+ unsichtbar, die Linien wirken aber dünner.</li>
+ <li><b>Abtastrate und Aufzeichnungslänge:</b> Die Zeitbasis (etwa 1 ms/Div) bestimmt, wie viele Uhrenbilder in einer Aufnahme stecken
+ und wie dicht die Punkte liegen. Liegen sie zu weit auseinander, die Zeitbasis kleiner oder die Aufzeichnungslänge größer wählen;
+ längere Verweilzeiten (Einstellungen → Oszilloskop) helfen ebenfalls.</li>
+ <li><b>Nachleuchten</b> (Persistence) kurz bis mittel einstellen: Es sammelt mehrere Aufnahmen und beruhigt das Bild. Unendliches
+ Nachleuchten zeigt auch die Bewegung des Sekundenzeigers als Fächer.</li>
+ <li><b>Bildrate des Displays:</b> Viele digitale Oszilloskope erneuern den Schirm nur einige Male pro Sekunde – der Sekundenzeiger
+ springt dann sichtbar, und das Bild flackert nicht, sondern „pulsiert“. Das ist normal.</li>
+</ul>
 <h3>Hinweise zu einzelnen Geräten</h3>
 <ul>
  <li><b>Tektronix TDS3012:</b> CH1 = X, CH2 = Y, XY im Display-Menü; kurzes Nachleuchten (Persist) beruhigt das Bild.</li>
@@ -323,6 +353,11 @@ beschrieben wird. Jede Gruppe hat „Auf Standardwerte zurücksetzen“; danach 
  <tr><td>Zifferblatt</td><td>5 Stile (Ziffern 1–12)</td><td>Ziffern 1–12, nur 12·3·6·9, nur Striche, römisch XII·III·VI·IX oder römisch I–XII. Wechselt
  sofort am Oszilloskop; auch durch Wischen über die Vorschau. Weniger Ziffern bedeuten ein kürzeres Bild und damit
  eine höhere Bildrate (weniger Flimmern).</td></tr>
+ <tr><td>Zifferblatt automatisch wechseln</td><td>aus, jede Minute, alle 5 / 15 Minuten, jede Stunde (aus)</td><td>Zeigt nacheinander alle fünf Zifferblätter.
+ Der Wechsel wird nicht gespeichert – nach einem Neustart erscheint wieder das eingestellte Zifferblatt.</td></tr>
+ <tr><td>Bildverschiebung gegen Einbrennen</td><td>an / aus (an)</td><td>Das ganze Bild wandert jede Minute um bis zu 2 Stufen (etwa 0,4 mm)
+ auf einem kleinen Kreis weiter. So nutzt sich die Leuchtschicht einer Röhre nicht an immer denselben Stellen ab. Das Testbild
+ steht immer still.</td></tr>
  <tr><td>Verweilzeit des Strahls</td><td>1,00–10,00 µs pro Schritt (3,00 µs)</td><td>Wie lange der Strahl auf jedem Wegstück verweilt. <b>Länger</b> = hellere, kräftigere Linien und
  sauberere Ecken, aber weniger Bilder pro Sekunde (mehr Flimmern). <b>Kürzer</b> = ruhigeres Bild, aber dunklere Linien; ein
  langsames Oszilloskop rundet dann Ecken ab. Die geschätzte Bildrate wird beim Ziehen angezeigt (Standard ca. 230 Bilder/s).</td></tr>
@@ -397,6 +432,7 @@ beschrieben wird. Jede Gruppe hat „Auf Standardwerte zurücksetzen“; danach 
  <tr><td>Bild flimmert</td><td>Verweilzeit verringern (z. B. 2,00 µs); am digitalen Oszilloskop Zeitbasis 1 ms/Div, Nachleuchten</td></tr>
  <tr><td>Linien zu dunkel</td><td>Verweilzeit erhöhen (z. B. 5,00 µs) oder Intensität am Oszilloskop</td></tr>
  <tr><td>Ecken verrundet, Ziffern verwaschen</td><td>Verweilzeit erhöhen</td></tr>
+ <tr><td>Bild rückt jede Minute ein Stück weiter</td><td>Gewollt: Bildverschiebung gegen Einbrennen (Einstellungen → Oszilloskop, abschaltbar)</td></tr>
  <tr><td>Kleine „Haken“ an Linienanfängen</td><td>Rücklauf-Tempo verringern (z. B. 12)</td></tr>
  <tr><td>Rücklaufspuren sichtbar</td><td>Rücklauf-Tempo erhöhen oder Profil DIGITAL probieren; mit Z-Eingang: Dunkeltastung (drittes Kabel an GPIO27)</td></tr>
  <tr><td>Uhr soll komplett neu eingerichtet werden</td><td>BOOT-Taster 10 s halten (Werkseinstellungen: alle Einstellungen und WLANs werden gelöscht)</td></tr>
@@ -488,8 +524,8 @@ Die Pixelverschiebung versetzt die Anzeige jede Minute um einen Pixel, damit kei
 landen in einem 8-KB-Ringpuffer, den der Debug-Bereich anzeigt.</p>
 <p><b>Vektordaten:</b> Zifferblatt, Ziffern, Zeiger und Testbild sind eigene Zeichnungen, erzeugt mit <code>tools/gen_vectors.py</code>
 (Koordinaten 0–255, 8 Bit je Achse).</p>
-<p><b>Speicher:</b> Programmspeicher 1.238.554 Byte (94 % beim Standard-Partitionsschema, ca. 39 % mit „Huge APP“), globale Variablen
-74.924 Byte (22 %). Die Webseite liegt gzip-komprimiert im Flash (21 KB), die Schrift (Raleway, auf die benötigten Zeichen reduziert) als WOFF2 (30 KB).</p>
+<p><b>Speicher:</b> Programmspeicher 1.240.666 Byte (94 % beim Standard-Partitionsschema, ca. 39 % mit „Huge APP“), globale Variablen
+74.940 Byte (22 %). Die Webseite liegt gzip-komprimiert im Flash (24 KB), die Schrift (Raleway, auf die benötigten Zeichen reduziert) als WOFF2 (30 KB).</p>
 <h3>Debug-Meldungen (Beispiel)</h3>
 <pre>+0s ESP32 Oscilloscope Clock v2.0
 +0s [Scope] Profil: DIGITAL – BOOT-Taster 3 s halten zum Umschalten
@@ -512,6 +548,8 @@ landen in einem 8-KB-Ringpuffer, den der Debug-Bereich anzeigt.</p>
  <tr><td><code>JUMP_SPEED</code>, <code>JUMP_LANDING</code>, <code>JUMP_RAMP</code></td><td>24, 8, 4</td><td>Sprünge im Profil ANALOG</td></tr>
  <tr><td><code>HAND/TICK/DIGIT_BRIGHT_PCT</code></td><td>67, 100, 100</td><td>Helligkeiten</td></tr>
  <tr><td><code>DIAL_STYLE</code></td><td>0</td><td>0 = 1–12, 1 = 12/3/6/9, 2 = I–XII, 3 = XII/III/VI/IX, 4 = nur Striche</td></tr>
+ <tr><td><code>DIAL_AUTO_MIN</code></td><td>0</td><td>Zifferblatt automatisch wechseln alle n Minuten (0 = aus; 1, 5, 15, 60)</td></tr>
+ <tr><td><code>SCOPE_SHIFT</code>, <code>SCOPE_SHIFT_EVERY_S</code></td><td>1, 60</td><td>Bildverschiebung gegen Einbrennen an, alle n Sekunden weiter</td></tr>
  <tr><td><code>RTC_ENABLE</code>, <code>RTC_SDA_PIN</code>, <code>RTC_SCL_PIN</code></td><td>0, 21, 22</td><td>Optionale Echtzeituhr DS3231 (im Webinterface umschaltbar)</td></tr>
  <tr><td><code>TZ_INFO</code>, <code>NTP_SERVER_1…3</code></td><td>Mitteleuropa, de.pool.ntp.org …</td><td>Zeitzone und Zeitserver</td></tr>
  <tr><td><code>FALLBACK_H/M/S</code></td><td>10:08:37</td><td>Startzeit ohne Zeitquelle</td></tr>

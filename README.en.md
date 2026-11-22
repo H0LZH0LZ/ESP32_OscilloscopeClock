@@ -69,6 +69,9 @@ pictures are screenshots of the page. Photos of the finished device will follow 
 - **Optional [DS3231 real-time clock](https://www.amazon.de/dp/B01H5NAFUY)** (I²C, GPIO21/22): keeps date and time with its coin cell even after a
   power failure without internet. Switch on in the web interface, off by default.
 - Several Wi-Fi networks: the clock automatically connects to the strongest known network.
+- **Image shift against burn-in:** every minute the oscilloscope picture moves on by up to 2 steps so that the phosphor
+  of a CRT does not wear at the same spots (on by default).
+- **Change dial automatically:** the next dial every minute, every 5/15 minutes or every hour (off by default).
 - **12- or 24-hour format** for OLED and web interface (12 h with AM/PM), switchable in the web interface.
 - **German or English** for the web interface, OLED display and log, switchable in the web
   interface (side menu) and saved. Start value `UI_LANG` in `config.h`.
@@ -144,12 +147,12 @@ interface.
 
 | Board package | Program memory | Global variables (RAM) |
 |---|---|---|
-| esp32 3.3.12 | 1,238,554 bytes (94 %) | 74,924 bytes (22 %) |
+| esp32 3.3.12 | 1,240,666 bytes (94 %) | 74,940 bytes (22 %) |
 | esp32 2.0.17 | 866,053 bytes (66 %) | 61,048 bytes (18 %) – state before the menu and dial switching |
 
 The configuration variants (profile ANALOG/DIGITAL, Z blanking, dial 0/1/2, `USE_FAST_DAC 0`,
 EXCEL mode) were also built without warnings before the web interface was added. With the
-recommended partition scheme **Huge APP** the same firmware uses 1,238,554 of 3,145,728
+recommended partition scheme **Huge APP** the same firmware uses 1,240,666 of 3,145,728
 bytes (**39 %**), with “Minimal SPIFFS” 62 %.
 
 Also simulated on a PC: beam path (brightness, retrace lines, frame rate), OLED content, BOOT

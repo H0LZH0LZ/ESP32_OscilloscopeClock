@@ -213,6 +213,20 @@ static_assert(BUTTON_FACTORY_MS >= BUTTON_LONG_MS + 5000, "config.h: BUTTON_FACT
 //   4 = keine Ziffern, nur Minutenstriche
 #define DIAL_STYLE 0
 
+// Zifferblatt automatisch wechseln (Startwert – im Webinterface einstellbar):
+// alle n Minuten das nächste der fünf Zifferblätter zeigen, 0 = aus (Standard).
+// Erlaubt: 0, 1, 5, 15, 60. Der automatische Wechsel wird nicht gespeichert –
+// nach einem Neustart erscheint wieder das eingestellte Zifferblatt.
+#define DIAL_AUTO_MIN 0
+
+// Bildverschiebung gegen Einbrennen auf der Röhre (Startwert, im Webinterface
+// umschaltbar): das ganze Oszilloskop-Bild wandert alle SCOPE_SHIFT_EVERY_S
+// Sekunden um bis zu 2 DAC-Stufen (≈ 0,4 mm) auf einem kleinen Kreis weiter.
+// So verteilt sich die Belastung der Leuchtschicht auf eine größere Fläche.
+// Das Testbild wird nie verschoben.
+#define SCOPE_SHIFT        1     // 1 = an (Standard), 0 = aus
+#define SCOPE_SHIFT_EVERY_S 60
+
 // EXCEL-Modus (Diagnose ohne Oszilloskop): zeichnet genau ein
 // Bild, gibt dabei jeden Punkt als "0xXX,0xYY," seriell aus und hält dann an.
 // Die Liste lässt sich in Excel/LibreOffice als XY-Diagramm darstellen.

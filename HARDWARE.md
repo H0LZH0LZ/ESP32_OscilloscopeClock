@@ -164,6 +164,11 @@ automatisch für 10 s** (`BOOT_TEST_S`), danach läuft die Uhr – so sieht man 
 - Kanal 1 (X) und Kanal 2 (Y): **0,5 V/Div**. Bei 8 Divisions ergibt das 4 V, das 3,2-V-Bild passt also hinein.
 - Mit den Position-Reglern auf Bildmitte schieben (DAC-Mitte ≈ 1,6 V).
 - Helligkeit/Intensität eher gering, Fokus nachstellen.
+- **Röhre schonen:** Im X/Y-Betrieb brennt ein stehendes Bild schnell in die Leuchtschicht ein. Intensität nur so hoch
+  wie nötig, die **Bildverschiebung gegen Einbrennen** (Webinterface → Oszilloskop, ab Werk an) eingeschaltet lassen und
+  das Oszilloskop ausschalten, wenn niemand hinsieht. Abdunkeln kann die Firmware das Bild nicht – nur der
+  Intensitätsregler oder die Dunkeltastung über den Z-Eingang.
+- Statt der Pigtails Tastköpfe? Kurze Masseleitungen, 10:1-Tastköpfe vorher am Kalibrierausgang abgleichen.
 
 ### Digitales Oszilloskop (Profil DIGITAL, ab Werk)
 Ein digitales Oszilloskop zeigt im X/Y-Modus nur die Abtastwerte **einer Aufnahme**. Damit die ganze Uhr
@@ -226,6 +231,8 @@ am Oszilloskop. Die Werte in `config.h` sind dann nur die Startwerte.
 | `USE_FAST_DAC` | `1` = direkte Registerzugriffe (Standard). `0` = `dacWrite()`, nur als Notlösung |
 | `DIAL_STYLE` | Start-Zifferblatt: 0 = 1–12, 1 = 12/3/6/9, 2 = römisch I–XII, 3 = römisch XII/III/VI/IX, 4 = nur Striche (ohne Zahlen). Im Webinterface durch Wischen über die Vorschau umschaltbar, die Auswahl wird gespeichert |
 | `TZ_INFO` | Zeitzone inkl. Sommerzeitregel (Standard: Mitteleuropa) |
+| `DIAL_AUTO_MIN` | Zifferblatt automatisch wechseln alle n Minuten (0 = aus, Standard; 1, 5, 15, 60) |
+| `SCOPE_SHIFT`, `SCOPE_SHIFT_EVERY_S` | Bildverschiebung gegen Einbrennen (Standard an, alle 60 s weiter) |
 | `RTC_ENABLE`, `RTC_SDA_PIN`, `RTC_SCL_PIN` | Optionale Echtzeituhr DS3231: Startwert aus, I²C an GPIO21/22 (im Webinterface umschaltbar) |
 | `NTP_SERVER_1` … `_3` | Zeitserver (der erste ist im Webinterface änderbar) |
 | `FALLBACK_H`, `FALLBACK_M`, `FALLBACK_S` | Startzeit, ab der die Uhr zählt, solange weder Zeitserver noch Handeingabe eine Uhrzeit geliefert haben |
