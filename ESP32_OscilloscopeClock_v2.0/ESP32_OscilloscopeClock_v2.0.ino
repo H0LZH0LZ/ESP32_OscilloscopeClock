@@ -753,6 +753,88 @@ static void buildTour(const uint8_t *digits, int digitsSize)
 }
 
 //*****************************************************************************
+// Flimmerschutz
+//*****************************************************************************
+// Eine Röhre wirkt erst ab etwa 60–70 Bildern pro Sekunde ruhig. Wie lange ein
+// Bild dauert, hängt von der Verweilzeit pro Schritt und von der Zahl der
+// Schritte ab (Zifferblatt, Helligkeiten, Rücklauf). Nach jeder Änderung rechnet
+// die Firmware deshalb die längste Verweilzeit aus, bei der noch FLICKER_MIN_FPS
+// Bilder pro Sekunde erreicht werden – mit 15 % Reserve für Sprünge, Rundung
+// und Rechenzeit. Ist im Webinterface mehr eingestellt, wird mit diesem
+// Grenzwert gezeichnet; die gespeicherte Einstellung bleibt unverändert.
+static volatile uint16_t g_beamMaxNs = 10000;   // Grenzwert für das aktuelle Bild (/api/status)
+
+// Länge eines Linienzugs in DAC-Einheiten (wie beamMove: echte Länge, auch schräg)
+static float strokeLen(const Stroke &st)
+{
+  const int a = st.a < st.b ? st.a : st.b, b = st.a < st.b ? st.b : st.a;
+  float len = 0;
+  for (int k = a; k < b; k += 2) {
+    const float dx = (float)st.t[k + 2] - st.t[k], dy = (float)st.t[k + 3] - st.t[k + 1];
+    len += sqrtf(dx * dx + dy * dy);
+  }
+  return len;
+}
+
+// Längste der 60 Stellungen eines Zeigers (stride = Byte je Stellung)
+static float handMaxLen(const uint8_t *table, int size, int stride)
+{
+  float best = 0;
+  for (int pos = 0; pos < 60; pos++) {
+    int i = pos * stride;
+    Stroke st;
+    if (nextStroke(table, size, 0xFF, i, st)) { const float l = strokeLen(st); if (l > best) best = l; }
+  }
+  return best;
+}
+
+// Zeitbedarf eines gebremsten Sprungs (Profil ANALOG) in Schreibschritten – wie beamJump()
+static float jumpSteps(float len, uint8_t speed)
+{
+  int n = (int)(len + 0.5f);
+  if (n < 1) n = 1;
+  const float land = speed < JUMP_LANDING ? speed : JUMP_LANDING;
+  float steps = 0;
+  for (int k = 1; k <= n; k++) {
+    const int r = n - k;
+    steps += 1.0f / (land + (speed - land) * (float)(r < JUMP_RAMP ? r : JUMP_RAMP) / JUMP_RAMP);
+  }
+  return steps;
+}
+
+// Längste flimmerfreie Verweilzeit (ns pro Schritt) für die aktuelle Rundtour
+static uint16_t flickerLimitNs(uint8_t tickPct, uint8_t digitPct, uint8_t handPct,
+                               uint8_t profile, uint8_t jumpSpeed, bool zblank)
+{
+#if FLICKER_MIN_FPS > 0
+  static float hands = -1;                                 // Zeigerlängen ändern sich nie
+  if (hands < 0) hands = handMaxLen(HrPtrData, sizeof(HrPtrData), 9) + handMaxLen(MinPtrData, sizeof(MinPtrData), 9);
+  static float sec = -1;
+  if (sec < 0) sec = handMaxLen(SecPtrData, sizeof(SecPtrData), 5);
+  const bool braked = !zblank && profile == 0 && jumpSpeed > 0;   // gefahrene Sprünge kosten Zeit
+  float steps = handPct / 100.0f * (hands + 2) + sec + 1;          // Sekundenzeiger: 2 × halbe Helligkeit
+  int jumps = 4;
+  for (int k = 0; k < s_tourLen; k++) {
+    const Stroke &st = s_tour[k];
+    const bool tick = st.t == DialData || st.t == DialHours || st.t == DialStation;
+    const uint8_t pct = tick ? tickPct : digitPct;
+    if (!pct) continue;
+    steps += (strokeLen(st) + 1) * pct / 100.0f;           // +1: Verweilen am Startpunkt
+    jumps++;
+    if (braked) steps += jumpSteps(tourGap(st, s_tour[(k + 1) % s_tourLen]), jumpSpeed);
+  }
+  const float budgetNs = 1e9f / FLICKER_MIN_FPS * 0.85f - (zblank ? jumps * (float)ZBLANK_SETTLE_NS : 0.0f);
+  float lim = budgetNs / steps;
+  if (lim < 1000) lim = 1000;                               // Untergrenze des Reglers
+  if (lim > 10000) lim = 10000;
+  return (uint16_t)lim;
+#else
+  (void)tickPct; (void)digitPct; (void)handPct; (void)profile; (void)jumpSpeed; (void)zblank;
+  return 10000;                                             // Flimmerschutz aus
+#endif
+}
+
+//*****************************************************************************
 // scopeTask – Core 1: zeichnet endlos Zifferblatt + Zeiger
 //*****************************************************************************
 // Ablauf eines Bildes (Strahl startet in der Mitte):
@@ -782,28 +864,55 @@ static void IRAM_ATTR scopeTask(void *)
   int builtDial = -1;                                     // Zifferblatt der aktuellen Rundtour
   uint16_t builtNs = g_beamNs;                            // Timing, mit dem gerade gezeichnet wird
   uint8_t  builtJump = g_jumpSpeed;
+  uint16_t limitNs = 10000;                               // Flimmerschutz: längste flimmerfreie Verweilzeit
+  uint16_t loggedLimit = 0;                               // zuletzt gemeldete Begrenzung (0 = keine)
+  uint8_t  lTick = 0, lDigit = 0, lHand = 0, lProf = 0xFF, lJump = 0; bool lZ = false;
 
   for (;;) {
     // Zifferblatt gewechselt (Webinterface)? Rundtour zwischen zwei Bildern neu
     // berechnen. Dauert einige ms – der Strahl steht so lange (einmaliger Punkt).
-    // Strahlgeschwindigkeit oder Rücklauf-Tempo geändert? Zwischen zwei Bildern übernehmen.
-    if (g_beamNs != builtNs || g_jumpSpeed != builtJump) {
-      builtNs = g_beamNs; builtJump = g_jumpSpeed;
-      beamTiming(builtNs, builtJump);
-      secCycles = s_stepCycles / 2;
-    }
-
-    // Bildverschiebung einmal pro Bild übernehmen; das Testbild bleibt fest stehen
-    s_ox = g_testPattern ? 0 : g_shiftX;
-    s_oy = g_testPattern ? 0 : g_shiftY;
-
     const int dial = g_dialStyle;
+    bool newLimit = false;
     if (dial != builtDial) {
       int size;
       const uint8_t *digits = dialDigits(dial, size);
       buildTour(digits, size);
       builtDial = dial;
+      newLimit = true;
     }
+
+    // Flimmerschutz: Grenzwert neu rechnen, wenn sich Zifferblatt, Helligkeiten,
+    // Profil, Rücklauf-Tempo oder Dunkeltastung geändert haben
+    const uint8_t tick = g_tickPct, digit = g_digitPct, hand = g_handPct, prof = g_scopeProfile, jump = g_jumpSpeed;
+    const bool zb = g_zblank;
+    if (newLimit || tick != lTick || digit != lDigit || hand != lHand || prof != lProf || jump != lJump || zb != lZ) {
+      lTick = tick; lDigit = digit; lHand = hand; lProf = prof; lJump = jump; lZ = zb;
+      limitNs = flickerLimitNs(tick, digit, hand, prof, jump, zb);
+      g_beamMaxNs = limitNs;
+    }
+
+    // Strahlgeschwindigkeit oder Rücklauf-Tempo geändert? Zwischen zwei Bildern übernehmen –
+    // höchstens bis zum flimmerfreien Grenzwert.
+    const uint16_t setNs = g_beamNs;
+    const uint16_t useNs = setNs < limitNs ? setNs : limitNs;
+    if (useNs != builtNs || jump != builtJump) {
+      builtNs = useNs; builtJump = jump;
+      beamTiming(builtNs, builtJump);
+      secCycles = s_stepCycles / 2;
+    }
+    const uint16_t limited = setNs > limitNs ? limitNs : 0;
+    if (limited != loggedLimit) {
+      loggedLimit = limited;
+      if (limited) logMsg(tr("[Scope] Flimmerschutz: Verweilzeit %u statt %u ns (mind. %d Bilder/s)",
+                             "[Scope] flicker guard: dwell time %u instead of %u ns (at least %d frames/s)"),
+                          (unsigned)limited, (unsigned)setNs, FLICKER_MIN_FPS);
+      else         logMsg(tr("[Scope] Flimmerschutz: eingestellte Verweilzeit gilt wieder",
+                             "[Scope] flicker guard: set dwell time applies again"));
+    }
+
+    // Bildverschiebung einmal pro Bild übernehmen; das Testbild bleibt fest stehen
+    s_ox = g_testPattern ? 0 : g_shiftX;
+    s_oy = g_testPattern ? 0 : g_shiftY;
 
     // Testbild (Einstellungen → Testbild): Rahmen, Kreis, Mittelkreuz statt der Uhr –
     // zum Einstellen von Position, Größe, X/Y-Verhältnis und Fokus am Oszilloskop
@@ -1337,6 +1446,7 @@ static void handleStatus()
   o += "},\"profile\":";             jsonStr(o, profileName(g_scopeProfile));
   o += ",\"dial\":";                 o += (int)g_dialStyle;
   o += ",\"fps\":";                  o += s_fps;
+  o += ",\"beamMax\":";              o += (int)g_beamMaxNs;     // Flimmerschutz: längste flimmerfreie Verweilzeit (ns)
   o += ",\"uptime\":";               o += (uint32_t)(millis() / 1000UL);
   o += ",\"heap\":";                 o += (uint32_t)ESP.getFreeHeap();        // RAM frei (Byte)
   o += ",\"heapTotal\":";            o += (uint32_t)ESP.getHeapSize();        // RAM gesamt (Heap)

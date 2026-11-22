@@ -245,7 +245,7 @@ eingesetzt (`textContent`), nie als HTML.
 |---|---|
 | `GET /` | die Seite |
 | `GET /manifest.json`, `/icon.svg`, `/icon.png` | App-Manifest und Symbol für den Startbildschirm |
-| `GET /api/status` | JSON: `time`, `date`, `kw`, `ntp{synced,overdue,manual,dst,last,server}`, `wifi{configured,connected,ssid,rssi,ip,host}`, `ap{active,ssid,ip}`, `profile`, `dial`, `fps`, `heap`, `heapTotal`, `heapMin`, `heapBlock`, `cpu0`, `reset`, `uptime`, `fw`, `lang`, `h12`, `oled` (Helligkeit in %, 0 = aus), `test` (Testbild an) |
+| `GET /api/status` | JSON: `time`, `date`, `kw`, `ntp{synced,overdue,manual,dst,last,server}`, `wifi{configured,connected,ssid,rssi,ip,host}`, `ap{active,ssid,ip}`, `profile`, `dial`, `fps`, `beamMax` (Flimmerschutz: längste flimmerfreie Verweilzeit in ns), `heap`, `heapTotal`, `heapMin`, `heapBlock`, `cpu0`, `reset`, `uptime`, `fw`, `lang`, `h12`, `oled` (Helligkeit in %, 0 = aus), `test` (Testbild an) |
 | `GET /api/log` | Log als Text, älteste Zeile zuerst |
 | `POST /api/log/clear` | Log-Ringpuffer leeren (serielle Ausgabe unberührt) |
 | `GET /api/networks` | gespeicherte Netze `[{ssid, source:"web"}]`, nie Passwörter |
@@ -301,7 +301,7 @@ Knopf „Auf Standardwerte zurücksetzen“: Er löscht nur die gespeicherten We
 |---|---|---|---|
 | Oszilloskop-Profil | `profile` | DIGITAL / ANALOG | `g_scopeProfile`, auch per BOOT-Taster |
 | Zifferblatt | `dial` | 5 Stile | `g_dialStyle`, synchron mit dem Wischen über die Vorschau |
-| Verweilzeit des Strahls | `beam` | 1.000–10.000 ns pro Schritt | `g_beamNs`, `scopeTask` berechnet das Timing zwischen zwei Bildern neu (`beamTiming()`) |
+| Verweilzeit des Strahls | `beam` | 1.000–10.000 ns pro Schritt | `g_beamNs`, `scopeTask` berechnet das Timing zwischen zwei Bildern neu (`beamTiming()`). Flimmerschutz: gezeichnet wird höchstens mit `g_beamMaxNs` (`flickerLimitNs()`, mindestens `FLICKER_MIN_FPS` Bilder/s) |
 | Helligkeit Stunden-/Minutenzeiger | `hand` | 0–100 % (0 = aus) | `g_handPct` |
 | Helligkeit Minutenstriche | `tick` | 0–100 % (0 = aus) | `g_tickPct`: Verweilzeit der Striche (Tabellen `DialData`, `DialHours`, `DialStation`) in der Rundtour, in Prozent der normalen Verweilzeit |
 | Helligkeit Ziffern | `digit` | 0–100 % (0 = aus) | `g_digitPct`: Verweilzeit der Ziffern in der Rundtour |
@@ -447,7 +447,7 @@ zu den Zifferblatt-Strichen, mehrere Uhrzeiten; gemessen mit den früheren Vekto
 Liegen zwei Zeiger genau übereinander, ist die Stelle naturgemäß heller.
 
 **Geschwindigkeit und alte Röhren:** Ein Bild dauert ca. 1.600 Schrittzeiten, bei 3 µs pro Schritt sind
-das etwa 205 Bilder/s (römisch ca. 145). Beim Schreiben bewegt sich der Strahl mit
+das etwa 205 Bilder/s (römisch ca. 180). Beim Schreiben bewegt sich der Strahl mit
 ca. 4 mV/µs, bei Sprüngen mit bis zu ca. 100 mV/µs, beim Ankommen mit ca. 33 mV/µs. Dazu kommt
 am Linienanfang ein voller Schritt (3 µs) Verweilzeit, in dem der Strahl sich setzen kann. Das reicht
 für Oszilloskope ab etwa 0,5 MHz X/Y-Bandbreite. Bei sehr alten Geräten `JUMP_SPEED` auf 12 senken,
@@ -479,7 +479,7 @@ bei Bedarf `BEAM_NS_PER_UNIT` erhöhen (hellere Spur, weniger Bilder/s).
 
 | Symptom | Stellschraube (`config.h` oder Webinterface) |
 |---|---|
-| Bild flimmert | `BEAM_NS_PER_UNIT` verringern (z. B. 2000) |
+| Bild flimmert | `BEAM_NS_PER_UNIT` verringern (z. B. 2000) oder `FLICKER_MIN_FPS` erhöhen |
 | Linien zu dunkel | `BEAM_NS_PER_UNIT` erhöhen (z. B. 5000) oder Intensität am Oszilloskop erhöhen |
 | Ecken verrundet, Ziffern verwaschen (Oszilloskop zu langsam) | `BEAM_NS_PER_UNIT` erhöhen |
 | Linienanfänge mit kleinen „Haken“ | `JUMP_SPEED` (z. B. 12) oder `JUMP_LANDING` (z. B. 4) verringern |

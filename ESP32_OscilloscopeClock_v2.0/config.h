@@ -86,17 +86,24 @@ static_assert(BUTTON_FACTORY_MS >= BUTTON_LONG_MS + 5000, "config.h: BUTTON_FACT
 // ---- Strahlgeschwindigkeit (gleichmäßige Helligkeit) -----------------------
 // Der Strahl bewegt sich auf ALLEN Linien gleich schnell: 1 DAC-Einheit
 // (≈ 12,5 mV, 1/255 des Bildes) pro BEAM_NS_PER_UNIT Nanosekunden.
-// Ein Bild dauert ca. 1.600 Schrittzeiten (römisches Zifferblatt ca. 2.300).
+// Ein Bild dauert ca. 1.650 Schrittzeiten (römisches Zifferblatt ca. 1.900).
 //
 //   BEAM_NS_PER_UNIT   Bildfrequenz          Hinweis
 //                      (1–12 / römisch)
-//        2000          ~300 Hz / ~210 Hz     moderne/schnelle Oszilloskope
-//        3000          ~205 Hz / ~145 Hz     Standard, passt für fast alle Röhren
-//        5000          ~125 Hz /  ~85 Hz     sehr alte/langsame Röhren, hellere Spur
-//        8000           ~80 Hz /  ~55 Hz     Untergrenze – römisch flimmert es schon leicht
+//        2000          ~305 Hz / ~265 Hz     moderne/schnelle Oszilloskope
+//        3000          ~205 Hz / ~180 Hz     Standard, passt für fast alle Röhren
+//        5000          ~125 Hz / ~105 Hz     sehr alte/langsame Röhren, hellere Spur
+//        8000           ~80 Hz /  ~80 Hz     beide vom Flimmerschutz begrenzt (FLICKER_MIN_FPS)
 //
 // Größer = langsamer = hellere Linien, aber niedrigere Bildfrequenz.
 #define BEAM_NS_PER_UNIT 3000
+
+// Flimmerschutz: Die Firmware begrenzt die Verweilzeit automatisch so, dass je
+// nach Zifferblatt, Helligkeiten und Rücklauf mindestens so viele Bilder pro
+// Sekunde gezeichnet werden (Röhren wirken ab etwa 60–70 ruhig). Ist im
+// Webinterface eine längere Verweilzeit eingestellt, gilt der Grenzwert; die
+// Einstellung selbst bleibt gespeichert. 0 = Flimmerschutz aus.
+#define FLICKER_MIN_FPS 75
 
 // ---- Rücklauf: Sprünge zwischen Linienzügen ---------------------------------
 // Ohne Dunkeltastung (s.u.) hinterlässt jeder Sprung eine schwache Spur.

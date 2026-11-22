@@ -251,7 +251,7 @@ inserted as text (`textContent`), never as HTML.
 | `GET /` | the page |
 | `GET /manifest.json`, `/icon.svg`, `/icon.png` | app manifest and icon for the home screen |
 | `GET /font.woff2`, `GET /font-600.woff2` | font of the page, Light and SemiBold (from `font.h`), cached by the browser for one year. Two static styles instead of a variable font, because some Android browsers otherwise show bold text of a variable font in the system font |
-| `GET /api/status` | JSON: `time`, `date`, `kw`, `ntp{synced,overdue,manual,dst,last,server}`, `wifi{configured,connected,ssid,rssi,ip,host}`, `ap{active,ssid,ip}`, `profile`, `dial`, `fps`, `heap`, `heapTotal`, `heapMin`, `heapBlock`, `cpu0`, `reset`, `uptime`, `fw`, `lang`, `h12`, `oled` (brightness in %, 0 = off), `test` (test pattern on) |
+| `GET /api/status` | JSON: `time`, `date`, `kw`, `ntp{synced,overdue,manual,dst,last,server}`, `wifi{configured,connected,ssid,rssi,ip,host}`, `ap{active,ssid,ip}`, `profile`, `dial`, `fps`, `beamMax` (flicker guard: longest flicker-free dwell time in ns), `heap`, `heapTotal`, `heapMin`, `heapBlock`, `cpu0`, `reset`, `uptime`, `fw`, `lang`, `h12`, `oled` (brightness in %, 0 = off), `test` (test pattern on) |
 | `GET /api/log` | log as text, oldest line first |
 | `POST /api/log/clear` | empty the log ring buffer (serial output unaffected) |
 | `GET /api/networks` | saved networks `[{ssid, source:"web"}]`, never passwords |
@@ -308,7 +308,7 @@ that group; Wi-Fi networks are kept.
 |---|---|---|---|
 | Oscilloscope profile („Oszilloskop-Profil“) | `profile` | DIGITAL / ANALOG | `g_scopeProfile`, also via BOOT button |
 | Dial („Zifferblatt“) | `dial` | 5 styles | `g_dialStyle`, in sync with swiping over the preview |
-| Beam dwell time („Verweilzeit des Strahls“) | `beam` | 1,000–10,000 ns per step | `g_beamNs`, `scopeTask` recalculates the timing between two frames (`beamTiming()`) |
+| Beam dwell time („Verweilzeit des Strahls“) | `beam` | 1,000–10,000 ns per step | `g_beamNs`, `scopeTask` recalculates the timing between two frames (`beamTiming()`). Flicker guard: drawing uses at most `g_beamMaxNs` (`flickerLimitNs()`, at least `FLICKER_MIN_FPS` frames/s) |
 | Hour/minute hand brightness („Helligkeit Stunden-/Minutenzeiger“) | `hand` | 0–100 % (0 = off) | `g_handPct` |
 | Tick mark brightness („Helligkeit Minutenstriche“) | `tick` | 0–100 % (0 = off) | `g_tickPct`: dwell time of the marks (tables `DialData`, `DialHours`, `DialStation`) in the round trip, in percent of the normal dwell time |
 | Numeral brightness („Helligkeit Ziffern“) | `digit` | 0–100 % (0 = off) | `g_digitPct`: dwell time of the numerals in the round trip |
@@ -454,7 +454,7 @@ repeated for the new graphics):
 Where two hands lie exactly on top of each other, the spot is naturally brighter.
 
 **Speed and old CRTs:** one frame takes approx. 1,600 step times; at 3 µs per step that is about
-205 frames/s (Roman approx. 145). While writing, the beam moves at approx. 4 mV/µs, during jumps
+205 frames/s (Roman approx. 180). While writing, the beam moves at approx. 4 mV/µs, during jumps
 at up to approx. 100 mV/µs, when arriving at approx. 33 mV/µs. In addition there is a full step
 (3 µs) of dwell time at the start of each line in which the beam can settle. This is sufficient
 for oscilloscopes from about 0.5 MHz X/Y bandwidth. For very old devices lower `JUMP_SPEED` to 12,
@@ -485,7 +485,7 @@ and if needed increase `BEAM_NS_PER_UNIT` (brighter trace, fewer frames/s).
 
 | Symptom | Adjustment (`config.h` or web interface) |
 |---|---|
-| Picture flickers | decrease `BEAM_NS_PER_UNIT` (e.g. 2000) |
+| Picture flickers | decrease `BEAM_NS_PER_UNIT` (e.g. 2000) or increase `FLICKER_MIN_FPS` |
 | Lines too dark | increase `BEAM_NS_PER_UNIT` (e.g. 5000) or increase intensity on the oscilloscope |
 | Rounded corners, blurred digits (oscilloscope too slow) | increase `BEAM_NS_PER_UNIT` |
 | Small “hooks” at the start of lines | decrease `JUMP_SPEED` (e.g. 12) or `JUMP_LANDING` (e.g. 4) |

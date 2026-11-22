@@ -36,6 +36,6 @@ window.fetch=async function(url,init){
  const r=await prev(url,init);
  if(u==='/api/dial'&&p.has('style'))S.dial=+p.get('style');
  if(u==='/api/status'){const s=await r.json();s.profile=S.profile?'DIGITAL':'ANALOG';S.dial=s.dial;
-  s.fps=Math.round(1e9/(1625*S.beamNs))+Math.round(Math.random()*4-2);s.heapTotal=301400;s.heapMin=171200;s.heapBlock=110580;s.cpu0=6+Math.round(Math.random()*6);s.ntp.dst=window.__dst??-1;s.reset=S.lang==='en'?'Power on':'Einschalten';s.lang=S.lang;s.oled=S.oledPct;s.rtc={enabled:!!S.rtc,found:!!S.rtc,valid:!!S.rtc};s.h12=S.h12;s.test=!!S.test;s.wifi.host=S.host+'.local';return J(s)}
+  const W=[1457,1115,1675,1182,1713][S.dial]||1457;s.beamMax=Math.min(10000,Math.round(1e9/75*.85/W));s.fps=Math.round(1e9/(W*1.12*Math.min(S.beamNs,s.beamMax)))+Math.round(Math.random()*4-2);s.heapTotal=301400;s.heapMin=171200;s.heapBlock=110580;s.cpu0=6+Math.round(Math.random()*6);s.ntp.dst=window.__dst??-1;s.reset=S.lang==='en'?'Power on':'Einschalten';s.lang=S.lang;s.oled=S.oledPct;s.rtc={enabled:!!S.rtc,found:!!S.rtc,valid:!!S.rtc};s.h12=S.h12;s.test=!!S.test;s.wifi.host=S.host+'.local';return J(s)}
  return r};
 })();

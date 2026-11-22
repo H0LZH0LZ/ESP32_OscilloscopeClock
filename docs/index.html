@@ -215,8 +215,8 @@ a.row>span:last-child{font-size:18px}
 <div class="grp"><h2 id="downloads-h" class="coll" role="button" tabindex="0" aria-expanded="true"><span data-l="de">0 Links &amp; Dokumente</span><span data-l="en">0 Links &amp; documents</span></h2>
 <section>
  <a class="row" target="_blank" rel="noopener" href="https://github.com/HolzHolz123/ESP32_OscilloscopeClock"><span><span data-l="de">GitHub – Version 2.0</span><span data-l="en">GitHub – version 2.0</span><small class="note" data-l="de">Diese Firmware mit Quellcode, Anleitung und Werkzeugen</small><small class="note" data-l="en">This firmware with source code, guide and tools</small></span><span>›</span></a>
- <a class="row" target="_blank" rel="noopener" data-l="de" href="ESP32_Oscilloscope_Clock_Dokumentation.pdf?v=381116e8"><span>Dokumentation (PDF)<small class="note">Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small></span><span>›</span></a>
- <a class="row" target="_blank" rel="noopener" data-l="en" href="ESP32_Oscilloscope_Clock_Documentation.pdf?v=87b9d0e6"><span>Documentation (PDF)<small class="note">Assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
+ <a class="row" target="_blank" rel="noopener" data-l="de" href="ESP32_Oscilloscope_Clock_Dokumentation.pdf?v=a0c06f39"><span>Dokumentation (PDF)<small class="note">Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small></span><span>›</span></a>
+ <a class="row" target="_blank" rel="noopener" data-l="en" href="ESP32_Oscilloscope_Clock_Documentation.pdf?v=fb218f55"><span>Documentation (PDF)<small class="note">Assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" href="demo/"><span><span data-l="de">Testseite</span><span data-l="en">Test page</span><small class="note" data-l="de">Das Webinterface der Uhr ausprobieren – läuft im Browser, alle Werte sind simuliert</small><small class="note" data-l="en">Try the clock's web interface – runs in the browser, all values are simulated</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" href="https://github.com/maurohh/ESP32_OscilloscopeClock"><span><span data-l="de">GitHub – Original</span><span data-l="en">GitHub – original</span><small class="note" data-l="de">Die ursprüngliche ESP32 Oscilloscope Clock von Mauro Pintus (2018), nach deren Idee diese Version entstand</small><small class="note" data-l="en">The original ESP32 Oscilloscope Clock by Mauro Pintus (2018) that inspired this version</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" href="https://fonts.google.com/specimen/Raleway"><span><span data-l="de">Schriftart Raleway</span><span data-l="en">Font Raleway</span><small class="note" data-l="de">Google Fonts – frei unter der SIL Open Font License 1.1</small><small class="note" data-l="en">Google Fonts – free under the SIL Open Font License 1.1</small></span><span>›</span></a>
@@ -487,7 +487,7 @@ The outer contact has continuity to GND. Retighten all screw terminals slightly.
 <div class="tw"><table style="break-inside:avoid">
  <tr><th>Variante</th><th>Arduino IDE: Partition Scheme</th><th>PlatformIO</th><th>Programmspeicher</th></tr>
  <tr><td data-th="Variante"><b>A – Huge APP</b> (empfohlen)</td><td data-th="Arduino IDE: Partition Scheme">„Huge APP (3MB No OTA/1MB SPIFFS)“</td><td data-th="PlatformIO"><code>pio run -t upload</code></td><td data-th="Programmspeicher">1.241.138 von 3.145.728 Byte (<b>39 %</b>)</td></tr>
- <tr><td data-th="Variante"><b>B – Standard</b></td><td data-th="Arduino IDE: Partition Scheme">„Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)“ – Voreinstellung, nichts umstellen</td><td data-th="PlatformIO"><code>pio run -e standard -t upload</code></td><td data-th="Programmspeicher">1.241.566 von 1.310.720 Byte (<b>94 %</b>)</td></tr>
+ <tr><td data-th="Variante"><b>B – Standard</b></td><td data-th="Arduino IDE: Partition Scheme">„Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)“ – Voreinstellung, nichts umstellen</td><td data-th="PlatformIO"><code>pio run -e standard -t upload</code></td><td data-th="Programmspeicher">1.243.154 von 1.310.720 Byte (<b>94 %</b>)</td></tr>
 </table></div>
 <p>Beide Varianten laufen gleich. <b>A</b> lässt rund 1,9 MB Platz für Erweiterungen; die Uhr nutzt weder OTA-Updates noch
 SPIFFS, deshalb fehlt dabei nichts. <b>B</b> funktioniert ohne Umstellen, hat aber nur noch etwa 70 KB Reserve. Ein Wechsel
@@ -508,7 +508,7 @@ Stelle und bleiben erhalten. Meldet die IDE beim Hochladen „Sketch too big“,
 <div class="tw"><table style="break-inside:avoid">
  <tr><th>Variant</th><th>Arduino IDE: Partition Scheme</th><th>PlatformIO</th><th>Program memory</th></tr>
  <tr><td data-th="Variant"><b>A – Huge APP</b> (recommended)</td><td data-th="Arduino IDE: Partition Scheme">“Huge APP (3MB No OTA/1MB SPIFFS)”</td><td data-th="PlatformIO"><code>pio run -t upload</code></td><td data-th="Program memory">1,241,138 of 3,145,728 bytes (<b>39 %</b>)</td></tr>
- <tr><td data-th="Variant"><b>B – Standard</b></td><td data-th="Arduino IDE: Partition Scheme">“Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)” – the default, nothing to change</td><td data-th="PlatformIO"><code>pio run -e standard -t upload</code></td><td data-th="Program memory">1,241,566 of 1,310,720 bytes (<b>94 %</b>)</td></tr>
+ <tr><td data-th="Variant"><b>B – Standard</b></td><td data-th="Arduino IDE: Partition Scheme">“Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)” – the default, nothing to change</td><td data-th="PlatformIO"><code>pio run -e standard -t upload</code></td><td data-th="Program memory">1,243,154 of 1,310,720 bytes (<b>94 %</b>)</td></tr>
 </table></div>
 <p>Both variants work the same. <b>A</b> leaves about 1.9 MB for extensions; the clock uses neither OTA updates nor SPIFFS,
 so nothing is lost. <b>B</b> works without changing anything but leaves only about 70 KB. You can switch at any time (choose
@@ -780,7 +780,7 @@ beschrieben wird. Jede Gruppe hat „Auf Standardwerte zurücksetzen“; danach 
  digitalen Geräten mit Bildröhre; bei LCD unnötig, aber unschädlich. Das Testbild steht immer still.</td></tr>
  <tr><td data-th="Einstellung">Verweilzeit des Strahls</td><td data-th="Bereich (Standard)">1,00–10,00 µs pro Schritt (3,00 µs)</td><td data-th="Wirkung">Wie lange der Strahl auf jedem Wegstück verweilt. <b>Länger</b> = hellere, kräftigere Linien und
  sauberere Ecken, aber weniger Bilder pro Sekunde (mehr Flimmern). <b>Kürzer</b> = ruhigeres Bild, aber dunklere Linien; ein
- langsames Oszilloskop rundet dann Ecken ab. Die geschätzte Bildrate wird beim Ziehen angezeigt (Standard ca. 205 Bilder/s).</td></tr>
+ langsames Oszilloskop rundet dann Ecken ab. Die geschätzte Bildrate wird beim Ziehen angezeigt (Standard ca. 205 Bilder/s). <b>Flimmerschutz:</b> Würde das Bild unter 75 Bilder pro Sekunde fallen, zeichnet die Uhr automatisch mit einer kürzeren Verweilzeit; darunter steht dann, mit welcher.</td></tr>
  <tr><td data-th="Einstellung">Helligkeit Stunden-/Minutenzeiger</td><td data-th="Bereich (Standard)">0–100 % (55 %)</td><td data-th="Wirkung">Verweilzeit auf den beiden Zeigern im Verhältnis zum Rest. Die schmalen, eng beieinander liegenden
  Doppellinien der Zeiger wirken sonst heller als Zifferblatt und Ziffern. Richtwerte je Oszilloskop und Einstellanleitung: Kapitel 6.
  0 % blendet die Zeiger aus. Der Sekundenzeiger ist davon nicht betroffen.</td></tr>
@@ -866,7 +866,7 @@ group has “Reset to defaults”; the change can then be undone with “Undo”
  unnecessary but harmless with an LCD. The test pattern always stays still.</td></tr>
  <tr><td data-th="Setting">Beam dwell time</td><td data-th="Range (default)">1.00–10.00 µs per step (3.00 µs)</td><td data-th="Effect">How long the beam dwells on each piece of its path. <b>Longer</b> = brighter, stronger lines and
  cleaner corners, but fewer frames per second (more flicker). <b>Shorter</b> = calmer picture but darker lines; a slow oscilloscope
- then rounds the corners. The estimated frame rate is shown while dragging (default approx. 205 frames/s).</td></tr>
+ then rounds the corners. The estimated frame rate is shown while dragging (default approx. 205 frames/s). <b>Flicker guard:</b> if the picture would drop below 75 frames per second, the clock automatically draws with a shorter dwell time and shows which one below the slider.</td></tr>
  <tr><td data-th="Setting">Hour/minute hand brightness</td><td data-th="Range (default)">0–100 % (55 %)</td><td data-th="Effect">Dwell time on the two hands relative to the rest. The narrow, closely spaced double lines of the
  hands otherwise look brighter than the dial and numerals. Guide values per oscilloscope and how to set it: chapter 6. 0 % hides the hands. The second hand is not affected.</td></tr>
  <tr><td data-th="Setting">Tick mark brightness</td><td data-th="Range (default)">0–100 % (100 %)</td><td data-th="Effect">Brightness of the 60 marks around the edge. Less brightness makes the hands stand out more and
@@ -1057,8 +1057,8 @@ BNC-Stecker einmal einen Kurzschluss bekommt. Bei 0,5 V/Div füllt das Bild gut 
 Jeder Punkt bekommt eine feste Anzahl Takte, und die Firmware wartet aktiv, bis dieser Zeitpunkt erreicht ist – ohne
 <code>delay()</code>, das zu ungenau wäre. Standard ist eine <b>Verweilzeit von 3 µs pro DAC-Stufe</b>. Ein Bild mit Zifferblatt
 1–12 besteht aus rund 1.600 Schritten und dauert damit etwa 4,9 ms: Das ergibt etwa <b>205 Bilder pro Sekunde</b>, das römische
-Zifferblatt etwa 145, das Bahnhof-Zifferblatt etwa 180. Größere Verweilzeiten machen die Linien heller, senken aber die Bildrate (unter etwa 60 Bildern pro Sekunde
-flimmert es). Wird Kern 1 kurz angehalten, etwa für einen Flash-Zugriff, holt die Firmware die verlorene Zeit nicht im
+Zifferblatt etwa 180, das Bahnhof-Zifferblatt etwa 175. Größere Verweilzeiten machen die Linien heller, senken aber die Bildrate (unter etwa 60 Bildern pro Sekunde
+flimmert es). Deshalb gibt es einen <b>Flimmerschutz</b>: Nach jeder Änderung von Zifferblatt, Helligkeiten, Profil oder Rücklauf zählt die Firmware die Schritte eines Bildes zusammen und rechnet daraus die längste Verweilzeit aus, bei der noch 75 Bilder pro Sekunde erreicht werden – mit 15 % Reserve. Ist mehr eingestellt, zeichnet sie mit diesem Grenzwert; die Einstellung selbst bleibt gespeichert. Beim römischen Zifferblatt liegt die Grenze bei etwa 6,8 µs, bei 1–12 bei etwa 7,8 µs. Wird Kern 1 kurz angehalten, etwa für einen Flash-Zugriff, holt die Firmware die verlorene Zeit nicht im
 Zeitraffer nach, sondern setzt den Zeitplan neu – sonst würde ein Stück Linie zu dunkel.</p>
 <h3>Gleiche Helligkeit</h3>
 <p>Die Helligkeit einer Linie hängt davon ab, wie lange der Strahl auf jedem Stück Weg verweilt. Die Firmware zerlegt jede Linie
@@ -1110,8 +1110,8 @@ Die Pixelverschiebung versetzt die Anzeige jede Minute um einen Pixel, damit kei
 landen in einem 8-KB-Ringpuffer, den der Debug-Bereich anzeigt.</p>
 <p><b>Vektordaten:</b> Zifferblatt, Ziffern, Zeiger und Testbild sind eigene Zeichnungen, erzeugt mit <code>tools/gen_vectors.py</code>
 (Koordinaten 0–255, 8 Bit je Achse).</p>
-<p><b>Speicher:</b> Programmspeicher 1.241.566 Byte (94 % beim Standard-Partitionsschema, ca. 39 % mit „Huge APP“), globale Variablen
-75.068 Byte (22 %). Die Webseite liegt gzip-komprimiert im Flash (24 KB), die Schrift (Raleway, auf die benötigten Zeichen reduziert) als WOFF2 (30 KB).</p>
+<p><b>Speicher:</b> Programmspeicher 1.243.154 Byte (94 % beim Standard-Partitionsschema, ca. 39 % mit „Huge APP“), globale Variablen
+75.084 Byte (22 %). Die Webseite liegt gzip-komprimiert im Flash (24 KB), die Schrift (Raleway, auf die benötigten Zeichen reduziert) als WOFF2 (30 KB).</p>
 </div><div data-l="en">
 <figure><img loading="lazy" src="images/software_en.svg"><figcaption>Fig. 14 – Distribution of the firmware over the two processor cores</figcaption></figure>
 <h3>Two cores with separate jobs</h3>
@@ -1135,8 +1135,8 @@ At 0.5 V/div the picture fills a good six divisions of the screen.</p>
 <p>The firmware measures how long the beam stays on a point with the CPU's cycle counter (240 MHz, i.e. to about 4 ns). Every point
 gets a fixed number of cycles, and the firmware waits actively until that moment – without <code>delay()</code>, which would be too
 coarse. The default is a <b>dwell time of 3 µs per DAC step</b>. A frame with the 1–12 dial consists of about 1,600 steps and takes
-about 4.9 ms: that gives about <b>205 frames per second</b>, about 145 with the Roman dial and about 180 with the station clock. Longer dwell times make the lines
-brighter but lower the frame rate (below about 60 frames per second it flickers). If core 1 is stopped briefly, for example for a
+about 4.9 ms: that gives about <b>205 frames per second</b>, about 180 with the Roman dial and about 175 with the station clock. Longer dwell times make the lines
+brighter but lower the frame rate (below about 60 frames per second it flickers). That is why there is a <b>flicker guard</b>: after every change of dial, brightness, profile or retrace the firmware adds up the steps of one frame and computes the longest dwell time that still gives 75 frames per second – with a 15 % reserve. If more is set, it draws with this limit; the setting itself stays saved. For the Roman dial the limit is about 6.8 µs, for 1–12 about 7.8 µs. If core 1 is stopped briefly, for example for a
 flash access, the firmware does not catch up in fast motion but resets its schedule – otherwise a piece of a line would turn out
 too dark.</p>
 <h3>Equal brightness</h3>
@@ -1187,8 +1187,8 @@ its frames (frame rate in the status), an idle hook measures the load of core 0,
 the debug section.</p>
 <p><b>Vector data:</b> dial, numerals, hands and test pattern are original drawings, generated with <code>tools/gen_vectors.py</code>
 (coordinates 0–255, 8 bits per axis).</p>
-<p><b>Memory:</b> program memory 1,241,566 bytes (94 % with the default partition scheme, approx. 39 % with “Huge APP”), global variables
-75,068 bytes (22 %). The web page is stored gzip-compressed in flash (24 KB), the font (Raleway, reduced to the characters needed) as WOFF2 (30 KB).</p>
+<p><b>Memory:</b> program memory 1,243,154 bytes (94 % with the default partition scheme, approx. 39 % with “Huge APP”), global variables
+75,084 bytes (22 %). The web page is stored gzip-compressed in flash (24 KB), the font (Raleway, reduced to the characters needed) as WOFF2 (30 KB).</p>
 </div></section></div>
 
 <div class="grp closed"><h2 id="kap11" class="coll" role="button" tabindex="0" aria-expanded="false"><span data-l="de">11 Anhang</span><span data-l="en">11 Appendix</span></h2>
@@ -1201,6 +1201,7 @@ the debug section.</p>
  <tr><td data-th="Parameter"><code>OLED_CS/DC/RST_PIN</code></td><td data-th="Standard">5, 17, 4</td><td data-th="Bedeutung">OLED-Anschlüsse; CLK 18 und DIN 23 sind fest (Hardware-SPI)</td></tr>
  <tr><td data-th="Parameter"><code>SCOPE_PROFILE</code></td><td data-th="Standard">1</td><td data-th="Bedeutung">0 = ANALOG, 1 = DIGITAL</td></tr>
  <tr><td data-th="Parameter"><code>BEAM_NS_PER_UNIT</code></td><td data-th="Standard">3000</td><td data-th="Bedeutung">Verweilzeit pro Schritt in ns (≈ 205 Bilder/s)</td></tr>
+ <tr><td data-th="Parameter"><code>FLICKER_MIN_FPS</code></td><td data-th="Standard">75</td><td data-th="Bedeutung">Flimmerschutz: begrenzt die Verweilzeit so, dass mindestens so viele Bilder/s entstehen (0 = aus)</td></tr>
  <tr><td data-th="Parameter"><code>JUMP_SPEED</code>, <code>JUMP_LANDING</code>, <code>JUMP_RAMP</code></td><td data-th="Standard">24, 8, 4</td><td data-th="Bedeutung">Sprünge im Profil ANALOG</td></tr>
  <tr><td data-th="Parameter"><code>HAND/TICK/DIGIT_BRIGHT_PCT</code></td><td data-th="Standard">67, 100, 100</td><td data-th="Bedeutung">Helligkeiten</td></tr>
  <tr><td data-th="Parameter"><code>DIAL_STYLE</code></td><td data-th="Standard">0</td><td data-th="Bedeutung">0 = 1–12, 1 = 12/3/6/9, 2 = I–XII, 3 = XII/III/VI/IX, 4 = Bahnhof (Stundenbalken)</td></tr>
@@ -1257,6 +1258,7 @@ hier unter dem Namen „ScopeClock Sans“.</p>
  <tr><td data-th="Parameter"><code>OLED_CS/DC/RST_PIN</code></td><td data-th="Default">5, 17, 4</td><td data-th="Meaning">OLED connections; CLK 18 and DIN 23 are fixed (hardware SPI)</td></tr>
  <tr><td data-th="Parameter"><code>SCOPE_PROFILE</code></td><td data-th="Default">1</td><td data-th="Meaning">0 = ANALOG, 1 = DIGITAL</td></tr>
  <tr><td data-th="Parameter"><code>BEAM_NS_PER_UNIT</code></td><td data-th="Default">3000</td><td data-th="Meaning">Dwell time per step in ns (≈ 205 frames/s)</td></tr>
+ <tr><td data-th="Parameter"><code>FLICKER_MIN_FPS</code></td><td data-th="Default">75</td><td data-th="Meaning">Flicker guard: limits the dwell time so that at least this many frames/s are drawn (0 = off)</td></tr>
  <tr><td data-th="Parameter"><code>JUMP_SPEED</code>, <code>JUMP_LANDING</code>, <code>JUMP_RAMP</code></td><td data-th="Default">24, 8, 4</td><td data-th="Meaning">Jumps in profile ANALOG</td></tr>
  <tr><td data-th="Parameter"><code>HAND/TICK/DIGIT_BRIGHT_PCT</code></td><td data-th="Default">67, 100, 100</td><td data-th="Meaning">Brightness values</td></tr>
  <tr><td data-th="Parameter"><code>DIAL_STYLE</code></td><td data-th="Default">0</td><td data-th="Meaning">0 = 1–12, 1 = 12/3/6/9, 2 = I–XII, 3 = XII/III/VI/IX, 4 = station clock (hour bars)</td></tr>

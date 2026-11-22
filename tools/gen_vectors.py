@@ -153,6 +153,7 @@ for i, a in enumerate(sys.argv):
 
 # ---------------------------------------------------------------- römisch, serifenlos
 RH = 20                                   # gleiche Höhe wie die 7-Segment-Ziffern
+ROMAN_GAP = 5                             # Abstand zwischen den Zeichen (3 wirkte am Schirm gedrängt)
 ROMAN = {
     'I': (0, [[(0, 0), (0, RH)]]),
     'V': (10, [[(0, RH), (5, 0), (10, RH)]]),
@@ -190,7 +191,7 @@ def roman(hours, radius=91):                 # gleicher Radius wie die 7-Segment
     polys = []
     for h in hours:
         cx, cy = pt(radius, h * 30)
-        polys += place(ROMAN, ROMAN_NUM[h], cx, cy, RH, 3)
+        polys += place(ROMAN, ROMAN_NUM[h], cx, cy, RH, ROMAN_GAP)
     return polys
 
 
