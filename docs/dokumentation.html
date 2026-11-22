@@ -206,8 +206,8 @@ Der Außenkontakt hat Durchgang zu GND. Alle Schraubklemmen leicht nachziehen.</
 <h3>Partitionsschema: zwei Varianten</h3>
 <table style="break-inside:avoid">
  <tr><th>Variante</th><th>Arduino IDE: Partition Scheme</th><th>PlatformIO</th><th>Programmspeicher</th></tr>
- <tr><td><b>A – Huge APP</b> (empfohlen)</td><td>„Huge APP (3MB No OTA/1MB SPIFFS)“</td><td><code>pio run -t upload</code></td><td>1.241.010 von 3.145.728 Byte (<b>39 %</b>)</td></tr>
- <tr><td><b>B – Standard</b></td><td>„Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)“ – Voreinstellung, nichts umstellen</td><td><code>pio run -e standard -t upload</code></td><td>1.240.978 von 1.310.720 Byte (<b>94 %</b>)</td></tr>
+ <tr><td><b>A – Huge APP</b> (empfohlen)</td><td>„Huge APP (3MB No OTA/1MB SPIFFS)“</td><td><code>pio run -t upload</code></td><td>1.241.138 von 3.145.728 Byte (<b>39 %</b>)</td></tr>
+ <tr><td><b>B – Standard</b></td><td>„Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)“ – Voreinstellung, nichts umstellen</td><td><code>pio run -e standard -t upload</code></td><td>1.241.106 von 1.310.720 Byte (<b>94 %</b>)</td></tr>
 </table>
 <p>Beide Varianten laufen gleich. <b>A</b> lässt rund 1,9 MB Platz für Erweiterungen; die Uhr nutzt weder OTA-Updates noch
 SPIFFS, deshalb fehlt dabei nichts. <b>B</b> funktioniert ohne Umstellen, hat aber nur noch etwa 70 KB Reserve. Ein Wechsel
@@ -268,24 +268,24 @@ im Webinterface oder BOOT-Taster 3 s halten.</div></div>
  kurze Masseleitungen und stellt 10:1-Tastköpfe vorher am Kalibrierausgang des Oszilloskops sauber ein (Rechteck ohne Überschwinger);
  ein verstellter Tastkopf verzerrt Ecken und Kreise. Die Empfindlichkeit dann entsprechend umrechnen (10:1 → 50 mV/Div).</li>
  <li>Beide Kanäle auf <b>DC-Kopplung</b>: Bei AC-Kopplung kippt der Gleichanteil weg, das Bild verzerrt und wandert.</li>
+ <li><b>Brummschleife vermeiden:</b> Die BNC-Masse des Oszilloskops liegt am Schutzleiter; ein ebenfalls geerdeter PC am USB kann Brumm ins Bild bringen. Im Dauerbetrieb ein normales USB-Steckernetzteil verwenden.</li>
 </ul>
-<div class="warn"><b>Röhre schonen (Einbrennen):</b> Ein Bild, das stundenlang an derselben Stelle steht, nutzt die Leuchtschicht
+<div class="warn" style="break-inside:auto"><b>Röhre schonen (Einbrennen):</b> Ein Bild, das stundenlang an derselben Stelle steht, nutzt die Leuchtschicht
 einer Röhre dort ab, im X/Y-Betrieb besonders schnell. Intensität nur so hoch wie nötig, die <b>Bildverschiebung gegen
 Einbrennen</b> (Einstellungen → Oszilloskop, ab Werk an) eingeschaltet lassen und das Oszilloskop ausschalten, wenn niemand
 hinsieht. Dunkler machen kann die Firmware das Bild nicht – die Helligkeitsregler verteilen nur die Zeit des Strahls; echtes
-Abdunkeln geht nur mit dem Intensitätsregler oder der Dunkeltastung (Z-Eingang).</div>
+Abdunkeln geht nur mit dem Intensitätsregler oder der Dunkeltastung (Z-Eingang). Digitale Oszilloskope mit LCD brennen nicht ein;
+dort ist die Bildverschiebung unnötig, schadet aber nicht. Ältere digitale Geräte mit Bildröhre (z. B. HP 54200A) brauchen sie.</div>
 <h3>X/Y-Betrieb am digitalen Oszilloskop</h3>
-<p>Ein analoges Oszilloskop zeichnet den Strahl in Echtzeit: Die Linien entstehen genau so, wie die Spannungen sich ändern. Ein
-digitales Oszilloskop tastet beide Kanäle dagegen erst ab, speichert die Werte und stellt sie danach als Punkte oder verbundene
-Punkte dar. Daraus ergeben sich einige Unterschiede:</p>
+<p>Ein analoges Oszilloskop zeichnet in Echtzeit, ein digitales tastet beide Kanäle erst ab und stellt die Werte danach als Punkte
+oder verbundene Punkte dar. Daraus ergeben sich einige Unterschiede:</p>
 <ul>
  <li><b>Profil DIGITAL</b> verwenden: Der Strahl springt dann hart von Linie zu Linie. Bei gebremsten Sprüngen würde das digitale
  Oszilloskop die Zwischenwerte als Punktspur mitten durchs Bild zeigen.</li>
  <li><b>Darstellung „Punkte“</b> statt „Vektoren“: Verbundene Punkte ziehen Linien über jeden Sprung. Bei Punkten bleiben die Sprünge
  unsichtbar, die Linien wirken aber dünner.</li>
- <li><b>Abtastrate und Aufzeichnungslänge:</b> Die Zeitbasis (etwa 1 ms/Div) bestimmt, wie viele Uhrenbilder in einer Aufnahme stecken
- und wie dicht die Punkte liegen. Liegen sie zu weit auseinander, die Zeitbasis kleiner oder die Aufzeichnungslänge größer wählen;
- längere Verweilzeiten (Einstellungen → Oszilloskop) helfen ebenfalls.</li>
+ <li><b>Abtastrate und Aufzeichnungslänge:</b> Die Zeitbasis (etwa 1 ms/Div) bestimmt, wie dicht die Punkte liegen. Liegen sie zu
+ weit auseinander, die Zeitbasis kleiner oder die Aufzeichnungslänge größer wählen; längere Verweilzeiten helfen ebenfalls.</li>
  <li><b>Nachleuchten</b> (Persistence) kurz bis mittel einstellen: Es sammelt mehrere Aufnahmen und beruhigt das Bild. Unendliches
  Nachleuchten zeigt auch die Bewegung des Sekundenzeigers als Fächer.</li>
  <li><b>Bildrate des Displays:</b> Viele digitale Oszilloskope erneuern den Schirm nur einige Male pro Sekunde; das Bild „pulsiert“ dann leicht – normal.</li>
@@ -295,22 +295,20 @@ Punkte dar. Daraus ergeben sich einige Unterschiede:</p>
 Helligkeit darstellt, wirken sie heller oder gleich hell wie der Rest. Der Regler <b>Helligkeit Stunden-/Minutenzeiger</b>
 (Einstellungen → Oszilloskop, ab Werk 55 %) gleicht das aus. Richtwerte:</p>
 <ul>
- <li><b>Röhren-Oszilloskop:</b> 55 %, bei sehr scharfem, dünnem Strahl bis 85 % – dann sind die beiden Kanten getrennt zu sehen.</li>
- <li><b>Tektronix TDS3012 (TDS3000):</b> 50–65 % – Helligkeit nach Trefferhäufigkeit, die doppelt überfahrenen Zeiger leuchten stark.</li>
- <li><b>HP 54200A</b> und <b>Digilent Analog Discovery 2:</b> 100 % – alle Punkte gleich hell; weniger Prozent macht die Zeiger nur lückenhaft.</li>
+ <li><b>Analoge Röhren-Oszilloskope:</b> 55 %, bei sehr scharfem, dünnem Strahl bis 85 % – dann sind die beiden Kanten getrennt zu sehen.</li>
+ <li><b>Digitale Oszilloskope mit Helligkeitsabstufung</b> (Digital Phosphor, Intensity Grading – z. B. Tektronix TDS3000): 50–65 %; die doppelt überfahrenen Zeiger leuchten dort stark.</li>
+ <li><b>Digitale Oszilloskope und USB-Messgeräte ohne Helligkeitsabstufung</b> (z. B. HP 54200A, Digilent Analog Discovery 2): 100 % – alle Punkte gleich hell; weniger Prozent macht die Zeiger nur lückenhaft.</li>
 </ul>
-<p><b>Genau einstellen:</b> erst Fokus und Intensität am Oszilloskop einstellen. Dann auf die Kreuzungen von Zeigern und
+<p><b>Genau einstellen</b> (bei anderen Geräten mit 55 % beginnen): erst Fokus und Intensität am Oszilloskop einstellen. Dann auf die Kreuzungen von Zeigern und
 Minutenstrichen schauen und den Regler in 5-%-Schritten schieben, bis beide gleich hell wirken; kurz auf 100 % und zurück zeigt die
 Richtung. Der Wert gilt sofort und bleibt gespeichert.</p>
-<h3>Hinweise zu einzelnen Geräten</h3>
+<h3>Beispiele für einzelne Geräte (andere sinngemäß)</h3>
 <ul>
  <li><b>Tektronix TDS3012:</b> CH1 = X, CH2 = Y, XY im Display-Menü; kurzes Nachleuchten (Persist) beruhigt das Bild.</li>
  <li><b>HP 54200A:</b> X/Y-Möglichkeiten im Handbuch prüfen; unendliches Nachleuchten sammelt das Bild über mehrere Aufnahmen.</li>
  <li><b>Digilent Analog Discovery 2:</b> Eingänge sind differenziell – 1+ an X, 1− an GND, 2+ an Y, 2− an GND, zusätzlich GND
  verbinden. WaveForms: 500 mV/Div, Offset −1,6 V, 1 ms/Div, Trigger Auto, View → XY.</li>
 </ul>
-<div class="warn"><b>Brummschleife vermeiden:</b> Die Masse der BNC-Eingänge des Oszilloskops liegt am Schutzleiter. Ein ebenfalls geerdeter PC am
-USB kann Brumm ins Bild bringen. Im Dauerbetrieb ein normales USB-Steckernetzteil verwenden.</div>
 
 <h2>7 Bedienung</h2>
 <h3>Webinterface</h3>
@@ -365,8 +363,8 @@ beschrieben wird. Jede Gruppe hat „Auf Standardwerte zurücksetzen“; danach 
  <tr><td>Zifferblatt automatisch wechseln</td><td>aus, jede Minute, alle 5 / 15 Minuten, jede Stunde (aus)</td><td>Zeigt nacheinander alle fünf Zifferblätter.
  Einstellung und gezeigtes Zifferblatt bleiben gespeichert: Nach dem Einschalten geht der Wechsel beim zuletzt gezeigten weiter.</td></tr>
  <tr><td>Bildverschiebung gegen Einbrennen</td><td>an / aus (an)</td><td>Das ganze Bild wandert jede Minute um bis zu 2 Stufen (etwa 0,4 mm)
- auf einem kleinen Kreis weiter. So nutzt sich die Leuchtschicht einer Röhre nicht an immer denselben Stellen ab. Das Testbild
- steht immer still.</td></tr>
+ auf einem kleinen Kreis weiter. So nutzt sich die Leuchtschicht einer Röhre nicht an immer denselben Stellen ab – auch bei
+ digitalen Geräten mit Bildröhre; bei LCD unnötig, aber unschädlich. Das Testbild steht immer still.</td></tr>
  <tr><td>Verweilzeit des Strahls</td><td>1,00–10,00 µs pro Schritt (3,00 µs)</td><td>Wie lange der Strahl auf jedem Wegstück verweilt. <b>Länger</b> = hellere, kräftigere Linien und
  sauberere Ecken, aber weniger Bilder pro Sekunde (mehr Flimmern). <b>Kürzer</b> = ruhigeres Bild, aber dunklere Linien; ein
  langsames Oszilloskop rundet dann Ecken ab. Die geschätzte Bildrate wird beim Ziehen angezeigt (Standard ca. 230 Bilder/s).</td></tr>
@@ -533,7 +531,7 @@ Die Pixelverschiebung versetzt die Anzeige jede Minute um einen Pixel, damit kei
 landen in einem 8-KB-Ringpuffer, den der Debug-Bereich anzeigt.</p>
 <p><b>Vektordaten:</b> Zifferblatt, Ziffern, Zeiger und Testbild sind eigene Zeichnungen, erzeugt mit <code>tools/gen_vectors.py</code>
 (Koordinaten 0–255, 8 Bit je Achse).</p>
-<p><b>Speicher:</b> Programmspeicher 1.240.978 Byte (94 % beim Standard-Partitionsschema, ca. 39 % mit „Huge APP“), globale Variablen
+<p><b>Speicher:</b> Programmspeicher 1.241.106 Byte (94 % beim Standard-Partitionsschema, ca. 39 % mit „Huge APP“), globale Variablen
 74.940 Byte (22 %). Die Webseite liegt gzip-komprimiert im Flash (24 KB), die Schrift (Raleway, auf die benötigten Zeichen reduziert) als WOFF2 (30 KB).</p>
 <h3>Debug-Meldungen (Beispiel)</h3>
 <pre>+0s ESP32 Oscilloscope Clock v2.0

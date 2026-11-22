@@ -205,8 +205,8 @@ The outer contact has continuity to GND. Retighten all screw terminals slightly.
 <h3>Partition scheme: two variants</h3>
 <table style="break-inside:avoid">
  <tr><th>Variant</th><th>Arduino IDE: Partition Scheme</th><th>PlatformIO</th><th>Program memory</th></tr>
- <tr><td><b>A – Huge APP</b> (recommended)</td><td>“Huge APP (3MB No OTA/1MB SPIFFS)”</td><td><code>pio run -t upload</code></td><td>1,241,010 of 3,145,728 bytes (<b>39 %</b>)</td></tr>
- <tr><td><b>B – Standard</b></td><td>“Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)” – the default, nothing to change</td><td><code>pio run -e standard -t upload</code></td><td>1,240,978 of 1,310,720 bytes (<b>94 %</b>)</td></tr>
+ <tr><td><b>A – Huge APP</b> (recommended)</td><td>“Huge APP (3MB No OTA/1MB SPIFFS)”</td><td><code>pio run -t upload</code></td><td>1,241,138 of 3,145,728 bytes (<b>39 %</b>)</td></tr>
+ <tr><td><b>B – Standard</b></td><td>“Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)” – the default, nothing to change</td><td><code>pio run -e standard -t upload</code></td><td>1,241,106 of 1,310,720 bytes (<b>94 %</b>)</td></tr>
 </table>
 <p>Both variants work the same. <b>A</b> leaves about 1.9 MB for extensions; the clock uses neither OTA updates nor SPIFFS,
 so nothing is lost. <b>B</b> works without changing anything but leaves only about 70 KB. You can switch at any time (choose
@@ -267,25 +267,25 @@ in the web interface or by holding the BOOT button for 3 s.</div></div>
  leads short and compensate 10:1 probes beforehand on the oscilloscope's calibration output (square wave without overshoot); a
  misadjusted probe distorts corners and circles. Convert the sensitivity accordingly (10:1 → 50 mV/div).</li>
  <li>Set both channels to <b>DC coupling</b>: with AC coupling the DC component drops away, the picture distorts and drifts.</li>
+ <li><b>Avoid ground loops:</b> the oscilloscope's BNC ground is connected to protective earth; an earthed PC on the USB can bring hum into the picture. For permanent use take a normal USB plug-in power supply.</li>
 </ul>
-<div class="warn"><b>Protect the CRT (burn-in):</b> a picture that stays at the same spot for hours wears the phosphor of a CRT
+<div class="warn" style="break-inside:auto"><b>Protect the CRT (burn-in):</b> a picture that stays at the same spot for hours wears the phosphor of a CRT
 there – particularly quickly in X/Y mode because the beam dwells on a few lines for a long time. Set the intensity only as high as
 necessary, leave the <b>image shift against burn-in</b> switched on (Settings → Oscilloscope, on by default) and switch the
 oscilloscope off when nobody is looking. The firmware cannot make the picture darker by itself: the beam is always somewhere on the
 screen, the brightness controls only distribute its time. Real dimming is only possible with the oscilloscope's intensity control or
-with Z blanking (Z input).</div>
+with Z blanking (Z input). Digital oscilloscopes with an LCD do not burn in;
+there the image shift is unnecessary but does no harm. Older digital instruments with a CRT (e.g. HP 54200A) do need it.</div>
 <h3>X/Y mode on a digital oscilloscope</h3>
-<p>An analogue oscilloscope draws the beam in real time: the lines appear exactly as the voltages change. A digital oscilloscope,
-in contrast, first samples both channels, stores the values and then displays them as dots or connected dots. This leads to a few
-differences:</p>
+<p>An analogue oscilloscope draws in real time; a digital one first samples both channels and then displays the values as dots
+or connected dots. This leads to a few differences:</p>
 <ul>
  <li>Use the <b>DIGITAL profile</b>: the beam then jumps hard from line to line. With braked jumps the digital oscilloscope would show
  the intermediate values as a trail of dots right through the picture.</li>
  <li><b>Display “dots”</b> instead of “vectors”: connected dots draw lines across every jump. With dots the jumps stay invisible, but
  the lines look thinner.</li>
- <li><b>Sample rate and record length:</b> the time base (about 1 ms/div) determines how many clock frames are contained in one
- acquisition and how dense the dots are. If they are too far apart, choose a faster time base or a longer record length; longer
- dwell times (Settings → Oscilloscope) help as well.</li>
+ <li><b>Sample rate and record length:</b> the time base (about 1 ms/div) determines how dense the dots are. If they are too
+ far apart, choose a faster time base or a longer record length; longer dwell times help as well.</li>
  <li>Set <b>persistence</b> to short or medium: it collects several acquisitions and calms the picture. Infinite persistence also
  shows the movement of the second hand as a fan.</li>
  <li><b>Display refresh rate:</b> many digital oscilloscopes update the screen only a few times per second – the second hand then
@@ -296,23 +296,20 @@ differences:</p>
 brightness, they look brighter than or as bright as the rest. The <b>hour/minute hand brightness</b> slider (Settings →
 Oscilloscope, 55 % by default) compensates for this. Guide values:</p>
 <ul>
- <li><b>CRT oscilloscope:</b> 55 %, up to 85 % with a very sharp, thin beam – the two edges are then seen separately.</li>
- <li><b>Tektronix TDS3012 (TDS3000):</b> 50–65 % – brightness by hit frequency, the hands traced twice glow strongly.</li>
- <li><b>HP 54200A</b> and <b>Digilent Analog Discovery 2:</b> 100 % – all dots equally bright; fewer percent only makes the hands patchy.</li>
+ <li><b>Analogue CRT oscilloscopes:</b> 55 %, up to 85 % with a very sharp, thin beam – the two edges are then seen separately.</li>
+ <li><b>Digital oscilloscopes with intensity grading</b> (digital phosphor – e.g. Tektronix TDS3000): 50–65 %; the hands, traced twice, glow strongly there.</li>
+ <li><b>Digital oscilloscopes and USB instruments without intensity grading</b> (e.g. HP 54200A, Digilent Analog Discovery 2): 100 % – all dots equally bright; fewer percent only makes the hands patchy.</li>
 </ul>
-<p><b>How to set the value exactly:</b> first set focus and intensity on the oscilloscope – otherwise the right value changes
-again afterwards. Then look at the spots where the hands cross the minute marks and move the slider in 5 % steps until hands and
-marks look equally bright there. As a check, briefly go to 100 % and back: the difference shows which way to go. The value is
-applied and saved immediately.</p>
-<h3>Notes on individual devices</h3>
+<p><b>How to set the value exactly</b> (with other devices start at 55 %): first set focus and intensity on the oscilloscope.
+Then look at where the hands cross the minute marks and move the slider in 5 % steps until both look equally bright; briefly going
+to 100 % and back shows the direction. The value is applied and saved immediately.</p>
+<h3>Examples of individual devices (others likewise)</h3>
 <ul>
  <li><b>Tektronix TDS3012:</b> CH1 = X, CH2 = Y, XY in the display menu; short persistence (Persist) calms the picture.</li>
  <li><b>HP 54200A:</b> check the X/Y options in the manual; infinite persistence collects the picture over several acquisitions.</li>
  <li><b>Digilent Analog Discovery 2:</b> the inputs are differential – 1+ to X, 1− to GND, 2+ to Y, 2− to GND, also connect
  GND. WaveForms: 500 mV/div, offset −1.6 V, 1 ms/div, trigger Auto, View → XY.</li>
 </ul>
-<div class="warn"><b>Avoid ground loops:</b> the ground of the oscilloscope's BNC inputs is connected to protective earth. An
-earthed PC on the USB can bring hum into the picture. For permanent use take a normal USB plug-in power supply.</div>
 
 <h2>7 Operation</h2>
 <h3>Web interface</h3>
@@ -364,7 +361,8 @@ group has “Reset to defaults”; the change can then be undone with “Undo”
  <tr><td>Change dial automatically</td><td>off, every minute, every 5 / 15 minutes, every hour (off)</td><td>Shows all five dials one after the other.
  The setting and the dial shown are saved: after power-on the change continues with the dial shown last.</td></tr>
  <tr><td>Image shift against burn-in</td><td>on / off (on)</td><td>Every minute the whole picture moves on by up to 2 steps (about 0.4 mm)
- on a small circle, so that the phosphor of a CRT does not always wear at the same spots. The test pattern always stays still.</td></tr>
+ on a small circle, so that the phosphor of a CRT does not always wear at the same spots – also on digital instruments with a CRT;
+ unnecessary but harmless with an LCD. The test pattern always stays still.</td></tr>
  <tr><td>Beam dwell time</td><td>1.00–10.00 µs per step (3.00 µs)</td><td>How long the beam dwells on each piece of its path. <b>Longer</b> = brighter, stronger lines and
  cleaner corners, but fewer frames per second (more flicker). <b>Shorter</b> = calmer picture but darker lines; a slow oscilloscope
  then rounds the corners. The estimated frame rate is shown while dragging (default approx. 230 frames/s).</td></tr>
@@ -533,7 +531,7 @@ its frames (frame rate in the status), an idle hook measures the load of core 0,
 the debug section.</p>
 <p><b>Vector data:</b> dial, numerals, hands and test pattern are original drawings, generated with <code>tools/gen_vectors.py</code>
 (coordinates 0–255, 8 bits per axis).</p>
-<p><b>Memory:</b> program memory 1,240,978 bytes (94 % with the default partition scheme, approx. 39 % with “Huge APP”), global variables
+<p><b>Memory:</b> program memory 1,241,106 bytes (94 % with the default partition scheme, approx. 39 % with “Huge APP”), global variables
 74,940 bytes (22 %). The web page is stored gzip-compressed in flash (24 KB), the font (Raleway, reduced to the characters needed) as WOFF2 (30 KB).</p>
 <h3>Debug messages (example, language English)</h3>
 <pre>+0s ESP32 Oscilloscope Clock v2.0

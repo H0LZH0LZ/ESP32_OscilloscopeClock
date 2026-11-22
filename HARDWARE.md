@@ -175,6 +175,9 @@ Ein digitales Oszilloskop zeigt im X/Y-Modus nur die Abtastwerte **einer Aufnahm
 zu sehen ist, muss das Aufnahmefenster (10 × Zeitbasis) mindestens ein Uhrenbild abdecken.
 Ein Bild dauert ca. 4,3 ms, mit römischen Ziffern ca. 6,2 ms.
 
+**Einbrennen:** Digitale Oszilloskope mit LCD brennen nicht ein – die Bildverschiebung ist dort unnötig, schadet aber nicht.
+Ältere digitale Geräte mit Bildröhre (z. B. HP 54200A) sollten sie eingeschaltet lassen.
+
 | Einstellung | Wert | Grund |
 |---|---|---|
 | Kopplung | DC, beide Kanäle | Die Signale haben einen Gleichanteil (0–3,2 V) |
@@ -184,6 +187,8 @@ Ein Bild dauert ca. 4,3 ms, mit römischen Ziffern ca. 6,2 ms.
 | Trigger | **Auto** (freilaufend) | Die Uhr liefert kein Triggerereignis |
 | Nachleuchten (Persistence) | kurz bis mittel, falls vorhanden | glättet den Bildaufbau |
 | Bandbreitenbegrenzung | ein (z. B. 20 MHz) | weniger Rauschen, die Signale sind langsam |
+
+**Beispiele für einzelne Geräte** – andere Oszilloskope werden sinngemäß eingestellt.
 
 **Tektronix TDS3012**
 - CH1 = X (GPIO25), CH2 = Y (GPIO26). XY-Darstellung im Display-Menü einschalten.
@@ -214,9 +219,10 @@ Ein Bild dauert ca. 4,3 ms, mit römischen Ziffern ca. 6,2 ms.
 Stunden- und Minutenzeiger sind schmale Nadeln aus zwei dicht liegenden Kanten und wirken je nach Oszilloskop heller als der
 Rest. Der Regler „Helligkeit Stunden-/Minutenzeiger“ (Webinterface → Oszilloskop, ab Werk 55 %) gleicht das aus. Richtwerte:
 
-- **Röhren-Oszilloskop:** 55 %, bei sehr scharfem, dünnem Strahl bis 85 %
-- **Tektronix TDS3012 (TDS3000):** 50–65 % (Helligkeit nach Trefferhäufigkeit)
-- **HP 54200A** und **Digilent Analog Discovery 2:** 100 % (alle Punkte gleich hell)
+- **Analoge Röhren-Oszilloskope:** 55 %, bei sehr scharfem, dünnem Strahl bis 85 %
+- **Digitale Oszilloskope mit Helligkeitsabstufung** (z. B. Tektronix TDS3000): 50–65 %
+- **Geräte ohne Helligkeitsabstufung** (z. B. HP 54200A, Digilent Analog Discovery 2): 100 % (alle Punkte gleich hell)
+- **Andere Geräte:** mit 55 % beginnen und abgleichen
 
 **Genau einstellen:** erst Fokus und Intensität am Oszilloskop einstellen. Dann auf die Kreuzungen von Zeigern und
 Minutenstrichen schauen und den Regler in 5-%-Schritten schieben, bis beide dort gleich hell wirken. Kurz auf 100 % und zurück
@@ -236,7 +242,7 @@ am Oszilloskop. Die Werte in `config.h` sind dann nur die Startwerte.
 | `JUMP_SPEED` | Geschwindigkeit der Sprünge zwischen Linien im Profil ANALOG (Standard 24; DIGITAL springt immer hart). Größer = schwächere Rücklaufspur, kleiner (12) für sehr alte Oszilloskope, 0 = harter Sprung |
 | `JUMP_LANDING`, `JUMP_RAMP` | Abbremsen vor dem Linienanfang (Standard 8 und 4). Kleinere `JUMP_LANDING` bei „Haken“ an Linienanfängen |
 | `ZBLANK_PIN`, `ZBLANK_ENABLE`, `ZBLANK_ACTIVE_HIGH` | Optionale Dunkeltastung über den Z-Eingang: GPIO (Standard 27), Startwert aus/an und Pegel. Im beschriebenen Aufbau nicht verdrahtet; ein- und ausschalten im Webinterface (Einstellungen → Oszilloskop) |
-| `HAND_BRIGHT_PCT` | Helligkeit von Stunden- und Minutenzeiger im Verhältnis zum Rest (Standard 55 %; Richtwerte: Röhre 55–85 %, TDS3000 50–65 %, HP 54200A und Analog Discovery 100 %) |
+| `HAND_BRIGHT_PCT` | Helligkeit von Stunden- und Minutenzeiger im Verhältnis zum Rest (Standard 55 %; Richtwerte: Röhre 55–85 %, digital mit Helligkeitsabstufung 50–65 %, ohne Abstufung 100 %) |
 | `TICK_BRIGHT_PCT`, `DIGIT_BRIGHT_PCT` | Helligkeit von Minutenstrichen und Ziffern, 0–100 % (Standard 100 %, 0 = ausgeblendet). Im Webinterface regelbar |
 | `OLED_BRIGHT_PCT` | OLED-Helligkeit 0–100 % (Standard 50 %, 0 = aus) |
 | `OLED_SECONDS` | 1 = OLED-Uhrzeit mit Sekunden, 0 = nur HH:MM |
