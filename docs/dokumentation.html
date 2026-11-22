@@ -42,6 +42,9 @@ figcaption{font-size:8.8pt;color:#555;margin-top:1.2mm}
 .small{font-size:9pt;color:#555}
 b,strong,th{font-weight:700}
 h2+*,h3+*{break-before:avoid}
+/* Einleitungssatz (meist mit Doppelpunkt) bleibt bei der folgenden Liste, Tabelle oder Abbildung */
+p:has(+ul),p:has(+ol),p:has(+table),p:has(+pre),p:has(+figure),p:has(+.two){break-after:avoid}
+h3+ul>li:nth-child(2),h3+ol>li:nth-child(2),li:last-child{break-before:avoid}
 /* Bohrplan-Seite: randlos, damit der Plan in Originalgröße (1:1) auf A4 passt */
 @page bohrplan{size:A4;margin:0}
 .bohrseite{page:bohrplan;break-before:page;break-after:page}
@@ -192,14 +195,13 @@ Antennenkabels vorsichtig senkrecht auf die Buchse am Modul drücken, bis er ein
 sind etwas zu lang: beide <b>einmal unter dem Breakout-Board hindurch</b> zur jeweils gegenüberliegenden Seite führen –
 das Antennenkabel zur Antenne, das Flachbandkabel zur USB-C-Einbaubuchse – und vor dem Festschrauben des Boards einlegen.
 Das Flachbandkabel nicht scharf knicken.</div></div>
-<figure><img src="images/aufbau.svg" style="width:41%"><figcaption>Abb. 5 – Anordnung in der Abzweigdose (maßstäblich); gestrichelt: Kabel unter dem Board und die optionale RTC</figcaption></figure>
+<figure><img src="images/aufbau.svg" style="width:30%"><figcaption>Abb. 5 – Anordnung in der Abzweigdose (maßstäblich); gestrichelt: Kabel unter dem Board und die optionale RTC</figcaption></figure>
 <div class="step"><b class="n">7</b><div><b>Pigtails anklemmen:</b> rote Ader (mit Widerstand) von X in die Klemme <b>P25</b>, von Y in <b>P26</b>, beide braunen Adern (Schirm) in <b>GND</b>.</div></div>
 <div class="step"><b class="n">8</b><div><b>OLED in den Deckel</b> setzen: mit Abstandsbolzen M2,5 hinter dem Fenster befestigen und die 7 Leitungen
 nach der Tabelle oben in die Klemmen legen. Die Leitungen so lang lassen, dass sich der Scharnierdeckel ganz öffnen lässt.</div></div>
 <div class="step"><b class="n">9</b><div><b>Prüfen vor dem ersten Einschalten</b> (Multimeter): Kein Durchgang zwischen 3V3 und GND und zwischen 5V und GND.
 Zwischen dem Mittelstift jedes BNC-Steckers und der Klemme P25 bzw. P26 je ca. 220 Ω, zum Außenkontakt kein Durchgang.
-Der Außenkontakt hat Durchgang zu GND. Alle Schraubklemmen leicht nachziehen.</div></div>
-<div class="step"><b class="n">10</b><div><b>Deckel schließen</b> erst nach der Inbetriebnahme (Kapitel 5).</div></div>
+Der Außenkontakt hat Durchgang zu GND. Alle Schraubklemmen leicht nachziehen. Den <b>Deckel</b> erst nach der Inbetriebnahme schließen (Kapitel 5).</div></div>
 
 <h2>4 Firmware installieren</h2>
 <h3>Mit der Arduino IDE 2.x</h3>
@@ -246,8 +248,8 @@ Das Webinterface ist danach unter <b>http://scope-clock.local</b> oder der IP-Ad
  <li><b>Brummschleife vermeiden:</b> Die BNC-Masse des Oszilloskops liegt am Schutzleiter; ein ebenfalls geerdeter PC am USB kann Brumm ins Bild bringen. Im Dauerbetrieb ein normales USB-Steckernetzteil verwenden.</li>
 </ul>
 <div class="two">
- <figure><img src="images/oszilloskop_testbild.png" style="width:60%"><figcaption>Abb. 7 – Testbild</figcaption></figure>
- <div style="flex:1.3">
+ <figure><img src="images/oszilloskop_testbild.png" style="width:80%"><figcaption>Abb. 7 – Testbild</figcaption></figure>
+ <div style="flex:2.2">
  <p><b>So wird das Testbild genutzt:</b></p>
  <ul>
   <li><b>Mittelkreuz</b> in die Bildmitte schieben (Position X und Y).</li>

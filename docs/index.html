@@ -215,8 +215,8 @@ a.row>span:last-child{font-size:18px}
 <div class="grp"><h2 id="downloads-h" class="coll" role="button" tabindex="0" aria-expanded="true"><span data-l="de">0 Links &amp; Dokumente</span><span data-l="en">0 Links &amp; documents</span></h2>
 <section>
  <a class="row" target="_blank" rel="noopener" href="https://github.com/HolzHolz123/ESP32_OscilloscopeClock"><span><span data-l="de">GitHub – Version 2.0</span><span data-l="en">GitHub – version 2.0</span><small class="note" data-l="de">Diese Firmware mit Quellcode, Anleitung und Werkzeugen</small><small class="note" data-l="en">This firmware with source code, guide and tools</small></span><span>›</span></a>
- <a class="row" target="_blank" rel="noopener" data-l="de" href="ESP32_Oscilloscope_Clock_Dokumentation.pdf?v=92778347"><span>Dokumentation (PDF)<small class="note">Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small></span><span>›</span></a>
- <a class="row" target="_blank" rel="noopener" data-l="en" href="ESP32_Oscilloscope_Clock_Documentation.pdf?v=577a2719"><span>Documentation (PDF)<small class="note">Assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
+ <a class="row" target="_blank" rel="noopener" data-l="de" href="ESP32_Oscilloscope_Clock_Dokumentation.pdf?v=39a44c18"><span>Dokumentation (PDF)<small class="note">Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small></span><span>›</span></a>
+ <a class="row" target="_blank" rel="noopener" data-l="en" href="ESP32_Oscilloscope_Clock_Documentation.pdf?v=da009834"><span>Documentation (PDF)<small class="note">Assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" href="demo/"><span><span data-l="de">Testseite</span><span data-l="en">Test page</span><small class="note" data-l="de">Das Webinterface der Uhr ausprobieren – läuft im Browser, alle Werte sind simuliert</small><small class="note" data-l="en">Try the clock's web interface – runs in the browser, all values are simulated</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" href="https://github.com/maurohh/ESP32_OscilloscopeClock"><span><span data-l="de">GitHub – Original</span><span data-l="en">GitHub – original</span><small class="note" data-l="de">Die ursprüngliche ESP32 Oscilloscope Clock von Mauro Pintus (2018), nach deren Idee diese Version entstand</small><small class="note" data-l="en">The original ESP32 Oscilloscope Clock by Mauro Pintus (2018) that inspired this version</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" href="https://fonts.google.com/specimen/Raleway"><span><span data-l="de">Schriftart Raleway</span><span data-l="en">Font Raleway</span><small class="note" data-l="de">Google Fonts – frei unter der SIL Open Font License 1.1</small><small class="note" data-l="en">Google Fonts – free under the SIL Open Font License 1.1</small></span><span>›</span></a>
@@ -410,8 +410,7 @@ Das Flachbandkabel nicht scharf knicken.</div></div>
 nach der Tabelle oben in die Klemmen legen. Die Leitungen so lang lassen, dass sich der Scharnierdeckel ganz öffnen lässt.</div></div>
 <div class="step"><b class="n">9</b><div><b>Prüfen vor dem ersten Einschalten</b> (Multimeter): Kein Durchgang zwischen 3V3 und GND und zwischen 5V und GND.
 Zwischen dem Mittelstift jedes BNC-Steckers und der Klemme P25 bzw. P26 je ca. 220 Ω, zum Außenkontakt kein Durchgang.
-Der Außenkontakt hat Durchgang zu GND. Alle Schraubklemmen leicht nachziehen.</div></div>
-<div class="step"><b class="n">10</b><div><b>Deckel schließen</b> erst nach der Inbetriebnahme (Kapitel 5).</div></div>
+Der Außenkontakt hat Durchgang zu GND. Alle Schraubklemmen leicht nachziehen. Den <b>Deckel</b> erst nach der Inbetriebnahme schließen (Kapitel 5).</div></div>
 </div><div data-l="en">
 <figure><img loading="lazy" src="images/verdrahtung_en.svg"><figcaption>Fig. 4 – Wiring. The DevKit sits in the breakout board; all wires go into the screw terminals of the same name.</figcaption></figure>
 <div class="tw"><table style="font-size:8.2pt">
@@ -469,8 +468,7 @@ panel socket – and lay them in place before screwing the board down. Do not ki
 according to the table above. Leave the wires long enough for the hinged lid to open fully.</div></div>
 <div class="step"><b class="n">9</b><div><b>Check before the first power-on</b> (multimeter): no continuity between 3V3 and GND and between 5V and GND.
 Approx. 220 Ω between the centre pin of each BNC plug and terminal P25 or P26, no continuity to the outer contact.
-The outer contact has continuity to GND. Retighten all screw terminals slightly.</div></div>
-<div class="step"><b class="n">10</b><div><b>Close the lid</b> only after commissioning (chapter 5) so that everything is still accessible if needed.</div></div>
+The outer contact has continuity to GND. Retighten all screw terminals slightly. <b>Close the lid</b> only after commissioning (chapter 5) so that everything is still accessible if needed.</div></div>
 </div></section></div>
 
 <div class="grp closed"><h2 id="kap4" class="coll" role="button" tabindex="0" aria-expanded="false"><span data-l="de">4 Firmware installieren</span><span data-l="en">4 Installing the firmware</span></h2>
@@ -557,7 +555,7 @@ The web interface is then reachable at <b>http://scope-clock.local</b> or at the
 </ul>
 <div class="two">
  <figure><img loading="lazy" src="images/oszilloskop_testbild.png"><figcaption>Abb. 7 – Testbild</figcaption></figure>
- <div style="flex:1.3">
+ <div style="flex:2.2">
  <p><b>So wird das Testbild genutzt:</b></p>
  <ul>
   <li><b>Mittelkreuz</b> in die Bildmitte schieben (Position X und Y).</li>
@@ -629,7 +627,7 @@ dort ist die Bildverschiebung unnötig, schadet aber nicht. Ältere digitale Ger
 </ul>
 <div class="two">
  <figure><img loading="lazy" src="images/oszilloskop_testbild.png"><figcaption>Fig. 7 – Test pattern</figcaption></figure>
- <div style="flex:1.3">
+ <div style="flex:2.8">
  <p><b>How to use the test pattern:</b></p>
  <ul>
   <li>Move the <b>centre cross</b> to the centre of the screen (position X and Y).</li>

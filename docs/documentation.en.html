@@ -42,6 +42,9 @@ figcaption{font-size:8.8pt;color:#555;margin-top:1.2mm}
 .small{font-size:9pt;color:#555}
 b,strong,th{font-weight:700}
 h2+*,h3+*{break-before:avoid}
+/* Einleitungssatz (meist mit Doppelpunkt) bleibt bei der folgenden Liste, Tabelle oder Abbildung */
+p:has(+ul),p:has(+ol),p:has(+table),p:has(+pre),p:has(+figure),p:has(+.two){break-after:avoid}
+h3+ul>li:nth-child(2),h3+ol>li:nth-child(2),li:last-child{break-before:avoid}
 /* Bohrplan-Seite: randlos, damit der Plan in Originalgröße (1:1) auf A4 passt */
 @page bohrplan{size:A4;margin:0}
 .bohrseite{page:bohrplan;break-before:page;break-after:page}
@@ -191,14 +194,13 @@ the terminal labels would then no longer match. Carefully press the small IPEX p
 straight onto the socket on the module until it clicks. The antenna cable and the USB flat cable are a little too long: run both
 <b>once underneath the breakout board</b> to the opposite side – the antenna cable to the antenna, the flat cable to the USB-C
 panel socket – and lay them in place before screwing the board down. Do not kink the flat cable sharply.</div></div>
-<figure><img src="images/aufbau_en.svg" style="width:46%"><figcaption>Fig. 5 – Layout in the junction box (to scale); dashed: cables under the board and the optional RTC</figcaption></figure>
+<figure><img src="images/aufbau_en.svg" style="width:32%"><figcaption>Fig. 5 – Layout in the junction box (to scale); dashed: cables under the board and the optional RTC</figcaption></figure>
 <div class="step"><b class="n">7</b><div><b>Connect the pigtails:</b> red lead (with resistor) of X into terminal <b>P25</b>, of Y into <b>P26</b>, both brown leads (shield) into <b>GND</b>.</div></div>
 <div class="step"><b class="n">8</b><div><b>Fit the OLED in the lid:</b> mount it behind the window with M2.5 standoffs and put the 7 wires into the terminals
 according to the table above. Leave the wires long enough for the hinged lid to open fully.</div></div>
 <div class="step"><b class="n">9</b><div><b>Check before the first power-on</b> (multimeter): no continuity between 3V3 and GND and between 5V and GND.
 Approx. 220 Ω between the centre pin of each BNC plug and terminal P25 or P26, no continuity to the outer contact.
-The outer contact has continuity to GND. Retighten all screw terminals slightly.</div></div>
-<div class="step"><b class="n">10</b><div><b>Close the lid</b> only after commissioning (chapter 5) so that everything is still accessible if needed.</div></div>
+The outer contact has continuity to GND. Retighten all screw terminals slightly. <b>Close the lid</b> only after commissioning (chapter 5) so that everything is still accessible if needed.</div></div>
 
 <h2>4 Installing the firmware</h2>
 <h3>With the Arduino IDE 2.x</h3>
@@ -245,8 +247,8 @@ The web interface is then reachable at <b>http://scope-clock.local</b> or at the
  <li><b>Avoid ground loops:</b> the oscilloscope's BNC ground is connected to protective earth; an earthed PC on the USB can bring hum into the picture. For permanent use take a normal USB plug-in power supply.</li>
 </ul>
 <div class="two">
- <figure><img src="images/oszilloskop_testbild.png" style="width:60%"><figcaption>Fig. 7 – Test pattern</figcaption></figure>
- <div style="flex:1.3">
+ <figure><img src="images/oszilloskop_testbild.png" style="width:80%"><figcaption>Fig. 7 – Test pattern</figcaption></figure>
+ <div style="flex:2.8">
  <p><b>How to use the test pattern:</b></p>
  <ul>
   <li>Move the <b>centre cross</b> to the centre of the screen (position X and Y).</li>
