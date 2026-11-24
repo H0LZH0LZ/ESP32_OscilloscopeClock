@@ -173,13 +173,13 @@ button,input,.set select,.logsel,#nav select,pre,.scope,#nav a{border-radius:var
 #nav a:active,#nav a:hover{background:var(--hov)}
 #nav a.cur,#nav a.subnav.cur{background:var(--hov)}
 @media (min-width:1100px){
- #nav{transform:none;width:280px;z-index:20;padding-top:calc(env(safe-area-inset-top) + 80px)}
+ #nav{transform:none;width:280px;z-index:20;top:calc(env(safe-area-inset-top) + 64px);padding-top:16px}
  #menuBtn,#shade{display:none}
  h1{padding-left:24px}
  main{margin-left:280px;max-width:none;padding:64px 40px 40px}
  main>*:not(h1){max-width:760px;margin-left:auto;margin-right:auto}}
 :root[data-theme="dark"]{--scope-bg:#050805;--scope-trace:#b6ffc4;--scope-glow:rgba(80,255,120,.18);--scope-halo:#3dff6a;--scope-grid:rgba(120,255,140,.08);--bg:#000;--card:#1c1c1e;--fg:#fff;--mute:#d0d0d6;--line:#2c2c2e;--acc:#30d158;--warn:#ffb340;--err:#ff6961}
-.demo{background:var(--card);border:1px dashed var(--line);border-radius:12px;padding:10px 14px;margin:10px 0 0;font-size:14px;color:var(--mute);display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;justify-content:center;text-align:center}
+.demo{background:var(--card);border:1px dashed var(--line);border-radius:12px;padding:10px 14px;margin:10px auto 0;font-size:14px;color:var(--mute);display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;justify-content:center;text-align:center}
 .demo b{color:var(--fg)}.demo button{width:auto;min-height:36px;margin:0;font-size:14px}
 </style></head><body>
 

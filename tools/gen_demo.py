@@ -66,7 +66,7 @@ def main():
     dark = re.search(r'@media \(prefers-color-scheme:dark\)\{:root:not\(\[data-theme="light"\]\)\{(.*?)\}\}', style).group(1)
     style += ':root[data-theme="dark"]{' + dark + '}\n'
     style += ('.demo{background:var(--card);border:1px dashed var(--line);border-radius:12px;padding:10px 14px;'
-              'margin:10px 0 0;font-size:14px;color:var(--mute);display:flex;flex-wrap:wrap;gap:8px 12px;'
+              'margin:10px auto 0;font-size:14px;color:var(--mute);display:flex;flex-wrap:wrap;gap:8px 12px;'
               'align-items:center;justify-content:center;text-align:center}\n'
               '.demo b{color:var(--fg)}.demo button{width:auto;min-height:36px;margin:0;font-size:14px}\n')
 
