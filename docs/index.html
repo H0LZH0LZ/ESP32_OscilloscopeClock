@@ -223,8 +223,8 @@ a.row>span:last-child{font-size:18px}
 <div class="grp"><h2 id="downloads-h" class="coll" role="button" tabindex="0" aria-expanded="true"><span data-l="de">0 Links &amp; Dokumente</span><span data-l="en">0 Links &amp; documents</span></h2>
 <section>
  <a class="row" target="_blank" rel="noopener" href="https://github.com/HolzHolz123/ESP32_OscilloscopeClock"><span><span data-l="de">GitHub – Version 2.0</span><span data-l="en">GitHub – version 2.0</span><small class="note" data-l="de">Diese Firmware mit Quellcode, Anleitung und Werkzeugen</small><small class="note" data-l="en">This firmware with source code, guide and tools</small></span><span>›</span></a>
- <a class="row" target="_blank" rel="noopener" data-l="de" href="ESP32_Oscilloscope_Clock_Dokumentation.pdf?v=997edb91"><span>Dokumentation (PDF)<small class="note">Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small></span><span>›</span></a>
- <a class="row" target="_blank" rel="noopener" data-l="en" href="ESP32_Oscilloscope_Clock_Documentation.pdf?v=6144c311"><span>Documentation (PDF)<small class="note">Assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
+ <a class="row" target="_blank" rel="noopener" data-l="de" href="ESP32_Oscilloscope_Clock_Dokumentation.pdf?v=7b77d783"><span>Dokumentation (PDF)<small class="note">Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small></span><span>›</span></a>
+ <a class="row" target="_blank" rel="noopener" data-l="en" href="ESP32_Oscilloscope_Clock_Documentation.pdf?v=85fed088"><span>Documentation (PDF)<small class="note">Assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" href="demo/"><span><span data-l="de">Testseite</span><span data-l="en">Test page</span><small class="note" data-l="de">Das Webinterface der Uhr ausprobieren – läuft im Browser, alle Werte sind simuliert</small><small class="note" data-l="en">Try the clock's web interface – runs in the browser, all values are simulated</small></span><span>›</span></a>
  <a class="row" href="#kap4"><span><span data-l="de">Firmware installieren</span><span data-l="en">Install firmware</span><small class="note" data-l="de">Direkt im Browser auf den ESP32 schreiben – oder den Sketch mit Arduino Cloud hochladen</small><small class="note" data-l="en">Write it to the ESP32 straight from the browser – or upload the sketch with Arduino Cloud</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" href="https://github.com/maurohh/ESP32_OscilloscopeClock"><span><span data-l="de">GitHub – Original</span><span data-l="en">GitHub – original</span><small class="note" data-l="de">Die ursprüngliche ESP32 Oscilloscope Clock von Mauro Pintus (2018), nach deren Idee diese Version entstand</small><small class="note" data-l="en">The original ESP32 Oscilloscope Clock by Mauro Pintus (2018) that inspired this version</small></span><span>›</span></a>
@@ -250,7 +250,7 @@ Zifferblatt, Ziffern und Zeiger etwa 200-mal pro Sekunde nach.</p>
  <li><b>Testbild</b> zum Einstellen des Oszilloskops, nach jedem Einschalten automatisch 10 Sekunden lang.</li>
 </ul>
 <figure><img loading="lazy" src="images/oled_normal.png"><figcaption>Abb. 2 – OLED im Betrieb</figcaption></figure>
-<figure><img loading="lazy" src="images/web_pc_dunkel.png"><figcaption>Abb. 3 – Webinterface am PC (dunkles Design)</figcaption></figure>
+<figure><img loading="lazy" src="images/web_pc_hell.png"><figcaption>Abb. 3 – Webinterface am PC (helles Design)</figcaption></figure>
 
 <div class="note"><b>Stand der Tests:</b> Die Firmware baut fehlerfrei und ohne Warnungen (Arduino-CLI, esp32 3.3.12). Strahlführung,
 OLED-Inhalt, BOOT-Taster und Webinterface wurden am PC simuliert bzw. im Browser getestet. Der Test an echter Hardware steht noch aus.</div>
@@ -270,7 +270,7 @@ built-in digital-to-analogue converters (DACs) and traces the dial, numerals and
  <li><b>Test pattern</b> for adjusting the oscilloscope, shown automatically for 10 seconds after every power-on.</li>
 </ul>
 <figure><img loading="lazy" src="images/oled_normal_en.png"><figcaption>Fig. 2 – OLED in operation</figcaption></figure>
-<figure><img loading="lazy" src="images/web_pc_dunkel_en.png"><figcaption>Fig. 3 – Web interface on a PC (dark theme)</figcaption></figure>
+<figure><img loading="lazy" src="images/web_pc_hell_en.png"><figcaption>Fig. 3 – Web interface on a PC (light theme)</figcaption></figure>
 
 <div class="note"><b>Test status:</b> the firmware builds without errors and without warnings (Arduino CLI, esp32 3.3.12). Beam path,
 OLED content, BOOT button and web interface were simulated on a PC or tested in the browser. The test on real hardware is still pending.</div>
@@ -409,7 +409,7 @@ Antennenkabels vorsichtig senkrecht auf die Buchse am Modul drücken, bis er ein
 sind etwas zu lang: beide <b>einmal unter dem Breakout-Board hindurch</b> zur jeweils gegenüberliegenden Seite führen –
 das Antennenkabel zur Antenne, das Flachbandkabel zur USB-C-Einbaubuchse – und vor dem Festschrauben des Boards einlegen.
 Das Flachbandkabel nicht scharf knicken.</div></div>
-<figure><img loading="lazy" src="images/aufbau.svg"><figcaption>Abb. 5 – Anordnung in der Abzweigdose (maßstäblich); gestrichelt: Kabel unter dem Board und die optionale RTC</figcaption></figure>
+<figure><img loading="lazy" src="images/aufbau.svg"><figcaption>Abb. 5 – Anordnung in der Abzweigdose (maßstäblich); gestrichelt: Kabel unter dem Board</figcaption></figure>
 <div class="step"><b class="n">7</b><div><b>Pigtails anklemmen:</b> rote Ader (mit Widerstand) von X in die Klemme <b>P25</b>, von Y in <b>P26</b>, beide braunen Adern (Schirm) in <b>GND</b>.</div></div>
 <div class="step"><b class="n">8</b><div><b>OLED in den Deckel</b> setzen: mit Abstandsbolzen M2,5 hinter dem Fenster befestigen und die 7 Leitungen
 nach der Tabelle oben in die Klemmen legen. Die Leitungen so lang lassen, dass sich der Scharnierdeckel ganz öffnen lässt.</div></div>
@@ -467,7 +467,7 @@ the terminal labels would then no longer match. Carefully press the small IPEX p
 straight onto the socket on the module until it clicks. The antenna cable and the USB flat cable are a little too long: run both
 <b>once underneath the breakout board</b> to the opposite side – the antenna cable to the antenna, the flat cable to the USB-C
 panel socket – and lay them in place before screwing the board down. Do not kink the flat cable sharply.</div></div>
-<figure><img loading="lazy" src="images/aufbau_en.svg"><figcaption>Fig. 5 – Layout in the junction box (to scale); dashed: cables under the board and the optional RTC</figcaption></figure>
+<figure><img loading="lazy" src="images/aufbau_en.svg"><figcaption>Fig. 5 – Layout in the junction box (to scale); dashed: cables under the board</figcaption></figure>
 <div class="step"><b class="n">7</b><div><b>Connect the pigtails:</b> red lead (with resistor) of X into terminal <b>P25</b>, of Y into <b>P26</b>, both brown leads (shield) into <b>GND</b>.</div></div>
 <div class="step"><b class="n">8</b><div><b>Fit the OLED in the lid:</b> mount it behind the window with M2.5 standoffs and put the 7 wires into the terminals
 according to the table above. Leave the wires long enough for the hinged lid to open fully.</div></div>
