@@ -201,6 +201,15 @@ Approx. 220 Ω between the centre pin of each BNC plug and terminal P25 or P26, 
 The outer contact has continuity to GND. Retighten all screw terminals slightly. <b>Close the lid</b> only after commissioning (chapter 5) so that everything is still accessible if needed.</div></div>
 
 <h2>4 Installing the firmware</h2>
+<h3>Without Arduino software: in the browser</h3>
+<p>The quickest way is the project page (section <b>“Install firmware”</b>): connect the ESP32 via USB, click “Install firmware” in
+<b>Chrome or Edge on a PC</b>, choose the port, done. GitHub builds the firmware there automatically after every change (board
+“ESP32 Dev Module”, variant B below). For the first installation tick “Erase device”, leave it out for an update – Wi-Fi networks and
+settings are then kept. Your own start values in <code>config.h</code> are not possible this way; use one of the following options for that.</p>
+<h3>With Arduino Cloud (app.arduino.cc)</h3>
+<p>Download the sketch from the project page as a ZIP, import it in the Arduino Cloud Editor under “Sketches” → “Import”, install the
+<b>Arduino Cloud Agent</b> once, choose the board <b>ESP32 Dev Module</b> and the library <b>U8g2</b> and upload. The default partition
+scheme applies (variant B). Arduino Cloud is not connected to GitHub: import the ZIP file again for a new version.</p>
 <h3>With the Arduino IDE 2.x</h3>
 <ol>
  <li>Boards manager: install <b>esp32 by Espressif</b> (version 3.x, 2.0.x also works) and select the board <b>ESP32 Dev Module</b>.</li>
@@ -212,7 +221,7 @@ The outer contact has continuity to GND. Retighten all screw terminals slightly.
 <h3>Partition scheme: two variants</h3>
 <table style="break-inside:avoid">
  <tr><th>Variant</th><th>Arduino IDE: Partition Scheme</th><th>PlatformIO</th><th>Program memory</th></tr>
- <tr><td><b>A – Huge APP</b> (recommended)</td><td>“Huge APP (3MB No OTA/1MB SPIFFS)”</td><td><code>pio run -t upload</code></td><td>1,241,138 of 3,145,728 bytes (<b>39 %</b>)</td></tr>
+ <tr><td><b>A – Huge APP</b> (recommended)</td><td>“Huge APP (3MB No OTA/1MB SPIFFS)”</td><td><code>pio run -t upload</code></td><td>1,243,154 of 3,145,728 bytes (<b>39 %</b>)</td></tr>
  <tr><td><b>B – Standard</b></td><td>“Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)” – the default, nothing to change</td><td><code>pio run -e standard -t upload</code></td><td>1,243,154 of 1,310,720 bytes (<b>94 %</b>)</td></tr>
 </table>
 <p>Both variants work the same. <b>A</b> leaves about 1.9 MB for extensions; the clock uses neither OTA updates nor SPIFFS,
@@ -604,6 +613,7 @@ the debug section.</p>
  <tr><td><code>vectors.h</code></td><td>Preview data for the web interface (from <code>tools/gen_vectors.py --vectors</code>)</td></tr>
  <tr><td><code>webpage.h</code>, <code>font.h</code>, <code>icon.h</code></td><td>Web page: source <code>web/index.html</code>; after changes run <code>python3 tools/gen_webpage.py</code> (removes comments, gzip, approx. 24 instead of 82 KB). Font, app icon</td></tr>
  <tr><td><code>docs/demo/index.html</code></td><td>test page of the web interface without a clock, open it in a browser (generated with <code>tools/gen_demo.py</code>)</td></tr>
+ <tr><td><code>docs/firmware/</code></td><td>firmware for “Install firmware” and sketch ZIP for Arduino Cloud (built by GitHub, <code>tools/gen_firmware.py</code>)</td></tr>
  <tr><td><code>docs/</code></td><td>this documentation in German and English (sources <code>dokumentation.html</code>, <code>documentation.en.html</code>), images</td></tr>
  <tr><td><code>README.md</code>, <code>HARDWARE.md</code>, <code>SOFTWARE.md</code></td><td>Summary on GitHub (German and English)</td></tr>
 </table>

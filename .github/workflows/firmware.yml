@@ -1,0 +1,62 @@
+# Baut die Firmware bei jeder Änderung am Sketch und legt sie für die Projektseite ab:
+#   docs/firmware/*.bin + manifest.json  → Knopf „Firmware installieren“ (ESP Web Tools)
+#   docs/firmware/ESP32_OscilloscopeClock_v2.0.zip → Import in den Arduino Cloud Editor
+# Gebaut wird wie in der Anleitung: Board „ESP32 Dev Module“, Standard-Partitionsschema,
+# esp32-Core 3.3.12, U8g2. Warnungen lassen den Build fehlschlagen.
+name: Firmware bauen
+
+on:
+  push:
+    branches: [claude/esp32-oscilloscope-clock-8t207x]
+    paths:
+      - 'ESP32_OscilloscopeClock_v2.0/**'
+      - 'tools/gen_firmware.py'
+      - '.github/workflows/firmware.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: firmware
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: arduino/setup-arduino-cli@v2
+
+      - name: esp32-Core und U8g2 installieren
+        run: |
+          arduino-cli config init
+          arduino-cli config add board_manager.additional_urls https://espressif.github.io/arduino-esp32/package_esp32_index.json
+          arduino-cli core update-index
+          arduino-cli core install esp32:esp32@3.3.12
+          arduino-cli lib install "U8g2@2.36.19"
+
+      - name: Kompilieren (ohne Warnungen)
+        run: |
+          arduino-cli compile --fqbn esp32:esp32:esp32 --warnings all --build-path build \
+            ESP32_OscilloscopeClock_v2.0 2>&1 | tee compile.log
+          if grep -iq "warning:" compile.log; then echo "::error::Der Build erzeugt Warnungen"; exit 1; fi
+
+      - name: Dateien für die Projektseite ablegen
+        run: python3 tools/gen_firmware.py build
+
+      - name: Als Artefakt bereitstellen
+        uses: actions/upload-artifact@v4
+        with:
+          name: firmware
+          path: docs/firmware/
+
+      - name: Änderungen übernehmen
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/firmware
+          if git diff --cached --quiet; then echo "Firmware unverändert"; exit 0; fi
+          git commit -m "Firmware für die Projektseite neu gebaut (${GITHUB_SHA::7})"
+          git push

@@ -202,6 +202,16 @@ Zwischen dem Mittelstift jedes BNC-Steckers und der Klemme P25 bzw. P26 je ca. 2
 Der Außenkontakt hat Durchgang zu GND. Alle Schraubklemmen leicht nachziehen. Den <b>Deckel</b> erst nach der Inbetriebnahme schließen (Kapitel 5).</div></div>
 
 <h2>4 Firmware installieren</h2>
+<h3>Ohne Arduino-Software: im Browser</h3>
+<p>Am schnellsten geht es über die Projektseite (Abschnitt <b>„Firmware installieren“</b>): ESP32 per USB anschließen, in
+<b>Chrome oder Edge am PC</b> auf „Firmware installieren“ klicken, den Anschluss wählen, fertig. Die Firmware dort baut GitHub bei jeder
+Änderung automatisch (Board „ESP32 Dev Module“, Variante B unten). Bei der ersten Installation „Erase device“ ankreuzen, bei einem
+Update weglassen – dann bleiben WLANs und Einstellungen erhalten. Eigene Startwerte in <code>config.h</code> gehen so nicht;
+dafür eine der folgenden Möglichkeiten nutzen.</p>
+<h3>Mit Arduino Cloud (app.arduino.cc)</h3>
+<p>Den Sketch von der Projektseite als ZIP herunterladen, im Arduino Cloud Editor unter „Sketches“ → „Import“ einlesen, einmalig den
+<b>Arduino Cloud Agent</b> installieren, Board <b>ESP32 Dev Module</b> und Bibliothek <b>U8g2</b> wählen und hochladen. Es gilt das
+Standard-Partitionsschema (Variante B). Arduino Cloud ist nicht mit GitHub verbunden: Für eine neue Version die ZIP-Datei erneut importieren.</p>
 <h3>Mit der Arduino IDE 2.x</h3>
 <ol>
  <li>Boardverwalter: <b>esp32 by Espressif</b> installieren (Version 3.x, auch 2.0.x geht), Board <b>ESP32 Dev Module</b> wählen.</li>
@@ -213,7 +223,7 @@ Der Außenkontakt hat Durchgang zu GND. Alle Schraubklemmen leicht nachziehen. D
 <h3>Partitionsschema: zwei Varianten</h3>
 <table style="break-inside:avoid">
  <tr><th>Variante</th><th>Arduino IDE: Partition Scheme</th><th>PlatformIO</th><th>Programmspeicher</th></tr>
- <tr><td><b>A – Huge APP</b> (empfohlen)</td><td>„Huge APP (3MB No OTA/1MB SPIFFS)“</td><td><code>pio run -t upload</code></td><td>1.241.138 von 3.145.728 Byte (<b>39 %</b>)</td></tr>
+ <tr><td><b>A – Huge APP</b> (empfohlen)</td><td>„Huge APP (3MB No OTA/1MB SPIFFS)“</td><td><code>pio run -t upload</code></td><td>1.243.154 von 3.145.728 Byte (<b>39 %</b>)</td></tr>
  <tr><td><b>B – Standard</b></td><td>„Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)“ – Voreinstellung, nichts umstellen</td><td><code>pio run -e standard -t upload</code></td><td>1.243.154 von 1.310.720 Byte (<b>94 %</b>)</td></tr>
 </table>
 <p>Beide Varianten laufen gleich. <b>A</b> lässt rund 1,9 MB Platz für Erweiterungen; die Uhr nutzt weder OTA-Updates noch
@@ -604,6 +614,7 @@ landen in einem 8-KB-Ringpuffer, den der Debug-Bereich anzeigt.</p>
  <tr><td><code>vectors.h</code></td><td>Vorschau-Daten für das Webinterface (aus <code>tools/gen_vectors.py --vectors</code>)</td></tr>
  <tr><td><code>webpage.h</code>, <code>font.h</code>, <code>icon.h</code></td><td>Webseite: Quelle <code>web/index.html</code>; nach Änderungen <code>python3 tools/gen_webpage.py</code> ausführen (entfernt Kommentare, gzip, ca. 24 statt 82 KB). Schrift, App-Symbol</td></tr>
  <tr><td><code>docs/demo/index.html</code></td><td>Testseite des Webinterfaces ohne Uhr, im Browser öffnen (erzeugt mit <code>tools/gen_demo.py</code>)</td></tr>
+ <tr><td><code>docs/firmware/</code></td><td>Firmware für „Firmware installieren“ und Sketch-ZIP für Arduino Cloud (baut GitHub, <code>tools/gen_firmware.py</code>)</td></tr>
  <tr><td><code>docs/</code></td><td>diese Dokumentation auf Deutsch und Englisch (Quellen <code>dokumentation.html</code>, <code>documentation.en.html</code>), Bilder</td></tr>
  <tr><td><code>README.md</code>, <code>HARDWARE.md</code>, <code>SOFTWARE.md</code></td><td>Kurzfassung auf GitHub (Deutsch und Englisch)</td></tr>
 </table>

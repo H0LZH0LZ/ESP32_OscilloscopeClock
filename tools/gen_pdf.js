@@ -19,14 +19,14 @@ const DOCS = {
     const p = await b.newPage();
     await p.goto('file://' + path.join(root, 'docs', d.src), { waitUntil: 'networkidle' });
     // Umbruchregeln: Absätze, Kästen, Schritte und Abbildungen nie teilen (CSS). Tabellen nur dann
-    // zwischen ihren Zeilen bzw. Punkten umbrechen, wenn sie fast eine ganze Seite füllen (über 85 %) – sonst bleiben
+    // zwischen ihren Zeilen bzw. Punkten umbrechen, wenn sie höher als 40 % einer Seite sind (Kopfzeile wird wiederholt) – sonst bleiben
     // sie zusammen. Gemessen wird bei Druckbreite (A4 abzüglich der Ränder).
     await p.emulateMedia({ media: 'print' });
     await p.setViewportSize({ width: Math.round(176 / 25.4 * 96), height: 1000 });
     await p.evaluate(() => {
       const page = 259 / 25.4 * 96;
       for (const e of document.querySelectorAll('table'))
-        e.style.breakInside = e.getBoundingClientRect().height > 0.85 * page ? 'auto' : 'avoid';
+        e.style.breakInside = e.getBoundingClientRect().height > 0.4 * page ? 'auto' : 'avoid';
       // Listen dürfen zwischen zwei Punkten umbrechen
       // (die ersten beiden und der letzte Punkt bleiben bei ihren Nachbarn, siehe CSS)
       for (const e of document.querySelectorAll('ul,ol')) e.style.breakInside = 'auto';
