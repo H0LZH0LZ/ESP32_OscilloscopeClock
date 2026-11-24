@@ -223,8 +223,8 @@ a.row>span:last-child{font-size:18px}
 <div class="grp"><h2 id="downloads-h" class="coll" role="button" tabindex="0" aria-expanded="true"><span data-l="de">0 Links &amp; Dokumente</span><span data-l="en">0 Links &amp; documents</span></h2>
 <section>
  <a class="row" target="_blank" rel="noopener" href="https://github.com/HolzHolz123/ESP32_OscilloscopeClock"><span><span data-l="de">GitHub – Version 2.0</span><span data-l="en">GitHub – version 2.0</span><small class="note" data-l="de">Diese Firmware mit Quellcode, Anleitung und Werkzeugen</small><small class="note" data-l="en">This firmware with source code, guide and tools</small></span><span>›</span></a>
- <a class="row" target="_blank" rel="noopener" data-l="de" href="ESP32_Oscilloscope_Clock_Dokumentation.pdf?v=8c453073"><span>Dokumentation (PDF)<small class="note">Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small></span><span>›</span></a>
- <a class="row" target="_blank" rel="noopener" data-l="en" href="ESP32_Oscilloscope_Clock_Documentation.pdf?v=f34e6f33"><span>Documentation (PDF)<small class="note">Assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
+ <a class="row" target="_blank" rel="noopener" data-l="de" href="ESP32_Oscilloscope_Clock_Dokumentation.pdf?v=6e353e0f"><span>Dokumentation (PDF)<small class="note">Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small></span><span>›</span></a>
+ <a class="row" target="_blank" rel="noopener" data-l="en" href="ESP32_Oscilloscope_Clock_Documentation.pdf?v=96d4862d"><span>Documentation (PDF)<small class="note">Assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" href="demo/"><span><span data-l="de">Testseite</span><span data-l="en">Test page</span><small class="note" data-l="de">Das Webinterface der Uhr ausprobieren – läuft im Browser, alle Werte sind simuliert</small><small class="note" data-l="en">Try the clock's web interface – runs in the browser, all values are simulated</small></span><span>›</span></a>
  <a class="row" href="#kap4"><span><span data-l="de">Firmware installieren</span><span data-l="en">Install firmware</span><small class="note" data-l="de">Direkt im Browser auf den ESP32 schreiben – oder den Sketch mit Arduino Cloud hochladen</small><small class="note" data-l="en">Write it to the ESP32 straight from the browser – or upload the sketch with Arduino Cloud</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" href="https://github.com/maurohh/ESP32_OscilloscopeClock"><span><span data-l="de">GitHub – Original</span><span data-l="en">GitHub – original</span><small class="note" data-l="de">Die ursprüngliche ESP32 Oscilloscope Clock von Mauro Pintus (2018), nach deren Idee diese Version entstand</small><small class="note" data-l="en">The original ESP32 Oscilloscope Clock by Mauro Pintus (2018) that inspired this version</small></span><span>›</span></a>
@@ -379,9 +379,9 @@ oscilloscope input; no additional BNC cable is needed.</p>
 <div class="warn"><b>Wichtig:</b> Klemme P0 (GPIO0) ist der BOOT-Taster – dort nichts anschließen. Das OLED an <b>3V3</b>,
 nicht an 5V. Das Modul -32U nie ohne Antenne im WLAN-Betrieb laufen lassen.</div>
 
-<div class="step"><b class="n">1</b><div><b>Bohrplan ausdrucken.</b> Die <b>letzte Seite dieser Dokumentation</b> (Bohrplan) auf <b>DIN A4 mit 100 % (ohne „An Seite anpassen“)</b>
-drucken und die Prüflinie nachmessen: Sie muss 50 mm lang sein. Schablonen ausschneiden und mit Klebeband auf den Deckel,
-die Anschlussseite und die gegenüberliegende Seite kleben.</div></div>
+<div class="step"><b class="n">1</b><div><b>Bohrplan ausdrucken.</b> Die <b>letzten beiden Seiten dieser Dokumentation</b> (Bohrplan Deckel und Seitenteile) auf <b>DIN A4 mit 100 % (ohne „An Seite anpassen“)</b>
+drucken und auf jedem Blatt das Prüfmaß nachmessen: Es muss 50 mm lang sein. Schablonen ausschneiden und mit Klebeband auf den Deckel,
+die Anschlussseite und die gegenüberliegende Seite kleben. Bei den Seitenteilen die Mittellinie auf die halbe Höhe des Unterteils legen.</div></div>
 <div class="step"><b class="n">2</b><div><b>Gehäuse bohren.</b> Alle Löcher mit 3 mm vorbohren.
 <b>Anschlussseite</b> (eine kurze Seite, 100 mm): Pigtail X, <b>mittig dazwischen die USB-C-Buchse</b>, Pigtail Y.
 <b>Pigtails:</b> 2 Löcher bei 28 und 72 mm für die Kabelverschraubungen: <b>5,0 mm bohren und M6-Gewinde schneiden</b>
@@ -437,9 +437,9 @@ Der Außenkontakt hat Durchgang zu GND. Alle Schraubklemmen leicht nachziehen. D
 <div class="warn"><b>Important:</b> terminal P0 (GPIO0) is the BOOT button – do not connect anything there. Connect the OLED to
 <b>3V3</b>, not to 5V. Never run the -32U module on Wi-Fi without an antenna.</div>
 
-<div class="step"><b class="n">1</b><div><b>Print the drilling template.</b> Print the <b>last page of this documentation</b> (drilling template) on <b>A4 at 100 % (not “fit to page”)</b>
-and measure the test line: it must be 50 mm long. Cut out the templates and tape them onto the lid,
-the connector side and the opposite side.</div></div>
+<div class="step"><b class="n">1</b><div><b>Print the drilling template.</b> Print the <b>last two pages of this documentation</b> (drilling template lid and side walls) on <b>A4 at 100 % (not “fit to page”)</b>
+and measure the test line on each sheet: it must be 50 mm long. Cut out the templates and tape them onto the lid,
+the connector side and the opposite side. For the side walls, place the centre line at half the height of the base.</div></div>
 <div class="step"><b class="n">2</b><div><b>Drill the enclosure.</b> Pre-drill all holes with 3 mm.
 <b>Connector side</b> (one short side, 100 mm): pigtail X, <b>the USB-C socket in the middle</b>, pigtail Y.
 <b>Pigtails:</b> 2 holes at 28 and 72 mm for the cable glands: <b>drill 5.0 mm and tap an M6 thread</b>

@@ -72,7 +72,7 @@ h3+ul>li:nth-child(2),h3+ol>li:nth-child(2),li:last-child{break-before:avoid}
   <li>Troubleshooting</li>
   <li>Technology: how the clock works</li>
   <li>Appendix: defaults in <code>config.h</code>, interfaces, origin and licences</li>
-  <li>Drilling template for printing (last page, scale 1:1)</li>
+  <li>Drilling template for printing (last two pages: lid and side walls, scale 1:1)</li>
  </ol>
  <div class="note"><b>About the figures:</b> the wiring diagram, drilling template and layout are drawings. The oscilloscope and
  OLED pictures were generated on a PC from the real firmware data (same vector tables, same display library u8g2, same
@@ -162,9 +162,9 @@ oscilloscope input; no additional BNC cable is needed.</p>
 <div class="warn"><b>Important:</b> terminal P0 (GPIO0) is the BOOT button – do not connect anything there. Connect the OLED to
 <b>3V3</b>, not to 5V. Never run the -32U module on Wi-Fi without an antenna.</div>
 
-<div class="step"><b class="n">1</b><div><b>Print the drilling template.</b> Print the <b>last page of this documentation</b> (drilling template) on <b>A4 at 100 % (not “fit to page”)</b>
-and measure the test line: it must be 50 mm long. Cut out the templates and tape them onto the lid,
-the connector side and the opposite side.</div></div>
+<div class="step"><b class="n">1</b><div><b>Print the drilling template.</b> Print the <b>last two pages of this documentation</b> (drilling template lid and side walls) on <b>A4 at 100 % (not “fit to page”)</b>
+and measure the test line on each sheet: it must be 50 mm long. Cut out the templates and tape them onto the lid,
+the connector side and the opposite side. For the side walls, place the centre line at half the height of the base.</div></div>
 <div class="step"><b class="n">2</b><div><b>Drill the enclosure.</b> Pre-drill all holes with 3 mm.
 <b>Connector side</b> (one short side, 100 mm): pigtail X, <b>the USB-C socket in the middle</b>, pigtail Y.
 <b>Pigtails:</b> 2 holes at 28 and 72 mm for the cable glands: <b>drill 5.0 mm and tap an M6 thread</b>
@@ -637,5 +637,6 @@ github.com/maurohh/ESP32_OscilloscopeClock) – many thanks! This version is an 
 web interface and all vector graphics are new. The font of the web interface is a reduced version of
 <b>Raleway</b> (Copyright 2010 The Raleway Project Authors, SIL Open Font License 1.1, licence text in <code>fonts/OFL.txt</code>),
 called “ScopeClock Sans” here.</p>
-<section class="bohrseite"><img src="images/bohrplan_en.svg" alt="Drilling template 1:1"></section>
+<section class="bohrseite"><img src="images/bohrplan_en.svg" alt="Drilling template lid 1:1"></section>
+<section class="bohrseite"><img src="images/bohrplan_seiten_en.svg" alt="Drilling template side walls 1:1"></section>
 </body></html>

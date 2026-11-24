@@ -128,7 +128,7 @@ der Leiste angeschlossen werden, die besser passt.
   Kabelverschraubung führen, erst dann innen abisolieren und den 220-Ω-Widerstand an die rote Ader löten – mit Widerstand
   und Schrumpfschlauch passt das Kabel nicht mehr durch. Das freie Widerstandsbein und die braune Ader kommen in die Klemmen.
 - Breakout-Board auf der Montageplatte; die Pigtails in die Klemmen P25/P26 (rot, über 220 Ω) und GND (braun).
-- Bohrplan 1:1 zum Ausdrucken auf DIN A4: letzte Seite von `docs/ESP32_Oscilloscope_Clock_Dokumentation.pdf`.
+- Bohrplan 1:1 zum Ausdrucken auf DIN A4: die letzten beiden Seiten (Deckel, Seitenteile) von `docs/ESP32_Oscilloscope_Clock_Dokumentation.pdf`.
 
 ## Oszilloskop-Einstellungen
 

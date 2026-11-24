@@ -72,7 +72,7 @@ h3+ul>li:nth-child(2),h3+ol>li:nth-child(2),li:last-child{break-before:avoid}
   <li>Fehlersuche</li>
   <li>Technik: wie die Uhr arbeitet</li>
   <li>Anhang: Startwerte in <code>config.h</code>, Schnittstellen, Herkunft und Lizenzen</li>
-  <li>Bohrplan zum Ausdrucken (letzte Seite, Maßstab 1:1)</li>
+  <li>Bohrplan zum Ausdrucken (letzte zwei Seiten: Deckel und Seitenteile, Maßstab 1:1)</li>
  </ol>
  <div class="note"><b>Zu den Abbildungen:</b> Schaltplan, Bohrplan und Anordnung sind Zeichnungen. Die Bilder des
  Oszilloskops und des OLED-Displays wurden am PC aus den echten Daten der Firmware erzeugt (gleiche
@@ -163,9 +163,9 @@ kommt direkt in den Eingang des Oszilloskops, ein zusätzliches BNC-Kabel ist ni
 <div class="warn"><b>Wichtig:</b> Klemme P0 (GPIO0) ist der BOOT-Taster – dort nichts anschließen. Das OLED an <b>3V3</b>,
 nicht an 5V. Das Modul -32U nie ohne Antenne im WLAN-Betrieb laufen lassen.</div>
 
-<div class="step"><b class="n">1</b><div><b>Bohrplan ausdrucken.</b> Die <b>letzte Seite dieser Dokumentation</b> (Bohrplan) auf <b>DIN A4 mit 100 % (ohne „An Seite anpassen“)</b>
-drucken und die Prüflinie nachmessen: Sie muss 50 mm lang sein. Schablonen ausschneiden und mit Klebeband auf den Deckel,
-die Anschlussseite und die gegenüberliegende Seite kleben.</div></div>
+<div class="step"><b class="n">1</b><div><b>Bohrplan ausdrucken.</b> Die <b>letzten beiden Seiten dieser Dokumentation</b> (Bohrplan Deckel und Seitenteile) auf <b>DIN A4 mit 100 % (ohne „An Seite anpassen“)</b>
+drucken und auf jedem Blatt das Prüfmaß nachmessen: Es muss 50 mm lang sein. Schablonen ausschneiden und mit Klebeband auf den Deckel,
+die Anschlussseite und die gegenüberliegende Seite kleben. Bei den Seitenteilen die Mittellinie auf die halbe Höhe des Unterteils legen.</div></div>
 <div class="step"><b class="n">2</b><div><b>Gehäuse bohren.</b> Alle Löcher mit 3 mm vorbohren.
 <b>Anschlussseite</b> (eine kurze Seite, 100 mm): Pigtail X, <b>mittig dazwischen die USB-C-Buchse</b>, Pigtail Y.
 <b>Pigtails:</b> 2 Löcher bei 28 und 72 mm für die Kabelverschraubungen: <b>5,0 mm bohren und M6-Gewinde schneiden</b>
@@ -637,5 +637,6 @@ github.com/maurohh/ESP32_OscilloscopeClock) – vielen Dank! Diese Version ist e
 Webinterface und alle Vektorgrafiken sind neu. Die Schrift des Webinterfaces ist eine verkleinerte Fassung von
 <b>Raleway</b> (Copyright 2010 The Raleway Project Authors, SIL Open Font License 1.1, Lizenztext in <code>fonts/OFL.txt</code>),
 hier unter dem Namen „ScopeClock Sans“.</p>
-<section class="bohrseite"><img src="images/bohrplan.svg" alt="Bohrplan 1:1"></section>
+<section class="bohrseite"><img src="images/bohrplan.svg" alt="Bohrplan Deckel 1:1"></section>
+<section class="bohrseite"><img src="images/bohrplan_seiten.svg" alt="Bohrplan Seitenteile 1:1"></section>
 </body></html>

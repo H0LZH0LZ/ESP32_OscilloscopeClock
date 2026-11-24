@@ -128,7 +128,7 @@ fits better.
   gland, only then strip it on the inside and solder the 220 Ω resistor to the red lead – with the resistor and heat-shrink
   tubing the cable no longer fits through. The free resistor leg and the brown lead go into the terminals.
 - Breakout board on the mounting plate; pigtails into terminals P25/P26 (red, via 220 Ω) and GND (brown).
-- Drilling template 1:1 for printing on A4: last page of `docs/ESP32_Oscilloscope_Clock_Documentation.pdf`.
+- Drilling template 1:1 for printing on A4: the last two pages (lid, side walls) of `docs/ESP32_Oscilloscope_Clock_Documentation.pdf`.
 
 ## Oscilloscope settings
 

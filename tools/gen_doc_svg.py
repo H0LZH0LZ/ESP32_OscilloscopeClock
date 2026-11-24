@@ -2,7 +2,8 @@
 """Zeichnet die Schaubilder der Dokumentation als SVG nach docs/images/:
   verdrahtung.svg  – Schaltplan ESP32 DevKitC ↔ Pigtails, OLED, Antenne (OLED-Inhalt aus
                      docs/images/oled_pixel.png, 128 × 64 Pixel aus der OLED-Simulation)
-  bohrplan.svg     – Gehäuse-Bohrplan 1:1 (in mm, zum Ausdrucken mit 100 %)
+  bohrplan.svg     – Gehäuse-Bohrplan 1:1, Blatt 1/2: Deckel (in mm, zum Ausdrucken mit 100 %)
+  bohrplan_seiten.svg – Blatt 2/2: beide Seitenteile
   aufbau.svg       – Anordnung der Teile im Gehäuse (Draufsicht)
   software.svg     – Aufteilung der Firmware auf die beiden Kerne
 Aufruf: python3 tools/gen_doc_svg.py
@@ -12,6 +13,7 @@ OUT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 
 FONT = "font-family='Helvetica,Arial,sans-serif'"
 
 # Englische Fassung: gleiche Zeichnung, Texte übersetzt (Datei *_en.svg)
+EN_BOHRPLAN2 = {'Bohrplan Deckel – Abzweigdose 150 × 100 × 70': 'Drilling template lid – junction box 150 × 100 × 70', 'Bohrplan Seitenteile – Abzweigdose 150 × 100 × 70': 'Drilling template side walls – junction box 150 × 100 × 70', 'ESP32 Oscilloscope Clock v2.0 · ABS-Gehäuse': 'ESP32 Oscilloscope Clock v2.0 · ABS enclosure', 'Fenster mit Bohrungen in den Ecken vorbohren und mit dem Cuttermesser ausschneiden.': 'Pre-drill the window with holes in the corners and cut it out with a utility knife.', 'Anschlussseite – Ansicht von außen': 'Connector side – view from outside', 'Gegenüberliegende Seite – Antenne, Ansicht von außen': 'Opposite side – antenna, view from outside', 'h = Höhe des Unterteils (ohne Deckel), am Gehäuse messen – gezeichnet nicht maßstäblich.': 'h = height of the base (without lid), measure it on the enclosure – not drawn to scale.', 'Schablone mit der Mittellinie auf h/2 ausrichten; alle Löcher liegen auf dieser Linie.': 'Align the template with the centre line at h/2; all holes lie on this line.'}
 EN_BOHRPLAN = {'Deckel – Draufsicht': 'Lid – top view', 'Fenster OLED': 'OLED window', 'Befestigungslöcher M2,5 des OLED-Moduls': 'M2.5 mounting holes of the OLED module', '(Lochabstand 61,5 × 39,5) nach dem Modul anreißen': '(hole spacing 61.5 × 39.5): mark them from the module', 'Prüfmaß 50': 'Test line 50', 'Mit 100 % drucken (nicht „an Seite anpassen“),': 'Print at 100 % (not “fit to page”),', 'Prüfmaß nachmessen, Schablonen ausschneiden.': 'measure the test line, cut out the templates.', 'Anschlussseite – Ansicht von außen (Ausschnitt)': 'Connector side – view from outside (detail)', '2× M6 (X, Y)': '2× M6 (X, Y)', 'M6: Kernloch Ø5 bohren und Gewinde schneiden – oder Ø6,2 mit Mutter M6 innen.': 'M6: drill tap hole Ø5 and cut the thread – or Ø6.2 with an M6 nut inside.', 'Höhe der Lochmitten: Mitte des Unterteils, am Gehäuse anreißen.': 'Height of the hole centres: middle of the base, mark it on the enclosure.', 'Gegenüberliegende Seite – Ansicht von außen (Ausschnitt)': 'Opposite side – view from outside (detail)', 'Lochmitte auf gleicher': 'Hole centre at same', 'Höhe wie Anschlussseite': 'height as connector side', 'Ø6,5': 'Ø6.5', '47,5': '47.5', 'Benennung': 'Title', 'Maßstab': 'Scale', 'Blatt': 'Sheet', 'Bohrplan Abzweigdose 150 × 100 × 70': 'Drilling template, junction box 150 × 100 × 70', 'Projekt · Werkstoff': 'Project · material', 'ESP32 Oscilloscope Clock v2.0 · Kunststoffgehäuse': 'ESP32 Oscilloscope Clock v2.0 · plastic enclosure', 'Allgemeintoleranz': 'General tolerance', 'Maße': 'Dimensions', 'in mm': 'in mm'}
 EN = {'Stiftleiste auf der Rückseite': 'Pin header on the back', 'DS3231 (optional) – SDA → P21, SCL → P22': 'DS3231 (optional) – SDA → P21, SCL → P22', 'Optional: Echtzeituhr DS3231 (ZS-042)': 'Optional: real-time clock DS3231 (ZS-042)', 'Knopfzelle CR2032 auf der Rückseite': 'Coin cell CR2032 on the back', 'P21 → SDA (RTC)': 'P21 → SDA (RTC)', 'optional': 'optional', 'OLED sitzt im Scharnierdeckel –': 'OLED sits in the hinged lid –', 'Das OLED sitzt im Scharnierdeckel – Leitungen lang genug lassen': 'The OLED sits in the hinged lid – leave the wires long enough', 'Leitungen lang genug lassen': 'leave the wires long enough', '47,5': '47.5', 'ESP32-Breakout-Board (Schraubklemmen), DevKit aufgesteckt': 'ESP32 breakout board (screw terminals), DevKit plugged in', 'USB-C ← Flachbandkabel ← USB-C-Einbaubuchse (Anschlussseite)': 'USB-C ← flat cable ← USB-C panel socket (connector side)', 'Gehäusewand': 'Enclosure wall', 'BNC-Stecker → Oszilloskop Kanal 1': 'BNC plug → oscilloscope channel 1', 'BNC-Stecker → Oszilloskop Kanal 2': 'BNC plug → oscilloscope channel 2', '⏚ = Klemme GND': '⏚ = GND terminal', 'Pigtail: rot = Innenleiter (Signal),': 'Pigtail: red = core (signal),', 'braun = Schirm (Masse)': 'brown = shield (ground)', 'SMA-Buchse + WLAN-Antenne (Bingfu, SMA)': 'SMA socket + WiFi antenna (Bingfu, SMA)', '(IPEX→SMA-Pigtail aus dem Antennen-Kit)': '(IPEX→SMA pigtail from the antenna kit)', 'GND (Masse)': 'GND (ground)', 'Beschriftung wie auf dem Breakout-Board (P25 = GPIO25 …).': 'Labels as printed on the breakout board (P25 = GPIO25 …).', 'P0 = BOOT-Taster – dort nichts anschließen.': 'P0 = BOOT button – do not connect anything there.', '220 Ω in die rote Ader jedes Pigtails eingelötet.': '220 Ω soldered into the red lead of each pigtail.', 'Bohrplan Abzweigdose 150 × 100 × 70 mm – Maßstab 1:1': 'Drilling template, junction box 150 × 100 × 70 mm – scale 1:1', 'DIN A4 mit 100 % drucken (nicht „an Seite anpassen“), dann das Prüfmaß nachmessen': 'Print on A4 at 100 % (not “fit to page”), then measure the test line', 'Deckel (Draufsicht)': 'Lid (top view)', 'Fenster OLED 55 × 28': 'OLED window 55 × 28', 'Befestigungslöcher des OLED-Moduls (61,5 × 39,5 mm) nach dem Modul anzeichnen (M2,5)': 'Mark the mounting holes of the OLED module (61.5 × 39.5 mm) from the module itself (M2.5)', 'Prüfmaß 50 mm': 'Test line 50 mm', 'Nach dem Drucken nachmessen: die Linie muss genau 50 mm lang sein.': 'Measure after printing: the line must be exactly 50 mm long.', 'Schablonen ausschneiden und mit Klebeband auf Deckel und Seiten kleben.': 'Cut out the templates and tape them onto the lid and the sides.', 'Anschlussseite (kurze Seite, von außen gesehen)': 'Connector side (short side, seen from outside)', 'Pigtails: Ø 5,0 bohren + M6-Gewinde schneiden (gestrichelt: M6) – oder Ø 6,2 + M6-Mutter innen': 'Pigtails: drill Ø 5.0 + tap M6 (dashed: M6) – or Ø 6.2 + M6 nut inside', 'Alle drei Löcher auf gleicher Höhe, etwa Mitte des Unterteils': 'All three holes at the same height, about the middle of the base', 'Gegenüberliegende Seite – Antenne': 'Opposite side – antenna', 'SMA  Ø 6,5': 'SMA  Ø 6.5', 'Mittig, gleiche Höhe wie die Anschlüsse': 'Centred, same height as the connectors', 'Anordnung in der Abzweigdose (Draufsicht, Deckel offen)': 'Layout in the junction box (top view, lid open)', 'Breakout-Board samt DevKit um 180° gedreht': 'Breakout board with DevKit rotated by 180°', 'gestrichelt: USB- und Antennenkabel unter dem Board': 'dashed: USB and antenna cable under the board', 'Antenne (SMA)': 'Antenna (SMA)', 'Gegenüberliegende Seite': 'Opposite side', 'Pigtail X · USB-C · Pigtail Y (Kabelverschraubungen SKINDICHT MINI M6)': 'Pigtail X · USB-C · pigtail Y (cable glands SKINDICHT MINI M6)', 'Anschlussseite (kurze Seite)': 'Connector side (short side)', 'OLED (61,5 × 39,5 mm) sitzt im Scharnierdeckel –': 'OLED (61.5 × 39.5 mm) sits in the hinged lid –', 'Leitungen lang genug lassen': 'leave the wires long enough', 'Kern 1 – scopeTask': 'Core 1 – scopeTask', '• nur Strahlausgabe, ohne Pause': '• beam output only, without pause', '• DAC X/Y an GPIO25/26 (Register)': '• DAC X/Y on GPIO25/26 (registers)', '• Rundtour: Zifferblatt + Ziffern': '• round trip: dial + numerals', '• Zeiger nach der Uhrzeit': '• hands according to the time', '• gleich schnelle Linien = gleich hell': '• equally fast lines = equally bright', '• Profil ANALOG/DIGITAL, Testbild': '• profile ANALOG/DIGITAL, test pattern', '• ca. 200 Bilder pro Sekunde': '• approx. 200 frames per second', 'Kern 0 – uiTask + wifiTask': 'Core 0 – uiTask + wifiTask', '• WLAN (stärkstes bekanntes Netz)': '• WiFi (strongest known network)', '• Zeit per NTP, stündlich': '• time via NTP, hourly', '• Webserver, Setup-WLAN, mDNS': '• web server, setup network, mDNS', '• OLED-Anzeige (SPI)': '• OLED display (SPI)', '• BOOT-Taster, Einstellungen (NVS)': '• BOOT button, settings (NVS)', '• Protokoll (Ringpuffer 8 KB)': '• log (ring buffer 8 KB)', '• CPU-Last-Messung': '• CPU load measurement', 'Übergabe nur über wenige atomare Variablen (Uhrzeit, Zifferblatt, Helligkeit, Profil) – keine Sperren im Zeichenpfad': 'Hand-over only via a few atomic variables (time, dial, brightness, profile) – no locks in the drawing path'}
 
@@ -20,7 +22,7 @@ def save(name, w, h, body, extra=''):
            f"<rect x='0' y='0' width='{w}' height='{h}' fill='#fff'/>\n{body}</svg>\n")
     open(os.path.join(OUT, name), 'w', encoding='utf-8').write(svg)
     en = svg
-    for de, tr in {**EN, **EN_BOHRPLAN}.items():
+    for de, tr in {**EN, **EN_BOHRPLAN, **EN_BOHRPLAN2}.items():
         en = en.replace('>' + de + '<', '>' + tr + '<')
     if name == 'verdrahtung.svg':                                 # OLED-Inhalt auf Englisch
         import base64
@@ -350,10 +352,12 @@ def bohrplan():
       - Bemaßung von Bezugskanten aus (linke und obere Kante), keine Überbemaßung
       - Bohrungen mit Ø und Mittellinienkreuz (schmale Strich-Punkt-Linie, bei kleinen Bohrungen schmale Volllinie)
       - Innengewinde in der Ansicht: Kernloch breite Volllinie, Gewinde-Außendurchmesser schmaler ¾-Kreis
-      - Seitenwände nur als Ausschnitt (Höhe hängt vom Gehäuse ab): oben/unten Bruchkanten (schmale Freihandlinie)
+      - zwei Blätter: 1/2 Deckel, 2/2 beide Seitenteile komplett. Die Höhe h des Unterteils steht im
+        Datenblatt nicht – sie wird am Gehäuse gemessen; die Lochmitten liegen auf h/2 (Mittellinie zum Ausrichten)
       - Zeichnungsrahmen (links 20 mm Heftrand, sonst 10 mm) und Schriftfeld unten rechts"""
     import math
-    s = []; a = s.append
+    pages = []
+    a = lambda t: pages[-1].append(t)                           # zeichnet auf die aktuelle Seite
     B, N = 0.5, 0.25                                              # Linienbreiten: breit / schmal
     TXT = 3.5                                                     # Schrifthöhe Maßzahlen und Texte
     def line(x1, y1, x2, y2, w=N, dash=None):
@@ -397,81 +401,89 @@ def bohrplan():
             pts.append(f"{x:.2f},{y + 0.8 * math.sin(q * 1.7) + 0.4 * math.sin(q * 3.1):.2f}")
         a(f"<polyline points='{' '.join(pts)}' fill='none' stroke='#000' stroke-width='{N}'/>")
 
-    # Zeichnungsrahmen DIN A4 hochkant: links 20 mm Heftrand, sonst 10 mm
-    a(f"<rect x='20' y='10' width='180' height='277' fill='none' stroke='#000' stroke-width='0.7'/>")
+    def sheet(title, nr):                                         # neues Blatt: Rahmen, Schriftfeld, Prüfmaß
+        pages.append([])
+        a(f"<rect x='20' y='10' width='180' height='277' fill='none' stroke='#000' stroke-width='0.7'/>")
+        TY = 267
+        a(f"<rect x='20' y='{TY}' width='180' height='20' fill='none' stroke='#000' stroke-width='0.7'/>")
+        line(20, TY + 10, 200, TY + 10, N); line(130, TY, 130, TY + 20, N); line(165, TY, 165, TY + 20, N)
+        def cell(x, y, label, value, bold=False):
+            text(x + 1.5, y + 3, label, 2.5, 'start')
+            text(x + 1.5, y + 8.3, value, 3.5, 'start', bold)
+        cell(20, TY, 'Benennung', title, True)
+        cell(130, TY, 'Maßstab', '1:1')
+        cell(165, TY, 'Blatt', nr)
+        cell(20, TY + 10, 'Projekt · Werkstoff', 'ESP32 Oscilloscope Clock v2.0 · ABS-Gehäuse')
+        cell(130, TY + 10, 'Allgemeintoleranz', 'ISO 2768-m')
+        cell(165, TY + 10, 'Maße', 'in mm')
+        # Prüfmaß 50 mm über dem Schriftfeld
+        py = 258
+        line(40, py, 90, py, B); line(40, py - 2.5, 40, py + 2.5, B); line(90, py - 2.5, 90, py + 2.5, B)
+        text(65, py - 2, 'Prüfmaß 50')
+        text(98, py - 1.5, 'Mit 100 % drucken (nicht „an Seite anpassen“),', anchor='start')
+        text(98, py + 3.5, 'Prüfmaß nachmessen, Schablonen ausschneiden.', anchor='start')
 
-    # ---- Deckel, Draufsicht (150 × 100), Bezugskanten links und oben
-    X, Y = 40, 33
-    text(22, 15, 'Deckel – Draufsicht', 4.2, 'start', True)
+    # ======== Blatt 1/2: Deckel, Draufsicht (150 × 100), Bezugskanten links und oben
+    sheet('Bohrplan Deckel – Abzweigdose 150 × 100 × 70', '1 / 2')
+    X, Y = 40, 50
+    text(22, 18, 'Deckel – Draufsicht', 4.2, 'start', True)
     a(f"<rect x='{X}' y='{Y}' width='150' height='100' fill='none' stroke='#000' stroke-width='{B}'/>")
     wx, wy = X + 47.5, Y + 22
     a(f"<rect x='{wx}' y='{wy}' width='55' height='28' fill='none' stroke='#000' stroke-width='{B}'/>")
-    dim_h(X, X + 150, Y - 11, Y, Y, '150')
-    dim_h(X, wx, Y - 5, Y, wy, '47,5'); dim_h(wx, wx + 55, Y - 5, wy, wy, '55')
+    dim_h(X, X + 150, Y - 12, Y, Y, '150')
+    dim_h(X, wx, Y - 6, Y, wy, '47,5'); dim_h(wx, wx + 55, Y - 6, wy, wy, '55')
     dim_v(Y, Y + 100, X - 12, X, X, '100')
     vx = wx - 8                                                   # innen links neben dem Fenster
-    line(wx, wy, vx - 2, wy); line(wx, wy + 28, vx - 2, wy + 28)   # kurze Maßhilfslinien am Fenster
+    line(wx, wy, vx - 2, wy); line(wx, wy + 28, vx - 2, wy + 28)
     line(vx, Y, vx, wy); arrow(vx, Y, -math.pi / 2); arrow(vx, wy, math.pi / 2); text(vx - 1, (Y + wy) / 2, '22', rot=-90)
     line(vx, wy, vx, wy + 28); arrow(vx, wy, -math.pi / 2); arrow(vx, wy + 28, math.pi / 2); text(vx - 1, wy + 14, '28', rot=-90)
     text(X + 75, wy + 14 + 1.2, 'Fenster OLED')
     text(X + 75, Y + 76, 'Befestigungslöcher M2,5 des OLED-Moduls')
     text(X + 75, Y + 81, '(Lochabstand 61,5 × 39,5) nach dem Modul anreißen')
+    text(22, Y + 120, 'Fenster mit Bohrungen in den Ecken vorbohren und mit dem Cuttermesser ausschneiden.', anchor='start')
+    save('bohrplan.svg', 210, 297, '\n'.join(pages[-1]), "width='210mm' height='297mm'")
 
-    # ---- Prüfmaß 50 mm (zum Nachmessen nach dem Druck)
-    py = 144
-    line(X, py, X + 50, py, B); line(X, py - 2.5, X, py + 2.5, B); line(X + 50, py - 2.5, X + 50, py + 2.5, B)
-    text(X + 25, py - 2, 'Prüfmaß 50')
-    text(X + 58, py - 1.5, 'Mit 100 % drucken (nicht „an Seite anpassen“),', anchor='start')
-    text(X + 58, py + 3.5, 'Prüfmaß nachmessen, Schablonen ausschneiden.', anchor='start')
+    # ======== Blatt 2/2: beide Seitenteile komplett (100 × h), Ansicht von außen
+    sheet('Bohrplan Seitenteile – Abzweigdose 150 × 100 × 70', '2 / 2')
+    HD = 50                                                       # gezeichnete Höhe des Unterteils (h wird gemessen)
+    def wall(X2, Y2, heading, holes, leaders):
+        text(22, Y2 - 22, heading, 4.2, 'start', True)
+        a(f"<rect x='{X2}' y='{Y2}' width='100' height='{HD}' fill='none' stroke='#000' stroke-width='{B}'/>")
+        cy = Y2 + HD / 2
+        line(X2 - 4, cy, X2 + 104, cy, N, '6 1 0.5 1')            # Mittellinie der Bohrungen (h/2) zum Ausrichten
+        dim_h(X2, X2 + 100, Y2 - 8, Y2, Y2, '100')
+        dim_v(Y2, Y2 + HD, X2 - 14, X2, X2, 'h')
+        dim_v(cy, Y2 + HD, X2 - 7, X2 - 4, X2, 'h/2')
+        for d, kind in holes:
+            cx = X2 + d
+            if kind == 'M6':                                      # Kernloch Ø5 breit, Gewinde M6 als schmaler ¾-Kreis
+                a(f"<circle cx='{cx}' cy='{cy}' r='2.5' fill='none' stroke='#000' stroke-width='{B}'/>")
+                a(f"<path d='M{cx + 3:.2f},{cy:.2f} A3,3 0 1 0 {cx:.2f},{cy + 3:.2f}' fill='none' stroke='#000' stroke-width='{N}'/>")
+                line(cx, cy - 5, cx, cy + 5)
+            else:
+                r = kind / 2
+                a(f"<circle cx='{cx}' cy='{cy}' r='{r}' fill='none' stroke='#000' stroke-width='{B}'/>")
+                line(cx, cy - r - (3 if r > 4 else 2), cx, cy + r + (3 if r > 4 else 2), N, '6 1 0.5 1' if r > 4 else None)
+        for k, (d, kind) in enumerate(holes):                     # Lochabstände von der linken Kante
+            rr = 3 if kind == 'M6' else kind / 2
+            dim_h(X2, X2 + d, Y2 + HD + 7 + k * 6, Y2 + HD, Y2 + HD, str(d))
+            line(X2 + d, cy + rr + 2, X2 + d, Y2 + HD)            # Mittellinie bis zur Kante verlängert
+        for args in leaders:
+            leader(*args)
 
-    # ---- Anschlussseite (kurze Seite, 100 mm), Ansicht von außen – Ausschnitt
-    X2, Y2, H2 = 55, 170, 22
-    cy = Y2 + H2 / 2
-    text(22, 155, 'Anschlussseite – Ansicht von außen (Ausschnitt)', 4.2, 'start', True)
-    line(X2, Y2, X2, Y2 + H2, B); line(X2 + 100, Y2, X2 + 100, Y2 + H2, B)
-    breakline(X2, X2 + 100, Y2); breakline(X2, X2 + 100, Y2 + H2)
-    for cx in (X2 + 28, X2 + 72):                                 # Pigtails: Gewinde M6 (Kernloch Ø 5)
-        a(f"<circle cx='{cx}' cy='{cy}' r='2.5' fill='none' stroke='#000' stroke-width='{B}'/>")
-        a(f"<path d='M{cx + 3:.2f},{cy:.2f} A3,3 0 1 0 {cx:.2f},{cy + 3:.2f}' fill='none' stroke='#000' stroke-width='{N}'/>")
-        centre(cx, cy, 3, False)
-    a(f"<circle cx='{X2 + 50}' cy='{cy}' r='8' fill='none' stroke='#000' stroke-width='{B}'/>")
-    centre(X2 + 50, cy, 8, True)
-    dim_h(X2, X2 + 100, Y2 - 6, Y2, Y2, '100')
-    for k, (d, t) in enumerate(((28, '28'), (50, '50'), (72, '72'))):   # alle Maße von der linken Kante
-        dim_h(X2, X2 + d, Y2 + H2 + 6 + k * 6, Y2 + H2, cy + (3 if d != 50 else 8) + 2, t)
-    leader(X2 + 28, cy, 3, 135, X2 - 4, Y2 + 2, '2× M6 (X, Y)', right=False)
-    leader(X2 + 50, cy, 8, 30, X2 + 104, Y2 + 2, 'Ø16')
-    text(22, Y2 + H2 + 26, 'M6: Kernloch Ø5 bohren und Gewinde schneiden – oder Ø6,2 mit Mutter M6 innen.', anchor='start')
-    text(22, Y2 + H2 + 31, 'Höhe der Lochmitten: Mitte des Unterteils, am Gehäuse anreißen.', anchor='start')
-
-    # ---- Gegenüberliegende Seite: Antenne (SMA)
-    X3, Y3, H3 = 55, 246, 16
-    cy3 = Y3 + H3 / 2
-    text(22, 230, 'Gegenüberliegende Seite – Ansicht von außen (Ausschnitt)', 4.2, 'start', True)
-    line(X3, Y3, X3, Y3 + H3, B); line(X3 + 100, Y3, X3 + 100, Y3 + H3, B)
-    breakline(X3, X3 + 100, Y3); breakline(X3, X3 + 100, Y3 + H3)
-    a(f"<circle cx='{X3 + 50}' cy='{cy3}' r='3.25' fill='none' stroke='#000' stroke-width='{B}'/>")
-    centre(X3 + 50, cy3, 3.25, False)
-    dim_h(X3, X3 + 100, Y3 - 10, Y3, Y3, '100')
-    dim_h(X3, X3 + 50, Y3 - 4, Y3, cy3 - 5.25, '50')
-    leader(X3 + 50, cy3, 3.25, -30, X3 + 104, Y3 + 13, 'Ø6,5')
-    text(X3 + 104, Y3 + 2, 'Lochmitte auf gleicher', 3.5, 'start')
-    text(X3 + 104, Y3 + 6.5, 'Höhe wie Anschlussseite', 3.5, 'start')
-
-    # ---- Schriftfeld (unten rechts, über die Rahmenbreite)
-    TY = 267
-    a(f"<rect x='20' y='{TY}' width='180' height='20' fill='none' stroke='#000' stroke-width='0.7'/>")
-    line(20, TY + 10, 200, TY + 10, N); line(130, TY, 130, TY + 20, N); line(165, TY, 165, TY + 20, N)
-    def cell(x, y, label, value, bold=False):
-        text(x + 1.5, y + 3, label, 2.5, 'start')
-        text(x + 1.5, y + 8.3, value, 3.5, 'start', bold)
-    cell(20, TY, 'Benennung', 'Bohrplan Abzweigdose 150 × 100 × 70', True)
-    cell(130, TY, 'Maßstab', '1:1')
-    cell(165, TY, 'Blatt', '1 / 1')
-    cell(20, TY + 10, 'Projekt · Werkstoff', 'ESP32 Oscilloscope Clock v2.0 · Kunststoffgehäuse')
-    cell(130, TY + 10, 'Allgemeintoleranz', 'ISO 2768-m')
-    cell(165, TY + 10, 'Maße', 'in mm')
-    save('bohrplan.svg', 210, 297, '\n'.join(s), "width='210mm' height='297mm'")
+    X2 = 55
+    wall(X2, 52, 'Anschlussseite – Ansicht von außen',
+         [(28, 'M6'), (50, 16), (72, 'M6')],
+         [(X2 + 28, 52 + HD / 2, 3, 135, X2 + 6, 52 + 9, '2× M6 (X, Y)', True),
+          (X2 + 50, 52 + HD / 2, 8, 30, X2 + 80, 52 + 6, 'Ø16')])
+    wall(X2, 168, 'Gegenüberliegende Seite – Antenne, Ansicht von außen',
+         [(50, 6.5)],
+         [(X2 + 50, 168 + HD / 2, 3.25, 45, X2 + 70, 168 + 8, 'Ø6,5')])
+    nb = 168 + HD + 18
+    text(22, nb, 'h = Höhe des Unterteils (ohne Deckel), am Gehäuse messen – gezeichnet nicht maßstäblich.', anchor='start')
+    text(22, nb + 5, 'Schablone mit der Mittellinie auf h/2 ausrichten; alle Löcher liegen auf dieser Linie.', anchor='start')
+    text(22, nb + 10, 'M6: Kernloch Ø5 bohren und Gewinde schneiden – oder Ø6,2 mit Mutter M6 innen.', anchor='start')
+    save('bohrplan_seiten.svg', 210, 297, '\n'.join(pages[-1]), "width='210mm' height='297mm'")
 
 # ---------------------------------------------------------------- Anordnung im Gehäuse
 def devkit_top(a, x0, y0, k):
