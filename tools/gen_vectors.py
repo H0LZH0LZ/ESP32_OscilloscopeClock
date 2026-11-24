@@ -238,6 +238,8 @@ def _letter(spec):
     return out
 MSG_GLYPHS = {c: (0 if c == 'I' else 10, _letter(v)) for c, v in _LET.items()}
 MSG_GLYPHS.update({c: (SEGMENT_W[c], SEGMENT[c]) for c in SEGMENT})
+MSG_GLYPHS['>'] = (8, [[(0, 20), (8, 10), (0, 0)]])          # Pfeil „wechselt zu“, wie am OLED
+MSG_GLYPHS[' '] = (2, [])
 
 
 def msg_text(text, cy, scale):
@@ -273,9 +275,9 @@ TABLES = {
     'DialDigitsRoman4': table(roman([12, 3, 6, 9])),
     'DialStation':      table(dial_station()),        # Stundenbalken, Zifferblatt 4 (Bahnhof)
     'TestData':         table(test_pattern()),
-    'MsgAnalog':        table(msg_text('ANALOG', 160, 2.0)),      # Meldung: Profil wechselt zu ANALOG
-    'MsgDigital':       table(msg_text('DIGITAL', 160, 2.0)),     # Meldung: Profil wechselt zu DIGITAL
-    'MsgReset':         table(msg_text('RESET', 160, 2.0)),       # Meldung: Werkseinstellungen
+    'MsgAnalog':        table(msg_text('> ANALOG', 160, 1.8)),      # Meldung: Profil wechselt zu ANALOG
+    'MsgDigital':       table(msg_text('> DIGITAL', 160, 1.8)),     # Meldung: Profil wechselt zu DIGITAL
+    'MsgReset':         table(msg_text('RESET', 160, 1.8)),       # Meldung: Werkseinstellungen
     'MsgDigit0':        table(msg_text('0', 86, 3.0)),
     'MsgDigit1':        table(msg_text('1', 86, 3.0)),
     'MsgDigit2':        table(msg_text('2', 86, 3.0)),
