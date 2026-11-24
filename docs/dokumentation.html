@@ -252,8 +252,8 @@ Die Pixelverschiebung versetzt die Anzeige jede Minute um einen Pixel, damit kei
 landen in einem 8-KB-Ringpuffer, den der Debug-Bereich anzeigt.</p>
 <p><b>Vektordaten:</b> Zifferblatt, Ziffern, Zeiger und Testbild sind eigene Zeichnungen, erzeugt mit <code>tools/gen_vectors.py</code>
 (Koordinaten 0–255, 8 Bit je Achse).</p>
-<p><b>Speicher:</b> Programmspeicher 1.243.154 Byte (94 % beim Standard-Partitionsschema, ca. 39 % mit „Huge APP“), globale Variablen
-75.068 Byte (22 %). Die Webseite liegt gzip-komprimiert im Flash (24 KB), die Schrift (Raleway, auf die benötigten Zeichen reduziert) als WOFF2 (30 KB).</p>
+<p><b>Speicher:</b> Programmspeicher 1.244.170 Byte (94 % beim Standard-Partitionsschema, ca. 39 % mit „Huge APP“), globale Variablen
+75.692 Byte (23 %). Die Webseite liegt gzip-komprimiert im Flash (24 KB), die Schrift (Raleway, auf die benötigten Zeichen reduziert) als WOFF2 (30 KB).</p>
 
 <h2>3 Stand der Technik</h2>
 <h3>3.1 Die ursprüngliche Oscilloscope Clock</h3>
@@ -262,9 +262,8 @@ landen in einem 8-KB-Ringpuffer, den der Debug-Bereich anzeigt.</p>
 als Tabellen von Linienzügen vor, die der Strahl nacheinander abfährt. Die Uhr braucht dafür außer dem ESP32 nur zwei Leitungen
 zum Oszilloskop.</p>
 <h3>3.2 Andere Oszilloskop-Uhren</h3>
-<p>Uhren und Grafiken auf dem Oszilloskop gibt es auch als Demonstrations- und Bausatzplatinen. Ein Beispiel ist das Demo Board
-von VintageTEK [7] für Tektronix-Röhrengeräte: Dort erzeugt ein Mikrocontroller ATmega328P die Ablenkspannungen über
-Widerstandsnetzwerke (R-2R), zeigt neben einer Uhr auch Spiele und verschiebt das Bild gegen Einbrennen. Gemeinsam ist allen
+<p>Uhren und Grafiken auf dem Oszilloskop gibt es auch als Demonstrations- und Bausatzplatinen. Meist erzeugt dort ein Mikrocontroller die
+Ablenkspannungen über Widerstandsnetzwerke (R-2R) und zeigt neben einer Uhr auch andere Motive. Gemeinsam ist allen
 diesen Geräten das Prinzip der <b>Vektorgrafik</b>: Der Strahl fährt die Linien direkt ab, statt wie beim Fernseher Zeile für
 Zeile zu schreiben.</p>
 <h3>3.3 Neu in Version 2.0</h3>
@@ -276,7 +275,7 @@ Zeile zu schreiben.</p>
  <li><b>Webinterface</b> mit Live-Vorschau, allen Einstellungen und WLAN-Verwaltung; Einrichtung über ein Setup-WLAN.</li>
  <li><b>OLED-Anzeige</b> mit der Bibliothek U8g2 [4] und optionale <b>Echtzeituhr DS3231</b> [6].</li>
  <li><b>Fünf Zifferblätter</b>, Bildverschiebung gegen Einbrennen und ein <b>Flimmerschutz</b>.</li>
- <li><b>Installation im Browser</b> mit ESP Web Tools [5]; Bohrplan als technische Zeichnung nach [8, 9].</li>
+ <li><b>Installation im Browser</b> mit ESP Web Tools [5]; Bohrplan als technische Zeichnung nach [7, 8].</li>
 </ul>
 
 <h2>4 Teileliste und Werkzeug</h2>
@@ -428,8 +427,8 @@ neue Version die ZIP-Datei erneut herunterladen und importieren.</p>
 <h3>6.4 Partitionsschema: zwei Varianten</h3>
 <table style="break-inside:avoid">
  <tr><th>Variante</th><th>Arduino IDE: Partition Scheme</th><th>PlatformIO</th><th>Programmspeicher</th></tr>
- <tr><td><b>A – Huge APP</b> (empfohlen)</td><td>„Huge APP (3MB No OTA/1MB SPIFFS)“</td><td><code>pio run -t upload</code></td><td>1.243.154 von 3.145.728 Byte (<b>39 %</b>)</td></tr>
- <tr><td><b>B – Standard</b></td><td>„Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)“ – Voreinstellung, nichts umstellen</td><td><code>pio run -e standard -t upload</code></td><td>1.243.154 von 1.310.720 Byte (<b>94 %</b>)</td></tr>
+ <tr><td><b>A – Huge APP</b> (empfohlen)</td><td>„Huge APP (3MB No OTA/1MB SPIFFS)“</td><td><code>pio run -t upload</code></td><td>1.244.170 von 3.145.728 Byte (<b>39 %</b>)</td></tr>
+ <tr><td><b>B – Standard</b></td><td>„Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)“ – Voreinstellung, nichts umstellen</td><td><code>pio run -e standard -t upload</code></td><td>1.244.170 von 1.310.720 Byte (<b>94 %</b>)</td></tr>
 </table>
 <p>Beide Varianten laufen gleich. <b>A</b> lässt rund 1,9 MB Platz für Erweiterungen; die Uhr nutzt weder OTA-Updates noch
 SPIFFS, deshalb fehlt dabei nichts. <b>B</b> funktioniert ohne Umstellen, hat aber nur noch etwa 70 KB Reserve. Ein Wechsel
@@ -593,7 +592,9 @@ Drehung um 180° und Pixelverschiebung gegen Einbrennen sind einstellbar.</p>
 <figure><img src="images/oled_englisch_12h.png" style="width:48%"><figcaption>Abb. 11 – OLED auf Englisch im 12-Stunden-Format</figcaption></figure>
 <h3>9.3 BOOT-Taster</h3>
 <p><b>3 Sekunden halten</b> schaltet das Oszilloskop-Profil um (DIGITAL ↔ ANALOG). Das OLED zeigt den Wechsel mit Countdown 3, 2, 1;
-vorher loslassen bricht ab (Abb. 12 und 13). Die Einstellung wird gespeichert. <b>Nicht beim Einschalten drücken</b> – sonst startet der ESP32 im Download-Modus.</p>
+vorher loslassen bricht ab (Abb. 12 und 13). <b>Das Oszilloskop zeigt dasselbe:</b> statt der Uhr das Ziel-Profil (ANALOG bzw.
+DIGITAL) und den Countdown, bei den Werkseinstellungen RESET und 5 … 1 – so sieht man den Wechsel auch ohne OLED oder bei
+ausgeschaltetem Display. Die Einstellung wird gespeichert. <b>Nicht beim Einschalten drücken</b> – sonst startet der ESP32 im Download-Modus.</p>
 <div class="two">
  <figure><img src="images/oled_profil.png"><figcaption>Abb. 12 – Umschalten DIGITAL → ANALOG (BOOT-Taster gehalten, noch 2 s)</figcaption></figure>
  <figure><img src="images/oled_profil_analog_digital.png"><figcaption>Abb. 13 – Umschalten ANALOG → DIGITAL (zurück zum Profil für digitale Oszilloskope)</figcaption></figure>
@@ -770,11 +771,10 @@ Teile ergeben Byte für Byte dasselbe Abbild wie die Arduino-Software. <b>Der Te
  <tr><td>[4]</td><td>O. Kraus: <i>U8g2</i> – Bibliothek für monochrome Displays, Version 2.36 – <a href="https://github.com/olikraus/u8g2">github.com/olikraus/u8g2</a></td></tr>
  <tr><td>[5]</td><td>ESPHome: <i>ESP Web Tools</i> – Firmware im Browser installieren, Version 10.4 – <a href="https://esphome.github.io/esp-web-tools/">esphome.github.io/esp-web-tools/</a></td></tr>
  <tr><td>[6]</td><td>Analog Devices (Maxim Integrated): <i>DS3231</i> – Datenblatt der Echtzeituhr – <a href="https://www.analog.com/media/en/technical-documentation/data-sheets/DS3231.pdf">www.analog.com/media/en/technical-documentation/data-sheets/DS3231.pdf</a></td></tr>
- <tr><td>[7]</td><td>VintageTEK – Museum für Tektronix-Geräte: <i>Demo Board</i> (Oszilloskop-Demonstrationsplatine mit Uhr und Spielen) – <a href="https://vintagetek.org/">vintagetek.org/</a></td></tr>
- <tr><td>[8]</td><td>TU München, Werkstatt EWT: <i>Grundlagen des Technischen Zeichnens</i> – <a href="https://www.epe.ed.tum.de/fileadmin/w00bzo/ewt/Werkstatt/Zeichnungserstellung.pdf">www.epe.ed.tum.de/fileadmin/w00bzo/ewt/Werkstatt/Zeichnungserstellung.pdf</a></td></tr>
- <tr><td>[9]</td><td>DIN ISO 128 (Darstellung) und DIN ISO 129 (Bemaßung) für technische Zeichnungen; DIN EN ISO 7200 (Schriftfeld)</td></tr>
- <tr><td>[10]</td><td>The Raleway Project Authors: <i>Raleway</i>, SIL Open Font License 1.1 – <a href="https://fonts.google.com/specimen/Raleway">fonts.google.com/specimen/Raleway</a></td></tr>
- <tr><td>[11]</td><td>TH Nürnberg, LEKO: <i>Die Struktur einer Arbeit in den Ingenieur- und Naturwissenschaften</i> (Gliederung dieser Anleitung) – <a href="https://leko.service.th-nuernberg.de/owl/artikel/die-struktur-einer-arbeit-in-den-ingenieur-und-naturwissenschaften-ing/">leko.service.th-nuernberg.de/owl/artikel/die-struktur-einer-arbeit-in-den-ingenieur-und-naturwissenschaften-ing/</a></td></tr>
+ <tr><td>[7]</td><td>TU München, Werkstatt EWT: <i>Grundlagen des Technischen Zeichnens</i> – <a href="https://www.epe.ed.tum.de/fileadmin/w00bzo/ewt/Werkstatt/Zeichnungserstellung.pdf">www.epe.ed.tum.de/fileadmin/w00bzo/ewt/Werkstatt/Zeichnungserstellung.pdf</a></td></tr>
+ <tr><td>[8]</td><td>DIN ISO 128 (Darstellung) und DIN ISO 129 (Bemaßung) für technische Zeichnungen; DIN EN ISO 7200 (Schriftfeld)</td></tr>
+ <tr><td>[9]</td><td>The Raleway Project Authors: <i>Raleway</i>, SIL Open Font License 1.1 – <a href="https://fonts.google.com/specimen/Raleway">fonts.google.com/specimen/Raleway</a></td></tr>
+ <tr><td>[10]</td><td>TH Nürnberg, LEKO: <i>Die Struktur einer Arbeit in den Ingenieur- und Naturwissenschaften</i> (Gliederung dieser Anleitung) – <a href="https://leko.service.th-nuernberg.de/owl/artikel/die-struktur-einer-arbeit-in-den-ingenieur-und-naturwissenschaften-ing/">leko.service.th-nuernberg.de/owl/artikel/die-struktur-einer-arbeit-in-den-ingenieur-und-naturwissenschaften-ing/</a></td></tr>
 </table>
 
 <h2>A Anhang</h2>

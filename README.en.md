@@ -116,7 +116,8 @@ pictures are screenshots of the page. Photos of the finished device will follow 
    time base to approx. 1 ms/div and the trigger to Auto (details in HARDWARE.en.md).
 6. **Oscilloscope profile via BOOT button:** the default profile is DIGITAL (digital
    oscilloscopes). For an analogue CRT oscilloscope hold the BOOT button for 3 s while running; the
-   OLED shows “DIGITAL > ANALOG” with a countdown 3, 2, 1. The setting is saved, no new upload is
+   OLED shows “DIGITAL > ANALOG” with a countdown 3, 2, 1, the oscilloscope the target profile and the countdown
+   (also without an OLED). The setting is saved, no new upload is
    needed. (Do not press the button while powering up, otherwise the ESP32 starts in download mode.)
 
 Alternatively with PlatformIO: `pio run -t upload` (variant A, Huge APP) or `pio run -e standard -t upload` (variant B).
@@ -150,12 +151,12 @@ interface.
 
 | Board package | Program memory | Global variables (RAM) |
 |---|---|---|
-| esp32 3.3.12 | 1,243,154 bytes (94 %) | 75,068 bytes (22 %) |
+| esp32 3.3.12 | 1,244,170 bytes (94 %) | 75,692 bytes (23 %) |
 | esp32 2.0.17 | 866,053 bytes (66 %) | 61,048 bytes (18 %) – state before the menu and dial switching |
 
 The configuration variants (profile ANALOG/DIGITAL, Z blanking, dial 0/1/2, `USE_FAST_DAC 0`,
 EXCEL mode) were also built without warnings before the web interface was added. With the
-recommended partition scheme **Huge APP** the same firmware uses 1,243,154 of 3,145,728
+recommended partition scheme **Huge APP** the same firmware uses 1,244,170 of 3,145,728
 bytes (**39 %**), with “Minimal SPIFFS” 62 %.
 
 Also simulated on a PC: beam path (brightness, retrace lines, frame rate), OLED content, BOOT

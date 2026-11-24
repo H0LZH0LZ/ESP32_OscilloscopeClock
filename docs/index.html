@@ -227,8 +227,8 @@ a.row>span:last-child{font-size:18px}
 <div class="grp"><h2 id="downloads-h" class="coll" role="button" tabindex="0" aria-expanded="true"><span data-l="de">0 Links &amp; Dokumente</span><span data-l="en">0 Links &amp; documents</span></h2>
 <section>
  <a class="row" target="_blank" rel="noopener" href="https://github.com/H0LZH0LZ/ESP32_OscilloscopeClock"><span><span data-l="de">GitHub – Version 2.0</span><span data-l="en">GitHub – version 2.0</span><small class="note" data-l="de">Diese Firmware mit Quellcode, Anleitung und Werkzeugen</small><small class="note" data-l="en">This firmware with source code, guide and tools</small></span><span>›</span></a>
- <a class="row" target="_blank" rel="noopener" data-l="de" href="ESP32_Oscilloscope_Clock_Dokumentation.pdf?v=27b2c707"><span>Dokumentation (PDF)<small class="note">Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small></span><span>›</span></a>
- <a class="row" target="_blank" rel="noopener" data-l="en" href="ESP32_Oscilloscope_Clock_Documentation.pdf?v=f2f4f5d8"><span>Documentation (PDF)<small class="note">Assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
+ <a class="row" target="_blank" rel="noopener" data-l="de" href="ESP32_Oscilloscope_Clock_Dokumentation.pdf?v=0cc66c3b"><span>Dokumentation (PDF)<small class="note">Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small></span><span>›</span></a>
+ <a class="row" target="_blank" rel="noopener" data-l="en" href="ESP32_Oscilloscope_Clock_Documentation.pdf?v=c34fc1f3"><span>Documentation (PDF)<small class="note">Assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" href="demo/"><span><span data-l="de">Testseite</span><span data-l="en">Test page</span><small class="note" data-l="de">Das Webinterface der Uhr ausprobieren – läuft im Browser, alle Werte sind simuliert</small><small class="note" data-l="en">Try the clock's web interface – runs in the browser, all values are simulated</small></span><span>›</span></a>
  <a class="row" href="#kap6"><span><span data-l="de">Firmware installieren</span><span data-l="en">Install firmware</span><small class="note" data-l="de">Direkt im Browser auf den ESP32 schreiben – oder den Sketch mit Arduino Cloud hochladen</small><small class="note" data-l="en">Write it to the ESP32 straight from the browser – or upload the sketch with Arduino Cloud</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" href="https://github.com/maurohh/ESP32_OscilloscopeClock"><span><span data-l="de">GitHub – Original</span><span data-l="en">GitHub – original</span><small class="note" data-l="de">Die ursprüngliche ESP32 Oscilloscope Clock von Mauro Pintus (2018), nach deren Idee diese Version entstand</small><small class="note" data-l="en">The original ESP32 Oscilloscope Clock by Mauro Pintus (2018) that inspired this version</small></span><span>›</span></a>
@@ -473,8 +473,8 @@ Die Pixelverschiebung versetzt die Anzeige jede Minute um einen Pixel, damit kei
 landen in einem 8-KB-Ringpuffer, den der Debug-Bereich anzeigt.</p>
 <p><b>Vektordaten:</b> Zifferblatt, Ziffern, Zeiger und Testbild sind eigene Zeichnungen, erzeugt mit <code>tools/gen_vectors.py</code>
 (Koordinaten 0–255, 8 Bit je Achse).</p>
-<p><b>Speicher:</b> Programmspeicher 1.243.154 Byte (94 % beim Standard-Partitionsschema, ca. 39 % mit „Huge APP“), globale Variablen
-75.068 Byte (22 %). Die Webseite liegt gzip-komprimiert im Flash (24 KB), die Schrift (Raleway, auf die benötigten Zeichen reduziert) als WOFF2 (30 KB).</p>
+<p><b>Speicher:</b> Programmspeicher 1.244.170 Byte (94 % beim Standard-Partitionsschema, ca. 39 % mit „Huge APP“), globale Variablen
+75.692 Byte (23 %). Die Webseite liegt gzip-komprimiert im Flash (24 KB), die Schrift (Raleway, auf die benötigten Zeichen reduziert) als WOFF2 (30 KB).</p>
 </div><div data-l="en">
 <figure><img loading="lazy" src="images/software_en.svg"><figcaption>Fig. 4 – Distribution of the firmware over the two processor cores</figcaption></figure>
 <h3>2.1 Two cores with separate jobs</h3>
@@ -550,8 +550,8 @@ its frames (frame rate in the status), an idle hook measures the load of core 0,
 the debug section.</p>
 <p><b>Vector data:</b> dial, numerals, hands and test pattern are original drawings, generated with <code>tools/gen_vectors.py</code>
 (coordinates 0–255, 8 bits per axis).</p>
-<p><b>Memory:</b> program memory 1,243,154 bytes (94 % with the default partition scheme, approx. 39 % with “Huge APP”), global variables
-75,068 bytes (22 %). The web page is stored gzip-compressed in flash (24 KB), the font (Raleway, reduced to the characters needed) as WOFF2 (30 KB).</p>
+<p><b>Memory:</b> program memory 1,244,170 bytes (94 % with the default partition scheme, approx. 39 % with “Huge APP”), global variables
+75,692 bytes (23 %). The web page is stored gzip-compressed in flash (24 KB), the font (Raleway, reduced to the characters needed) as WOFF2 (30 KB).</p>
 </div></section></div>
 
 <div class="grp closed"><h2 id="kap3" class="coll" role="button" tabindex="0" aria-expanded="false"><span data-l="de">3 Stand der Technik</span><span data-l="en">3 State of the art</span></h2>
@@ -562,9 +562,8 @@ the debug section.</p>
 als Tabellen von Linienzügen vor, die der Strahl nacheinander abfährt. Die Uhr braucht dafür außer dem ESP32 nur zwei Leitungen
 zum Oszilloskop.</p>
 <h3>3.2 Andere Oszilloskop-Uhren</h3>
-<p>Uhren und Grafiken auf dem Oszilloskop gibt es auch als Demonstrations- und Bausatzplatinen. Ein Beispiel ist das Demo Board
-von VintageTEK [7] für Tektronix-Röhrengeräte: Dort erzeugt ein Mikrocontroller ATmega328P die Ablenkspannungen über
-Widerstandsnetzwerke (R-2R), zeigt neben einer Uhr auch Spiele und verschiebt das Bild gegen Einbrennen. Gemeinsam ist allen
+<p>Uhren und Grafiken auf dem Oszilloskop gibt es auch als Demonstrations- und Bausatzplatinen. Meist erzeugt dort ein Mikrocontroller die
+Ablenkspannungen über Widerstandsnetzwerke (R-2R) und zeigt neben einer Uhr auch andere Motive. Gemeinsam ist allen
 diesen Geräten das Prinzip der <b>Vektorgrafik</b>: Der Strahl fährt die Linien direkt ab, statt wie beim Fernseher Zeile für
 Zeile zu schreiben.</p>
 <h3>3.3 Neu in Version 2.0</h3>
@@ -576,7 +575,7 @@ Zeile zu schreiben.</p>
  <li><b>Webinterface</b> mit Live-Vorschau, allen Einstellungen und WLAN-Verwaltung; Einrichtung über ein Setup-WLAN.</li>
  <li><b>OLED-Anzeige</b> mit der Bibliothek U8g2 [4] und optionale <b>Echtzeituhr DS3231</b> [6].</li>
  <li><b>Fünf Zifferblätter</b>, Bildverschiebung gegen Einbrennen und ein <b>Flimmerschutz</b>.</li>
- <li><b>Installation im Browser</b> mit ESP Web Tools [5]; Bohrplan als technische Zeichnung nach [8, 9].</li>
+ <li><b>Installation im Browser</b> mit ESP Web Tools [5]; Bohrplan als technische Zeichnung nach [7, 8].</li>
 </ul>
 </div><div data-l="en">
 <h3>3.1 The original Oscilloscope Clock</h3>
@@ -584,9 +583,8 @@ Zeile zu schreiben.</p>
 built-in digital-to-analogue converters [2], the time comes from the internet via NTP. Dial and hands are stored as tables of
 polylines which the beam traces one after another. Apart from the ESP32, the clock only needs two wires to the oscilloscope.</p>
 <h3>3.2 Other oscilloscope clocks</h3>
-<p>Clocks and graphics on the oscilloscope also exist as demonstration and kit boards. One example is the Demo Board by VintageTEK
-[7] for Tektronix CRT instruments: there an ATmega328P microcontroller generates the deflection voltages via resistor networks
-(R-2R), shows games besides a clock and shifts the picture against burn-in. All these devices share the principle of <b>vector
+<p>Clocks and graphics on the oscilloscope also exist as demonstration and kit boards. Usually a microcontroller generates the deflection
+voltages there via resistor networks (R-2R) and shows other graphics besides a clock. All these devices share the principle of <b>vector
 graphics</b>: the beam traces the lines directly instead of writing line by line like a TV set.</p>
 <h3>3.3 New in version 2.0</h3>
 <ul>
@@ -597,7 +595,7 @@ graphics</b>: the beam traces the lines directly instead of writing line by line
  <li><b>Web interface</b> with live preview, all settings and Wi-Fi management; set-up via a setup network.</li>
  <li><b>OLED display</b> with the U8g2 library [4] and optional <b>DS3231 real-time clock</b> [6].</li>
  <li><b>Five dials</b>, picture shift against burn-in and a <b>flicker guard</b>.</li>
- <li><b>Installation in the browser</b> with ESP Web Tools [5]; drilling template as a technical drawing according to [8, 9].</li>
+ <li><b>Installation in the browser</b> with ESP Web Tools [5]; drilling template as a technical drawing according to [7, 8].</li>
 </ul>
 </div></section></div>
 
@@ -869,8 +867,8 @@ neue Version die ZIP-Datei erneut herunterladen und importieren.</p>
 <h3>6.4 Partitionsschema: zwei Varianten</h3>
 <div class="tw"><table style="break-inside:avoid">
  <tr><th>Variante</th><th>Arduino IDE: Partition Scheme</th><th>PlatformIO</th><th>Programmspeicher</th></tr>
- <tr><td data-th="Variante"><b>A – Huge APP</b> (empfohlen)</td><td data-th="Arduino IDE: Partition Scheme">„Huge APP (3MB No OTA/1MB SPIFFS)“</td><td data-th="PlatformIO"><code>pio run -t upload</code></td><td data-th="Programmspeicher">1.243.154 von 3.145.728 Byte (<b>39 %</b>)</td></tr>
- <tr><td data-th="Variante"><b>B – Standard</b></td><td data-th="Arduino IDE: Partition Scheme">„Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)“ – Voreinstellung, nichts umstellen</td><td data-th="PlatformIO"><code>pio run -e standard -t upload</code></td><td data-th="Programmspeicher">1.243.154 von 1.310.720 Byte (<b>94 %</b>)</td></tr>
+ <tr><td data-th="Variante"><b>A – Huge APP</b> (empfohlen)</td><td data-th="Arduino IDE: Partition Scheme">„Huge APP (3MB No OTA/1MB SPIFFS)“</td><td data-th="PlatformIO"><code>pio run -t upload</code></td><td data-th="Programmspeicher">1.244.170 von 3.145.728 Byte (<b>39 %</b>)</td></tr>
+ <tr><td data-th="Variante"><b>B – Standard</b></td><td data-th="Arduino IDE: Partition Scheme">„Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)“ – Voreinstellung, nichts umstellen</td><td data-th="PlatformIO"><code>pio run -e standard -t upload</code></td><td data-th="Programmspeicher">1.244.170 von 1.310.720 Byte (<b>94 %</b>)</td></tr>
 </table></div>
 <p>Beide Varianten laufen gleich. <b>A</b> lässt rund 1,9 MB Platz für Erweiterungen; die Uhr nutzt weder OTA-Updates noch
 SPIFFS, deshalb fehlt dabei nichts. <b>B</b> funktioniert ohne Umstellen, hat aber nur noch etwa 70 KB Reserve. Ein Wechsel
@@ -917,8 +915,8 @@ version download and import the ZIP file again.</p>
 <h3>6.4 Partition scheme: two variants</h3>
 <div class="tw"><table style="break-inside:avoid">
  <tr><th>Variant</th><th>Arduino IDE: Partition Scheme</th><th>PlatformIO</th><th>Program memory</th></tr>
- <tr><td data-th="Variant"><b>A – Huge APP</b> (recommended)</td><td data-th="Arduino IDE: Partition Scheme">“Huge APP (3MB No OTA/1MB SPIFFS)”</td><td data-th="PlatformIO"><code>pio run -t upload</code></td><td data-th="Program memory">1,243,154 of 3,145,728 bytes (<b>39 %</b>)</td></tr>
- <tr><td data-th="Variant"><b>B – Standard</b></td><td data-th="Arduino IDE: Partition Scheme">“Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)” – the default, nothing to change</td><td data-th="PlatformIO"><code>pio run -e standard -t upload</code></td><td data-th="Program memory">1,243,154 of 1,310,720 bytes (<b>94 %</b>)</td></tr>
+ <tr><td data-th="Variant"><b>A – Huge APP</b> (recommended)</td><td data-th="Arduino IDE: Partition Scheme">“Huge APP (3MB No OTA/1MB SPIFFS)”</td><td data-th="PlatformIO"><code>pio run -t upload</code></td><td data-th="Program memory">1,244,170 of 3,145,728 bytes (<b>39 %</b>)</td></tr>
+ <tr><td data-th="Variant"><b>B – Standard</b></td><td data-th="Arduino IDE: Partition Scheme">“Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)” – the default, nothing to change</td><td data-th="PlatformIO"><code>pio run -e standard -t upload</code></td><td data-th="Program memory">1,244,170 of 1,310,720 bytes (<b>94 %</b>)</td></tr>
 </table></div>
 <p>Both variants work the same. <b>A</b> leaves about 1.9 MB for extensions; the clock uses neither OTA updates nor SPIFFS,
 so nothing is lost. <b>B</b> works without changing anything but leaves only about 70 KB. You can switch at any time (choose
@@ -1220,7 +1218,9 @@ Drehung um 180° und Pixelverschiebung gegen Einbrennen sind einstellbar.</p>
 <figure><img loading="lazy" src="images/oled_englisch_12h.png"><figcaption>Abb. 11 – OLED auf Englisch im 12-Stunden-Format</figcaption></figure>
 <h3>9.3 BOOT-Taster</h3>
 <p><b>3 Sekunden halten</b> schaltet das Oszilloskop-Profil um (DIGITAL ↔ ANALOG). Das OLED zeigt den Wechsel mit Countdown 3, 2, 1;
-vorher loslassen bricht ab (Abb. 12 und 13). Die Einstellung wird gespeichert. <b>Nicht beim Einschalten drücken</b> – sonst startet der ESP32 im Download-Modus.</p>
+vorher loslassen bricht ab (Abb. 12 und 13). <b>Das Oszilloskop zeigt dasselbe:</b> statt der Uhr das Ziel-Profil (ANALOG bzw.
+DIGITAL) und den Countdown, bei den Werkseinstellungen RESET und 5 … 1 – so sieht man den Wechsel auch ohne OLED oder bei
+ausgeschaltetem Display. Die Einstellung wird gespeichert. <b>Nicht beim Einschalten drücken</b> – sonst startet der ESP32 im Download-Modus.</p>
 <div class="two">
  <figure><img loading="lazy" src="images/oled_profil.png"><figcaption>Abb. 12 – Umschalten DIGITAL → ANALOG (BOOT-Taster gehalten, noch 2 s)</figcaption></figure>
  <figure><img loading="lazy" src="images/oled_profil_analog_digital.png"><figcaption>Abb. 13 – Umschalten ANALOG → DIGITAL (zurück zum Profil für digitale Oszilloskope)</figcaption></figure>
@@ -1248,7 +1248,9 @@ Brightness 0–100 %, seconds, rotation by 180° and pixel shifting against burn
 <figure><img loading="lazy" src="images/oled_englisch_12h.png"><figcaption>Fig. 11 – OLED in English in 12-hour format</figcaption></figure>
 <h3>9.3 BOOT button</h3>
 <p><b>Holding it for 3 seconds</b> switches the oscilloscope profile (DIGITAL ↔ ANALOG). The OLED shows the change with a countdown
-3, 2, 1; releasing earlier cancels (Fig. 12 and 13). The setting is saved. <b>Do not press it while powering on</b> – otherwise the ESP32 starts in download mode.</p>
+3, 2, 1; releasing earlier cancels (Fig. 12 and 13). <b>The oscilloscope shows the same:</b> instead of the clock the target
+profile (ANALOG or DIGITAL) and the countdown, for the factory reset RESET and 5 … 1 – so the change is visible even without an
+OLED or with the display switched off. The setting is saved. <b>Do not press it while powering on</b> – otherwise the ESP32 starts in download mode.</p>
 <div class="two">
  <figure><img loading="lazy" src="images/oled_profil_en.png"><figcaption>Fig. 12 – Switching DIGITAL → ANALOG (BOOT button held, 2 s to go)</figcaption></figure>
  <figure><img loading="lazy" src="images/oled_profil_analog_digital_en.png"><figcaption>Fig. 13 – Switching ANALOG → DIGITAL (back to the profile for digital oscilloscopes)</figcaption></figure>
@@ -1592,11 +1594,10 @@ byte the same image as the Arduino software. <b>The test on real hardware is sti
  <tr><td>[4]</td><td>O. Kraus: <i>U8g2</i> – Bibliothek für monochrome Displays, Version 2.36 – <a href="https://github.com/olikraus/u8g2" target="_blank" rel="noopener">github.com/olikraus/u8g2</a></td></tr>
  <tr><td>[5]</td><td>ESPHome: <i>ESP Web Tools</i> – Firmware im Browser installieren, Version 10.4 – <a href="https://esphome.github.io/esp-web-tools/" target="_blank" rel="noopener">esphome.github.io/esp-web-tools/</a></td></tr>
  <tr><td>[6]</td><td>Analog Devices (Maxim Integrated): <i>DS3231</i> – Datenblatt der Echtzeituhr – <a href="https://www.analog.com/media/en/technical-documentation/data-sheets/DS3231.pdf" target="_blank" rel="noopener">www.analog.com/media/en/technical-documentation/data-sheets/DS3231.pdf</a></td></tr>
- <tr><td>[7]</td><td>VintageTEK – Museum für Tektronix-Geräte: <i>Demo Board</i> (Oszilloskop-Demonstrationsplatine mit Uhr und Spielen) – <a href="https://vintagetek.org/" target="_blank" rel="noopener">vintagetek.org/</a></td></tr>
- <tr><td>[8]</td><td>TU München, Werkstatt EWT: <i>Grundlagen des Technischen Zeichnens</i> – <a href="https://www.epe.ed.tum.de/fileadmin/w00bzo/ewt/Werkstatt/Zeichnungserstellung.pdf" target="_blank" rel="noopener">www.epe.ed.tum.de/fileadmin/w00bzo/ewt/Werkstatt/Zeichnungserstellung.pdf</a></td></tr>
- <tr><td>[9]</td><td>DIN ISO 128 (Darstellung) und DIN ISO 129 (Bemaßung) für technische Zeichnungen; DIN EN ISO 7200 (Schriftfeld)</td></tr>
- <tr><td>[10]</td><td>The Raleway Project Authors: <i>Raleway</i>, SIL Open Font License 1.1 – <a href="https://fonts.google.com/specimen/Raleway" target="_blank" rel="noopener">fonts.google.com/specimen/Raleway</a></td></tr>
- <tr><td>[11]</td><td>TH Nürnberg, LEKO: <i>Die Struktur einer Arbeit in den Ingenieur- und Naturwissenschaften</i> (Gliederung dieser Anleitung) – <a href="https://leko.service.th-nuernberg.de/owl/artikel/die-struktur-einer-arbeit-in-den-ingenieur-und-naturwissenschaften-ing/" target="_blank" rel="noopener">leko.service.th-nuernberg.de/owl/artikel/die-struktur-einer-arbeit-in-den-ingenieur-und-naturwissenschaften-ing/</a></td></tr>
+ <tr><td>[7]</td><td>TU München, Werkstatt EWT: <i>Grundlagen des Technischen Zeichnens</i> – <a href="https://www.epe.ed.tum.de/fileadmin/w00bzo/ewt/Werkstatt/Zeichnungserstellung.pdf" target="_blank" rel="noopener">www.epe.ed.tum.de/fileadmin/w00bzo/ewt/Werkstatt/Zeichnungserstellung.pdf</a></td></tr>
+ <tr><td>[8]</td><td>DIN ISO 128 (Darstellung) und DIN ISO 129 (Bemaßung) für technische Zeichnungen; DIN EN ISO 7200 (Schriftfeld)</td></tr>
+ <tr><td>[9]</td><td>The Raleway Project Authors: <i>Raleway</i>, SIL Open Font License 1.1 – <a href="https://fonts.google.com/specimen/Raleway" target="_blank" rel="noopener">fonts.google.com/specimen/Raleway</a></td></tr>
+ <tr><td>[10]</td><td>TH Nürnberg, LEKO: <i>Die Struktur einer Arbeit in den Ingenieur- und Naturwissenschaften</i> (Gliederung dieser Anleitung) – <a href="https://leko.service.th-nuernberg.de/owl/artikel/die-struktur-einer-arbeit-in-den-ingenieur-und-naturwissenschaften-ing/" target="_blank" rel="noopener">leko.service.th-nuernberg.de/owl/artikel/die-struktur-einer-arbeit-in-den-ingenieur-und-naturwissenschaften-ing/</a></td></tr>
 </table></div>
 </div><div data-l="en">
 <div class="tw"><table class="refs">
@@ -1606,11 +1607,10 @@ byte the same image as the Arduino software. <b>The test on real hardware is sti
  <tr><td>[4]</td><td>O. Kraus: <i>U8g2</i> – library for monochrome displays, version 2.36 – <a href="https://github.com/olikraus/u8g2" target="_blank" rel="noopener">github.com/olikraus/u8g2</a></td></tr>
  <tr><td>[5]</td><td>ESPHome: <i>ESP Web Tools</i> – install firmware from the browser, version 10.4 – <a href="https://esphome.github.io/esp-web-tools/" target="_blank" rel="noopener">esphome.github.io/esp-web-tools/</a></td></tr>
  <tr><td>[6]</td><td>Analog Devices (Maxim Integrated): <i>DS3231</i> – real-time clock data sheet – <a href="https://www.analog.com/media/en/technical-documentation/data-sheets/DS3231.pdf" target="_blank" rel="noopener">www.analog.com/media/en/technical-documentation/data-sheets/DS3231.pdf</a></td></tr>
- <tr><td>[7]</td><td>VintageTEK – museum of Tektronix instruments: <i>Demo Board</i> (oscilloscope demonstration board with clock and games) – <a href="https://vintagetek.org/" target="_blank" rel="noopener">vintagetek.org/</a></td></tr>
- <tr><td>[8]</td><td>TU Munich, EWT workshop: <i>Grundlagen des Technischen Zeichnens</i> (basics of technical drawing) – <a href="https://www.epe.ed.tum.de/fileadmin/w00bzo/ewt/Werkstatt/Zeichnungserstellung.pdf" target="_blank" rel="noopener">www.epe.ed.tum.de/fileadmin/w00bzo/ewt/Werkstatt/Zeichnungserstellung.pdf</a></td></tr>
- <tr><td>[9]</td><td>DIN ISO 128 (presentation) and DIN ISO 129 (dimensioning) for technical drawings; DIN EN ISO 7200 (title block)</td></tr>
- <tr><td>[10]</td><td>The Raleway Project Authors: <i>Raleway</i>, SIL Open Font License 1.1 – <a href="https://fonts.google.com/specimen/Raleway" target="_blank" rel="noopener">fonts.google.com/specimen/Raleway</a></td></tr>
- <tr><td>[11]</td><td>TH Nürnberg, LEKO: <i>Die Struktur einer Arbeit in den Ingenieur- und Naturwissenschaften</i> (structure of this guide) – <a href="https://leko.service.th-nuernberg.de/owl/artikel/die-struktur-einer-arbeit-in-den-ingenieur-und-naturwissenschaften-ing/" target="_blank" rel="noopener">leko.service.th-nuernberg.de/owl/artikel/die-struktur-einer-arbeit-in-den-ingenieur-und-naturwissenschaften-ing/</a></td></tr>
+ <tr><td>[7]</td><td>TU Munich, EWT workshop: <i>Grundlagen des Technischen Zeichnens</i> (basics of technical drawing) – <a href="https://www.epe.ed.tum.de/fileadmin/w00bzo/ewt/Werkstatt/Zeichnungserstellung.pdf" target="_blank" rel="noopener">www.epe.ed.tum.de/fileadmin/w00bzo/ewt/Werkstatt/Zeichnungserstellung.pdf</a></td></tr>
+ <tr><td>[8]</td><td>DIN ISO 128 (presentation) and DIN ISO 129 (dimensioning) for technical drawings; DIN EN ISO 7200 (title block)</td></tr>
+ <tr><td>[9]</td><td>The Raleway Project Authors: <i>Raleway</i>, SIL Open Font License 1.1 – <a href="https://fonts.google.com/specimen/Raleway" target="_blank" rel="noopener">fonts.google.com/specimen/Raleway</a></td></tr>
+ <tr><td>[10]</td><td>TH Nürnberg, LEKO: <i>Die Struktur einer Arbeit in den Ingenieur- und Naturwissenschaften</i> (structure of this guide) – <a href="https://leko.service.th-nuernberg.de/owl/artikel/die-struktur-einer-arbeit-in-den-ingenieur-und-naturwissenschaften-ing/" target="_blank" rel="noopener">leko.service.th-nuernberg.de/owl/artikel/die-struktur-einer-arbeit-in-den-ingenieur-und-naturwissenschaften-ing/</a></td></tr>
 </table></div>
 </div></section></div>
 

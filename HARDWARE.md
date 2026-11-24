@@ -133,7 +133,8 @@ der Leiste angeschlossen werden, die besser passt.
 ## Oszilloskop-Einstellungen
 
 Die Firmware kennt zwei Oszilloskop-Profile. Umgeschaltet wird im Betrieb mit dem **BOOT-Taster** des
-ESP32: **3 s halten**. Das OLED zeigt dabei den Wechsel (z. B. „DIGITAL > ANALOG“) mit Countdown 3, 2, 1.
+ESP32: **3 s halten**. Das OLED zeigt dabei den Wechsel (z. B. „DIGITAL > ANALOG“) mit Countdown 3, 2, 1,
+das Oszilloskop statt der Uhr das Ziel-Profil und den Countdown – auch ohne OLED.
 Wer vorher loslässt, bricht ab. Die Einstellung wird im Flash gespeichert und gilt auch nach einem Neustart.
 Ein neues Hochladen ist nicht nötig. Den Taster **nicht beim Einschalten** drücken, sonst
 startet der ESP32 im Download-Modus. Beim Umschalten kann einmal kurz ein Lichtpunkt auf dem Oszilloskop
@@ -242,7 +243,7 @@ am Oszilloskop. Die Werte in `config.h` sind dann nur die Startwerte.
 | `FLICKER_MIN_FPS` | Flimmerschutz: Die Firmware begrenzt die Verweilzeit automatisch so, dass mindestens so viele Bilder/s entstehen (Standard 75, 0 = aus). Die Einstellung im Webinterface bleibt gespeichert |
 | `SCOPE_PROFILE` | Start-Profil, solange keins gespeichert ist: 0 = ANALOG, 1 = DIGITAL (Standard). Im Betrieb per BOOT-Taster umschaltbar |
 | `BUTTON_LONG_MS` | Haltedauer des BOOT-Tasters zum Umschalten (Standard 3000 ms) |
-| `BUTTON_FACTORY_MS` | Haltedauer für die Werkseinstellungen (Standard 10000 ms; die letzten 5 s Countdown auf dem OLED) |
+| `BUTTON_FACTORY_MS` | Haltedauer für die Werkseinstellungen (Standard 10000 ms; die letzten 5 s Countdown auf OLED und Oszilloskop) |
 | `JUMP_SPEED` | Geschwindigkeit der Sprünge zwischen Linien im Profil ANALOG (Standard 24; DIGITAL springt immer hart). Größer = schwächere Rücklaufspur, kleiner (12) für sehr alte Oszilloskope, 0 = harter Sprung |
 | `JUMP_LANDING`, `JUMP_RAMP` | Abbremsen vor dem Linienanfang (Standard 8 und 4). Kleinere `JUMP_LANDING` bei „Haken“ an Linienanfängen |
 | `ZBLANK_PIN`, `ZBLANK_ENABLE`, `ZBLANK_ACTIVE_HIGH` | Optionale Dunkeltastung über den Z-Eingang: GPIO (Standard 27), Startwert aus/an und Pegel. Im beschriebenen Aufbau nicht verdrahtet; ein- und ausschalten im Webinterface (Einstellungen → Oszilloskop) |

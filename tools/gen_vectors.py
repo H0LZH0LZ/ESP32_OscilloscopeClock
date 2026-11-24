@@ -218,6 +218,36 @@ def hand_table(polys_per_pos):
     return out
 
 
+# ---------------------------------------------------------------- Meldungen am Oszilloskop
+# Beim Halten des BOOT-Tasters zeigt das Oszilloskop dasselbe wie das OLED: das Ziel-Profil
+# bzw. RESET und den Countdown – auch ohne (oder mit ausgeschaltetem) OLED.
+# Buchstaben im Stil der 7-Segment-Ziffern (Höhe 20, Breite 10), ergänzt um Schrägen.
+_LET = {
+    'A': ['abcefg'], 'L': ['fed'], 'O': ['abcdef'], 'E': ['afged'], 'S': ['afgcd'],
+    'G': ['afedc', [(9, 10), (5, 10)]],
+    'N': [[(0, 0), (0, 20), (10, 0), (10, 20)]],
+    'D': [[(0, 0), (0, 20), (7, 20), (10, 16), (10, 4), (7, 0), (0, 0)]],
+    'I': [[(0, 0), (0, 20)]],
+    'T': [[(0, 20), (10, 20)], [(5, 20), (5, 0)]],
+    'R': ['abfeg', [(4, 10), (10, 0)]],
+}
+def _letter(spec):
+    out = []
+    for part in spec:
+        out += [_SEG[c] for c in part] if isinstance(part, str) else [part]
+    return out
+MSG_GLYPHS = {c: (0 if c == 'I' else 10, _letter(v)) for c, v in _LET.items()}
+MSG_GLYPHS.update({c: (SEGMENT_W[c], SEGMENT[c]) for c in SEGMENT})
+
+
+def msg_text(text, cy, scale):
+    """Text in der Meldungsschrift, waagerecht mittig, Mitte bei Höhe cy, vergrößert um scale."""
+    polys = place(MSG_GLYPHS, text, 0, 0, 20, 5)
+    w = max(x for p in polys for x, _ in p) - min(x for p in polys for x, _ in p)
+    x0 = min(x for p in polys for x, _ in p)
+    return [[(round(C + (x - x0 - w / 2) * scale), round(cy + (y - 0) * scale)) for x, y in p] for p in polys]
+
+
 # ---------------------------------------------------------------- Testbild
 def test_pattern():
     """Testbild zum Einstellen des Oszilloskops: Rahmen (Bildgrenzen), Kreis
@@ -243,6 +273,19 @@ TABLES = {
     'DialDigitsRoman4': table(roman([12, 3, 6, 9])),
     'DialStation':      table(dial_station()),        # Stundenbalken, Zifferblatt 4 (Bahnhof)
     'TestData':         table(test_pattern()),
+    'MsgAnalog':        table(msg_text('ANALOG', 160, 2.0)),      # Meldung: Profil wechselt zu ANALOG
+    'MsgDigital':       table(msg_text('DIGITAL', 160, 2.0)),     # Meldung: Profil wechselt zu DIGITAL
+    'MsgReset':         table(msg_text('RESET', 160, 2.0)),       # Meldung: Werkseinstellungen
+    'MsgDigit0':        table(msg_text('0', 86, 3.0)),
+    'MsgDigit1':        table(msg_text('1', 86, 3.0)),
+    'MsgDigit2':        table(msg_text('2', 86, 3.0)),
+    'MsgDigit3':        table(msg_text('3', 86, 3.0)),
+    'MsgDigit4':        table(msg_text('4', 86, 3.0)),
+    'MsgDigit5':        table(msg_text('5', 86, 3.0)),
+    'MsgDigit6':        table(msg_text('6', 86, 3.0)),
+    'MsgDigit7':        table(msg_text('7', 86, 3.0)),
+    'MsgDigit8':        table(msg_text('8', 86, 3.0)),
+    'MsgDigit9':        table(msg_text('9', 86, 3.0)),
     'HrPtrData':        hand_table(hand_needle(60, 2)),
     'MinPtrData':       hand_table(hand_needle(100, 2)),
     'SecPtrData':       hand_table(hand_line(108)),

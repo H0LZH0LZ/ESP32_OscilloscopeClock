@@ -424,7 +424,8 @@
 <path d='M171,240 L159,243 Q153,250 159,257 L171,260 Z' fill='#cfd3d7' stroke='#6d7378'/>
 <rect x='179' y='239' width='7' height='22' rx='1' fill='#b3b8bd' stroke='#6d7378'/>
 <text x='40' y='228' font-size='13' font-weight='bold'>Pigtail X</text>
-<text x='10' y='280' font-size='11' fill='#444'>BNC plug → oscilloscope channel 1</text>
+<text x='10' y='280' font-size='11' fill='#444'>BNC plug</text>
+<text x='10' y='294' font-size='11' fill='#444'>→ oscilloscope channel 1</text>
 <line x1='238' y1='250' x2='286' y2='250' stroke='#9aa0a6' stroke-width='2'/>
 <rect x='246' y='243' width='32' height='14' rx='6' fill='#e6cf9e' stroke='#9c7c45'/>
 <rect x='251' y='243' width='3.5' height='14' fill='#d62828'/>
@@ -454,7 +455,8 @@
 <path d='M171,360 L159,363 Q153,370 159,377 L171,380 Z' fill='#cfd3d7' stroke='#6d7378'/>
 <rect x='179' y='359' width='7' height='22' rx='1' fill='#b3b8bd' stroke='#6d7378'/>
 <text x='40' y='348' font-size='13' font-weight='bold'>Pigtail Y</text>
-<text x='10' y='400' font-size='11' fill='#444'>BNC plug → oscilloscope channel 2</text>
+<text x='10' y='400' font-size='11' fill='#444'>BNC plug</text>
+<text x='10' y='414' font-size='11' fill='#444'>→ oscilloscope channel 2</text>
 <line x1='238' y1='370' x2='286' y2='370' stroke='#9aa0a6' stroke-width='2'/>
 <rect x='246' y='363' width='32' height='14' rx='6' fill='#e6cf9e' stroke='#9c7c45'/>
 <rect x='251' y='363' width='3.5' height='14' fill='#d62828'/>

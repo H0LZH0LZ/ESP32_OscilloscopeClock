@@ -49,6 +49,8 @@
   "DIGITAL > ANALOG" und einen Countdown 3, 2, 1; das Profil wird im Flash
   gespeichert. Weiter halten bis 10 s → Werkseinstellungen (alle Einstellungen
   und WLANs löschen, Neustart); ab 5 s zählt das OLED 5 … 1 herunter, Loslassen bricht ab.
+  Das Oszilloskop zeigt währenddessen dasselbe (Ziel-Profil bzw. RESET und Countdown) –
+  so sieht man den Wechsel auch ohne OLED oder bei ausgeschaltetem Display.
   Nicht beim Einschalten drücken (Download-Modus).
 
   Webinterface: http://scope-clock.local (oder IP-Adresse der Uhr) – Live-
@@ -185,6 +187,9 @@ static char    s_ntpServer[64] = NTP_SERVER_1;             // erster NTP-Server 
 static uint8_t s_oledPct       = OLED_BRIGHT_PCT;          // OLED-Helligkeit 0–100 % (0 = aus)
 static bool    s_oledSec       = OLED_SECONDS;             // Uhrzeit mit Sekunden
 static char    s_host[33]      = WIFI_HOSTNAME;            // Gerätename (Router, http://<name>.local)
+// Meldung am Oszilloskop, solange der BOOT-Taster gehalten wird (wie am OLED – auch ohne OLED):
+// 0 = keine, 1 = Wechsel zu ANALOG, 2 = Wechsel zu DIGITAL, 3 = Werkseinstellungen; dazu der Countdown
+static volatile uint8_t g_scopeMsg = 0, g_scopeMsgDigit = 0;
 static volatile bool g_testPattern = BOOT_TEST_S > 0;    // Testbild statt Uhr (nicht gespeichert); beim Start BOOT_TEST_S Sekunden an
 static bool s_bootTest = BOOT_TEST_S > 0;                 // Start-Testbild läuft noch (endet automatisch)
 static bool    s_oledShift     = OLED_SHIFT_EVERY_S > 0;
@@ -913,6 +918,23 @@ static void IRAM_ATTR scopeTask(void *)
     // Bildverschiebung einmal pro Bild übernehmen; das Testbild bleibt fest stehen
     s_ox = g_testPattern ? 0 : g_shiftX;
     s_oy = g_testPattern ? 0 : g_shiftY;
+
+    // BOOT-Taster gehalten: Ziel-Profil bzw. RESET und Countdown statt der Uhr
+    const uint8_t msg = g_scopeMsg;
+    if (msg) {
+      s_ox = s_oy = 0;
+      const uint8_t *word = msg == 1 ? MsgAnalog : msg == 2 ? MsgDigital : MsgReset;
+      const int wsize     = msg == 1 ? sizeof(MsgAnalog) : msg == 2 ? sizeof(MsgDigital) : sizeof(MsgReset);
+      static const uint8_t *const DIG[10] = { MsgDigit0, MsgDigit1, MsgDigit2, MsgDigit3, MsgDigit4,
+                                              MsgDigit5, MsgDigit6, MsgDigit7, MsgDigit8, MsgDigit9 };
+      static const int DIGS[10] = { sizeof(MsgDigit0), sizeof(MsgDigit1), sizeof(MsgDigit2), sizeof(MsgDigit3), sizeof(MsgDigit4),
+                                    sizeof(MsgDigit5), sizeof(MsgDigit6), sizeof(MsgDigit7), sizeof(MsgDigit8), sizeof(MsgDigit9) };
+      const int d = g_scopeMsgDigit % 10;
+      PlotTable(word, wsize, 0x00, 0);
+      PlotTable(DIG[d], DIGS[d], 0x00, 0);
+      g_frameCount = g_frameCount + 1;
+      continue;
+    }
 
     // Testbild (Einstellungen → Testbild): Rahmen, Kreis, Mittelkreuz statt der Uhr –
     // zum Einstellen von Position, Größe, X/Y-Verhältnis und Fokus am Oszilloskop
@@ -2527,6 +2549,24 @@ static void buttonPoll()
   if (now - s_btnDownSince >= BUTTON_FACTORY_MS) factoryReset();
 }
 
+// Meldung am Oszilloskop zum gehaltenen BOOT-Taster (gleicher Inhalt wie am OLED, ab 0,3 s):
+// Ziel-Profil mit Countdown 3, 2, 1 bzw. RESET mit Countdown 5 … 1. Aufruf alle 10 ms (uiTask).
+static void scopeMsgUpdate()
+{
+  const uint32_t now = millis();
+  uint8_t msg = 0, digit = 0;
+  if (s_factoryDone || (s_btnDownSince && now - s_btnDownSince >= BUTTON_FACTORY_MS - 5000UL)) {
+    const uint32_t held = s_btnDownSince ? now - s_btnDownSince : BUTTON_FACTORY_MS;
+    msg = 3;
+    digit = s_factoryDone || held >= BUTTON_FACTORY_MS ? 0 : (BUTTON_FACTORY_MS - held + 999) / 1000;
+  } else if (s_btnDownSince && !s_btnHandled && now - s_btnDownSince >= 300) {
+    msg = g_scopeProfile ? 1 : 2;                                   // Ziel: das jeweils andere Profil
+    digit = (BUTTON_LONG_MS - (now - s_btnDownSince) + 999) / 1000;
+  }
+  g_scopeMsgDigit = digit;
+  g_scopeMsg = msg;
+}
+
 // true, solange der Taster lange genug gehalten wird, dass die Warnung zu den
 // Werkseinstellungen erscheint – oder sie bereits ausgelöst wurden.
 static bool factoryPhase()
@@ -2713,6 +2753,7 @@ static void uiTask(void *)
   for (;;) {
     publishTime();
     buttonPoll();
+    scopeMsgUpdate();
     if (s_bootTest && millis() >= (uint32_t)BOOT_TEST_S * 1000UL) {   // Start-Testbild beenden
       s_bootTest = false; g_testPattern = false;
       logMsg("%s", tr("[Scope] Start-Testbild beendet, Uhr laeuft", "[Scope] start-up test pattern finished, clock running"));

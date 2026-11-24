@@ -469,6 +469,9 @@ bei Bedarf `BEAM_NS_PER_UNIT` erhöhen (hellere Spur, weniger Bilder/s).
   einen Schritt weiter: `hpos = (h % 12) * 5 + m / 12`.
 - Zifferblatt: `DialData` (48 Minutenstriche, alle Zifferblätter), dazu `DialHours` (Stundenstriche,
   Stil 0–3) oder `DialStation` (Stundenbalken, Stil 4). Ein Balken ist ein geschlossener Linienzug aus 5 Punkten.
+- Meldungen beim Halten des BOOT-Tasters: `MsgAnalog`, `MsgDigital`, `MsgReset` und `MsgDigit0`–`MsgDigit9`
+  (Buchstaben im 7-Segment-Stil). Der `uiTask` setzt `g_scopeMsg`/`g_scopeMsgDigit` (`scopeMsgUpdate()`), der
+  `scopeTask` zeichnet dann Ziel-Profil bzw. RESET und Countdown statt der Uhr – auch ohne OLED.
 - Alle Tabellen erzeugt `tools/gen_vectors.py`: Zifferblatt, Ziffern (Schrift wählbar mit
   `--font segment|kante|raleway`, Standard 7-Segment) und Zeiger. Formen ändern = Skript anpassen
   und `python3 tools/gen_vectors.py > ESP32_OscilloscopeClock_v2.0/DataTable.h` ausführen.

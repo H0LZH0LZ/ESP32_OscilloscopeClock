@@ -106,7 +106,8 @@ sind Screenshots der Seite. Fotos des fertigen Geräts folgen nach dem Bau des P
    auf ca. 1 ms/Div und den Trigger auf Auto stellen (Details in HARDWARE.md).
 6. **Oszilloskop-Profil per BOOT-Taster:** Standardmäßig ist das Profil DIGITAL eingestellt (digitale
    Oszilloskope). Für ein analoges Röhren-Oszilloskop den BOOT-Taster im Betrieb 3 s halten, das
-   OLED zeigt dabei „DIGITAL > ANALOG“ mit Countdown 3, 2, 1. Die Einstellung bleibt gespeichert,
+   OLED zeigt dabei „DIGITAL > ANALOG“ mit Countdown 3, 2, 1, das Oszilloskop das Ziel-Profil und den Countdown
+   (auch ohne OLED). Die Einstellung bleibt gespeichert,
    es ist kein neues Hochladen nötig.
    (Den Taster nicht beim Einschalten drücken, sonst startet der ESP32 im Download-Modus.)
 
@@ -140,12 +141,12 @@ stehen in `ESP32_OscilloscopeClock_v2.0/config.h`. Im Betrieb ändert man sie be
 
 | Board-Paket | Programmspeicher | Globale Variablen (RAM) |
 |---|---|---|
-| esp32 3.3.12 | 1.243.154 Byte (94 %) | 75.068 Byte (22 %) |
+| esp32 3.3.12 | 1.244.170 Byte (94 %) | 75.692 Byte (23 %) |
 | esp32 2.0.17 | 866.053 Byte (66 %) | 61.048 Byte (18 %) – Stand vor Menü und Zifferblatt-Umschaltung |
 
 Die Konfigurationsvarianten (Profil ANALOG/DIGITAL, Z-Dunkeltastung, Zifferblatt 0/1/2,
 `USE_FAST_DAC 0`, EXCEL-Modus) wurden vor dem Webinterface ebenfalls ohne Warnungen gebaut.
-Mit dem empfohlenen Partitionsschema **Huge APP** belegt dieselbe Firmware 1.243.154 von 3.145.728 Byte
+Mit dem empfohlenen Partitionsschema **Huge APP** belegt dieselbe Firmware 1.244.170 von 3.145.728 Byte
 (**39 %**), mit „Minimal SPIFFS“ 62 %.
 
 Zusätzlich auf dem PC simuliert: Strahlverlauf (Helligkeit, Rücklaufspuren, Bildrate),

@@ -133,7 +133,7 @@ fits better.
 ## Oscilloscope settings
 
 The firmware knows two oscilloscope profiles. Switch at run time with the **BOOT button** of the
-ESP32: **hold for 3 s**. The OLED shows the change (e.g. “DIGITAL > ANALOG”) with a countdown
+ESP32: **hold for 3 s**. The oscilloscope shows the target profile and the countdown instead of the clock (also without an OLED); the OLED shows the change (e.g. “DIGITAL > ANALOG”) with a countdown
 3, 2, 1. Releasing earlier cancels. The setting is stored in flash and survives a restart. No new
 upload is needed. Do **not** press the button **while powering up**, otherwise the ESP32 starts in
 download mode. When switching, a bright dot may flash briefly on the oscilloscope (flash write).
@@ -242,7 +242,7 @@ the oscilloscope. The values in `config.h` are then only the start values.
 | `FLICKER_MIN_FPS` | Flicker guard: the firmware automatically limits the dwell time so that at least this many frames/s are drawn (default 75, 0 = off). The setting in the web interface stays saved |
 | `SCOPE_PROFILE` | Start profile as long as none is saved: 0 = ANALOG, 1 = DIGITAL (default). Switchable at run time with the BOOT button |
 | `BUTTON_LONG_MS` | Hold time of the BOOT button for switching (default 3000 ms) |
-| `BUTTON_FACTORY_MS` | Hold time for the factory reset (default 10000 ms; countdown on the OLED during the last 5 s) |
+| `BUTTON_FACTORY_MS` | Hold time for the factory reset (default 10000 ms; countdown on the OLED and the oscilloscope during the last 5 s) |
 | `JUMP_SPEED` | Speed of the jumps between lines in profile ANALOG (default 24; DIGITAL always jumps instantly). Larger = fainter retrace line, smaller (12) for very old oscilloscopes, 0 = instant jump |
 | `JUMP_LANDING`, `JUMP_RAMP` | Braking before the start of a line (default 8 and 4). Smaller `JUMP_LANDING` if lines start with small “hooks” |
 | `ZBLANK_PIN`, `ZBLANK_ENABLE`, `ZBLANK_ACTIVE_HIGH` | Optional blanking via the Z input: GPIO (default 27), start value off/on and level. Not wired in the described build; switch on and off in the web interface (Settings → Oscilloscope) |

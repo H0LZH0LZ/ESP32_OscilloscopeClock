@@ -1,5 +1,5 @@
-<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 700 957'  font-family='Helvetica,Arial,sans-serif'>
-<rect x='0' y='0' width='700' height='957' fill='#fff'/>
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 700 1001'  font-family='Helvetica,Arial,sans-serif'>
+<rect x='0' y='0' width='700' height='1001' fill='#fff'/>
 <text x='350.0' y='26' text-anchor='middle' font-size='17' font-weight='bold'>Layout in the junction box (top view, lid open)</text>
 <rect x='150' y='165' width='400' height='600' rx='16' fill='#f2f2f0' stroke='#888' stroke-width='3'/>
 <g transform='rotate(180 350.0 479.0)'><rect x='224.0' y='325' width='252' height='308' rx='4' fill='#22a54a' stroke='#17803a' stroke-width='2'/>
@@ -190,8 +190,6 @@
 <text x='457.6' y='537.5' text-anchor='start' font-size='7' fill='#fff' >P35</text>
 <text x='457.6' y='523.5' text-anchor='start' font-size='7' fill='#fff' >P32</text>
 <text x='457.6' y='509.5' text-anchor='start' font-size='7' fill='#fff' >P33</text>
-<text x='457.6' y='489.0' text-anchor='start' font-size='7' fill='#fff' font-weight="bold">P25</text>
-<text x='457.6' y='475.0' text-anchor='start' font-size='7' fill='#fff' font-weight="bold">P26</text>
 <text x='457.6' y='467.5' text-anchor='start' font-size='7' fill='#fff' >P27</text>
 <text x='457.6' y='453.5' text-anchor='start' font-size='7' fill='#fff' >P14</text>
 <text x='457.6' y='439.5' text-anchor='start' font-size='7' fill='#fff' >P12</text>
@@ -226,8 +224,6 @@
 <path d='M327.6,570.0 L327.6,633 C327.6,678 406.0,678 406.0,633' fill='none' stroke='#777' stroke-width='3'/>
 <line x1='406.0' y1='633' x2='406.0' y2='325' stroke='#777' stroke-width='3' stroke-dasharray='8 6'/>
 <path d='M406.0,325 C406.0,225 350,235 350,173' fill='none' stroke='#777' stroke-width='3'/>
-<text x='476.0' y='315' text-anchor='end' font-size='11' fill='#1d5e2c'>Breakout board with DevKit rotated by 180°</text>
-<text x='350.0' y='649' text-anchor='middle' font-size='10' fill='#555'>dashed: USB and antenna cable under the board</text>
 <path d='M340,161 h20 v12 h-20 Z' fill='#d8b14a' stroke='#8a6d1d'/>
 <rect x='341' y='143' width='18' height='18' rx='2' fill='#222'/>
 <line x1='344' y1='143' x2='344' y2='161' stroke='#444'/>
@@ -272,9 +268,12 @@
 <text x='456' y='865' font-size='13' font-weight='bold'>Y</text>
 <path d='M438,747 C438,705 500.0,715 500.0,675 L500.0,479.0' fill='none' stroke='#b57452' stroke-width='3'/>
 <line x1='500.0' y1='479.0' x2='442.0' y2='479.0' stroke='#d62828' stroke-width='3'/>
-<text x='516.0' y='483.0' font-size='10' fill='#1d5e2c'>P25/P26</text>
+<text x='516.0' y='473.0' font-size='10' fill='#1d5e2c'>P26 (Y)</text>
+<text x='516.0' y='505.0' font-size='10' fill='#1d5e2c'>P25 (X)</text>
 <text x='350.0' y='905' text-anchor='middle' font-size='12'>Pigtail X · USB-C · pigtail Y (cable glands SKINDICHT MINI M6)</text>
 <text x='350.0' y='925' text-anchor='middle' font-size='13' fill='#555'>Connector side (short side)</text>
 <text x='350.0' y='46' text-anchor='middle' font-size='11' fill='#555'>The OLED sits in the hinged lid – leave the wires long enough</text>
 <text x='136' y='465.0' text-anchor='middle' font-size='12' fill='#06c' transform='rotate(-90 136 465.0)'>150 mm</text>
-<text x='350.0' y='945' text-anchor='middle' font-size='12' fill='#06c'>100 mm</text></svg>
+<text x='350.0' y='945' text-anchor='middle' font-size='12' fill='#06c'>100 mm</text>
+<text x='350.0' y='971' text-anchor='middle' font-size='12' fill='#1d5e2c'>Breakout board with DevKit rotated by 180°</text>
+<text x='350.0' y='989' text-anchor='middle' font-size='12' fill='#555'>dashed: USB and antenna cable under the board</text></svg>
