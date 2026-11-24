@@ -78,11 +78,11 @@ h3+ul>li:nth-child(2),h3+ol>li:nth-child(2),li:last-child{break-before:avoid}
   <li><span class="tn">5</span>Aufbauanleitung Schritt für Schritt</li>
   <li><span class="tn">6</span>Firmware installieren<div class="tsub">6.1 Ohne Arduino-Software: im Browser · 6.2 Mit Arduino Cloud (app.arduino.cc) · 6.3 Mit der Arduino IDE 2.x · 6.4 Partitionsschema: zwei Varianten</div></li>
   <li><span class="tn">7</span>Erste Inbetriebnahme</li>
-  <li><span class="tn">8</span>Oszilloskop einstellen<div class="tsub">8.1 Anschließen · 8.2 X/Y-Betrieb am digitalen Oszilloskop · 8.3 Helligkeit der Zeiger abgleichen · 8.4 Beispiele für einzelne Geräte (andere sinngemäß)</div></li>
+  <li><span class="tn">8</span>Oszilloskop einstellen<div class="tsub">8.1 Anschließen · 8.2 Grundeinstellung Schritt für Schritt · 8.3 X/Y-Betrieb am digitalen Oszilloskop · 8.4 Helligkeit der Zeiger abgleichen · 8.5 Typische Bildfehler beim Einstellen · 8.6 Beispiele für einzelne Geräte (andere sinngemäß)</div></li>
   <li><span class="tn">9</span>Bedienung<div class="tsub">9.1 Webinterface · 9.2 OLED-Anzeige · 9.3 BOOT-Taster</div></li>
   <li><span class="tn">10</span>Alle Einstellungen im Überblick<div class="tsub">10.1 Oszilloskop · 10.2 Uhrzeit · 10.3 Display (OLED) · 10.4 WLAN · 10.5 System und Seitenmenü</div></li>
-  <li><span class="tn">11</span>Tests und Fehlersuche<div class="tsub">11.1 Stand der Tests · 11.2 Fehlerbilder und Abhilfe · 11.3 Debug-Meldungen (Beispiel)</div></li>
-  <li><span class="tn">12</span>Zusammenfassung<div class="tsub">12.1 Grenzen</div></li>
+  <li><span class="tn">11</span>Fehlersuche<div class="tsub">11.1 Fehlerbilder und Abhilfe · 11.2 Debug-Meldungen (Beispiel)</div></li>
+  <li><span class="tn">12</span>Zusammenfassung<div class="tsub">12.1 Stand der Tests · 12.2 Grenzen</div></li>
   <li><span class="tn"></span>Quellenverzeichnis</li>
   <li><span class="tn">A</span>Anhang<div class="tsub">A.1 Startwerte in <code>config.h</code> · A.2 Schnittstellen des Webservers · A.3 Dateien im Projekt · A.4 Herkunft und Lizenzen</div></li>
   <li class="bp"><span class="tn">B</span>Bohrplan zum Ausdrucken (Deckel und Seitenteile, Maßstab 1:1)</li>
@@ -158,7 +158,7 @@ Oszilloskopen läuft – vom Röhrengerät bis zum digitalen Speicher-Oszillosko
 <h3>1.1 Aufbau dieser Anleitung</h3>
 <p>Kapitel 2 erklärt die Grundlagen, Kapitel 3 ordnet die Uhr in den Stand der Technik ein. Die Kapitel 4 bis 7 führen durch Teile,
 Aufbau, Firmware und erste Inbetriebnahme, die Kapitel 8 bis 10 durch das Einstellen des Oszilloskops, die Bedienung und alle
-Einstellungen. Kapitel 11 beschreibt die Tests und hilft bei der Fehlersuche, Kapitel 12 fasst zusammen. Es folgen das
+Einstellungen. Kapitel 11 hilft bei der Fehlersuche, Kapitel 12 fasst zusammen und nennt den Stand der Tests. Es folgen das
 Quellenverzeichnis, Anhang A (Startwerte, Schnittstellen, Dateien) und Anhang B (Bohrplan zum Ausdrucken).</p>
 <figure><img src="images/oszilloskop_zifferblaetter.png" style="width:100%"><figcaption>Abb. 1 – Die fünf Zifferblätter und das Testbild, wie sie auf dem Oszilloskop erscheinen (Darstellung aus den Vektordaten der Firmware)</figcaption></figure>
 <h3>1.2 Funktionen</h3>
@@ -412,7 +412,7 @@ Stelle und bleiben erhalten. Meldet die IDE beim Hochladen „Sketch too big“,
 (bis zu 10 Netze). Die Startwerte aller Einstellungen stehen in <code>config.h</code>; im Betrieb ist das Webinterface bequemer.</div>
 
 <h2>7 Erste Inbetriebnahme</h2>
-<div class="step"><b class="n">1</b><div><b>Oszilloskop anschließen</b> und grob einstellen: X/Y-Betrieb, beide Kanäle DC, 0,5 V/Div (Abschnitt 8.1).</div></div>
+<div class="step"><b class="n">1</b><div><b>Oszilloskop anschließen</b> und grob einstellen: X/Y-Betrieb, beide Kanäle DC, 0,5 V/Div (Abschnitt 8.2).</div></div>
 <div class="step"><b class="n">2</b><div><b>Einschalten</b> (USB-Netzteil). Das Oszilloskop zeigt 10 Sekunden lang das Testbild, danach die Uhr.
 Das OLED zeigt die Uhrzeit (zunächst ab 10:08:37) und „Keine NTP-Verbindung“.</div></div>
 <div class="step"><b class="n">3</b><div><b>WLAN einrichten.</b> Ohne bekanntes Netz öffnet die Uhr nach kurzer Zeit das offene Setup-WLAN
@@ -433,6 +433,27 @@ Das Webinterface ist danach unter <b>http://scope-clock.local</b> oder der IP-Ad
  <li>Beide Kanäle auf <b>DC-Kopplung</b>: Bei AC-Kopplung kippt der Gleichanteil weg, das Bild verzerrt und wandert.</li>
  <li><b>Brummschleife vermeiden:</b> Die BNC-Masse des Oszilloskops liegt am Schutzleiter; ein ebenfalls geerdeter PC am USB kann Brumm ins Bild bringen. Im Dauerbetrieb ein normales USB-Steckernetzteil verwenden.</li>
 </ul>
+<h3>8.2 Grundeinstellung Schritt für Schritt</h3>
+<p>Die Uhr gibt auf beiden Kanälen Spannungen zwischen etwa 0 und 3,2 V aus; die Bildmitte liegt bei rund 1,6 V. Ein Oszilloskop
+zeigt 0 V in der Mitte – das Bild muss also um 1,6 V verschoben werden. So geht es am analogen Röhren-Oszilloskop (am digitalen
+sinngemäß, Unterschiede unten):</p>
+<ol>
+ <li><b>Punkt suchen:</b> Intensität klein stellen, beide Kanäle auf <b>GND</b> (Eingang kurzgeschlossen) und X/Y-Betrieb
+ einschalten. Es erscheint ein Punkt; ihn mit den POSITION-Reglern in die Bildmitte schieben. Den Punkt nicht lange hell stehen
+ lassen – er brennt sich sonst in die Röhre ein.</li>
+ <li><b>Empfindlichkeit:</b> beide Kanäle auf <b>0,5 V/Div</b>, die Feinregler (VAR) beider Kanäle in die Raststellung <b>CAL</b>.
+ Nur gleiche Einstellungen ergeben einen runden Kreis.</li>
+ <li><b>Signal einschalten:</b> beide Kanäle auf <b>DC</b>. Jetzt erscheint das Testbild (die ersten 10 Sekunden nach dem
+ Einschalten oder „Einstellungen“ → „Oszilloskop“ → „Testbild“), wegen der 1,6 V aber rechts oben aus der Mitte verschoben.</li>
+ <li><b>Mitte:</b> mit X- und Y-POSITION das Mittelkreuz in die Bildmitte schieben – das sind gut 3 Teilungen nach links und nach
+ unten. Reicht der Stellbereich nicht, kurz auf 1 V/Div, mitteln, dann zurück auf 0,5 V/Div und fein nachstellen.</li>
+ <li><b>Größe und Form prüfen:</b> Der Rahmen ist gut 6 × 6 Teilungen groß, der Kreis berührt ihn in der Mitte jeder Seite. Wer das
+ Bild größer möchte, dreht beide Feinregler um denselben Betrag auf – der Kreis muss rund bleiben.</li>
+ <li><b>Schärfe:</b> Fokus und – falls vorhanden – Astigmatismus am Kreis einstellen, bis er überall gleich dünn ist. Intensität
+ so niedrig wie möglich, so hoch wie nötig.</li>
+ <li><b>Uhr:</b> Testbild ausschalten. Profil ANALOG wählen (BOOT-Taster 3 s oder Webinterface) und die Zeigerhelligkeit abgleichen
+ (Abschnitt 8.4).</li>
+</ol>
 <div class="two">
  <figure><img src="images/oszilloskop_testbild.png" style="width:80%"><figcaption>Abb. 8 – Testbild</figcaption></figure>
  <div style="flex:2.2">
@@ -457,7 +478,11 @@ Das Webinterface ist danach unter <b>http://scope-clock.local</b> oder der IP-Ad
  <tr><td>Nachleuchten</td><td>kurz bis mittel, falls vorhanden</td><td>beruhigt den Bildaufbau</td></tr>
  <tr><td>Bandbreitenbegrenzung</td><td>ein (z. B. 20 MHz)</td><td>weniger Rauschen</td></tr>
 </table>
-<h3>8.2 X/Y-Betrieb am digitalen Oszilloskop</h3>
+<p><b>Am digitalen Oszilloskop</b> gibt es meist keinen Punkt-Modus: Statt der POSITION-Regler wird je Kanal der
+<b>Offset</b> auf −1,6 V gestellt (bei manchen Geräten „Position“ in Volt). Vor dem Umschalten auf X/Y die Zeitbasis auf etwa
+1 ms/Div und den Trigger auf Auto stellen; Erfassungsart „Normal“ bzw. „Sample“, keine Mittelwertbildung (Average), sonst
+verschmiert der Sekundenzeiger. Profil DIGITAL wählen. Die Feinheiten stehen im nächsten Abschnitt.</p>
+<h3>8.3 X/Y-Betrieb am digitalen Oszilloskop</h3>
 <p>Ein analoges Oszilloskop zeichnet in Echtzeit, ein digitales tastet beide Kanäle erst ab und stellt die Werte danach als Punkte
 oder verbundene Punkte dar. Daraus ergeben sich einige Unterschiede:</p>
 <ul>
@@ -471,7 +496,7 @@ oder verbundene Punkte dar. Daraus ergeben sich einige Unterschiede:</p>
  Nachleuchten zeigt auch die Bewegung des Sekundenzeigers als Fächer.</li>
  <li><b>Bildrate des Displays:</b> Viele digitale Oszilloskope erneuern den Schirm nur einige Male pro Sekunde; das Bild „pulsiert“ dann leicht – normal.</li>
 </ul>
-<h3>8.3 Helligkeit der Zeiger abgleichen</h3>
+<h3>8.4 Helligkeit der Zeiger abgleichen</h3>
 <p>Stunden- und Minutenzeiger sind schmale Nadeln aus zwei dicht nebeneinander liegenden Kanten. Je nachdem, wie ein Oszilloskop
 Helligkeit darstellt, wirken sie heller oder gleich hell wie der Rest. Der Regler <b>Helligkeit Stunden-/Minutenzeiger</b>
 (Einstellungen → Oszilloskop, standardmäßig 55 %) gleicht das aus. Richtwerte:</p>
@@ -489,12 +514,35 @@ Einbrennen</b> (Einstellungen → Oszilloskop, standardmäßig an) eingeschaltet
 hinsieht. Dunkler machen kann die Firmware das Bild nicht – die Helligkeitsregler verteilen nur die Zeit des Strahls; echtes
 Abdunkeln geht nur mit dem Intensitätsregler oder der Dunkeltastung (Z-Eingang). Digitale Oszilloskope mit LCD brennen nicht ein;
 dort ist die Bildverschiebung unnötig, schadet aber nicht. Ältere digitale Geräte mit Bildröhre (z. B. HP 54200A) brauchen sie.</div>
-<h3>8.4 Beispiele für einzelne Geräte (andere sinngemäß)</h3>
+<h3>8.5 Typische Bildfehler beim Einstellen</h3>
+<table>
+ <tr><th style="width:32%">Bild</th><th>Ursache und Abhilfe</th></tr>
+ <tr><td>Uhr liegt auf der Seite oder ist gespiegelt</td><td>X und Y vertauscht – Pigtails tauschen. Bei manchen Geräten ist im X/Y-Betrieb nicht Kanal 1 die X-Achse (Handbuch). Spiegelung: Invertierung (INV, Invert) eines Kanals ausschalten.</td></tr>
+ <tr><td>Kreis ist oval</td><td>Kanäle unterschiedlich eingestellt: gleiche V/Div, Feinregler beide auf CAL, kein 10:1-Tastkopf an nur einem Kanal.</td></tr>
+ <tr><td>Bild nur teilweise sichtbar</td><td>Position bzw. Offset stimmt nicht (Mitte liegt bei 1,6 V) oder die Empfindlichkeit ist zu hoch (z. B. 0,2 V/Div).</td></tr>
+ <tr><td>Bild wandert, wackelt oder ist verzerrt</td><td>AC-Kopplung statt DC; Brummschleife über den geerdeten PC (Netzteil verwenden); Bandbreitenbegrenzung einschalten.</td></tr>
+ <tr><td>Schwache Linien zwischen Ziffern und Strichen</td><td>Rücklaufspuren beim Sprung. ANALOG: Rücklauf-Tempo erhöhen oder Dunkeltastung (Z-Eingang). DIGITAL: Profil DIGITAL und Darstellung „Punkte“.</td></tr>
+ <tr><td>Punktspur quer durchs Bild (digital)</td><td>Profil ANALOG ist eingestellt – auf DIGITAL umschalten.</td></tr>
+ <tr><td>Linien unscharf, doppelt oder mit hellen Enden</td><td>Fokus und Astigmatismus nachstellen, Intensität senken; bei Tastköpfen diese am Kalibrierausgang abgleichen.</td></tr>
+ <tr><td>Bild flimmert (Röhre)</td><td>Verweilzeit zu lang – der Flimmerschutz begrenzt sie; Raum abdunkeln, Intensität eher senken als erhöhen.</td></tr>
+</table>
+<h3>8.6 Beispiele für einzelne Geräte (andere sinngemäß)</h3>
+<p>Menünamen unterscheiden sich je nach Gerät und Firmware; das Vorgehen ist überall gleich. Die Zahlen bei der Zeigerhelligkeit
+sind Startwerte für Abschnitt 8.4.</p>
 <ul>
- <li><b>Tektronix TDS3012:</b> CH1 = X, CH2 = Y, XY im Display-Menü; kurzes Nachleuchten (Persist) beruhigt das Bild.</li>
- <li><b>HP 54200A:</b> X/Y-Möglichkeiten im Handbuch prüfen; unendliches Nachleuchten sammelt das Bild über mehrere Aufnahmen.</li>
- <li><b>Digilent Analog Discovery 2:</b> Eingänge sind differenziell – 1+ an X, 1− an GND, 2+ an Y, 2− an GND, zusätzlich GND
- verbinden. WaveForms: 500 mV/Div, Offset −1,6 V, 1 ms/Div, Trigger Auto, View → XY.</li>
+ <li><b>Analoge Röhren-Oszilloskope</b> (z. B. Hameg HM203/HM303, Tektronix 2200-Serie): X/Y über die Taste „X-Y“ bzw. bei der
+ Tektronix 2200-Serie über den SEC/DIV-Schalter ganz links in Stellung „X-Y“. Welcher Kanal die X-Achse ist, steht am Gerät oder
+ im Handbuch (meist Kanal 1). Kein Offset – das Bild wie in Abschnitt 8.2 mit POSITION mittig schieben. Profil ANALOG,
+ Zeigerhelligkeit 55 %, Bildverschiebung an.</li>
+ <li><b>Tektronix TDS3012</b> (digital, Helligkeitsabstufung): CH1 = X, CH2 = Y, im Display-Menü „XY Display“ einschalten. Offset
+ beider Kanäle −1,6 V, Erfassung „Sample“, kurzes Nachleuchten (Persist) beruhigt das Bild. Profil DIGITAL, Zeigerhelligkeit
+ 50–65 %.</li>
+ <li><b>Rigol DS1000Z</b> (z. B. DS1054Z): Horizontal-Menü → Zeitbasis „XY“; CH1 = X, CH2 = Y, Offset je Kanal −1,6 V, vorher
+ Zeitbasis etwa 1 ms/Div. Unter „Display“ Nachleuchten kurz und Darstellung „Punkte“. Profil DIGITAL, Zeigerhelligkeit 50–65 %.</li>
+ <li><b>HP 54200A</b> (digital, mit Bildröhre): X/Y-Möglichkeiten im Handbuch prüfen; unendliches Nachleuchten sammelt das Bild über
+ mehrere Aufnahmen. Keine Helligkeitsabstufung – Zeigerhelligkeit 100 %. Wegen der Röhre die Bildverschiebung eingeschaltet lassen.</li>
+ <li><b>Digilent Analog Discovery 2</b> (USB-Messgerät): Eingänge sind differenziell – 1+ an X, 1− an GND, 2+ an Y, 2− an GND,
+ zusätzlich GND verbinden. WaveForms: 500 mV/Div, Offset −1,6 V, 1 ms/Div, Trigger Auto, View → XY. Zeigerhelligkeit 100 %.</li>
 </ul>
 
 <h2>9 Bedienung</h2>
@@ -554,7 +602,7 @@ beschrieben wird. Jede Gruppe hat „Auf Standardwerte zurücksetzen“; danach 
  sauberere Ecken, aber weniger Bilder pro Sekunde (mehr Flimmern). <b>Kürzer</b> = ruhigeres Bild, aber dunklere Linien; ein
  langsames Oszilloskop rundet dann Ecken ab. Die geschätzte Bildrate wird beim Ziehen angezeigt (Standard ca. 205 Bilder/s). <b>Flimmerschutz:</b> Würde das Bild unter 75 Bilder pro Sekunde fallen, zeichnet die Uhr automatisch mit einer kürzeren Verweilzeit; darunter steht dann, mit welcher.</td></tr>
  <tr><td>Helligkeit Stunden-/Minutenzeiger</td><td>0–100 % (55 %)</td><td>Verweilzeit auf den beiden Zeigern im Verhältnis zum Rest. Die schmalen, eng beieinander liegenden
- Doppellinien der Zeiger wirken sonst heller als Zifferblatt und Ziffern. Richtwerte je Oszilloskop und Einstellanleitung: Abschnitt 8.3.
+ Doppellinien der Zeiger wirken sonst heller als Zifferblatt und Ziffern. Richtwerte je Oszilloskop und Einstellanleitung: Abschnitt 8.4.
  0 % blendet die Zeiger aus. Der Sekundenzeiger ist davon nicht betroffen.</td></tr>
  <tr><td>Helligkeit Minutenstriche</td><td>0–100 % (100 %)</td><td>Helligkeit der 60 Striche am Rand. Weniger Helligkeit lässt die Zeiger stärker hervortreten und
  verkürzt das Bild etwas; 0 % blendet die Striche ganz aus.</td></tr>
@@ -616,14 +664,8 @@ beschrieben wird. Jede Gruppe hat „Auf Standardwerte zurücksetzen“; danach 
  <tr><td>Darstellung (Seitenmenü)</td><td>automatisch, hell, dunkel</td><td>Farbschema der Webseite; „Automatisch“ folgt dem Handy/PC. Nur im Browser gespeichert.</td></tr>
 </table>
 
-<h2>11 Tests und Fehlersuche</h2>
-<h3>11.1 Stand der Tests</h3>
-<p>Die Firmware wird bei jeder Änderung automatisch gebaut (GitHub Actions, Arduino-CLI, esp32 3.3.12, Standard-Partitionsschema);
-Warnungen gelten dabei als Fehler. Strahlführung und Zifferblätter wurden am PC aus denselben Vektordaten berechnet und dargestellt
-(die Oszilloskop-Bilder dieser Anleitung), die OLED-Inhalte mit derselben Bibliothek U8g2 simuliert. Das Webinterface wurde im
-Browser mit simulierten Schnittstellen getestet (Testseite), die Installation im Browser ohne angeschlossenes Gerät: Die vier
-Teile ergeben Byte für Byte dasselbe Abbild wie die Arduino-Software. <b>Der Test an echter Hardware steht noch aus.</b></p>
-<h3>11.2 Fehlerbilder und Abhilfe</h3>
+<h2>11 Fehlersuche</h2>
+<h3>11.1 Fehlerbilder und Abhilfe</h3>
 <table>
  <tr><th>Beobachtung</th><th>Abhilfe</th></tr>
  <tr><td>Kein Bild auf dem Oszilloskop</td><td>X/Y-Betrieb, DC-Kopplung, 0,5 V/Div; Position auf Bildmitte; Pigtail X an Kanal 1, Y an Kanal 2; Testbild einschalten</td></tr>
@@ -646,7 +688,7 @@ Teile ergeben Byte für Byte dasselbe Abbild wie die Arduino-Software. <b>Der Te
 </table>
 <p>Für eine Fehlermeldung im Debug-Bereich „Herunterladen“ antippen und die Textdatei weitergeben.</p>
 
-<h3>11.3 Debug-Meldungen (Beispiel)</h3>
+<h3>11.2 Debug-Meldungen (Beispiel)</h3>
 <pre>+0s ESP32 Oscilloscope Clock v2.0
 +0s [Scope] Profil: DIGITAL – BOOT-Taster 3 s halten zum Umschalten
 +0s [Scope] Rundtour: 122 Linienzuege, Spruenge gesamt 1348 DAC-Einheiten
@@ -676,10 +718,16 @@ Steht dort „[RTC] kein DS3231 gefunden“, obwohl das Modul eingebaut ist, die
 digitalen Oszilloskopen erzeugen kann. Die Aufteilung auf zwei Prozessorkerne hält den Zeichenpfad frei von Unterbrechungen,
 die konstante Strahlgeschwindigkeit sorgt für gleich helle Linien, und Webinterface, OLED und Installation im Browser machen
 Einrichtung und Bedienung ohne Programmierkenntnisse möglich.</p>
-<h3>12.1 Grenzen</h3>
+<h3>12.1 Stand der Tests</h3>
+<p>Die Firmware wird bei jeder Änderung automatisch gebaut (GitHub Actions, Arduino-CLI, esp32 3.3.12, Standard-Partitionsschema);
+Warnungen gelten dabei als Fehler. Strahlführung und Zifferblätter wurden am PC aus denselben Vektordaten berechnet und dargestellt
+(die Oszilloskop-Bilder dieser Anleitung), die OLED-Inhalte mit derselben Bibliothek U8g2 simuliert. Das Webinterface wurde im
+Browser mit simulierten Schnittstellen getestet (Testseite), die Installation im Browser ohne angeschlossenes Gerät: Die vier
+Teile ergeben Byte für Byte dasselbe Abbild wie die Arduino-Software. <b>Der Test an echter Hardware steht noch aus.</b></p>
+<h3>12.2 Grenzen</h3>
 <ul>
  <li><b>Helligkeit:</b> Die Firmware verteilt nur die Zeit des Strahls. Dunkler wird das Bild nur mit dem Intensitätsregler des
- Oszilloskops oder über den Z-Eingang (Abschnitt 8.3).</li>
+ Oszilloskops oder über den Z-Eingang (Abschnitt 8.4).</li>
  <li><b>Bildrate und Helligkeit</b> hängen zusammen: Längere Verweilzeiten machen die Linien heller, senken aber die Bildrate –
  der Flimmerschutz begrenzt das bei mindestens 75 Bildern pro Sekunde.</li>
  <li><b>Auflösung:</b> Die DACs haben 8 Bit, also 256 Stufen je Achse. Für Zifferblatt und Ziffern reicht das; feinere Details
