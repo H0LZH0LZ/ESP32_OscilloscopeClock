@@ -252,8 +252,8 @@ Die Pixelverschiebung versetzt die Anzeige jede Minute um einen Pixel, damit kei
 landen in einem 8-KB-Ringpuffer, den der Debug-Bereich anzeigt.</p>
 <p><b>Vektordaten:</b> Zifferblatt, Ziffern, Zeiger und Testbild sind eigene Zeichnungen, erzeugt mit <code>tools/gen_vectors.py</code>
 (Koordinaten 0–255, 8 Bit je Achse).</p>
-<p><b>Speicher:</b> Programmspeicher 1.245.034 Byte (94 % beim Standard-Partitionsschema, ca. 39 % mit „Huge APP“), globale Variablen
-75.708 Byte (23 %). Die Webseite liegt gzip-komprimiert im Flash (25 KB), die Schrift (Raleway, auf die benötigten Zeichen reduziert) als WOFF2 (30 KB).</p>
+<p><b>Speicher:</b> Programmspeicher 1.245.514 Byte (95 % beim Standard-Partitionsschema, ca. 39 % mit „Huge APP“), globale Variablen
+75.708 Byte (23 %). Die Webseite liegt gzip-komprimiert im Flash (26 KB), die Schrift (Raleway, auf die benötigten Zeichen reduziert) als WOFF2 (30 KB).</p>
 
 <h2>3 Stand der Technik</h2>
 <h3>3.1 Die ursprüngliche Oscilloscope Clock</h3>
@@ -427,11 +427,11 @@ neue Version die ZIP-Datei erneut herunterladen und importieren.</p>
 <h3>6.4 Partitionsschema: zwei Varianten</h3>
 <table style="break-inside:avoid">
  <tr><th>Variante</th><th>Arduino IDE: Partition Scheme</th><th>PlatformIO</th><th>Programmspeicher</th></tr>
- <tr><td><b>A – Huge APP</b> (empfohlen)</td><td>„Huge APP (3MB No OTA/1MB SPIFFS)“</td><td><code>pio run -t upload</code></td><td>1.245.034 von 3.145.728 Byte (<b>39 %</b>)</td></tr>
- <tr><td><b>B – Standard</b></td><td>„Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)“ – Voreinstellung, nichts umstellen</td><td><code>pio run -e standard -t upload</code></td><td>1.245.034 von 1.310.720 Byte (<b>94 %</b>)</td></tr>
+ <tr><td><b>A – Huge APP</b> (empfohlen)</td><td>„Huge APP (3MB No OTA/1MB SPIFFS)“</td><td><code>pio run -t upload</code></td><td>1.245.514 von 3.145.728 Byte (<b>39 %</b>)</td></tr>
+ <tr><td><b>B – Standard</b></td><td>„Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)“ – Voreinstellung, nichts umstellen</td><td><code>pio run -e standard -t upload</code></td><td>1.245.514 von 1.310.720 Byte (<b>95 %</b>)</td></tr>
 </table>
 <p>Beide Varianten laufen gleich. <b>A</b> lässt rund 1,9 MB Platz für Erweiterungen; die Uhr nutzt weder OTA-Updates noch
-SPIFFS, deshalb fehlt dabei nichts. <b>B</b> funktioniert ohne Umstellen, hat aber nur noch etwa 70 KB Reserve. Ein Wechsel
+SPIFFS, deshalb fehlt dabei nichts. <b>B</b> funktioniert ohne Umstellen, hat aber nur noch etwa 64 KB Reserve. Ein Wechsel
 ist jederzeit möglich (Schema wählen, neu hochladen) – gespeicherte WLANs und Einstellungen liegen bei beiden an derselben
 Stelle und bleiben erhalten. Meldet die IDE beim Hochladen „Sketch too big“, ist Variante B eingestellt: auf A wechseln.</p>
 <div class="note"><b>Zugangsdaten stehen nie im Quelltext.</b> WLANs werden nach dem Hochladen über das Webinterface eingetragen
@@ -575,7 +575,6 @@ sind Startwerte für Abschnitt 8.4.</p>
 <h3>9.1 Webinterface</h3>
 <p>Aufruf über <b>http://scope-clock.local</b> (Name unter Einstellungen → System änderbar) oder die IP-Adresse. Die Seite ist für das
 Handy gemacht und lässt sich über „Zum Startbildschirm hinzufügen“ wie eine App ablegen.</p>
-<figure><img src="images/web_uebersicht.png" style="width:80%"><figcaption>Abb. 9 – Webinterface: Startansicht hell und dunkel, Seitenmenü</figcaption></figure>
 <ul>
  <li><b>Vorschau:</b> zeigt das Oszilloskop-Bild live. <b>Wischen nach links/rechts</b> (oder Punkte/Pfeile darunter, am PC Pfeiltasten) wechselt das Zifferblatt – auch am Oszilloskop.</li>
  <li><b>Vollbild:</b> <b>Antippen der Uhr</b> (oder ⛶ oben rechts in der Vorschau) zeigt nur Zifferblatt, Uhrzeit und Datum bildschirmfüllend – im Querformat nebeneinander. Der Bildschirm bleibt dabei an, so wird ein altes Handy oder Tablet zur Tischuhr. Wischen wechselt weiter das Zifferblatt; erneutes Antippen, ✕, Esc oder die Zurück-Geste beendet das Vollbild. Am iPhone füllt die Ansicht die Seite, ganz ohne Adressleiste nur als App vom Startbildschirm.</li>
@@ -583,21 +582,22 @@ Handy gemacht und lässt sich über „Zum Startbildschirm hinzufügen“ wie ei
  <li><b>Status:</b> WLAN, Signalstärke, Netzwerkadresse, Zeitabgleich (NTP), Echtzeituhr, OLED-Anzeige (an/aus), Laufzeit, Grund des letzten Neustarts, Arbeitsspeicher, Auslastung beider Kerne, Firmware-Version. Orange = Warnung, Rot = Fehler.</li>
  <li><b>Einstellungen</b> in fünf Gruppen (Oszilloskop, Uhrzeit, Display, WLAN, System). Änderungen wirken sofort und werden gespeichert; „✓ Gespeichert“ erscheint direkt an der Einstellung. Jede Gruppe hat „Auf Standardwerte zurücksetzen“ mit 8 s „Rückgängig“.</li>
  <li><b>Debug:</b> Meldungen der Uhr mit Filter (WLAN, Zeit, Web, Oszilloskop, Warnungen), „Aktualisieren“, „Herunterladen“ (Textdatei) und „Leeren“.</li>
- <li><b>Seitenmenü (☰):</b> springt in die Bereiche, dazu Sprache (Deutsch/English) und Darstellung (automatisch/hell/dunkel). Der Bereich, in dem man gerade ist, ist im Menü grün markiert; der schmale grüne Balken am oberen Bildschirmrand zeigt, wie weit man gescrollt hat.</li>
+ <li><b>Seitenmenü (☰):</b> springt in die Bereiche, dazu Sprache (Deutsch/English), Darstellung (automatisch/hell/dunkel) und Farbe der Uhr (Grüntöne). Der Bereich, in dem man gerade ist, ist im Menü grün markiert; der schmale grüne Balken am oberen Bildschirmrand zeigt, wie weit man gescrollt hat.</li>
 </ul>
-<figure><img src="images/web_einstellungen.png" style="width:80%"><figcaption>Abb. 10 – Gruppe Oszilloskop, Gruppe WLAN mit Netzsuche, Debug-Bereich</figcaption></figure>
+<figure><img src="images/web_uebersicht.png" style="width:58%"><figcaption>Abb. 9 – Webinterface: Startansicht hell und dunkel, Seitenmenü</figcaption></figure>
+<figure><img src="images/web_einstellungen.png" style="width:58%"><figcaption>Abb. 10 – Gruppe Oszilloskop, Gruppe WLAN mit Netzsuche, Debug-Bereich</figcaption></figure>
 <h3>9.2 OLED-Anzeige</h3>
 <p>Oben die Uhrzeit im 7-Segment-Stil, darunter Kalenderwoche und Datum mit kleinen 7-Segment-Ziffern, dann das WLAN und die Signalstärke. Ohne gültige Zeit steht
 dort „Keine NTP-Verbindung“, im Setup-WLAN der Netzname „ScopeClock-Setup“ und die Adresse. Helligkeit 0–100 %, Sekunden,
 Drehung um 180° und Pixelverschiebung gegen Einbrennen sind einstellbar.</p>
-<figure><img src="images/oled_englisch_12h.png" style="width:48%"><figcaption>Abb. 11 – OLED auf Englisch im 12-Stunden-Format</figcaption></figure>
+<figure><img src="images/oled_englisch_12h.png" style="width:30%"><figcaption>Abb. 11 – OLED auf Englisch im 12-Stunden-Format</figcaption></figure>
 <h3>9.3 BOOT-Taster</h3>
 <p><b>3 Sekunden halten</b> schaltet das Oszilloskop-Profil um (DIGITAL ↔ ANALOG). Das OLED zeigt den Wechsel mit Countdown 3, 2, 1;
 vorher loslassen bricht ab (Abb. 12 und 13). <b>Das Oszilloskop zeigt dasselbe:</b> statt der Uhr das Ziel-Profil („&gt; ANALOG“ bzw.
 „&gt; DIGITAL“) und den Countdown, bei den Werkseinstellungen RESET und 5 … 1 – so sieht man den Wechsel auch ohne OLED oder bei
 ausgeschaltetem Display. Die Einstellung wird gespeichert. <b>Nicht beim Einschalten drücken</b> – sonst startet der ESP32 im Download-Modus.</p>
 <p><b>Werkseinstellungen: 10 Sekunden halten.</b> Ab 5 s zählt das OLED 5 … 1 herunter (Abb. 14), dann werden <b>alle Einstellungen und WLANs gelöscht</b> und die Uhr startet mit dem Setup-WLAN neu. Vorher loslassen bricht ab.</p>
-<div class="two">
+<div class="two" style="width:62%;margin:0 auto">
  <figure><img src="images/oled_profil.png"><figcaption>Abb. 12 – Umschalten DIGITAL → ANALOG (BOOT-Taster gehalten, noch 2 s)</figcaption></figure>
  <figure><img src="images/oled_profil_analog_digital.png"><figcaption>Abb. 13 – Umschalten ANALOG → DIGITAL (zurück zum Profil für digitale Oszilloskope)</figcaption></figure>
  <figure><img src="images/oled_werksreset.png"><figcaption>Abb. 14 – OLED kurz vor den Werkseinstellungen (BOOT-Taster gehalten)</figcaption></figure>
@@ -691,6 +691,7 @@ beschrieben wird. Jede Gruppe hat „Auf Standardwerte zurücksetzen“; danach 
  das Testbild aus. WLANs bleiben erhalten; 8 Sekunden lang „Rückgängig“.</td></tr>
  <tr><td>Sprache (Seitenmenü)</td><td>Deutsch / English (Deutsch)</td><td>Sprache der Webseite, des OLED und des Debug-Protokolls; wird auf der Uhr gespeichert und gilt für alle Geräte.</td></tr>
  <tr><td>Darstellung (Seitenmenü)</td><td>automatisch, hell, dunkel</td><td>Farbschema der Webseite; „Automatisch“ folgt dem Handy/PC. Nur im Browser gespeichert.</td></tr>
+ <tr><td>Farbe der Uhr (Seitenmenü)</td><td>Grün, Gelbgrün, Smaragdgrün, Mintgrün (Grün)</td><td>Grünton von Vorschau, Uhrzeit und Datum im Webinterface (auch im Vollbild). Das Oszilloskop-Bild ändert sich nicht. Nur im Browser gespeichert.</td></tr>
 </table>
 
 <h2>11 Fehlersuche</h2>

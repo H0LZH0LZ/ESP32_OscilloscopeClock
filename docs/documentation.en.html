@@ -249,8 +249,8 @@ its frames (frame rate in the status), an idle hook measures the load of core 0,
 the debug section.</p>
 <p><b>Vector data:</b> dial, numerals, hands and test pattern are original drawings, generated with <code>tools/gen_vectors.py</code>
 (coordinates 0–255, 8 bits per axis).</p>
-<p><b>Memory:</b> program memory 1,245,034 bytes (94 % with the default partition scheme, approx. 39 % with “Huge APP”), global variables
-75,708 bytes (23 %). The web page is stored gzip-compressed in flash (25 KB), the font (Raleway, reduced to the characters needed) as WOFF2 (30 KB).</p>
+<p><b>Memory:</b> program memory 1,245,514 bytes (95 % with the default partition scheme, approx. 39 % with “Huge APP”), global variables
+75,708 bytes (23 %). The web page is stored gzip-compressed in flash (26 KB), the font (Raleway, reduced to the characters needed) as WOFF2 (30 KB).</p>
 
 <h2>3 State of the art</h2>
 <h3>3.1 The original Oscilloscope Clock</h3>
@@ -420,11 +420,11 @@ version download and import the ZIP file again.</p>
 <h3>6.4 Partition scheme: two variants</h3>
 <table style="break-inside:avoid">
  <tr><th>Variant</th><th>Arduino IDE: Partition Scheme</th><th>PlatformIO</th><th>Program memory</th></tr>
- <tr><td><b>A – Huge APP</b> (recommended)</td><td>“Huge APP (3MB No OTA/1MB SPIFFS)”</td><td><code>pio run -t upload</code></td><td>1,245,034 of 3,145,728 bytes (<b>39 %</b>)</td></tr>
- <tr><td><b>B – Standard</b></td><td>“Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)” – the default, nothing to change</td><td><code>pio run -e standard -t upload</code></td><td>1,245,034 of 1,310,720 bytes (<b>94 %</b>)</td></tr>
+ <tr><td><b>A – Huge APP</b> (recommended)</td><td>“Huge APP (3MB No OTA/1MB SPIFFS)”</td><td><code>pio run -t upload</code></td><td>1,245,514 of 3,145,728 bytes (<b>39 %</b>)</td></tr>
+ <tr><td><b>B – Standard</b></td><td>“Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)” – the default, nothing to change</td><td><code>pio run -e standard -t upload</code></td><td>1,245,514 of 1,310,720 bytes (<b>95 %</b>)</td></tr>
 </table>
 <p>Both variants work the same. <b>A</b> leaves about 1.9 MB for extensions; the clock uses neither OTA updates nor SPIFFS,
-so nothing is lost. <b>B</b> works without changing anything but leaves only about 70 KB. You can switch at any time (choose
+so nothing is lost. <b>B</b> works without changing anything but leaves only about 64 KB. You can switch at any time (choose
 the scheme, upload again) – saved networks and settings are stored at the same place in both and are kept. If the IDE reports
 “Sketch too big” when uploading, variant B is selected: switch to A.</p>
 <div class="note"><b>Credentials are never stored in the source code.</b> Wi-Fi networks are entered in the web interface after
@@ -568,7 +568,6 @@ figures are start values for section 8.4.</p>
 <h3>9.1 Web interface</h3>
 <p>Open <b>http://scope-clock.local</b> (name can be changed under Settings → System) or the IP address. The page is made for
 phones and can be added to the home screen like an app (“Add to home screen”).</p>
-<figure><img src="images/web_uebersicht_en.png" style="width:80%"><figcaption>Fig. 9 – Web interface: start view light and dark, side menu</figcaption></figure>
 <ul>
  <li><b>Preview:</b> shows the oscilloscope picture live. <b>Swiping left/right</b> (or the dots/arrows below it, arrow keys on a PC) changes the dial – on the oscilloscope as well.</li>
  <li><b>Full screen:</b> <b>tapping the clock</b> (or ⛶ at the top right of the preview) shows only the dial, time and date filling the screen – side by side in landscape. The screen stays on, turning an old phone or tablet into a desk clock. Swiping still changes the dial; tapping again, ✕, Esc or the back gesture ends full screen. On an iPhone the view fills the page, without an address bar only as an app from the home screen.</li>
@@ -576,21 +575,22 @@ phones and can be added to the home screen like an app (“Add to home screen”
  <li><b>Status:</b> Wi-Fi, signal strength, network address, time sync (NTP), real-time clock, OLED display (on/off), uptime, reason for the last restart, memory, load of both cores, firmware version. Orange = warning, red = error.</li>
  <li><b>Settings</b> in five groups (Oscilloscope, Time, Display, Wi-Fi, System). Changes take effect immediately and are saved; “✓ Saved” appears right at the setting. Each group has “Reset to defaults” with 8 s “Undo”.</li>
  <li><b>Debug:</b> messages of the clock with a filter (Wi-Fi, time, web, oscilloscope, warnings), “Refresh”, “Download” (text file) and “Clear”.</li>
- <li><b>Side menu (☰):</b> jumps to the sections, plus language (Deutsch/English) and appearance (automatic/light/dark). The section you are currently in is highlighted in green; the thin green bar at the top edge of the screen shows how far you have scrolled.</li>
+ <li><b>Side menu (☰):</b> jumps to the sections, plus language (Deutsch/English), appearance (automatic/light/dark) and clock colour (shades of green). The section you are currently in is highlighted in green; the thin green bar at the top edge of the screen shows how far you have scrolled.</li>
 </ul>
-<figure><img src="images/web_einstellungen_en.png" style="width:80%"><figcaption>Fig. 10 – Oscilloscope group, Wi-Fi group with network scan, debug section</figcaption></figure>
+<figure><img src="images/web_uebersicht_en.png" style="width:58%"><figcaption>Fig. 9 – Web interface: start view light and dark, side menu</figcaption></figure>
+<figure><img src="images/web_einstellungen_en.png" style="width:58%"><figcaption>Fig. 10 – Oscilloscope group, Wi-Fi group with network scan, debug section</figcaption></figure>
 <h3>9.2 OLED display</h3>
 <p>At the top the time in 7-segment style, below it the calendar week and date with small 7-segment digits, then the Wi-Fi network and the signal strength.
 Without a valid time it shows “No NTP connection”; in the setup network it shows the network name “ScopeClock-Setup” and the address.
 Brightness 0–100 %, seconds, rotation by 180° and pixel shifting against burn-in can be set.</p>
-<figure><img src="images/oled_englisch_12h.png" style="width:48%"><figcaption>Fig. 11 – OLED in English in 12-hour format</figcaption></figure>
+<figure><img src="images/oled_englisch_12h.png" style="width:38%"><figcaption>Fig. 11 – OLED in English in 12-hour format</figcaption></figure>
 <h3>9.3 BOOT button</h3>
 <p><b>Holding it for 3 seconds</b> switches the oscilloscope profile (DIGITAL ↔ ANALOG). The OLED shows the change with a countdown
 3, 2, 1; releasing earlier cancels (Fig. 12 and 13). <b>The oscilloscope shows the same:</b> instead of the clock the target
 profile (“&gt; ANALOG” or “&gt; DIGITAL”) and the countdown, for the factory reset RESET and 5 … 1 – so the change is visible even without an
 OLED or with the display switched off. The setting is saved. <b>Do not press it while powering on</b> – otherwise the ESP32 starts in download mode.</p>
 <p><b>Factory reset: hold for 10 seconds.</b> From 5 s the OLED counts down 5 … 1 (Fig. 14), then <b>all settings and networks are erased</b> and the clock restarts with the setup network. Releasing earlier cancels.</p>
-<div class="two">
+<div class="two" style="width:62%;margin:0 auto">
  <figure><img src="images/oled_profil_en.png"><figcaption>Fig. 12 – Switching DIGITAL → ANALOG (BOOT button held, 2 s to go)</figcaption></figure>
  <figure><img src="images/oled_profil_analog_digital_en.png"><figcaption>Fig. 13 – Switching ANALOG → DIGITAL (back to the profile for digital oscilloscopes)</figcaption></figure>
  <figure><img src="images/oled_werksreset_en.png"><figcaption>Fig. 14 – OLED shortly before the factory reset (BOOT button held)</figcaption></figure>
@@ -685,6 +685,7 @@ group has “Reset to defaults”; the change can then be undone with “Undo”
  <tr><td>Language (side menu)</td><td>Deutsch / English (Deutsch)</td><td>Language of the web page, the OLED and the debug log; saved on the clock and applies to all devices.</td></tr>
  <tr><td>Appearance (side menu)</td><td>automatic / light / dark (automatic)</td><td>Colour scheme of the web page. “Automatic” follows the setting of the phone/PC. Only saved in the
  respective browser, not on the clock.</td></tr>
+ <tr><td>Clock colour (side menu)</td><td>green, yellow-green, emerald, mint (green)</td><td>Shade of green of the preview, time and date in the web interface (also in full screen). The oscilloscope picture does not change. Only saved in the browser.</td></tr>
 </table>
 
 <h2>11 Troubleshooting</h2>
