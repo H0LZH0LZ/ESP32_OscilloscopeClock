@@ -203,15 +203,28 @@ Der Außenkontakt hat Durchgang zu GND. Alle Schraubklemmen leicht nachziehen. D
 
 <h2>4 Firmware installieren</h2>
 <h3>Ohne Arduino-Software: im Browser</h3>
-<p>Am schnellsten geht es über die Projektseite (Abschnitt <b>„Firmware installieren“</b>): ESP32 per USB anschließen, in
-<b>Chrome oder Edge am PC</b> auf „Firmware installieren“ klicken, den Anschluss wählen, fertig. Die Firmware dort baut GitHub bei jeder
-Änderung automatisch (Board „ESP32 Dev Module“, Variante B unten). Bei der ersten Installation „Erase device“ ankreuzen, bei einem
-Update weglassen – dann bleiben WLANs und Einstellungen erhalten. Eigene Startwerte in <code>config.h</code> gehen so nicht;
-dafür eine der folgenden Möglichkeiten nutzen.</p>
+<p>Die fertige Firmware lässt sich direkt von der <a href="https://holzholz123.github.io/ESP32_OscilloscopeClock/#kap4">Projektseite</a> auf den ESP32 schreiben – in <b>Chrome oder Edge
+am PC</b> (Windows, macOS, Linux) oder auf dem Chromebook. GitHub baut sie bei jeder Änderung automatisch (Board „ESP32 Dev Module“,
+Variante B unten).</p>
+<ol>
+ <li>ESP32 mit einem USB-Datenkabel an den PC anschließen.</li>
+ <li>Auf <b>„Firmware installieren“</b> klicken und im Fenster den Anschluss des ESP32 wählen (z. B. „CP2102“, „CH340“ oder „USB Serial“).</li>
+ <li><b>Install</b> wählen. Bei der ersten Installation „Erase device“ ankreuzen; bei einem Update weglassen – dann bleiben WLANs und Einstellungen erhalten.</li>
+ <li>Nach etwa einer Minute startet die Uhr. Weiter mit Kapitel 5.</li>
+</ol>
+<!-- FIRMWARE-KNOPF -->
+<p>Erscheint kein Anschluss, fehlt meist der USB-Treiber (CP210x oder CH340) oder das Kabel kann nur laden. Bricht die Verbindung ab,
+beim Start der Installation den <b>BOOT-Taster</b> gedrückt halten. Eigene Startwerte in <code>config.h</code> gehen so nicht – dafür
+eine der folgenden Möglichkeiten nutzen.</p>
 <h3>Mit Arduino Cloud (app.arduino.cc)</h3>
-<p>Den Sketch von der Projektseite als ZIP herunterladen, im Arduino Cloud Editor unter „Sketches“ → „Import“ einlesen, einmalig den
-<b>Arduino Cloud Agent</b> installieren, Board <b>ESP32 Dev Module</b> und Bibliothek <b>U8g2</b> wählen und hochladen. Es gilt das
-Standard-Partitionsschema (Variante B). Arduino Cloud ist nicht mit GitHub verbunden: Für eine neue Version die ZIP-Datei erneut importieren.</p>
+<ol>
+ <li><a href="https://holzholz123.github.io/ESP32_OscilloscopeClock/firmware/ESP32_OscilloscopeClock_v2.0.zip">Sketch als ZIP herunterladen</a> (Ordner <code>ESP32_OscilloscopeClock_v2.0</code> mit allen Dateien).</li>
+ <li>Auf <a href="https://app.arduino.cc/">app.arduino.cc</a> anmelden, unter „Sketches“ → „Import“ die ZIP-Datei wählen.</li>
+ <li>Einmalig den <b>Arduino Cloud Agent</b> installieren (der Editor bietet ihn an) – er verbindet den Browser mit dem USB-Anschluss.</li>
+ <li>Board <b>ESP32 Dev Module</b> wählen, Bibliothek <b>U8g2</b> einbinden, bei Bedarf <code>config.h</code> anpassen und hochladen.</li>
+</ol>
+<p>Es gilt das Standard-Partitionsschema (Variante B), „Huge APP“ ist nicht nötig. Arduino Cloud ist nicht mit GitHub verbunden: Für eine
+neue Version die ZIP-Datei erneut herunterladen und importieren.</p>
 <h3>Mit der Arduino IDE 2.x</h3>
 <ol>
  <li>Boardverwalter: <b>esp32 by Espressif</b> installieren (Version 3.x, auch 2.0.x geht), Board <b>ESP32 Dev Module</b> wählen.</li>

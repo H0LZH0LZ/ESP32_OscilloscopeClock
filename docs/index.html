@@ -192,7 +192,6 @@ a.row>span:last-child{font-size:18px}
  <h3><span data-l="de">Abschnitte</span><span data-l="en">Sections</span></h3>
  <a href="#projekt-h"><span data-l="de">Projekt</span><span data-l="en">Project</span></a>
  <a href="#downloads-h"><span data-l="de">0 Links &amp; Dokumente</span><span data-l="en">0 Links &amp; documents</span></a>
- <a href="#flash-h"><span data-l="de">Firmware installieren</span><span data-l="en">Install firmware</span></a>
  <!-- KAPITEL-MENUE -->
  <a href="#kap1"><span data-l="de">1 Überblick</span><span data-l="en">1 Overview</span></a>
  <a href="#kap2"><span data-l="de">2 Teileliste und Werkzeug</span><span data-l="en">2 Parts list and tools</span></a>
@@ -227,70 +226,10 @@ a.row>span:last-child{font-size:18px}
  <a class="row" target="_blank" rel="noopener" data-l="de" href="ESP32_Oscilloscope_Clock_Dokumentation.pdf?v=997edb91"><span>Dokumentation (PDF)<small class="note">Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" data-l="en" href="ESP32_Oscilloscope_Clock_Documentation.pdf?v=6144c311"><span>Documentation (PDF)<small class="note">Assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" href="demo/"><span><span data-l="de">Testseite</span><span data-l="en">Test page</span><small class="note" data-l="de">Das Webinterface der Uhr ausprobieren – läuft im Browser, alle Werte sind simuliert</small><small class="note" data-l="en">Try the clock's web interface – runs in the browser, all values are simulated</small></span><span>›</span></a>
- <a class="row" href="#flash-h"><span><span data-l="de">Firmware installieren</span><span data-l="en">Install firmware</span><small class="note" data-l="de">Direkt im Browser auf den ESP32 schreiben – oder den Sketch mit Arduino Cloud hochladen</small><small class="note" data-l="en">Write it to the ESP32 straight from the browser – or upload the sketch with Arduino Cloud</small></span><span>›</span></a>
+ <a class="row" href="#kap4"><span><span data-l="de">Firmware installieren</span><span data-l="en">Install firmware</span><small class="note" data-l="de">Direkt im Browser auf den ESP32 schreiben – oder den Sketch mit Arduino Cloud hochladen</small><small class="note" data-l="en">Write it to the ESP32 straight from the browser – or upload the sketch with Arduino Cloud</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" href="https://github.com/maurohh/ESP32_OscilloscopeClock"><span><span data-l="de">GitHub – Original</span><span data-l="en">GitHub – original</span><small class="note" data-l="de">Die ursprüngliche ESP32 Oscilloscope Clock von Mauro Pintus (2018), nach deren Idee diese Version entstand</small><small class="note" data-l="en">The original ESP32 Oscilloscope Clock by Mauro Pintus (2018) that inspired this version</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" href="https://fonts.google.com/specimen/Raleway"><span><span data-l="de">Schriftart Raleway</span><span data-l="en">Font Raleway</span><small class="note" data-l="de">Google Fonts – frei unter der SIL Open Font License 1.1</small><small class="note" data-l="en">Google Fonts – free under the SIL Open Font License 1.1</small></span><span>›</span></a>
 </section></div>
-
-<!-- Firmware installieren: im Browser (ESP Web Tools) oder mit Arduino Cloud; Dateien aus tools/gen_firmware.py -->
-<div class="grp closed"><h2 id="flash-h" class="coll" role="button" tabindex="0" aria-expanded="false"><span data-l="de">Firmware installieren</span><span data-l="en">Install firmware</span></h2>
-<section class="doc"><div data-l="de">
-<h3>Im Browser – ohne Arduino-Software</h3>
-<p>Die fertige Firmware lässt sich direkt von dieser Seite auf den ESP32 schreiben. Das geht in <b>Chrome oder Edge am PC</b>
-(Windows, macOS, Linux) oder auf dem Chromebook.</p>
-<ol>
- <li>ESP32 mit einem USB-Datenkabel an den PC anschließen.</li>
- <li>Auf <b>„Firmware installieren“</b> klicken und im Fenster den Anschluss des ESP32 wählen (z. B. „CP2102“, „CH340“ oder „USB Serial“).</li>
- <li><b>Install</b> wählen. Bei der ersten Installation „Erase device“ ankreuzen; bei einem Update weglassen – dann bleiben WLANs und Einstellungen erhalten.</li>
- <li>Nach etwa einer Minute startet die Uhr. Weiter mit Kapitel 5 „Erste Inbetriebnahme“.</li>
-</ol>
-<esp-web-install-button manifest="firmware/manifest.json">
- <button slot="activate" class="flashbtn">Firmware installieren</button>
- <span slot="unsupported" class="flashmsg">Dieser Browser kann nicht auf USB-Geräte zugreifen. Bitte Chrome oder Edge am PC verwenden – oder den Sketch mit Arduino Cloud bzw. der Arduino IDE hochladen (siehe unten).</span>
- <span slot="not-allowed" class="flashmsg">Die Installation geht nur über eine sichere Verbindung (https).</span>
-</esp-web-install-button>
-<p class="note">Erscheint kein Anschluss, fehlt meist der USB-Treiber (CP210x oder CH340) oder das Kabel kann nur laden. Bricht die Verbindung ab,
-beim Start der Installation den <b>BOOT-Taster</b> gedrückt halten. Die Firmware ist für das Board „ESP32 Dev Module“ mit
-Standard-Partitionsschema gebaut (Version 2.0, alle Einstellungen standardmäßig, WLAN über das Setup-WLAN „ScopeClock-Setup“).</p>
-<h3>Mit Arduino Cloud (app.arduino.cc)</h3>
-<p>Wer den Sketch selbst bauen oder anpassen möchte, kann ihn im Arduino Cloud Editor im Browser kompilieren und hochladen:</p>
-<ol>
- <li><a href="firmware/ESP32_OscilloscopeClock_v2.0.zip" download>Sketch als ZIP herunterladen</a> (Ordner <code>ESP32_OscilloscopeClock_v2.0</code> mit allen Dateien).</li>
- <li>Auf <a target="_blank" rel="noopener" href="https://app.arduino.cc/">app.arduino.cc</a> anmelden, unter „Sketches“ → „Import“ die ZIP-Datei wählen.</li>
- <li>Einmalig den <b>Arduino Cloud Agent</b> installieren (der Editor bietet ihn an) – er verbindet den Browser mit dem USB-Anschluss.</li>
- <li>Board <b>„ESP32 Dev Module“</b> wählen, Bibliothek <b>U8g2</b> einbinden, Einstellungen bei Bedarf in <code>config.h</code> anpassen, dann <b>Hochladen</b>.</li>
-</ol>
-<p>Die Firmware passt ins Standard-Partitionsschema; „Huge APP“ ist nicht nötig. Arduino Cloud ist nicht mit GitHub verbunden – nach einer
-neuen Version die ZIP-Datei erneut herunterladen und importieren. Mit der Arduino IDE oder PlatformIO: siehe Kapitel 4.</p>
-</div><div data-l="en">
-<h3>In the browser – without Arduino software</h3>
-<p>The finished firmware can be written to the ESP32 directly from this page. This works in <b>Chrome or Edge on a PC</b>
-(Windows, macOS, Linux) or on a Chromebook.</p>
-<ol>
- <li>Connect the ESP32 to the PC with a USB data cable.</li>
- <li>Click <b>“Install firmware”</b> and choose the ESP32's port in the window (e.g. “CP2102”, “CH340” or “USB Serial”).</li>
- <li>Choose <b>Install</b>. For the first installation tick “Erase device”; leave it out for an update – Wi-Fi networks and settings are then kept.</li>
- <li>After about a minute the clock starts. Continue with chapter 5 “First start-up”.</li>
-</ol>
-<esp-web-install-button manifest="firmware/manifest.json">
- <button slot="activate" class="flashbtn">Install firmware</button>
- <span slot="unsupported" class="flashmsg">This browser cannot access USB devices. Please use Chrome or Edge on a PC – or upload the sketch with Arduino Cloud or the Arduino IDE (see below).</span>
- <span slot="not-allowed" class="flashmsg">Installing only works over a secure connection (https).</span>
-</esp-web-install-button>
-<p class="note">If no port appears, the USB driver (CP210x or CH340) is usually missing or the cable only charges. If the connection drops,
-hold the <b>BOOT button</b> when the installation starts. The firmware is built for the board “ESP32 Dev Module” with the
-default partition scheme (version 2.0, all settings at their defaults, Wi-Fi via the setup network “ScopeClock-Setup”).</p>
-<h3>With Arduino Cloud (app.arduino.cc)</h3>
-<p>If you want to build or adapt the sketch yourself, you can compile and upload it in the Arduino Cloud Editor in the browser:</p>
-<ol>
- <li><a href="firmware/ESP32_OscilloscopeClock_v2.0.zip" download>Download the sketch as a ZIP</a> (folder <code>ESP32_OscilloscopeClock_v2.0</code> with all files).</li>
- <li>Sign in at <a target="_blank" rel="noopener" href="https://app.arduino.cc/">app.arduino.cc</a>, choose “Sketches” → “Import” and select the ZIP file.</li>
- <li>Install the <b>Arduino Cloud Agent</b> once (the editor offers it) – it connects the browser to the USB port.</li>
- <li>Choose the board <b>“ESP32 Dev Module”</b>, include the library <b>U8g2</b>, adjust <code>config.h</code> if needed, then <b>Upload</b>.</li>
-</ol>
-<p>The firmware fits the default partition scheme; “Huge APP” is not needed. Arduino Cloud is not connected to GitHub – after a new
-version, download and import the ZIP file again. With the Arduino IDE or PlatformIO: see chapter 4.</p>
-</div></section></div>
 
 <!-- KAPITEL -->
 <div class="grp closed"><h2 id="kap1" class="coll" role="button" tabindex="0" aria-expanded="false"><span data-l="de">1 Überblick</span><span data-l="en">1 Overview</span></h2>
@@ -540,15 +479,32 @@ The outer contact has continuity to GND. Retighten all screw terminals slightly.
 <div class="grp closed"><h2 id="kap4" class="coll" role="button" tabindex="0" aria-expanded="false"><span data-l="de">4 Firmware installieren</span><span data-l="en">4 Installing the firmware</span></h2>
 <section class="doc"><div data-l="de">
 <h3>Ohne Arduino-Software: im Browser</h3>
-<p>Am schnellsten geht es über die Projektseite (Abschnitt <b>„Firmware installieren“</b>): ESP32 per USB anschließen, in
-<b>Chrome oder Edge am PC</b> auf „Firmware installieren“ klicken, den Anschluss wählen, fertig. Die Firmware dort baut GitHub bei jeder
-Änderung automatisch (Board „ESP32 Dev Module“, Variante B unten). Bei der ersten Installation „Erase device“ ankreuzen, bei einem
-Update weglassen – dann bleiben WLANs und Einstellungen erhalten. Eigene Startwerte in <code>config.h</code> gehen so nicht;
-dafür eine der folgenden Möglichkeiten nutzen.</p>
+<p>Die fertige Firmware lässt sich direkt von der <a href="#kap4">Projektseite</a> auf den ESP32 schreiben – in <b>Chrome oder Edge
+am PC</b> (Windows, macOS, Linux) oder auf dem Chromebook. GitHub baut sie bei jeder Änderung automatisch (Board „ESP32 Dev Module“,
+Variante B unten).</p>
+<ol>
+ <li>ESP32 mit einem USB-Datenkabel an den PC anschließen.</li>
+ <li>Auf <b>„Firmware installieren“</b> klicken und im Fenster den Anschluss des ESP32 wählen (z. B. „CP2102“, „CH340“ oder „USB Serial“).</li>
+ <li><b>Install</b> wählen. Bei der ersten Installation „Erase device“ ankreuzen; bei einem Update weglassen – dann bleiben WLANs und Einstellungen erhalten.</li>
+ <li>Nach etwa einer Minute startet die Uhr. Weiter mit Kapitel 5.</li>
+</ol>
+<esp-web-install-button manifest="firmware/manifest.json">
+ <button slot="activate" class="flashbtn">Firmware installieren</button>
+ <span slot="unsupported" class="flashmsg">Dieser Browser kann nicht auf USB-Geräte zugreifen. Bitte Chrome oder Edge am PC verwenden – oder den Sketch mit Arduino Cloud bzw. der Arduino IDE hochladen (siehe unten).</span>
+ <span slot="not-allowed" class="flashmsg">Die Installation geht nur über eine sichere Verbindung (https).</span>
+</esp-web-install-button>
+<p>Erscheint kein Anschluss, fehlt meist der USB-Treiber (CP210x oder CH340) oder das Kabel kann nur laden. Bricht die Verbindung ab,
+beim Start der Installation den <b>BOOT-Taster</b> gedrückt halten. Eigene Startwerte in <code>config.h</code> gehen so nicht – dafür
+eine der folgenden Möglichkeiten nutzen.</p>
 <h3>Mit Arduino Cloud (app.arduino.cc)</h3>
-<p>Den Sketch von der Projektseite als ZIP herunterladen, im Arduino Cloud Editor unter „Sketches“ → „Import“ einlesen, einmalig den
-<b>Arduino Cloud Agent</b> installieren, Board <b>ESP32 Dev Module</b> und Bibliothek <b>U8g2</b> wählen und hochladen. Es gilt das
-Standard-Partitionsschema (Variante B). Arduino Cloud ist nicht mit GitHub verbunden: Für eine neue Version die ZIP-Datei erneut importieren.</p>
+<ol>
+ <li><a href="firmware/ESP32_OscilloscopeClock_v2.0.zip">Sketch als ZIP herunterladen</a> (Ordner <code>ESP32_OscilloscopeClock_v2.0</code> mit allen Dateien).</li>
+ <li>Auf <a href="https://app.arduino.cc/" target="_blank" rel="noopener">app.arduino.cc</a> anmelden, unter „Sketches“ → „Import“ die ZIP-Datei wählen.</li>
+ <li>Einmalig den <b>Arduino Cloud Agent</b> installieren (der Editor bietet ihn an) – er verbindet den Browser mit dem USB-Anschluss.</li>
+ <li>Board <b>ESP32 Dev Module</b> wählen, Bibliothek <b>U8g2</b> einbinden, bei Bedarf <code>config.h</code> anpassen und hochladen.</li>
+</ol>
+<p>Es gilt das Standard-Partitionsschema (Variante B), „Huge APP“ ist nicht nötig. Arduino Cloud ist nicht mit GitHub verbunden: Für eine
+neue Version die ZIP-Datei erneut herunterladen und importieren.</p>
 <h3>Mit der Arduino IDE 2.x</h3>
 <ol>
  <li>Boardverwalter: <b>esp32 by Espressif</b> installieren (Version 3.x, auch 2.0.x geht), Board <b>ESP32 Dev Module</b> wählen.</li>
@@ -571,14 +527,32 @@ Stelle und bleiben erhalten. Meldet die IDE beim Hochladen „Sketch too big“,
 (bis zu 10 Netze). Die Startwerte aller Einstellungen stehen in <code>config.h</code>; im Betrieb ist das Webinterface bequemer.</div>
 </div><div data-l="en">
 <h3>Without Arduino software: in the browser</h3>
-<p>The quickest way is the project page (section <b>“Install firmware”</b>): connect the ESP32 via USB, click “Install firmware” in
-<b>Chrome or Edge on a PC</b>, choose the port, done. GitHub builds the firmware there automatically after every change (board
-“ESP32 Dev Module”, variant B below). For the first installation tick “Erase device”, leave it out for an update – Wi-Fi networks and
-settings are then kept. Your own start values in <code>config.h</code> are not possible this way; use one of the following options for that.</p>
+<p>The finished firmware can be written to the ESP32 straight from the <a href="#kap4">project page</a> – in <b>Chrome or Edge
+on a PC</b> (Windows, macOS, Linux) or on a Chromebook. GitHub builds it automatically after every change (board “ESP32 Dev Module”,
+variant B below).</p>
+<ol>
+ <li>Connect the ESP32 to the PC with a USB data cable.</li>
+ <li>Click <b>“Install firmware”</b> and choose the ESP32's port in the window (e.g. “CP2102”, “CH340” or “USB Serial”).</li>
+ <li>Choose <b>Install</b>. For the first installation tick “Erase device”; leave it out for an update – Wi-Fi networks and settings are then kept.</li>
+ <li>After about a minute the clock starts. Continue with chapter 5.</li>
+</ol>
+<esp-web-install-button manifest="firmware/manifest.json">
+ <button slot="activate" class="flashbtn">Install firmware</button>
+ <span slot="unsupported" class="flashmsg">This browser cannot access USB devices. Please use Chrome or Edge on a PC – or upload the sketch with Arduino Cloud or the Arduino IDE (see below).</span>
+ <span slot="not-allowed" class="flashmsg">Installing only works over a secure connection (https).</span>
+</esp-web-install-button>
+<p>If no port appears, the USB driver (CP210x or CH340) is usually missing or the cable only charges. If the connection drops, hold the
+<b>BOOT button</b> when the installation starts. Your own start values in <code>config.h</code> are not possible this way – use one of
+the following options for that.</p>
 <h3>With Arduino Cloud (app.arduino.cc)</h3>
-<p>Download the sketch from the project page as a ZIP, import it in the Arduino Cloud Editor under “Sketches” → “Import”, install the
-<b>Arduino Cloud Agent</b> once, choose the board <b>ESP32 Dev Module</b> and the library <b>U8g2</b> and upload. The default partition
-scheme applies (variant B). Arduino Cloud is not connected to GitHub: import the ZIP file again for a new version.</p>
+<ol>
+ <li><a href="firmware/ESP32_OscilloscopeClock_v2.0.zip">Download the sketch as a ZIP</a> (folder <code>ESP32_OscilloscopeClock_v2.0</code> with all files).</li>
+ <li>Sign in at <a href="https://app.arduino.cc/" target="_blank" rel="noopener">app.arduino.cc</a>, choose “Sketches” → “Import” and select the ZIP file.</li>
+ <li>Install the <b>Arduino Cloud Agent</b> once (the editor offers it) – it connects the browser to the USB port.</li>
+ <li>Choose the board <b>ESP32 Dev Module</b>, include the library <b>U8g2</b>, adjust <code>config.h</code> if needed and upload.</li>
+</ol>
+<p>The default partition scheme applies (variant B), “Huge APP” is not needed. Arduino Cloud is not connected to GitHub: for a new
+version download and import the ZIP file again.</p>
 <h3>With the Arduino IDE 2.x</h3>
 <ol>
  <li>Boards manager: install <b>esp32 by Espressif</b> (version 3.x, 2.0.x also works) and select the board <b>ESP32 Dev Module</b>.</li>

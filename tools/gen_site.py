@@ -21,6 +21,24 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DOCS = os.path.join(ROOT, 'docs')
+SITE = 'https://holzholz123.github.io/ESP32_OscilloscopeClock/'
+
+# Knopf zum Installieren im Browser (ESP Web Tools); die Dateien in docs/firmware/ baut GitHub
+# (tools/gen_firmware.py, .github/workflows/firmware.yml). Im PDF steht an dieser Stelle nichts.
+FLASH_BUTTON = {
+    'de': ('<esp-web-install-button manifest="firmware/manifest.json">\n'
+           ' <button slot="activate" class="flashbtn">Firmware installieren</button>\n'
+           ' <span slot="unsupported" class="flashmsg">Dieser Browser kann nicht auf USB-Geräte zugreifen. Bitte Chrome oder Edge am PC '
+           'verwenden – oder den Sketch mit Arduino Cloud bzw. der Arduino IDE hochladen (siehe unten).</span>\n'
+           ' <span slot="not-allowed" class="flashmsg">Die Installation geht nur über eine sichere Verbindung (https).</span>\n'
+           '</esp-web-install-button>'),
+    'en': ('<esp-web-install-button manifest="firmware/manifest.json">\n'
+           ' <button slot="activate" class="flashbtn">Install firmware</button>\n'
+           ' <span slot="unsupported" class="flashmsg">This browser cannot access USB devices. Please use Chrome or Edge on a PC – '
+           'or upload the sketch with Arduino Cloud or the Arduino IDE (see below).</span>\n'
+           ' <span slot="not-allowed" class="flashmsg">Installing only works over a secure connection (https).</span>\n'
+           '</esp-web-install-button>'),
+}
 
 
 def label_cells(m):
@@ -72,6 +90,11 @@ def chapters(path):
         content = content.replace('</table>', '</table></div>')
         content = re.sub(r'(<img [^>]*?) style="width:\d+%"', r'\1', content)
         content = re.sub(r'<img (?![^>]*loading=)', '<img loading="lazy" ', content)
+        # Links auf die Projektseite selbst werden relativ (kein neuer Tab), z. B. Sketch-ZIP
+        content = content.replace('href="' + SITE, 'href="')
+        content = content.replace('href=""', 'href="./"')
+        # Kapitel 4: Knopf "Firmware installieren" (ESP Web Tools, Skript am Ende von docs/index.html)
+        content = content.replace('<!-- FIRMWARE-KNOPF -->', FLASH_BUTTON['en' if path.endswith('.en.html') else 'de'])
         # externe Links (Händler, GitHub …) in einem neuen Tab öffnen
         content = re.sub(r'<a href="(https?://[^"]*)"', r'<a href="\1" target="_blank" rel="noopener"', content)
         out.append((title, content))
