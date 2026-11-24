@@ -77,7 +77,6 @@ h3+ul>li:nth-child(2),h3+ol>li:nth-child(2),li:last-child{break-before:avoid}
   <li><span class="tn">9</span>Fehlersuche<div class="tsub">9.1 Debug-Meldungen (Beispiel)</div></li>
   <li><span class="tn">10</span>Technik: wie die Uhr arbeitet<div class="tsub">10.1 Zwei Kerne mit getrennten Aufgaben · 10.2 Vom Zahlenwert zur Ablenkspannung · 10.3 Taktgenaue Strahlführung · 10.4 Gleiche Helligkeit · 10.5 Ein Bild im Ablauf · 10.6 Rundtour und Sprünge · 10.7 Uhrzeit · 10.8 WLAN, Webserver und Einstellungen · 10.9 OLED und Überwachung</div></li>
   <li><span class="tn">11</span>Anhang<div class="tsub">11.1 Startwerte in <code>config.h</code> · 11.2 Schnittstellen des Webservers · 11.3 Dateien im Projekt · 11.4 Herkunft und Lizenzen</div></li>
-  <li><span class="tn">12</span>Glossar</li>
   <li class="bp">Bohrplan zum Ausdrucken (letzte zwei Seiten: Deckel und Seitenteile, Maßstab 1:1)</li>
  </ol>
 <!-- /TOC -->
@@ -644,46 +643,6 @@ github.com/maurohh/ESP32_OscilloscopeClock) – vielen Dank! Diese Version ist e
 Webinterface und alle Vektorgrafiken sind neu. Die Schrift des Webinterfaces ist eine verkleinerte Fassung von
 <b>Raleway</b> (Copyright 2010 The Raleway Project Authors, SIL Open Font License 1.1, Lizenztext in <code>fonts/OFL.txt</code>),
 hier unter dem Namen „ScopeClock Sans“.</p>
-<h2>12 Glossar</h2>
-<p>Fachbegriffe aus dieser Anleitung kurz erklärt. Querverweise führen zum Abschnitt mit den Einzelheiten.</p>
-<table>
- <tr><th style="width:27%">Begriff</th><th>Erklärung</th></tr>
- <tr><td><b>Abzweigdose</b></td><td>Kunststoffgehäuse aus der Elektroinstallation (hier ABS, IP67, 150 × 100 × 70 mm). Lässt das WLAN-Signal durch – ein Metallgehäuse würde es abschirmen.</td></tr>
- <tr><td><b>Allgemeintoleranz (ISO 2768-m)</b></td><td>Zulässige Abweichung für Maße ohne eigene Toleranzangabe; „m“ = mittel, z. B. ±0,2 mm bei Maßen bis 30 mm.</td></tr>
- <tr><td><b>BNC</b></td><td>Bajonett-Steckverbinder für Koaxialkabel – der übliche Eingang am Oszilloskop.</td></tr>
- <tr><td><b>BOOT-Taster</b></td><td>Taster an GPIO0 des DevKits. Bei der Uhr: 3 s halten wechselt das Profil, 10 s halten setzt alle Einstellungen zurück (Abschnitt 7.3).</td></tr>
- <tr><td><b>Breakout-Board</b></td><td>Trägerplatine mit Schraubklemmen, auf die das DevKit gesteckt wird – alle Leitungen werden angeschraubt statt gelötet.</td></tr>
- <tr><td><b>DAC</b></td><td>Digital-Analog-Wandler. Der ESP32 hat zwei mit 8 Bit (GPIO25 und GPIO26); sie erzeugen die Spannungen für X und Y (0–3,2 V in 256 Stufen).</td></tr>
- <tr><td><b>DevKit (ESP32 DevKitC)</b></td><td>Entwicklungsplatine mit ESP32-Modul, USB-Anschluss, Spannungsregler und den Tastern BOOT und EN.</td></tr>
- <tr><td><b>Dunkeltastung (Z-Eingang)</b></td><td>Abschalten des Strahls während der Sprünge über den Z-Eingang des Oszilloskops – nur bei Geräten mit Z-Eingang, optional über GPIO27.</td></tr>
- <tr><td><b>Einbrennen</b></td><td>Dauerhafte Abnutzung der Leuchtschicht einer Bildröhre, wenn ein Bild lange an derselben Stelle steht. Dagegen hilft die Bildverschiebung.</td></tr>
- <tr><td><b>ESP Web Tools</b></td><td>Werkzeug, mit dem ein Browser (Chrome, Edge) über Web Serial Firmware auf den ESP32 schreibt – der Knopf „Firmware installieren“ auf der Projektseite.</td></tr>
- <tr><td><b>Flimmerschutz</b></td><td>Begrenzt die Verweilzeit automatisch so, dass mindestens 75 Bilder pro Sekunde gezeichnet werden (<code>FLICKER_MIN_FPS</code>).</td></tr>
- <tr><td><b>GPIO</b></td><td>Frei programmierbarer Anschluss des ESP32; auf dem Breakout-Board als P… beschriftet (P25 = GPIO25).</td></tr>
- <tr><td><b>IPEX (U.FL)</b></td><td>Winziger Antennenstecker am Modul ESP32-WROOM-32U; ein Adapterkabel führt zur SMA-Buchse in der Gehäusewand.</td></tr>
- <tr><td><b>I²C</b></td><td>Zweidraht-Bus (SDA, SCL), hier für die optionale Echtzeituhr DS3231.</td></tr>
- <tr><td><b>Kabelverschraubung</b></td><td>Abgedichtete Kabeldurchführung (hier M6, Lapp SKINDICHT MINI) für die Pigtails.</td></tr>
- <tr><td><b>mDNS</b></td><td>Namensauflösung im Heimnetz ohne DNS-Server – die Uhr ist unter <code>scope-clock.local</code> erreichbar.</td></tr>
- <tr><td><b>Nachleuchten (Persistence)</b></td><td>Einstellung am digitalen Oszilloskop: Punkte bleiben eine Zeit lang stehen und ergeben ein ruhiges Bild.</td></tr>
- <tr><td><b>NTP</b></td><td>Network Time Protocol: holt die genaue Uhrzeit aus dem Internet, bei der Uhr stündlich.</td></tr>
- <tr><td><b>NVS</b></td><td>Non-Volatile Storage – Bereich im Flash, in dem Einstellungen und WLANs gespeichert sind. Bleibt beim Hochladen neuer Firmware erhalten.</td></tr>
- <tr><td><b>OLED</b></td><td>Selbstleuchtende Anzeige (hier 2,42 Zoll, 128 × 64 Pixel, SPI) im Deckel; zeigt Uhrzeit, Datum und WLAN.</td></tr>
- <tr><td><b>OTA</b></td><td>Firmware-Update über WLAN (Over the Air). Die Uhr nutzt es nicht – deshalb passt auch das Partitionsschema „Huge APP“.</td></tr>
- <tr><td><b>Partitionsschema</b></td><td>Aufteilung des 4-MB-Flash in Bereiche für Programm, Einstellungen (NVS) und Daten (Abschnitt 4.4).</td></tr>
- <tr><td><b>Pigtail</b></td><td>Kurzes Kabel mit Stecker an einem Ende – hier RG316 mit BNC-Stecker, das andere Ende kommt in die Klemmen.</td></tr>
- <tr><td><b>Profil ANALOG / DIGITAL</b></td><td>Wie der Strahl zwischen Linien springt: gebremst für Röhren-Oszilloskope (ANALOG) oder hart für Speicher-Oszilloskope (DIGITAL).</td></tr>
- <tr><td><b>Prüfmaß</b></td><td>50-mm-Linie auf dem Bohrplan zum Nachmessen, ob mit 100 % gedruckt wurde.</td></tr>
- <tr><td><b>RSSI</b></td><td>Empfangsstärke des WLANs in dBm; besser als −70 dBm ist gut, schlechter als −80 dBm schwach.</td></tr>
- <tr><td><b>RTC (Echtzeituhr)</b></td><td>Optionales Modul DS3231 mit Knopfzelle; hält die Uhrzeit auch ohne Strom und ohne Internet.</td></tr>
- <tr><td><b>Rücklauf (Sprung)</b></td><td>Bewegung des Strahls von einer Linie zur nächsten. Sie hinterlässt eine schwache Spur, deshalb sortiert die Firmware die Linien zu einer Rundtour.</td></tr>
- <tr><td><b>Rundtour</b></td><td>Reihenfolge, in der Striche und Ziffern gezeichnet werden – so sortiert, dass die Sprünge dazwischen möglichst kurz sind.</td></tr>
- <tr><td><b>Setup-WLAN</b></td><td>Offenes WLAN „ScopeClock-Setup“, das die Uhr öffnet, wenn kein bekanntes Netz erreichbar ist; darüber werden WLANs eingetragen.</td></tr>
- <tr><td><b>SPI</b></td><td>Schneller serieller Bus, über den der ESP32 das OLED ansteuert (Leitungen DIN, CLK, CS, DC, RST).</td></tr>
- <tr><td><b>Testbild</b></td><td>Rahmen, Kreis und Mittelkreuz in der Größe der Uhr zum Einstellen von Position, Größe und Fokus (Abschnitt 6.1).</td></tr>
- <tr><td><b>Verweilzeit</b></td><td>Wie lange der Strahl je Schritt auf einem Punkt bleibt (Standard 3 µs). Länger = hellere Linien, aber weniger Bilder pro Sekunde.</td></tr>
- <tr><td><b>X/Y-Betrieb</b></td><td>Betriebsart des Oszilloskops: Kanal 1 lenkt den Strahl waagerecht, Kanal 2 senkrecht ab – statt der Zeitbasis.</td></tr>
-</table>
-
 <section class="bohrseite"><img src="images/bohrplan.svg" alt="Bohrplan Deckel 1:1"></section>
 <section class="bohrseite"><img src="images/bohrplan_seiten.svg" alt="Bohrplan Seitenteile 1:1"></section>
 </body></html>

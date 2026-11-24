@@ -77,7 +77,6 @@ h3+ul>li:nth-child(2),h3+ol>li:nth-child(2),li:last-child{break-before:avoid}
   <li><span class="tn">9</span>Troubleshooting<div class="tsub">9.1 Debug messages (example, language English)</div></li>
   <li><span class="tn">10</span>Technology: how the clock works<div class="tsub">10.1 Two cores with separate jobs · 10.2 From number to deflection voltage · 10.3 Cycle-exact beam control · 10.4 Equal brightness · 10.5 One frame step by step · 10.6 Round trip and jumps · 10.7 Time · 10.8 Wi-Fi, web server and settings · 10.9 OLED and monitoring</div></li>
   <li><span class="tn">11</span>Appendix<div class="tsub">11.1 Defaults in <code>config.h</code> · 11.2 Web server interfaces · 11.3 Files in the project · 11.4 Origin and licences</div></li>
-  <li><span class="tn">12</span>Glossary</li>
   <li class="bp">Drilling template for printing (last two pages: lid and side walls, scale 1:1)</li>
  </ol>
 <!-- /TOC -->
@@ -644,46 +643,6 @@ github.com/maurohh/ESP32_OscilloscopeClock) – many thanks! This version is an 
 web interface and all vector graphics are new. The font of the web interface is a reduced version of
 <b>Raleway</b> (Copyright 2010 The Raleway Project Authors, SIL Open Font License 1.1, licence text in <code>fonts/OFL.txt</code>),
 called “ScopeClock Sans” here.</p>
-<h2>12 Glossary</h2>
-<p>Technical terms from this guide briefly explained. Cross-references lead to the section with the details.</p>
-<table>
- <tr><th style="width:27%">Term</th><th>Explanation</th></tr>
- <tr><td><b>BNC</b></td><td>Bayonet connector for coaxial cable – the usual input on an oscilloscope.</td></tr>
- <tr><td><b>BOOT button</b></td><td>Button on GPIO0 of the DevKit. On the clock: hold for 3 s to switch the profile, 10 s to reset all settings (section 7.3).</td></tr>
- <tr><td><b>Breakout board</b></td><td>Carrier board with screw terminals into which the DevKit is plugged – all wires are screwed in instead of soldered.</td></tr>
- <tr><td><b>Burn-in</b></td><td>Permanent wear of a CRT's phosphor when a picture stays at the same spot for a long time. The picture shift helps against it.</td></tr>
- <tr><td><b>Cable gland</b></td><td>Sealed cable entry (here M6, Lapp SKINDICHT MINI) for the pigtails.</td></tr>
- <tr><td><b>DAC</b></td><td>Digital-to-analogue converter. The ESP32 has two with 8 bits (GPIO25 and GPIO26); they generate the voltages for X and Y (0–3.2 V in 256 steps).</td></tr>
- <tr><td><b>DevKit (ESP32 DevKitC)</b></td><td>Development board with ESP32 module, USB port, voltage regulator and the BOOT and EN buttons.</td></tr>
- <tr><td><b>Dwell time</b></td><td>How long the beam stays on a point per step (default 3 µs). Longer = brighter lines but fewer frames per second.</td></tr>
- <tr><td><b>ESP Web Tools</b></td><td>Tool with which a browser (Chrome, Edge) writes firmware to the ESP32 via Web Serial – the “Install firmware” button on the project page.</td></tr>
- <tr><td><b>Flicker guard</b></td><td>Automatically limits the dwell time so that at least 75 frames per second are drawn (<code>FLICKER_MIN_FPS</code>).</td></tr>
- <tr><td><b>General tolerance (ISO 2768-m)</b></td><td>Permitted deviation for dimensions without their own tolerance; “m” = medium, e.g. ±0.2 mm for dimensions up to 30 mm.</td></tr>
- <tr><td><b>GPIO</b></td><td>Freely programmable pin of the ESP32; labelled P… on the breakout board (P25 = GPIO25).</td></tr>
- <tr><td><b>IPEX (U.FL)</b></td><td>Tiny antenna connector on the ESP32-WROOM-32U module; an adapter cable leads to the SMA socket in the enclosure wall.</td></tr>
- <tr><td><b>I²C</b></td><td>Two-wire bus (SDA, SCL), here for the optional DS3231 real-time clock.</td></tr>
- <tr><td><b>Junction box</b></td><td>Plastic enclosure from electrical installation (here ABS, IP67, 150 × 100 × 70 mm). It lets the Wi-Fi signal through – a metal enclosure would shield it.</td></tr>
- <tr><td><b>mDNS</b></td><td>Name resolution in the home network without a DNS server – the clock can be reached at <code>scope-clock.local</code>.</td></tr>
- <tr><td><b>NTP</b></td><td>Network Time Protocol: gets the exact time from the internet, hourly on the clock.</td></tr>
- <tr><td><b>NVS</b></td><td>Non-Volatile Storage – area in flash where settings and Wi-Fi networks are stored. It is kept when new firmware is uploaded.</td></tr>
- <tr><td><b>OLED</b></td><td>Self-luminous display (here 2.42 inch, 128 × 64 pixels, SPI) in the lid; shows time, date and Wi-Fi.</td></tr>
- <tr><td><b>OTA</b></td><td>Firmware update over Wi-Fi (over the air). The clock does not use it – which is why the “Huge APP” partition scheme fits.</td></tr>
- <tr><td><b>Partition scheme</b></td><td>Division of the 4 MB flash into areas for program, settings (NVS) and data (section 4.4).</td></tr>
- <tr><td><b>Persistence</b></td><td>Setting on a digital oscilloscope: points stay on screen for a while and give a calm picture.</td></tr>
- <tr><td><b>Pigtail</b></td><td>Short cable with a connector at one end – here RG316 with a BNC plug, the other end goes into the terminals.</td></tr>
- <tr><td><b>Profile ANALOG / DIGITAL</b></td><td>How the beam jumps between lines: braked for CRT oscilloscopes (ANALOG) or hard for storage oscilloscopes (DIGITAL).</td></tr>
- <tr><td><b>Retrace (jump)</b></td><td>Movement of the beam from one line to the next. It leaves a faint trace, which is why the firmware sorts the lines into a round trip.</td></tr>
- <tr><td><b>Round trip</b></td><td>Order in which tick marks and numerals are drawn – sorted so that the jumps in between are as short as possible.</td></tr>
- <tr><td><b>RSSI</b></td><td>Wi-Fi signal strength in dBm; better than −70 dBm is good, worse than −80 dBm is weak.</td></tr>
- <tr><td><b>RTC (real-time clock)</b></td><td>Optional DS3231 module with coin cell; keeps the time without power and without internet.</td></tr>
- <tr><td><b>Setup network</b></td><td>Open Wi-Fi “ScopeClock-Setup” that the clock opens when no known network is in range; Wi-Fi networks are entered through it.</td></tr>
- <tr><td><b>SPI</b></td><td>Fast serial bus through which the ESP32 drives the OLED (wires DIN, CLK, CS, DC, RST).</td></tr>
- <tr><td><b>Test line</b></td><td>50 mm line on the drilling template to check that it was printed at 100 %.</td></tr>
- <tr><td><b>Test pattern</b></td><td>Frame, circle and centre cross the size of the clock for adjusting position, size and focus (section 6.1).</td></tr>
- <tr><td><b>X/Y mode</b></td><td>Oscilloscope mode: channel 1 deflects the beam horizontally, channel 2 vertically – instead of the time base.</td></tr>
- <tr><td><b>Z blanking (Z input)</b></td><td>Switching the beam off during jumps via the oscilloscope's Z input – only on devices with a Z input, optionally via GPIO27.</td></tr>
-</table>
-
 <section class="bohrseite"><img src="images/bohrplan_en.svg" alt="Drilling template lid 1:1"></section>
 <section class="bohrseite"><img src="images/bohrplan_seiten_en.svg" alt="Drilling template side walls 1:1"></section>
 </body></html>
