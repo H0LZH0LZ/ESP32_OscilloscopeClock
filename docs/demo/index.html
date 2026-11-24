@@ -106,6 +106,8 @@ header.fs{position:fixed;inset:0;z-index:100;margin:0!important;max-width:none!i
 header.fs .scope{margin:0;padding:0;background:transparent}
 header.fs .scope canvas{width:min(92vw,74vh);max-width:none}
 header.fs .dots{display:none}
+.fscopy{display:none}
+header.fs .fscopy{display:block;position:fixed;right:calc(env(safe-area-inset-right) + 12px);bottom:calc(env(safe-area-inset-bottom) + 8px);font-size:11px;color:var(--mute);opacity:.6;pointer-events:none}
 header.fs #clock{font-size:min(8vw,6.4vh)}header.fs #date{font-size:max(14px,min(4vw,2.8vh))}
 header.fs .fsbtn{position:fixed;top:calc(env(safe-area-inset-top) + 10px);right:calc(env(safe-area-inset-right) + 10px)}
 html:has(header.fs){overflow:hidden}
@@ -220,7 +222,8 @@ button,input,.set select,.logsel,#nav select,pre,.scope,#nav a{border-radius:var
  aria-label="Vorschau des Oszilloskop-Bildes – antippen für Vollbild, nach links oder rechts wischen (oder Pfeiltasten), um das Zifferblatt zu wechseln"></canvas><div class="dialtag" id="dialTag"></div>
  <button type="button" class="fsbtn" id="fsBtn" aria-label="Vollbild">⛶</button></div>
 <div class="dots" id="dots"><button type="button" id="dPrev" aria-label="Voriges Zifferblatt">‹</button><span id="dotList" style="display:flex"></span><button type="button" id="dNext" aria-label="Nächstes Zifferblatt">›</button></div>
-<div class="tbox"><div id="clock">--:--:--</div><div id="date">&nbsp;</div></div></header>
+<div class="tbox"><div id="clock">--:--:--</div><div id="date">&nbsp;</div></div>
+<div class="fscopy">© Christian Holz</div></header>
 <div class="demo" id="demoBar"><span><b>Demo-Vorschau</b> – keine Verbindung zu einer Uhr, alle Werte sind simuliert. Die Uhrzeit ist die deines Geräts.</span>
 <button type="button" class="sec" id="demoSetup">Setup-WLAN simulieren</button></div>
 <div class="grp"><h2 id="status-h" class="coll" role="button" tabindex="0" aria-expanded="true">Status</h2>
