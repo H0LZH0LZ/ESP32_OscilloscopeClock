@@ -93,6 +93,9 @@ def chapters(path):
         # Links auf die Projektseite selbst werden relativ (kein neuer Tab), z. B. Sketch-ZIP
         content = content.replace('href="' + SITE, 'href="')
         content = content.replace('href=""', 'href="./"')
+        # Verweise aus dem PDF auf die Projektseite: hier ist man schon auf der Projektseite
+        content = re.sub(r'von der <a href="#kap\d+">Projektseite</a>', 'von dieser Seite', content)
+        content = re.sub(r'from the <a href="#kap\d+">project page</a>', 'from this page', content)
         # Kapitel 4: Knopf "Firmware installieren" (ESP Web Tools, Skript am Ende von docs/index.html)
         content = content.replace('<!-- FIRMWARE-KNOPF -->', FLASH_BUTTON['en' if path.endswith('.en.html') else 'de'])
         # externe Links (Händler, GitHub …) in einem neuen Tab öffnen
