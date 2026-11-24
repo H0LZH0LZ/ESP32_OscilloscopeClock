@@ -120,7 +120,11 @@ def main():
     if len(de) != len(en):
         sys.exit(f'gen_site.py: {len(de)} deutsche, aber {len(en)} englische Kapitel')
     nav, body = [], []
-    for k, ((td, cd), (te, ce)) in enumerate(zip(de, en), 1):
+    # Auf der Website steht das Abkürzungsverzeichnis am Ende (Nachschlagen); im PDF bleibt es vorn
+    pairs = list(zip(de, en))
+    abk = [p for p in pairs if strip_tags(p[0][0]) == 'Abkürzungsverzeichnis']
+    pairs = [p for p in pairs if p not in abk] + abk
+    for k, ((td, cd), (te, ce)) in enumerate(pairs, 1):
         # Sprungziel aus der Kapitelnummer (bleibt gleich, wenn davor Abschnitte dazukommen):
         # Kapitel 6 → #kap6, Anhang A → #anhang-a, ohne Nummer → #abkuerzungen / #quellen
         mnum = re.match(r'(\d+|[A-Z]) ', strip_tags(td))
