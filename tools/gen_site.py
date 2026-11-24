@@ -80,7 +80,7 @@ def chapters(path):
     out = []
     for i in range(1, len(parts), 2):
         title, content = parts[i].strip(), parts[i + 1].strip()
-        if not re.match(r'(\d+|[A-Z]) ', title) and title not in ('Quellenverzeichnis', 'References'):
+        if not re.match(r'(\d+|[A-Z]) ', title) and title not in ('Quellenverzeichnis', 'References', 'Abkürzungsverzeichnis', 'List of abbreviations'):
             continue
         # Tabellen: jede Zelle bekommt die Spaltenbezeichnung (data-th) – auf dem Handy stehen die
         # Zeilen dann als Einträge untereinander, jeweils mit Bezeichnung

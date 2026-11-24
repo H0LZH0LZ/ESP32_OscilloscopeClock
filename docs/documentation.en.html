@@ -41,6 +41,9 @@ figcaption{font-size:8.8pt;color:#555;margin-top:1.2mm}
 .toc .tn{display:inline-block;width:8mm;font-weight:700;color:#0a5c33}
 .toc .tsub{font-size:8.6pt;color:#555;margin-left:8mm;line-height:1.4}
 .toc li.bp{margin-top:2.5mm}
+.abk table{font-size:8.6pt;column-count:1}
+.abk td{border:0;border-bottom:1px solid #e3e6e9;padding:1mm 2mm}.abk td:first-child{width:18mm;font-weight:700;white-space:nowrap}
+.abk .cols{display:flex;gap:6mm;align-items:flex-start}.abk .cols table{flex:1}
 table.refs td{border:0;padding:1mm 2mm 1mm 0}table.refs td:first-child{width:9mm;white-space:nowrap;font-weight:700}table.refs a{overflow-wrap:anywhere}
 .two{display:flex;gap:4mm}.two figure{flex:1}
 .pb{break-before:page}
@@ -67,6 +70,7 @@ h3+ul>li:nth-child(2),h3+ol>li:nth-child(2),li:last-child{break-before:avoid}
  <h2>Contents</h2>
 <!-- TOC -->
  <ol class="tl">
+  <li><span class="tn"></span>List of abbreviations</li>
   <li><span class="tn">1</span>Introduction<div class="tsub">1.1 Structure of this guide · 1.2 Features</div></li>
   <li><span class="tn">2</span>Fundamentals: how the clock works<div class="tsub">2.1 Two cores with separate jobs · 2.2 From number to deflection voltage · 2.3 Cycle-exact beam control · 2.4 Equal brightness · 2.5 One frame step by step · 2.6 Round trip and jumps · 2.7 Time · 2.8 Wi-Fi, web server and settings · 2.9 OLED and monitoring</div></li>
   <li><span class="tn">3</span>State of the art<div class="tsub">3.1 The original Oscilloscope Clock · 3.2 Other oscilloscope clocks · 3.3 New in version 2.0</div></li>
@@ -89,6 +93,59 @@ h3+ul>li:nth-child(2),h3+ol>li:nth-child(2),li:last-child{break-before:avoid}
  drawing code). The web interface pictures are screenshots of the page. Photos of the finished device will be added once the
  prototype has been built.</div>
 </section>
+
+<div class="abk">
+<h2>List of abbreviations</h2>
+<p class="small">Commonly known abbreviations (Wi-Fi, USB, PC) as well as pin and type names (P25, GPIO25, DS3231) are not listed.</p>
+<div class="cols">
+<table>
+ <tr><td>ABS</td><td>acrylonitrile butadiene styrene (enclosure plastic)</td></tr>
+ <tr><td>BNC</td><td>Bayonet Neill–Concelman (coaxial connector)</td></tr>
+ <tr><td>CLK</td><td>clock line (SPI)</td></tr>
+ <tr><td>CS</td><td>chip select (SPI)</td></tr>
+ <tr><td>DAC</td><td>digital-to-analogue converter</td></tr>
+ <tr><td>DC</td><td>direct current (coupling); on the OLED: data/command</td></tr>
+ <tr><td>DIN</td><td>German Institute for Standardization; on the OLED: data in</td></tr>
+ <tr><td>DNS</td><td>Domain Name System</td></tr>
+ <tr><td>EN</td><td>enable – reset button of the DevKit</td></tr>
+ <tr><td>FPC</td><td>flexible printed circuit – flat cable</td></tr>
+ <tr><td>GND</td><td>ground</td></tr>
+ <tr><td>GPIO</td><td>general purpose input/output</td></tr>
+ <tr><td>IDE</td><td>integrated development environment</td></tr>
+ <tr><td>IP</td><td>Internet Protocol (IP address); with IP67/IP68: degree of protection</td></tr>
+ <tr><td>IPEX</td><td>type of small antenna coaxial connector (also U.FL)</td></tr>
+ <tr><td>IRAM</td><td>internal RAM – fast internal memory of the ESP32</td></tr>
+ <tr><td>ISO</td><td>International Organization for Standardization</td></tr>
+ <tr><td>I²C</td><td>Inter-Integrated Circuit – two-wire bus</td></tr>
+ <tr><td>JSON</td><td>JavaScript Object Notation – data format</td></tr>
+ <tr><td>LCD</td><td>liquid crystal display</td></tr>
+ <tr><td>mDNS</td><td>multicast DNS – name resolution in the home network</td></tr>
+</table>
+<table>
+ <tr><td>MOSI</td><td>master out slave in – data line (SPI)</td></tr>
+ <tr><td>NTP</td><td>Network Time Protocol – time sync via the internet</td></tr>
+ <tr><td>NVS</td><td>non-volatile storage – memory for settings</td></tr>
+ <tr><td>OLED</td><td>organic light-emitting diode – self-luminous display</td></tr>
+ <tr><td>OTA</td><td>over the air – update via Wi-Fi</td></tr>
+ <tr><td>POSIX</td><td>Portable Operating System Interface (time-zone string)</td></tr>
+ <tr><td>RAM</td><td>random access memory</td></tr>
+ <tr><td>RSSI</td><td>received signal strength indicator</td></tr>
+ <tr><td>RST</td><td>reset line</td></tr>
+ <tr><td>RTC</td><td>real-time clock</td></tr>
+ <tr><td>SCK, SCL</td><td>serial clock – clock line (SPI or I²C)</td></tr>
+ <tr><td>SDA</td><td>serial data – data line (I²C)</td></tr>
+ <tr><td>SMA</td><td>SubMiniature version A (antenna connector)</td></tr>
+ <tr><td>SPI</td><td>Serial Peripheral Interface – serial bus</td></tr>
+ <tr><td>SPIFFS</td><td>SPI flash file system</td></tr>
+ <tr><td>SSID</td><td>service set identifier – name of a Wi-Fi network</td></tr>
+ <tr><td>SW</td><td>width across flats (spanner size)</td></tr>
+ <tr><td>UTC</td><td>Coordinated Universal Time</td></tr>
+ <tr><td>VCC</td><td>supply voltage</td></tr>
+ <tr><td>VSPI</td><td>one of the two freely usable SPI interfaces of the ESP32</td></tr>
+ <tr><td>WOFF2</td><td>Web Open Font Format 2 – font format</td></tr>
+</table>
+</div>
+</div>
 
 <h2>1 Introduction</h2>
 <p>The <b>ESP32 Oscilloscope Clock</b> draws an analogue clock on the screen of an oscilloscope. The oscilloscope works in
