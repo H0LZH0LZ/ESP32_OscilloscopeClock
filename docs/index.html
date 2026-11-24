@@ -223,8 +223,8 @@ a.row>span:last-child{font-size:18px}
 <div class="grp"><h2 id="downloads-h" class="coll" role="button" tabindex="0" aria-expanded="true"><span data-l="de">0 Links &amp; Dokumente</span><span data-l="en">0 Links &amp; documents</span></h2>
 <section>
  <a class="row" target="_blank" rel="noopener" href="https://github.com/HolzHolz123/ESP32_OscilloscopeClock"><span><span data-l="de">GitHub – Version 2.0</span><span data-l="en">GitHub – version 2.0</span><small class="note" data-l="de">Diese Firmware mit Quellcode, Anleitung und Werkzeugen</small><small class="note" data-l="en">This firmware with source code, guide and tools</small></span><span>›</span></a>
- <a class="row" target="_blank" rel="noopener" data-l="de" href="ESP32_Oscilloscope_Clock_Dokumentation.pdf?v=d27685cd"><span>Dokumentation (PDF)<small class="note">Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small></span><span>›</span></a>
- <a class="row" target="_blank" rel="noopener" data-l="en" href="ESP32_Oscilloscope_Clock_Documentation.pdf?v=2f44adcd"><span>Documentation (PDF)<small class="note">Assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
+ <a class="row" target="_blank" rel="noopener" data-l="de" href="ESP32_Oscilloscope_Clock_Dokumentation.pdf?v=c057dc0c"><span>Dokumentation (PDF)<small class="note">Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small></span><span>›</span></a>
+ <a class="row" target="_blank" rel="noopener" data-l="en" href="ESP32_Oscilloscope_Clock_Documentation.pdf?v=6d3dabf2"><span>Documentation (PDF)<small class="note">Assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" href="demo/"><span><span data-l="de">Testseite</span><span data-l="en">Test page</span><small class="note" data-l="de">Das Webinterface der Uhr ausprobieren – läuft im Browser, alle Werte sind simuliert</small><small class="note" data-l="en">Try the clock's web interface – runs in the browser, all values are simulated</small></span><span>›</span></a>
  <a class="row" href="#kap5"><span><span data-l="de">Firmware installieren</span><span data-l="en">Install firmware</span><small class="note" data-l="de">Direkt im Browser auf den ESP32 schreiben – oder den Sketch mit Arduino Cloud hochladen</small><small class="note" data-l="en">Write it to the ESP32 straight from the browser – or upload the sketch with Arduino Cloud</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" href="https://github.com/maurohh/ESP32_OscilloscopeClock"><span><span data-l="de">GitHub – Original</span><span data-l="en">GitHub – original</span><small class="note" data-l="de">Die ursprüngliche ESP32 Oscilloscope Clock von Mauro Pintus (2018), nach deren Idee diese Version entstand</small><small class="note" data-l="en">The original ESP32 Oscilloscope Clock by Mauro Pintus (2018) that inspired this version</small></span><span>›</span></a>
@@ -455,19 +455,7 @@ kommt direkt in den Eingang des Oszilloskops, ein zusätzliches BNC-Kabel ist ni
  <tr><td class="qty" data-th="Anz.">–</td><td data-th="Teil">Kleinteile</td><td data-th="Hinweis">7 Leitungen für das OLED (DuPont-Kabel oder Litze), Schrumpfschlauch, Aderendhülsen 0,25–0,5 mm² (optional), Abstandsbolzen M2,5 (OLED) und M3 (Breakout-Board), ggf. 2–3 Muttern M6</td></tr>
  <tr><td class="qty" data-th="Anz.">1</td><td data-qty="1 ×" data-th="Teil">USB-Netzteil 5 V, ≥ 1 A, mit USB-C-Kabel</td><td data-th="Hinweis">Ein normales, ungeerdetes Steckernetzteil vermeidet Brummschleifen.</td></tr>
 </table></div>
-<h3>3.1 Beim Bau des Prototyps verwendete Artikel</h3>
-<ul class="small">
- <li>ESP32 DevKitC V4 (ESP32-WROOM-32U, USB-C) mit Antennen-Kit (DUBEUYEW, 2 Stück) – <a href="https://www.amazon.de/dp/B0F65G3V81" target="_blank" rel="noopener">amazon.de/dp/B0F65G3V81</a></li>
- <li>Waveshare 2,42" OLED, 128 × 64, SPI/I²C, weiß – <a href="https://www.amazon.de/dp/B0CL6WMHJN" target="_blank" rel="noopener">amazon.de/dp/B0CL6WMHJN</a></li>
- <li>WLAN-Antenne Bingfu 2,4/5,8 GHz, 8 dBi, SMA-Stecker – <a href="https://www.amazon.de/dp/B086JCJMSN" target="_blank" rel="noopener">amazon.de/dp/B086JCJMSN</a></li>
- <li>Optional: Echtzeituhr DS3231 (WINGONEER „Tiny DS3231 AT24C32“, Modul ZS-042) – <a href="https://www.amazon.de/dp/B01H5NAFUY" target="_blank" rel="noopener">amazon.de/dp/B01H5NAFUY</a></li>
- <li>Abzweigdose IP67, 150 × 100 × 70 mm (Yunseity) – <a href="https://www.amazon.de/dp/B0B5RGNNXV" target="_blank" rel="noopener">amazon.de/dp/B0B5RGNNXV</a></li>
- <li>ESP32-Breakout-Board mit Schraubklemmen (XTVTX, 2er-Pack) – <a href="https://www.amazon.de/dp/B0BCWBW4SR" target="_blank" rel="noopener">amazon.de/dp/B0BCWBW4SR</a></li>
- <li>USB-C-Einbauverlängerung, 16-mm-Einbauöffnung (Plinkwirekb) – <a href="https://www.amazon.de/dp/B0FM7RLQTF" target="_blank" rel="noopener">amazon.de/dp/B0FM7RLQTF</a></li>
- <li>BNC-Pigtail RG316, BNC-Stecker auf DuPont – <a href="https://de.aliexpress.com/item/1005006318978533.html" target="_blank" rel="noopener">de.aliexpress.com/item/1005006318978533.html</a></li>
- <li>Kabelverschraubung Lapp SKINDICHT MINI M6 – <a href="https://de.rs-online.com/web/p/kabelverschraubungen/4583953" target="_blank" rel="noopener">de.rs-online.com/…/4583953</a></li>
-</ul>
-<h3>3.2 Werkzeug</h3>
+<h3>3.1 Werkzeug</h3>
 <ul>
  <li>Lötkolben (feine Spitze) und Lötzinn – nur für die beiden Widerstände in den Pigtails –, Schrumpfschlauch, Seitenschneider, Abisolierzange</li>
  <li>Kleiner Schraubendreher für die Schraubklemmen, Schraubenschlüssel SW 9 für die Kabelverschraubungen</li>
@@ -494,19 +482,7 @@ oscilloscope input; no additional BNC cable is needed.</p>
  <tr><td class="qty" data-th="Qty">–</td><td data-th="Part">Small parts</td><td data-th="Note">7 wires for the OLED (DuPont cables or stranded wire), heat-shrink tubing, wire-end ferrules 0.25–0.5 mm² (optional), standoffs M2.5 (OLED) and M3 (breakout board), possibly 2–3 M6 nuts</td></tr>
  <tr><td class="qty" data-th="Qty">1</td><td data-qty="1 ×" data-th="Part">USB power supply 5 V, ≥ 1 A, with USB-C cable</td><td data-th="Note">A normal, unearthed plug-in power supply avoids ground loops.</td></tr>
 </table></div>
-<h3>3.1 Articles used to build the prototype</h3>
-<ul class="small">
- <li>ESP32 DevKitC V4 (ESP32-WROOM-32U, USB-C) with antenna kit (DUBEUYEW, pack of 2) – <a href="https://www.amazon.de/dp/B0F65G3V81" target="_blank" rel="noopener">amazon.de/dp/B0F65G3V81</a></li>
- <li>Waveshare 2.42" OLED, 128 × 64, SPI/I²C, white – <a href="https://www.amazon.de/dp/B0CL6WMHJN" target="_blank" rel="noopener">amazon.de/dp/B0CL6WMHJN</a></li>
- <li>WiFi antenna Bingfu 2.4/5.8 GHz, 8 dBi, SMA plug – <a href="https://www.amazon.de/dp/B086JCJMSN" target="_blank" rel="noopener">amazon.de/dp/B086JCJMSN</a></li>
- <li>Optional: DS3231 real-time clock (WINGONEER “Tiny DS3231 AT24C32”, module ZS-042) – <a href="https://www.amazon.de/dp/B01H5NAFUY" target="_blank" rel="noopener">amazon.de/dp/B01H5NAFUY</a></li>
- <li>Junction box IP67, 150 × 100 × 70 mm (Yunseity) – <a href="https://www.amazon.de/dp/B0B5RGNNXV" target="_blank" rel="noopener">amazon.de/dp/B0B5RGNNXV</a></li>
- <li>ESP32 breakout board with screw terminals (XTVTX, pack of 2) – <a href="https://www.amazon.de/dp/B0BCWBW4SR" target="_blank" rel="noopener">amazon.de/dp/B0BCWBW4SR</a></li>
- <li>USB-C panel extension, 16 mm mounting hole (Plinkwirekb) – <a href="https://www.amazon.de/dp/B0FM7RLQTF" target="_blank" rel="noopener">amazon.de/dp/B0FM7RLQTF</a></li>
- <li>BNC pigtail RG316, BNC plug to DuPont – <a href="https://de.aliexpress.com/item/1005006318978533.html" target="_blank" rel="noopener">de.aliexpress.com/item/1005006318978533.html</a></li>
- <li>Cable gland Lapp SKINDICHT MINI M6 – <a href="https://de.rs-online.com/web/p/kabelverschraubungen/4583953" target="_blank" rel="noopener">de.rs-online.com/…/4583953</a></li>
-</ul>
-<h3>3.2 Tools</h3>
+<h3>3.1 Tools</h3>
 <ul>
  <li>Soldering iron (fine tip) and solder – only for the two resistors in the pigtails –, heat-shrink tubing, side cutters, wire stripper</li>
  <li>Small screwdriver for the screw terminals, 9 mm spanner for the cable glands</li>
