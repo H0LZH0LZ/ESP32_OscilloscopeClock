@@ -104,6 +104,10 @@ def chapters(path):
     return out
 
 
+def strip_tags(t):
+    return html.unescape(re.sub(r'<[^>]+>', '', t)).strip()
+
+
 def replace_between(s, tag, new):
     a, b = f'<!-- {tag} -->', f'<!-- /{tag} -->'
     i, j = s.index(a) + len(a), s.index(b)
@@ -117,7 +121,13 @@ def main():
         sys.exit(f'gen_site.py: {len(de)} deutsche, aber {len(en)} englische Kapitel')
     nav, body = [], []
     for k, ((td, cd), (te, ce)) in enumerate(zip(de, en), 1):
-        cid = f'kap{k}'
+        # Sprungziel aus der Kapitelnummer (bleibt gleich, wenn davor Abschnitte dazukommen):
+        # Kapitel 6 → #kap6, Anhang A → #anhang-a, ohne Nummer → #abkuerzungen / #quellen
+        mnum = re.match(r'(\d+|[A-Z]) ', strip_tags(td))
+        if mnum:
+            cid = f'kap{mnum.group(1)}' if mnum.group(1).isdigit() else f'anhang-{mnum.group(1).lower()}'
+        else:
+            cid = {'Abkürzungsverzeichnis': 'abkuerzungen', 'Quellenverzeichnis': 'quellen'}.get(strip_tags(td), f'abschnitt{k}')
         strip = lambda t: html.unescape(re.sub(r'<[^>]+>', '', t))
         nav.append(f' <a href="#{cid}"><span data-l="de">{html.escape(strip(td))}</span>'
                    f'<span data-l="en">{html.escape(strip(te))}</span></a>')
