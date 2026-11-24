@@ -37,6 +37,10 @@ figcaption{font-size:8.8pt;color:#555;margin-top:1.2mm}
 .cover .meta{font-size:9.5pt;color:#666}
 .toc{break-after:page}
 .toc ol{font-size:11pt;line-height:1.9}
+.toc ol.tl{list-style:none;padding-left:0;line-height:1.45}.toc ol.tl>li{margin:0 0 1.6mm}
+.toc .tn{display:inline-block;width:8mm;font-weight:700;color:#0a5c33}
+.toc .tsub{font-size:8.6pt;color:#555;margin-left:8mm;line-height:1.4}
+.toc li.bp{margin-top:2.5mm}
 .two{display:flex;gap:4mm}.two figure{flex:1}
 .pb{break-before:page}
 .small{font-size:9pt;color:#555}
@@ -60,20 +64,23 @@ h3+ul>li:nth-child(2),h3+ol>li:nth-child(2),li:last-child{break-before:avoid}
 
 <section class="toc">
  <h2>Contents</h2>
- <ol>
-  <li>Overview</li>
-  <li>Parts list and tools</li>
-  <li>Step-by-step assembly</li>
-  <li>Installing the firmware</li>
-  <li>First start-up</li>
-  <li>Setting up the oscilloscope</li>
-  <li>Operation: web interface, OLED, BOOT button</li>
-  <li>All settings at a glance</li>
-  <li>Troubleshooting</li>
-  <li>Technology: how the clock works</li>
-  <li>Appendix: defaults in <code>config.h</code>, interfaces, origin and licences</li>
-  <li>Drilling template for printing (last two pages: lid and side walls, scale 1:1)</li>
+<!-- TOC -->
+ <ol class="tl">
+  <li><span class="tn">1</span>Overview<div class="tsub">1.1 Features</div></li>
+  <li><span class="tn">2</span>Parts list and tools<div class="tsub">2.1 Articles used to build the prototype · 2.2 Tools</div></li>
+  <li><span class="tn">3</span>Step-by-step assembly</li>
+  <li><span class="tn">4</span>Installing the firmware<div class="tsub">4.1 Without Arduino software: in the browser · 4.2 With Arduino Cloud (app.arduino.cc) · 4.3 With the Arduino IDE 2.x · 4.4 Partition scheme: two variants</div></li>
+  <li><span class="tn">5</span>First start-up</li>
+  <li><span class="tn">6</span>Setting up the oscilloscope<div class="tsub">6.1 Connecting · 6.2 X/Y mode on a digital oscilloscope · 6.3 Matching the brightness of the hands · 6.4 Examples of individual devices (others likewise)</div></li>
+  <li><span class="tn">7</span>Operation<div class="tsub">7.1 Web interface · 7.2 OLED display · 7.3 BOOT button</div></li>
+  <li><span class="tn">8</span>All settings at a glance<div class="tsub">8.1 Oscilloscope · 8.2 Time · 8.3 Display (OLED) · 8.4 Wi-Fi · 8.5 System and side menu</div></li>
+  <li><span class="tn">9</span>Troubleshooting<div class="tsub">9.1 Debug messages (example, language English)</div></li>
+  <li><span class="tn">10</span>Technology: how the clock works<div class="tsub">10.1 Two cores with separate jobs · 10.2 From number to deflection voltage · 10.3 Cycle-exact beam control · 10.4 Equal brightness · 10.5 One frame step by step · 10.6 Round trip and jumps · 10.7 Time · 10.8 Wi-Fi, web server and settings · 10.9 OLED and monitoring</div></li>
+  <li><span class="tn">11</span>Appendix<div class="tsub">11.1 Defaults in <code>config.h</code> · 11.2 Web server interfaces · 11.3 Files in the project · 11.4 Origin and licences</div></li>
+  <li><span class="tn">12</span>Glossary</li>
+  <li class="bp">Drilling template for printing (last two pages: lid and side walls, scale 1:1)</li>
  </ol>
+<!-- /TOC -->
  <div class="note"><b>About the figures:</b> the wiring diagram, drilling template and layout are drawings. The oscilloscope and
  OLED pictures were generated on a PC from the real firmware data (same vector tables, same display library u8g2, same
  drawing code). The web interface pictures are screenshots of the page. Photos of the finished device will be added once the
@@ -85,7 +92,7 @@ h3+ul>li:nth-child(2),h3+ol>li:nth-child(2),li:last-child{break-before:avoid}
 <b>X/Y mode</b>: two voltages deflect the beam horizontally and vertically. An ESP32 generates these two voltages with its
 built-in digital-to-analogue converters (DACs) and traces the dial, numerals and hands about 200 times per second.</p>
 <figure><img src="images/oszilloskop_zifferblaetter_en.png" style="width:100%"><figcaption>Fig. 1 – The five dials and the test pattern as they appear on the oscilloscope (rendered from the firmware's vector data)</figcaption></figure>
-<h3>Features</h3>
+<h3>1.1 Features</h3>
 <ul>
  <li><b>Accurate time</b> from the internet (NTP), synchronised every hour, automatic daylight saving time. Without internet the time can be set in the web interface.</li>
  <li><b>Five dials:</b> numerals 1–12, only 12·3·6·9, station clock (hour bars instead of numerals), Roman XII·III·VI·IX, Roman I–XII. Switch by swiping over the preview in the web interface.</li>
@@ -120,7 +127,7 @@ oscilloscope input; no additional BNC cable is needed.</p>
  <tr><td>–</td><td>Small parts</td><td>7 wires for the OLED (DuPont cables or stranded wire), heat-shrink tubing, wire-end ferrules 0.25–0.5 mm² (optional), standoffs M2.5 (OLED) and M3 (breakout board), possibly 2–3 M6 nuts</td></tr>
  <tr><td>1</td><td>USB power supply 5 V, ≥ 1 A, with USB-C cable</td><td>A normal, unearthed plug-in power supply avoids ground loops.</td></tr>
 </table>
-<h3>Articles used to build the prototype</h3>
+<h3>2.1 Articles used to build the prototype</h3>
 <ul class="small">
  <li>ESP32 DevKitC V4 (ESP32-WROOM-32U, USB-C) with antenna kit (DUBEUYEW, pack of 2) – <a href="https://www.amazon.de/dp/B0F65G3V81">amazon.de/dp/B0F65G3V81</a></li>
  <li>Waveshare 2.42" OLED, 128 × 64, SPI/I²C, white – <a href="https://www.amazon.de/dp/B0CL6WMHJN">amazon.de/dp/B0CL6WMHJN</a></li>
@@ -132,7 +139,7 @@ oscilloscope input; no additional BNC cable is needed.</p>
  <li>BNC pigtail RG316, BNC plug to DuPont – <a href="https://de.aliexpress.com/item/1005006318978533.html">de.aliexpress.com/item/1005006318978533.html</a></li>
  <li>Cable gland Lapp SKINDICHT MINI M6 – <a href="https://de.rs-online.com/web/p/kabelverschraubungen/4583953">de.rs-online.com/…/4583953</a></li>
 </ul>
-<h3>Tools</h3>
+<h3>2.2 Tools</h3>
 <ul>
  <li>Soldering iron (fine tip) and solder – only for the two resistors in the pigtails –, heat-shrink tubing, side cutters, wire stripper</li>
  <li>Small screwdriver for the screw terminals, 9 mm spanner for the cable glands</li>
@@ -201,10 +208,10 @@ Approx. 220 Ω between the centre pin of each BNC plug and terminal P25 or P26, 
 The outer contact has continuity to GND. Retighten all screw terminals slightly. <b>Close the lid</b> only after commissioning (chapter 5) so that everything is still accessible if needed.</div></div>
 
 <h2>4 Installing the firmware</h2>
-<h3>Without Arduino software: in the browser</h3>
+<h3>4.1 Without Arduino software: in the browser</h3>
 <p>The finished firmware can be written to the ESP32 straight from the <a href="https://holzholz123.github.io/ESP32_OscilloscopeClock/#kap4">project page</a> – in <b>Chrome or Edge
 on a PC</b> (Windows, macOS, Linux) or on a Chromebook. GitHub builds it automatically after every change (board “ESP32 Dev Module”,
-variant B below).</p>
+variant B in section 4.4).</p>
 <ol>
  <li>Connect the ESP32 to the PC with a USB data cable.</li>
  <li>Click <b>“Install firmware”</b> and choose the ESP32's port in the window (e.g. “CP2102”, “CH340” or “USB Serial”).</li>
@@ -215,16 +222,16 @@ variant B below).</p>
 <p>If no port appears, the USB driver (CP210x or CH340) is usually missing or the cable only charges. If the connection drops, hold the
 <b>BOOT button</b> when the installation starts. Your own start values in <code>config.h</code> are not possible this way – use one of
 the following options for that.</p>
-<h3>With Arduino Cloud (app.arduino.cc)</h3>
+<h3>4.2 With Arduino Cloud (app.arduino.cc)</h3>
 <ol>
  <li><a href="https://holzholz123.github.io/ESP32_OscilloscopeClock/firmware/ESP32_OscilloscopeClock_v2.0.zip">Download the sketch as a ZIP</a> (folder <code>ESP32_OscilloscopeClock_v2.0</code> with all files).</li>
  <li>Sign in at <a href="https://app.arduino.cc/">app.arduino.cc</a>, choose “Sketches” → “Import” and select the ZIP file.</li>
  <li>Install the <b>Arduino Cloud Agent</b> once (the editor offers it) – it connects the browser to the USB port.</li>
  <li>Choose the board <b>ESP32 Dev Module</b>, include the library <b>U8g2</b>, adjust <code>config.h</code> if needed and upload.</li>
 </ol>
-<p>The default partition scheme applies (variant B), “Huge APP” is not needed. Arduino Cloud is not connected to GitHub: for a new
+<p>The default partition scheme applies (variant B, section 4.4), “Huge APP” is not needed. Arduino Cloud is not connected to GitHub: for a new
 version download and import the ZIP file again.</p>
-<h3>With the Arduino IDE 2.x</h3>
+<h3>4.3 With the Arduino IDE 2.x</h3>
 <ol>
  <li>Boards manager: install <b>esp32 by Espressif</b> (version 3.x, 2.0.x also works) and select the board <b>ESP32 Dev Module</b>.</li>
  <li>Under <b>Tools → Partition Scheme</b> choose one of the two variants from the table below.</li>
@@ -232,7 +239,7 @@ version download and import the ZIP file again.</p>
  <li>Open <code>ESP32_OscilloscopeClock_v2.0/ESP32_OscilloscopeClock_v2.0.ino</code> and upload it.</li>
  <li>Set the serial monitor to <b>115200 baud</b> – it shows the same messages as the debug section of the web interface.</li>
 </ol>
-<h3>Partition scheme: two variants</h3>
+<h3>4.4 Partition scheme: two variants</h3>
 <table style="break-inside:avoid">
  <tr><th>Variant</th><th>Arduino IDE: Partition Scheme</th><th>PlatformIO</th><th>Program memory</th></tr>
  <tr><td><b>A – Huge APP</b> (recommended)</td><td>“Huge APP (3MB No OTA/1MB SPIFFS)”</td><td><code>pio run -t upload</code></td><td>1,243,154 of 3,145,728 bytes (<b>39 %</b>)</td></tr>
@@ -246,7 +253,7 @@ the scheme, upload again) – saved networks and settings are stored at the same
 uploading (up to 10 networks). The defaults of all settings are in <code>config.h</code>; during operation the web interface is more convenient.</div>
 
 <h2>5 First start-up</h2>
-<div class="step"><b class="n">1</b><div><b>Connect the oscilloscope</b> and set it up roughly: X/Y mode, both channels DC, 0.5 V/div (chapter 6).</div></div>
+<div class="step"><b class="n">1</b><div><b>Connect the oscilloscope</b> and set it up roughly: X/Y mode, both channels DC, 0.5 V/div (section 6.1).</div></div>
 <div class="step"><b class="n">2</b><div><b>Power on</b> (USB power supply). The oscilloscope shows the test pattern for 10 seconds, then the clock.
 The OLED shows the time (initially counting from 10:08:37) and “No NTP connection”.</div></div>
 <div class="step"><b class="n">3</b><div><b>Set up Wi-Fi.</b> Without a known network the clock opens the open setup network
@@ -256,10 +263,10 @@ opens automatically, otherwise open <code>http://192.168.4.1</code>. The <b>Wi-F
 <figure><img style="width:48%" src="images/oled_setup_en.png"><figcaption>Fig. 6 – OLED in the setup network</figcaption></figure>
 <div class="step"><b class="n">4</b><div><b>Connect.</b> The clock connects to the strongest known network, fetches the time and closes the setup network.
 The web interface is then reachable at <b>http://scope-clock.local</b> or at the IP address shown in the status.</div></div>
-<div class="step"><b class="n">5</b><div><b>Choose the profile and adjust the picture:</b> DIGITAL (default) for storage oscilloscopes, ANALOG for CRT oscilloscopes – in the web interface or by holding the BOOT button for 3 s (chapter 7). Fine-tune position and size with the test pattern: “Settings” → “Oscilloscope” → “Test pattern”.</div></div>
+<div class="step"><b class="n">5</b><div><b>Choose the profile and adjust the picture:</b> DIGITAL (default) for storage oscilloscopes, ANALOG for CRT oscilloscopes – in the web interface or by holding the BOOT button for 3 s (section 7.3). Fine-tune position and size with the test pattern: “Settings” → “Oscilloscope” → “Test pattern”.</div></div>
 
 <h2>6 Setting up the oscilloscope</h2>
-<h3>Connecting</h3>
+<h3>6.1 Connecting</h3>
 <ul>
  <li>The pigtails plug straight into the oscilloscope – that is the best connection. If you use <b>probes</b> instead, keep the ground
  leads short and compensate 10:1 probes beforehand on the oscilloscope's calibration output (square wave without overshoot); a
@@ -291,7 +298,7 @@ The web interface is then reachable at <b>http://scope-clock.local</b> or at the
  <tr><td>Persistence</td><td>short to medium, if available</td><td>smooths the picture build-up</td></tr>
  <tr><td>Bandwidth limit</td><td>on (e.g. 20 MHz)</td><td>less noise</td></tr>
 </table>
-<h3>X/Y mode on a digital oscilloscope</h3>
+<h3>6.2 X/Y mode on a digital oscilloscope</h3>
 <p>An analogue oscilloscope draws in real time; a digital one first samples both channels and then displays the values as dots
 or connected dots. This leads to a few differences:</p>
 <ul>
@@ -306,7 +313,7 @@ or connected dots. This leads to a few differences:</p>
  <li><b>Display refresh rate:</b> many digital oscilloscopes update the screen only a few times per second – the second hand then
  visibly jumps, and the picture does not flicker but “pulses”. That is normal.</li>
 </ul>
-<h3>Matching the brightness of the hands</h3>
+<h3>6.3 Matching the brightness of the hands</h3>
 <p>The hour and minute hands are narrow needles made of two closely spaced edges. Depending on how an oscilloscope displays
 brightness, they look brighter than or as bright as the rest. The <b>hour/minute hand brightness</b> slider (Settings →
 Oscilloscope, 55 % by default) compensates for this. Guide values:</p>
@@ -325,7 +332,7 @@ oscilloscope off when nobody is looking. The firmware cannot make the picture da
 screen, the brightness controls only distribute its time. Real dimming is only possible with the oscilloscope's intensity control or
 with Z blanking (Z input). Digital oscilloscopes with an LCD do not burn in;
 there the image shift is unnecessary but does no harm. Older digital instruments with a CRT (e.g. HP 54200A) do need it.</div>
-<h3>Examples of individual devices (others likewise)</h3>
+<h3>6.4 Examples of individual devices (others likewise)</h3>
 <ul>
  <li><b>Tektronix TDS3012:</b> CH1 = X, CH2 = Y, XY in the display menu; short persistence (Persist) calms the picture.</li>
  <li><b>HP 54200A:</b> check the X/Y options in the manual; infinite persistence collects the picture over several acquisitions.</li>
@@ -334,7 +341,7 @@ there the image shift is unnecessary but does no harm. Older digital instruments
 </ul>
 
 <h2>7 Operation</h2>
-<h3>Web interface</h3>
+<h3>7.1 Web interface</h3>
 <p>Open <b>http://scope-clock.local</b> (name can be changed under Settings → System) or the IP address. The page is made for
 phones and can be added to the home screen like an app (“Add to home screen”).</p>
 <figure><img src="images/web_uebersicht_en.png" style="width:80%"><figcaption>Fig. 8 – Web interface: start view light and dark, side menu</figcaption></figure>
@@ -347,12 +354,12 @@ phones and can be added to the home screen like an app (“Add to home screen”
  <li><b>Side menu (☰):</b> jumps to the sections, plus language (Deutsch/English) and appearance (automatic/light/dark). The section you are currently in is highlighted in green; the thin green bar at the top edge of the screen shows how far you have scrolled.</li>
 </ul>
 <figure><img src="images/web_einstellungen_en.png" style="width:80%"><figcaption>Fig. 9 – Oscilloscope group, Wi-Fi group with network scan, debug section</figcaption></figure>
-<h3>OLED display</h3>
+<h3>7.2 OLED display</h3>
 <p>At the top the time in 7-segment style, below it the calendar week and date with small 7-segment digits, then the Wi-Fi network and the signal strength.
 Without a valid time it shows “No NTP connection”; in the setup network it shows the network name “ScopeClock-Setup” and the address.
 Brightness 0–100 %, seconds, rotation by 180° and pixel shifting against burn-in can be set.</p>
 <figure><img src="images/oled_englisch_12h.png" style="width:48%"><figcaption>Fig. 10 – OLED in English in 12-hour format</figcaption></figure>
-<h3>BOOT button</h3>
+<h3>7.3 BOOT button</h3>
 <p><b>Holding it for 3 seconds</b> switches the oscilloscope profile (DIGITAL ↔ ANALOG). The OLED shows the change with a countdown
 3, 2, 1; releasing earlier cancels (Fig. 11 and 12). The setting is saved. <b>Do not press it while powering on</b> – otherwise the ESP32 starts in download mode.</p>
 <div class="two">
@@ -367,7 +374,7 @@ Brightness 0–100 %, seconds, rotation by 180° and pixel shifting against burn
 the clock (exception: test pattern). Sliders only send when released so that the memory is not written on every movement. Each
 group has “Reset to defaults”; the change can then be undone with “Undo” for 8 seconds. The defaults come from <code>config.h</code>.</p>
 
-<h3>Oscilloscope</h3>
+<h3>8.1 Oscilloscope</h3>
 <table>
  <tr><th style="width:24%">Setting</th><th style="width:16%">Range (default)</th><th>Effect</th></tr>
  <tr><td>Oscilloscope profile</td><td>DIGITAL / ANALOG (DIGITAL)</td><td>Defines how the beam jumps between two lines.
@@ -387,7 +394,7 @@ group has “Reset to defaults”; the change can then be undone with “Undo”
  cleaner corners, but fewer frames per second (more flicker). <b>Shorter</b> = calmer picture but darker lines; a slow oscilloscope
  then rounds the corners. The estimated frame rate is shown while dragging (default approx. 205 frames/s). <b>Flicker guard:</b> if the picture would drop below 75 frames per second, the clock automatically draws with a shorter dwell time and shows which one below the slider.</td></tr>
  <tr><td>Hour/minute hand brightness</td><td>0–100 % (55 %)</td><td>Dwell time on the two hands relative to the rest. The narrow, closely spaced double lines of the
- hands otherwise look brighter than the dial and numerals. Guide values per oscilloscope and how to set it: chapter 6. 0 % hides the hands. The second hand is not affected.</td></tr>
+ hands otherwise look brighter than the dial and numerals. Guide values per oscilloscope and how to set it: section 6.3. 0 % hides the hands. The second hand is not affected.</td></tr>
  <tr><td>Tick mark brightness</td><td>0–100 % (100 %)</td><td>Brightness of the 60 marks around the edge. Less brightness makes the hands stand out more and
  shortens the frame slightly; 0 % hides the marks completely.</td></tr>
  <tr><td>Numeral brightness</td><td>0–100 % (100 %)</td><td>Brightness of the numbers on the dial. 0 % hides them, leaving only the minute marks.</td></tr>
@@ -397,7 +404,7 @@ group has “Reset to defaults”; the change can then be undone with “Undo”
  <tr><td>Z blanking (Z input)</td><td>on / off (off); high or low = dark (high)</td><td>Only with a <b>third wire</b> from GPIO27 (terminal P27) to the Z input of the oscilloscope – not part of the described build. Switches the beam off during every jump, the retrace lines disappear. Level as stated in the oscilloscope manual; when off, GPIO27 is high impedance.</td></tr>
 </table>
 
-<h3>Time</h3>
+<h3>8.2 Time</h3>
 <table>
  <tr><th style="width:24%">Setting</th><th style="width:16%">Range (default)</th><th>Effect</th></tr>
  <tr><td>Set time</td><td>device time or date + time</td><td>Only appears while no time server can be reached (e.g. without internet); the Time group then
@@ -413,7 +420,7 @@ group has “Reset to defaults”; the change can then be undone with “Undo”
  “Apply” saves the name and synchronises immediately. Two more servers from <code>config.h</code> serve as a fallback.</td></tr>
 </table>
 
-<h3>Display (OLED)</h3>
+<h3>8.3 Display (OLED)</h3>
 <table>
  <tr><th style="width:24%">Setting</th><th style="width:16%">Range (default)</th><th>Effect</th></tr>
  <tr><td>OLED brightness</td><td>0–100 % (50 %)</td><td>Brightness of the small display on the clock. Low values protect the OLED (less burn-in, longer life);
@@ -425,7 +432,7 @@ group has “Reset to defaults”; the change can then be undone with “Undo”
  do not burn in. The shift is hardly noticeable.</td></tr>
 </table>
 
-<h3>Wi-Fi</h3>
+<h3>8.4 Wi-Fi</h3>
 <table>
  <tr><th style="width:24%">Setting</th><th style="width:16%">Range</th><th>Effect</th></tr>
  <tr><td>Saved networks</td><td>up to 10</td><td>Networks the clock may connect to. It automatically chooses the strongest network in range.
@@ -439,7 +446,7 @@ group has “Reset to defaults”; the change can then be undone with “Undo”
  “ScopeClock-Setup” for a new set-up.</td></tr>
 </table>
 
-<h3>System and side menu</h3>
+<h3>8.5 System and side menu</h3>
 <table>
  <tr><th style="width:24%">Setting</th><th style="width:16%">Range (default)</th><th>Effect</th></tr>
  <tr><td>Device name</td><td>a–z, 0–9, hyphen, max. 32 (scope-clock)</td><td>Name of the clock in the router and address in the browser: <code>http://&lt;name&gt;.local</code>. Applies
@@ -476,7 +483,7 @@ group has “Reset to defaults”; the change can then be undone with “Undo”
 </table>
 <p>For a bug report tap “Download” in the debug section and pass on the text file.</p>
 
-<h3>Debug messages (example, language English)</h3>
+<h3>9.1 Debug messages (example, language English)</h3>
 <pre>+0s ESP32 Oscilloscope Clock v2.0
 +0s [Scope] profile: DIGITAL – hold BOOT button 3 s to switch
 +0s [Scope] round trip: 122 polylines, jumps total 1348 DAC units
@@ -503,7 +510,7 @@ says “[RTC] no DS3231 found” although the module is fitted, check the SDA an
 
 <h2>10 Technology: how the clock works</h2>
 <figure><img src="images/software_en.svg" style="width:96%"><figcaption>Fig. 14 – Distribution of the firmware over the two processor cores</figcaption></figure>
-<h3>Two cores with separate jobs</h3>
+<h3>10.1 Two cores with separate jobs</h3>
 <p>The ESP32 has two processor cores. <b>Core 1</b> runs only the <code>scopeTask</code>: it draws frame after frame without a pause
 and never releases the core – any interruption would show up as a bright dot or a jerk on the screen. That is why the idle-task
 watchdog is switched off on core 1, and the whole drawing path lives in the fast internal RAM (IRAM) so that it never has to wait
@@ -514,13 +521,13 @@ core 0 as well.</p>
 <p>There are no locks between the cores. Core 0 places time, dial, brightness values and profile in a few variables that are read
 and written in a single step; the time is packed into one 32-bit value. Core 1 reads them once per frame – so all three hands are
 guaranteed to belong to the same second.</p>
-<h3>From number to deflection voltage</h3>
+<h3>10.2 From number to deflection voltage</h3>
 <p>The two 8-bit DACs on GPIO25 (X) and GPIO26 (Y) each provide 256 voltage steps between about 0 and 3.2 V; one step is roughly
 12.5 mV. The firmware writes the values directly into the DAC registers instead of using the slower Arduino function
 <code>dacWrite()</code>, and writes X and Y immediately one after the other so that no intermediate dot becomes visible. A register
 is only written when its value changes. The 220 Ω resistors in the pigtails limit the current should a BNC plug ever be shorted.
 At 0.5 V/div the picture fills a good six divisions of the screen.</p>
-<h3>Cycle-exact beam control</h3>
+<h3>10.3 Cycle-exact beam control</h3>
 <p>The firmware measures how long the beam stays on a point with the CPU's cycle counter (240 MHz, i.e. to about 4 ns). Every point
 gets a fixed number of cycles, and the firmware waits actively until that moment – without <code>delay()</code>, which would be too
 coarse. The default is a <b>dwell time of 3 µs per DAC step</b>. A frame with the 1–12 dial consists of about 1,600 steps and takes
@@ -528,14 +535,14 @@ about 4.9 ms: that gives about <b>205 frames per second</b>, about 180 with the 
 brighter but lower the frame rate (below about 60 frames per second it flickers). That is why there is a <b>flicker guard</b>: after every change of dial, brightness, profile or retrace the firmware adds up the steps of one frame and computes the longest dwell time that still gives 75 frames per second – with a 15 % reserve. If more is set, it draws with this limit; the setting itself stays saved. For the Roman dial the limit is about 6.8 µs, for 1–12 about 7.8 µs. If core 1 is stopped briefly, for example for a
 flash access, the firmware does not catch up in fast motion but resets its schedule – otherwise a piece of a line would turn out
 too dark.</p>
-<h3>Equal brightness</h3>
+<h3>10.4 Equal brightness</h3>
 <p>The brightness of a line depends on how long the beam dwells on each piece of the path. The firmware therefore splits every line
 into steps of exactly one DAC step – it computes the length of diagonal lines with an integer square root, without floating point –
 and holds each step equally long. Horizontal, vertical and diagonal lines are thus equally bright. Individual parts can be set
 separately: hour and minute hands are at 55 % by default because the narrow needles would otherwise look brighter than the rest;
 minute marks and numerals are at 100 %. The second hand is drawn out and back, each time with half the dwell time, so it is just as
 bright as a single line.</p>
-<h3>One frame step by step</h3>
+<h3>10.5 One frame step by step</h3>
 <ol>
  <li>Hour and minute hands from pre-computed tables (60 positions each). The hour hand moves on one step every 12 minutes and so
  travels along like on a real clock.</li>
@@ -543,7 +550,7 @@ bright as a single line.</p>
  <li>The <b>round trip</b> over all minute marks and numerals – it starts at the stroke closest to the hand's tip.</li>
  <li>Second hand from the tip back to the centre; the next frame starts there without a long jump.</li>
 </ol>
-<h3>Round trip and jumps</h3>
+<h3>10.6 Round trip and jumps</h3>
 <p>Between two strokes the beam has to jump, and every jump can leave a faint trace. At start-up and after every change of dial the
 firmware therefore sorts all strokes into a round trip with jumps as short as possible: first always to the nearest stroke (which may
 also be traced backwards), then sections are reversed as long as that saves jumping (2-opt method). The log reports the result, e.g.
@@ -553,14 +560,14 @@ jump at 24 times the drawing speed and brakes over the last steps, so that even 
 only about 1/24 as bright as a line. In the <b>DIGITAL</b> profile the beam jumps hard in a single step – a digital oscilloscope would
 otherwise show the intermediate values as dots. If your oscilloscope has a Z input you can additionally enable <b>Z blanking</b> on
 GPIO27: during a jump the beam is blanked, and after the jump the firmware waits 5 µs for the deflection to settle.</p>
-<h3>Time</h3>
+<h3>10.7 Time</h3>
 <p>The time comes from the internet via <b>NTP</b> (by default <code>de.pool.ntp.org</code>, plus two fallback servers) and is
 re-synchronised every hour. Time zone and daylight-saving rule are stored in a POSIX time-zone string, e.g.
 <code>CET-1CEST,M3.5.0,M10.5.0/3</code> for Central Europe – the change-over is therefore automatic. Without internet the time can
 be set by hand in the web interface. With the optional <b>DS3231 real-time clock</b> the clock takes the time from the module after
 power-on (it keeps running in UTC, even without power); every NTP sync and every manual setting writes the time back, and without NTP
 the firmware corrects the system clock every 10 minutes from the more accurate DS3231.</p>
-<h3>Wi-Fi, web server and settings</h3>
+<h3>10.8 Wi-Fi, web server and settings</h3>
 <p>The clock knows up to 10 Wi-Fi networks and connects to the strongest one in range (WiFiMulti). If none is reachable it opens the
 open setup network “ScopeClock-Setup”; a small DNS server redirects every address to the clock there, which is why the phone opens
 the setup page by itself. In the home network the clock is reachable via mDNS at <code>http://scope-clock.local</code>. The web page
@@ -569,7 +576,7 @@ see appendix). The preview in the web interface draws the same vector data as th
 <p>All settings and networks are stored in the <b>NVS</b>, a separate area of the flash memory. They survive power-off, uploading new
 firmware and changing the partition scheme; only “factory reset” (BOOT button 10 s) erases them. Passwords are never sent back to
 the browser.</p>
-<h3>OLED and monitoring</h3>
+<h3>10.9 OLED and monitoring</h3>
 <p>The OLED is driven via hardware SPI; the U8g2 library builds the whole picture in RAM and transfers it in about 1 ms. Pixel
 shifting moves the display by one pixel every minute so that nothing burns in. For troubleshooting the <code>scopeTask</code> counts
 its frames (frame rate in the status), an idle hook measures the load of core 0, and all messages go into an 8 KB ring buffer shown in
@@ -580,7 +587,7 @@ the debug section.</p>
 75,068 bytes (22 %). The web page is stored gzip-compressed in flash (24 KB), the font (Raleway, reduced to the characters needed) as WOFF2 (30 KB).</p>
 
 <h2>11 Appendix</h2>
-<h3>Defaults in <code>config.h</code></h3>
+<h3>11.1 Defaults in <code>config.h</code></h3>
 <p class="small">Almost everything can be changed in the web interface; <code>config.h</code> only provides the defaults and fixed pins.</p>
 <table>
  <tr><th>Parameter</th><th>Default</th><th>Meaning</th></tr>
@@ -605,7 +612,7 @@ the debug section.</p>
  <tr><td><code>BOOT_TEST_S</code>, <code>BUTTON_LONG_MS</code>, <code>BUTTON_FACTORY_MS</code></td><td>10, 3000, 10000</td><td>Start-up test pattern (s), BOOT button: switch profile, factory reset (ms)</td></tr>
  <tr><td><code>ZBLANK_PIN</code>, <code>ZBLANK_ENABLE</code>, <code>ZBLANK_ACTIVE_HIGH</code></td><td>27, 0, 1</td><td>Optional Z blanking: GPIO, start value off, high = dark (switchable in the web interface)</td></tr>
 </table>
-<h3>Web server interfaces</h3>
+<h3>11.2 Web server interfaces</h3>
 <table>
  <tr><th>Request</th><th>Function</th></tr>
  <tr><td><code>GET /</code></td><td>Web page (gzip)</td></tr>
@@ -618,7 +625,7 @@ the debug section.</p>
  <tr><td><code>GET /api/log</code>, <code>POST /api/log/clear</code></td><td>Read or clear the debug log</td></tr>
  <tr><td><code>GET /api/vectors</code></td><td>Vector data for the preview (generated in <code>vectors.h</code>, gzip)</td></tr>
 </table>
-<h3>Files in the project</h3>
+<h3>11.3 Files in the project</h3>
 <table>
  <tr><th>File</th><th>Content</th></tr>
  <tr><td><code>ESP32_OscilloscopeClock_v2.0/*.ino</code></td><td>Firmware</td></tr>
@@ -631,12 +638,52 @@ the debug section.</p>
  <tr><td><code>docs/</code></td><td>this documentation in German and English (sources <code>dokumentation.html</code>, <code>documentation.en.html</code>), images</td></tr>
  <tr><td><code>README.md</code>, <code>HARDWARE.md</code>, <code>SOFTWARE.md</code></td><td>Summary on GitHub (German and English)</td></tr>
 </table>
-<h3>Origin and licences</h3>
+<h3>11.4 Origin and licences</h3>
 <p>The idea comes from the <b>ESP32 Oscilloscope Clock by Mauro Pintus</b> (Milan 2018,
 github.com/maurohh/ESP32_OscilloscopeClock) – many thanks! This version is an independent rewrite: firmware,
 web interface and all vector graphics are new. The font of the web interface is a reduced version of
 <b>Raleway</b> (Copyright 2010 The Raleway Project Authors, SIL Open Font License 1.1, licence text in <code>fonts/OFL.txt</code>),
 called “ScopeClock Sans” here.</p>
+<h2>12 Glossary</h2>
+<p>Technical terms from this guide briefly explained. Cross-references lead to the section with the details.</p>
+<table>
+ <tr><th style="width:27%">Term</th><th>Explanation</th></tr>
+ <tr><td><b>BNC</b></td><td>Bayonet connector for coaxial cable – the usual input on an oscilloscope.</td></tr>
+ <tr><td><b>BOOT button</b></td><td>Button on GPIO0 of the DevKit. On the clock: hold for 3 s to switch the profile, 10 s to reset all settings (section 7.3).</td></tr>
+ <tr><td><b>Breakout board</b></td><td>Carrier board with screw terminals into which the DevKit is plugged – all wires are screwed in instead of soldered.</td></tr>
+ <tr><td><b>Burn-in</b></td><td>Permanent wear of a CRT's phosphor when a picture stays at the same spot for a long time. The picture shift helps against it.</td></tr>
+ <tr><td><b>Cable gland</b></td><td>Sealed cable entry (here M6, Lapp SKINDICHT MINI) for the pigtails.</td></tr>
+ <tr><td><b>DAC</b></td><td>Digital-to-analogue converter. The ESP32 has two with 8 bits (GPIO25 and GPIO26); they generate the voltages for X and Y (0–3.2 V in 256 steps).</td></tr>
+ <tr><td><b>DevKit (ESP32 DevKitC)</b></td><td>Development board with ESP32 module, USB port, voltage regulator and the BOOT and EN buttons.</td></tr>
+ <tr><td><b>Dwell time</b></td><td>How long the beam stays on a point per step (default 3 µs). Longer = brighter lines but fewer frames per second.</td></tr>
+ <tr><td><b>ESP Web Tools</b></td><td>Tool with which a browser (Chrome, Edge) writes firmware to the ESP32 via Web Serial – the “Install firmware” button on the project page.</td></tr>
+ <tr><td><b>Flicker guard</b></td><td>Automatically limits the dwell time so that at least 75 frames per second are drawn (<code>FLICKER_MIN_FPS</code>).</td></tr>
+ <tr><td><b>General tolerance (ISO 2768-m)</b></td><td>Permitted deviation for dimensions without their own tolerance; “m” = medium, e.g. ±0.2 mm for dimensions up to 30 mm.</td></tr>
+ <tr><td><b>GPIO</b></td><td>Freely programmable pin of the ESP32; labelled P… on the breakout board (P25 = GPIO25).</td></tr>
+ <tr><td><b>IPEX (U.FL)</b></td><td>Tiny antenna connector on the ESP32-WROOM-32U module; an adapter cable leads to the SMA socket in the enclosure wall.</td></tr>
+ <tr><td><b>I²C</b></td><td>Two-wire bus (SDA, SCL), here for the optional DS3231 real-time clock.</td></tr>
+ <tr><td><b>Junction box</b></td><td>Plastic enclosure from electrical installation (here ABS, IP67, 150 × 100 × 70 mm). It lets the Wi-Fi signal through – a metal enclosure would shield it.</td></tr>
+ <tr><td><b>mDNS</b></td><td>Name resolution in the home network without a DNS server – the clock can be reached at <code>scope-clock.local</code>.</td></tr>
+ <tr><td><b>NTP</b></td><td>Network Time Protocol: gets the exact time from the internet, hourly on the clock.</td></tr>
+ <tr><td><b>NVS</b></td><td>Non-Volatile Storage – area in flash where settings and Wi-Fi networks are stored. It is kept when new firmware is uploaded.</td></tr>
+ <tr><td><b>OLED</b></td><td>Self-luminous display (here 2.42 inch, 128 × 64 pixels, SPI) in the lid; shows time, date and Wi-Fi.</td></tr>
+ <tr><td><b>OTA</b></td><td>Firmware update over Wi-Fi (over the air). The clock does not use it – which is why the “Huge APP” partition scheme fits.</td></tr>
+ <tr><td><b>Partition scheme</b></td><td>Division of the 4 MB flash into areas for program, settings (NVS) and data (section 4.4).</td></tr>
+ <tr><td><b>Persistence</b></td><td>Setting on a digital oscilloscope: points stay on screen for a while and give a calm picture.</td></tr>
+ <tr><td><b>Pigtail</b></td><td>Short cable with a connector at one end – here RG316 with a BNC plug, the other end goes into the terminals.</td></tr>
+ <tr><td><b>Profile ANALOG / DIGITAL</b></td><td>How the beam jumps between lines: braked for CRT oscilloscopes (ANALOG) or hard for storage oscilloscopes (DIGITAL).</td></tr>
+ <tr><td><b>Retrace (jump)</b></td><td>Movement of the beam from one line to the next. It leaves a faint trace, which is why the firmware sorts the lines into a round trip.</td></tr>
+ <tr><td><b>Round trip</b></td><td>Order in which tick marks and numerals are drawn – sorted so that the jumps in between are as short as possible.</td></tr>
+ <tr><td><b>RSSI</b></td><td>Wi-Fi signal strength in dBm; better than −70 dBm is good, worse than −80 dBm is weak.</td></tr>
+ <tr><td><b>RTC (real-time clock)</b></td><td>Optional DS3231 module with coin cell; keeps the time without power and without internet.</td></tr>
+ <tr><td><b>Setup network</b></td><td>Open Wi-Fi “ScopeClock-Setup” that the clock opens when no known network is in range; Wi-Fi networks are entered through it.</td></tr>
+ <tr><td><b>SPI</b></td><td>Fast serial bus through which the ESP32 drives the OLED (wires DIN, CLK, CS, DC, RST).</td></tr>
+ <tr><td><b>Test line</b></td><td>50 mm line on the drilling template to check that it was printed at 100 %.</td></tr>
+ <tr><td><b>Test pattern</b></td><td>Frame, circle and centre cross the size of the clock for adjusting position, size and focus (section 6.1).</td></tr>
+ <tr><td><b>X/Y mode</b></td><td>Oscilloscope mode: channel 1 deflects the beam horizontally, channel 2 vertically – instead of the time base.</td></tr>
+ <tr><td><b>Z blanking (Z input)</b></td><td>Switching the beam off during jumps via the oscilloscope's Z input – only on devices with a Z input, optionally via GPIO27.</td></tr>
+</table>
+
 <section class="bohrseite"><img src="images/bohrplan_en.svg" alt="Drilling template lid 1:1"></section>
 <section class="bohrseite"><img src="images/bohrplan_seiten_en.svg" alt="Drilling template side walls 1:1"></section>
 </body></html>

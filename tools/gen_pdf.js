@@ -12,6 +12,8 @@ const DOCS = {
 };
 (async () => {
   const root = path.resolve(__dirname, '..');
+  // Unterkapitel nummerieren und Inhaltsverzeichnis aktualisieren (tools/number_docs.py)
+  require('child_process').execFileSync('python3', [path.join(__dirname, 'number_docs.py')], { stdio: 'inherit' });
   const langs = process.argv[2] ? [process.argv[2]] : Object.keys(DOCS);
   const b = await chromium.launch();
   for (const l of langs) {
