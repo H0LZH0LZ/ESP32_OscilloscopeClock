@@ -79,7 +79,7 @@ pictures are screenshots of the page. Photos of the finished device will follow 
 - **German or English** for the web interface, OLED display and log, switchable in the web
   interface (side menu) and saved. Start value `UI_LANG` in `config.h`.
 - **Web interface** at `http://scope-clock.local`, optimised for phones, no password, also as an app on the
-  home screen. Light/dark/automatic appearance, clock colour in four shades of green, log with filter, reset with “Undo”.
+  home screen. Light/dark/automatic appearance, clock colour in shades of green or grey, log with filter, reset with “Undo”.
   At the top it shows a live preview of the oscilloscope picture (transparent background in the
   light theme), below that the status (time sync, Wi-Fi, signal strength, profile, frame rate,
   uptime, memory, CPU load, reason for the last restart) and the log („Protokoll“). It is also used
@@ -151,12 +151,12 @@ interface.
 
 | Board package | Program memory | Global variables (RAM) |
 |---|---|---|
-| esp32 3.3.12 | 1,245,514 bytes (95 %) | 75,708 bytes (23 %) |
+| esp32 3.3.12 | 1,245,530 bytes (95 %) | 75,708 bytes (23 %) |
 | esp32 2.0.17 | 866,053 bytes (66 %) | 61,048 bytes (18 %) – state before the menu and dial switching |
 
 The configuration variants (profile ANALOG/DIGITAL, Z blanking, dial 0/1/2, `USE_FAST_DAC 0`,
 EXCEL mode) were also built without warnings before the web interface was added. With the
-recommended partition scheme **Huge APP** the same firmware uses 1,245,514 of 3,145,728
+recommended partition scheme **Huge APP** the same firmware uses 1,245,530 of 3,145,728
 bytes (**39 %**), with “Minimal SPIFFS” 62 %.
 
 Also simulated on a PC: beam path (brightness, retrace lines, frame rate), OLED content, BOOT

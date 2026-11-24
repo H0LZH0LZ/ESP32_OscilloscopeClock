@@ -252,7 +252,7 @@ Die Pixelverschiebung versetzt die Anzeige jede Minute um einen Pixel, damit kei
 landen in einem 8-KB-Ringpuffer, den der Debug-Bereich anzeigt.</p>
 <p><b>Vektordaten:</b> Zifferblatt, Ziffern, Zeiger und Testbild sind eigene Zeichnungen, erzeugt mit <code>tools/gen_vectors.py</code>
 (Koordinaten 0–255, 8 Bit je Achse).</p>
-<p><b>Speicher:</b> Programmspeicher 1.245.514 Byte (95 % beim Standard-Partitionsschema, ca. 39 % mit „Huge APP“), globale Variablen
+<p><b>Speicher:</b> Programmspeicher 1.245.530 Byte (95 % beim Standard-Partitionsschema, ca. 39 % mit „Huge APP“), globale Variablen
 75.708 Byte (23 %). Die Webseite liegt gzip-komprimiert im Flash (26 KB), die Schrift (Raleway, auf die benötigten Zeichen reduziert) als WOFF2 (30 KB).</p>
 
 <h2>3 Stand der Technik</h2>
@@ -427,8 +427,8 @@ neue Version die ZIP-Datei erneut herunterladen und importieren.</p>
 <h3>6.4 Partitionsschema: zwei Varianten</h3>
 <table style="break-inside:avoid">
  <tr><th>Variante</th><th>Arduino IDE: Partition Scheme</th><th>PlatformIO</th><th>Programmspeicher</th></tr>
- <tr><td><b>A – Huge APP</b> (empfohlen)</td><td>„Huge APP (3MB No OTA/1MB SPIFFS)“</td><td><code>pio run -t upload</code></td><td>1.245.514 von 3.145.728 Byte (<b>39 %</b>)</td></tr>
- <tr><td><b>B – Standard</b></td><td>„Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)“ – Voreinstellung, nichts umstellen</td><td><code>pio run -e standard -t upload</code></td><td>1.245.514 von 1.310.720 Byte (<b>95 %</b>)</td></tr>
+ <tr><td><b>A – Huge APP</b> (empfohlen)</td><td>„Huge APP (3MB No OTA/1MB SPIFFS)“</td><td><code>pio run -t upload</code></td><td>1.245.530 von 3.145.728 Byte (<b>39 %</b>)</td></tr>
+ <tr><td><b>B – Standard</b></td><td>„Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)“ – Voreinstellung, nichts umstellen</td><td><code>pio run -e standard -t upload</code></td><td>1.245.530 von 1.310.720 Byte (<b>95 %</b>)</td></tr>
 </table>
 <p>Beide Varianten laufen gleich. <b>A</b> lässt rund 1,9 MB Platz für Erweiterungen; die Uhr nutzt weder OTA-Updates noch
 SPIFFS, deshalb fehlt dabei nichts. <b>B</b> funktioniert ohne Umstellen, hat aber nur noch etwa 64 KB Reserve. Ein Wechsel
@@ -582,7 +582,7 @@ Handy gemacht und lässt sich über „Zum Startbildschirm hinzufügen“ wie ei
  <li><b>Status:</b> WLAN, Signalstärke, Netzwerkadresse, Zeitabgleich (NTP), Echtzeituhr, OLED-Anzeige (an/aus), Laufzeit, Grund des letzten Neustarts, Arbeitsspeicher, Auslastung beider Kerne, Firmware-Version. Orange = Warnung, Rot = Fehler.</li>
  <li><b>Einstellungen</b> in fünf Gruppen (Oszilloskop, Uhrzeit, Display, WLAN, System). Änderungen wirken sofort und werden gespeichert; „✓ Gespeichert“ erscheint direkt an der Einstellung. Jede Gruppe hat „Auf Standardwerte zurücksetzen“ mit 8 s „Rückgängig“.</li>
  <li><b>Debug:</b> Meldungen der Uhr mit Filter (WLAN, Zeit, Web, Oszilloskop, Warnungen), „Aktualisieren“, „Herunterladen“ (Textdatei) und „Leeren“.</li>
- <li><b>Seitenmenü (☰):</b> springt in die Bereiche, dazu Sprache (Deutsch/English), Darstellung (automatisch/hell/dunkel) und Farbe der Uhr (Grüntöne). Der Bereich, in dem man gerade ist, ist im Menü grün markiert; der schmale grüne Balken am oberen Bildschirmrand zeigt, wie weit man gescrollt hat.</li>
+ <li><b>Seitenmenü (☰):</b> springt in die Bereiche, dazu Sprache (Deutsch/English), Darstellung (automatisch/hell/dunkel) und Farbe der Uhr (Grüntöne oder Grau). Der Bereich, in dem man gerade ist, ist im Menü grün markiert; der schmale grüne Balken am oberen Bildschirmrand zeigt, wie weit man gescrollt hat.</li>
 </ul>
 <figure><img src="images/web_uebersicht.png" style="width:58%"><figcaption>Abb. 9 – Webinterface: Startansicht hell und dunkel, Seitenmenü</figcaption></figure>
 <figure><img src="images/web_einstellungen.png" style="width:58%"><figcaption>Abb. 10 – Gruppe Oszilloskop, Gruppe WLAN mit Netzsuche, Debug-Bereich</figcaption></figure>
@@ -691,7 +691,7 @@ beschrieben wird. Jede Gruppe hat „Auf Standardwerte zurücksetzen“; danach 
  das Testbild aus. WLANs bleiben erhalten; 8 Sekunden lang „Rückgängig“.</td></tr>
  <tr><td>Sprache (Seitenmenü)</td><td>Deutsch / English (Deutsch)</td><td>Sprache der Webseite, des OLED und des Debug-Protokolls; wird auf der Uhr gespeichert und gilt für alle Geräte.</td></tr>
  <tr><td>Darstellung (Seitenmenü)</td><td>automatisch, hell, dunkel</td><td>Farbschema der Webseite; „Automatisch“ folgt dem Handy/PC. Nur im Browser gespeichert.</td></tr>
- <tr><td>Farbe der Uhr (Seitenmenü)</td><td>Grün, Gelbgrün, Smaragdgrün, Mintgrün (Grün)</td><td>Grünton von Vorschau, Uhrzeit und Datum im Webinterface (auch im Vollbild). Das Oszilloskop-Bild ändert sich nicht. Nur im Browser gespeichert.</td></tr>
+ <tr><td>Farbe der Uhr (Seitenmenü)</td><td>Grün, Smaragdgrün, Mintgrün, Grau (Grün)</td><td>Farbton von Vorschau, Uhrzeit, Datum und den farbigen Elementen der Seite (v2.0, Punkte, Schalter) – auch im Vollbild. Das Oszilloskop-Bild ändert sich nicht. Nur im Browser gespeichert.</td></tr>
 </table>
 
 <h2>11 Fehlersuche</h2>
