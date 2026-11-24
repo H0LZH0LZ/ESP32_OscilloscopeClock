@@ -249,7 +249,7 @@ its frames (frame rate in the status), an idle hook measures the load of core 0,
 the debug section.</p>
 <p><b>Vector data:</b> dial, numerals, hands and test pattern are original drawings, generated with <code>tools/gen_vectors.py</code>
 (coordinates 0–255, 8 bits per axis).</p>
-<p><b>Memory:</b> program memory 1,245,706 bytes (95 % with the default partition scheme, approx. 39 % with “Huge APP”), global variables
+<p><b>Memory:</b> program memory 1,245,914 bytes (95 % with the default partition scheme, approx. 39 % with “Huge APP”), global variables
 75,708 bytes (23 %). The web page is stored gzip-compressed in flash (26 KB), the font (Raleway, reduced to the characters needed) as WOFF2 (30 KB).</p>
 
 <h2>3 State of the art</h2>
@@ -420,8 +420,8 @@ version download and import the ZIP file again.</p>
 <h3>6.4 Partition scheme: two variants</h3>
 <table style="break-inside:avoid">
  <tr><th>Variant</th><th>Arduino IDE: Partition Scheme</th><th>PlatformIO</th><th>Program memory</th></tr>
- <tr><td><b>A – Huge APP</b> (recommended)</td><td>“Huge APP (3MB No OTA/1MB SPIFFS)”</td><td><code>pio run -t upload</code></td><td>1,245,706 of 3,145,728 bytes (<b>39 %</b>)</td></tr>
- <tr><td><b>B – Standard</b></td><td>“Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)” – the default, nothing to change</td><td><code>pio run -e standard -t upload</code></td><td>1,245,706 of 1,310,720 bytes (<b>95 %</b>)</td></tr>
+ <tr><td><b>A – Huge APP</b> (recommended)</td><td>“Huge APP (3MB No OTA/1MB SPIFFS)”</td><td><code>pio run -t upload</code></td><td>1,245,914 of 3,145,728 bytes (<b>39 %</b>)</td></tr>
+ <tr><td><b>B – Standard</b></td><td>“Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)” – the default, nothing to change</td><td><code>pio run -e standard -t upload</code></td><td>1,245,914 of 1,310,720 bytes (<b>95 %</b>)</td></tr>
 </table>
 <p>Both variants work the same. <b>A</b> leaves about 1.9 MB for extensions; the clock uses neither OTA updates nor SPIFFS,
 so nothing is lost. <b>B</b> works without changing anything but leaves only about 64 KB. You can switch at any time (choose
@@ -570,7 +570,7 @@ figures are start values for section 8.4.</p>
 phones and can be added to the home screen like an app (“Add to home screen”).</p>
 <ul>
  <li><b>Preview:</b> shows the oscilloscope picture live. <b>Swiping left/right</b> (or the dots/arrows below it, arrow keys on a PC) changes the dial – on the oscilloscope as well.</li>
- <li><b>Full screen:</b> <b>tapping the clock</b> (or ⛶ at the top right of the preview) shows only the dial, time and date filling the screen – side by side in landscape. The screen stays on, turning an old phone or tablet into a desk clock. Swiping still changes the dial; tapping again, ✕, Esc or the back gesture ends full screen. On an iPhone the view fills the page, without an address bar only as an app from the home screen.</li>
+ <li><b>Full screen:</b> <b>tapping the clock</b> (or ⛶ at the top right of the preview) shows only the dial, time and date filling the screen – side by side in landscape. The screen stays on, turning an old phone or tablet into a desk clock. Swiping left/right still changes the dial, <b>swiping up/down changes the clock colour</b> (on a PC also with the mouse or the arrow keys ↑/↓, then also outside full screen); tapping again, ✕, Esc or the back gesture ends full screen. On an iPhone the view fills the page, without an address bar only as an app from the home screen.</li>
  <li><b>When the page opens</b> only <b>Status</b> is expanded, everything else is collapsed. Without a time server “Time” expands by itself, without a Wi-Fi connection the “Wi-Fi” group does; they collapse again once everything is connected.</li>
  <li><b>Status:</b> Wi-Fi, signal strength, network address, time sync (NTP), real-time clock, OLED display (on/off), uptime, reason for the last restart, memory, load of both cores, firmware version. Orange = warning, red = error.</li>
  <li><b>Settings</b> in five groups (Oscilloscope, Time, Display, Wi-Fi, System). Changes take effect immediately and are saved; “✓ Saved” appears right at the setting. Each group has “Reset to defaults” with 8 s “Undo”.</li>
