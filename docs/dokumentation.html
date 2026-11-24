@@ -41,6 +41,8 @@ figcaption{font-size:8.8pt;color:#555;margin-top:1.2mm}
 .toc .tn{display:inline-block;width:8mm;font-weight:700;color:#0a5c33}
 .toc .tsub{font-size:8.6pt;color:#555;margin-left:8mm;line-height:1.4}
 .toc li.bp{margin-top:2.5mm}
+.abstract p{font-size:10.6pt;line-height:1.6}
+table.refs td{border:0;padding:1mm 2mm 1mm 0}table.refs td:first-child{width:9mm;white-space:nowrap;font-weight:700}table.refs a{overflow-wrap:anywhere}
 .two{display:flex;gap:4mm}.two figure{flex:1}
 .pb{break-before:page}
 .small{font-size:9pt;color:#555}
@@ -62,22 +64,37 @@ h3+ul>li:nth-child(2),h3+ol>li:nth-child(2),li:last-child{break-before:avoid}
  <div class="meta">Aufbau · Inbetriebnahme · Bedienung · Technik<br>Stand: November 2026 · Firmware v2.0</div>
 </section>
 
+<section class="abstract">
+<h2>Kurzfassung</h2>
+<p>Die <b>ESP32 Oscilloscope Clock</b> zeigt eine analoge Uhr auf einem Oszilloskop im X/Y-Betrieb. Ein ESP32 erzeugt mit seinen
+beiden 8-Bit-Digital-Analog-Wandlern die Ablenkspannungen und zeichnet Zifferblatt und Zeiger etwa 200-mal pro Sekunde als
+Vektorgrafik; die Uhrzeit kommt per NTP aus dem Internet oder von einer optionalen Echtzeituhr.</p>
+<p>Diese Anleitung erklärt die Funktionsweise und ordnet die Uhr in den Stand der Technik ein. Sie beschreibt den Aufbau in einer
+Abzweigdose mit Teileliste, Verdrahtung und Bohrplan, die Installation der Firmware – auch direkt im Browser –, das Einstellen
+analoger und digitaler Oszilloskope sowie Bedienung, Einstellungen, Tests und Fehlersuche.</p>
+<p>Version 2.0 ist eine Neufassung der Uhr von Mauro Pintus (2018): Zeichnen und Netzwerk laufen getrennt auf den beiden
+Prozessorkernen, alle Linien sind gleich hell, dazu kommen Webinterface, OLED-Anzeige, fünf Zifferblätter, Profile für
+Röhren- und Speicher-Oszilloskope und ein Flimmerschutz.</p>
+</section>
 <section class="toc">
  <h2>Inhalt</h2>
 <!-- TOC -->
  <ol class="tl">
-  <li><span class="tn">1</span>Überblick<div class="tsub">1.1 Funktionen</div></li>
-  <li><span class="tn">2</span>Technik: wie die Uhr arbeitet<div class="tsub">2.1 Zwei Kerne mit getrennten Aufgaben · 2.2 Vom Zahlenwert zur Ablenkspannung · 2.3 Taktgenaue Strahlführung · 2.4 Gleiche Helligkeit · 2.5 Ein Bild im Ablauf · 2.6 Rundtour und Sprünge · 2.7 Uhrzeit · 2.8 WLAN, Webserver und Einstellungen · 2.9 OLED und Überwachung</div></li>
-  <li><span class="tn">3</span>Teileliste und Werkzeug<div class="tsub">3.1 Werkzeug</div></li>
-  <li><span class="tn">4</span>Aufbauanleitung Schritt für Schritt</li>
-  <li><span class="tn">5</span>Firmware installieren<div class="tsub">5.1 Ohne Arduino-Software: im Browser · 5.2 Mit Arduino Cloud (app.arduino.cc) · 5.3 Mit der Arduino IDE 2.x · 5.4 Partitionsschema: zwei Varianten</div></li>
-  <li><span class="tn">6</span>Erste Inbetriebnahme</li>
-  <li><span class="tn">7</span>Oszilloskop einstellen<div class="tsub">7.1 Anschließen · 7.2 X/Y-Betrieb am digitalen Oszilloskop · 7.3 Helligkeit der Zeiger abgleichen · 7.4 Beispiele für einzelne Geräte (andere sinngemäß)</div></li>
-  <li><span class="tn">8</span>Bedienung<div class="tsub">8.1 Webinterface · 8.2 OLED-Anzeige · 8.3 BOOT-Taster</div></li>
-  <li><span class="tn">9</span>Alle Einstellungen im Überblick<div class="tsub">9.1 Oszilloskop · 9.2 Uhrzeit · 9.3 Display (OLED) · 9.4 WLAN · 9.5 System und Seitenmenü</div></li>
-  <li><span class="tn">10</span>Fehlersuche<div class="tsub">10.1 Debug-Meldungen (Beispiel)</div></li>
-  <li><span class="tn">11</span>Anhang<div class="tsub">11.1 Startwerte in <code>config.h</code> · 11.2 Schnittstellen des Webservers · 11.3 Dateien im Projekt · 11.4 Herkunft und Lizenzen</div></li>
-  <li class="bp">Bohrplan zum Ausdrucken (letzte zwei Seiten: Deckel und Seitenteile, Maßstab 1:1)</li>
+  <li><span class="tn">1</span>Einleitung<div class="tsub">1.1 Funktionen · 1.2 Aufbau dieser Anleitung</div></li>
+  <li><span class="tn">2</span>Grundlagen: wie die Uhr arbeitet<div class="tsub">2.1 Zwei Kerne mit getrennten Aufgaben · 2.2 Vom Zahlenwert zur Ablenkspannung · 2.3 Taktgenaue Strahlführung · 2.4 Gleiche Helligkeit · 2.5 Ein Bild im Ablauf · 2.6 Rundtour und Sprünge · 2.7 Uhrzeit · 2.8 WLAN, Webserver und Einstellungen · 2.9 OLED und Überwachung</div></li>
+  <li><span class="tn">3</span>Stand der Technik<div class="tsub">3.1 Die ursprüngliche Oscilloscope Clock · 3.2 Andere Oszilloskop-Uhren · 3.3 Neu in Version 2.0</div></li>
+  <li><span class="tn">4</span>Teileliste und Werkzeug<div class="tsub">4.1 Werkzeug</div></li>
+  <li><span class="tn">5</span>Aufbauanleitung Schritt für Schritt</li>
+  <li><span class="tn">6</span>Firmware installieren<div class="tsub">6.1 Ohne Arduino-Software: im Browser · 6.2 Mit Arduino Cloud (app.arduino.cc) · 6.3 Mit der Arduino IDE 2.x · 6.4 Partitionsschema: zwei Varianten</div></li>
+  <li><span class="tn">7</span>Erste Inbetriebnahme</li>
+  <li><span class="tn">8</span>Oszilloskop einstellen<div class="tsub">8.1 Anschließen · 8.2 X/Y-Betrieb am digitalen Oszilloskop · 8.3 Helligkeit der Zeiger abgleichen · 8.4 Beispiele für einzelne Geräte (andere sinngemäß)</div></li>
+  <li><span class="tn">9</span>Bedienung<div class="tsub">9.1 Webinterface · 9.2 OLED-Anzeige · 9.3 BOOT-Taster</div></li>
+  <li><span class="tn">10</span>Alle Einstellungen im Überblick<div class="tsub">10.1 Oszilloskop · 10.2 Uhrzeit · 10.3 Display (OLED) · 10.4 WLAN · 10.5 System und Seitenmenü</div></li>
+  <li><span class="tn">11</span>Tests und Fehlersuche<div class="tsub">11.1 Stand der Tests · 11.2 Fehlerbilder und Abhilfe · 11.3 Debug-Meldungen (Beispiel)</div></li>
+  <li><span class="tn">12</span>Zusammenfassung und Ausblick<div class="tsub">12.1 Grenzen · 12.2 Ausblick</div></li>
+  <li><span class="tn"></span>Quellenverzeichnis</li>
+  <li><span class="tn">A</span>Anhang<div class="tsub">A.1 Startwerte in <code>config.h</code> · A.2 Schnittstellen des Webservers · A.3 Dateien im Projekt · A.4 Herkunft und Lizenzen</div></li>
+  <li class="bp"><span class="tn">B</span>Bohrplan zum Ausdrucken (Deckel und Seitenteile, Maßstab 1:1)</li>
  </ol>
 <!-- /TOC -->
  <div class="note"><b>Zu den Abbildungen:</b> Schaltplan, Bohrplan und Anordnung sind Zeichnungen. Die Bilder des
@@ -86,11 +103,14 @@ h3+ul>li:nth-child(2),h3+ol>li:nth-child(2),li:last-child{break-before:avoid}
  Bildschirmfotos der Seite. Fotos des fertigen Geräts kommen hinzu, sobald der Prototyp aufgebaut ist.</div>
 </section>
 
-<h2>1 Überblick</h2>
+<h2>1 Einleitung</h2>
 <p>Die <b>ESP32 Oscilloscope Clock</b> zeichnet eine analoge Uhr auf den Bildschirm eines Oszilloskops. Das
 Oszilloskop arbeitet dabei im <b>X/Y-Betrieb</b>: Zwei Spannungen lenken den Strahl waagerecht und senkrecht ab.
 Ein ESP32 erzeugt diese beiden Spannungen mit seinen eingebauten Digital-Analog-Wandlern (DAC) und fährt so
 Zifferblatt, Ziffern und Zeiger etwa 200-mal pro Sekunde nach.</p>
+
+<p>Ziel ist eine Uhr, die sich aus wenigen fertigen Modulen ohne eigene Platine nachbauen lässt und an möglichst vielen
+Oszilloskopen läuft – vom Röhrengerät bis zum digitalen Speicher-Oszilloskop.</p>
 <figure><img src="images/oszilloskop_zifferblaetter.png" style="width:100%"><figcaption>Abb. 1 – Die fünf Zifferblätter und das Testbild, wie sie auf dem Oszilloskop erscheinen (Darstellung aus den Vektordaten der Firmware)</figcaption></figure>
 <h3>1.1 Funktionen</h3>
 <ul>
@@ -105,10 +125,13 @@ Zifferblatt, Ziffern und Zeiger etwa 200-mal pro Sekunde nach.</p>
 <figure><img src="images/oled_normal.png" style="width:45%"><figcaption>Abb. 2 – OLED im Betrieb</figcaption></figure>
 <figure><img src="images/web_pc_hell.png" style="width:100%"><figcaption>Abb. 3 – Webinterface am PC (helles Design)</figcaption></figure>
 
-<div class="note"><b>Stand der Tests:</b> Die Firmware baut fehlerfrei und ohne Warnungen (Arduino-CLI, esp32 3.3.12). Strahlführung,
-OLED-Inhalt, BOOT-Taster und Webinterface wurden am PC simuliert bzw. im Browser getestet. Der Test an echter Hardware steht noch aus.</div>
+<h3>1.2 Aufbau dieser Anleitung</h3>
+<p>Kapitel 2 erklärt die Grundlagen, Kapitel 3 ordnet die Uhr in den Stand der Technik ein. Die Kapitel 4 bis 7 führen durch Teile,
+Aufbau, Firmware und erste Inbetriebnahme, die Kapitel 8 bis 10 durch das Einstellen des Oszilloskops, die Bedienung und alle
+Einstellungen. Kapitel 11 beschreibt die Tests und hilft bei der Fehlersuche, Kapitel 12 fasst zusammen. Es folgen das
+Quellenverzeichnis, Anhang A (Startwerte, Schnittstellen, Dateien) und Anhang B (Bohrplan zum Ausdrucken).</p>
 
-<h2>2 Technik: wie die Uhr arbeitet</h2>
+<h2>2 Grundlagen: wie die Uhr arbeitet</h2>
 <figure><img src="images/software.svg" style="width:96%"><figcaption>Abb. 4 – Aufteilung der Firmware auf die beiden Prozessorkerne</figcaption></figure>
 <h3>2.1 Zwei Kerne mit getrennten Aufgaben</h3>
 <p>Der ESP32 hat zwei Prozessorkerne. <b>Kern 1</b> führt nur den <code>scopeTask</code> aus: Er zeichnet ohne Pause Bild für Bild
@@ -188,7 +211,31 @@ landen in einem 8-KB-Ringpuffer, den der Debug-Bereich anzeigt.</p>
 <p><b>Speicher:</b> Programmspeicher 1.243.154 Byte (94 % beim Standard-Partitionsschema, ca. 39 % mit „Huge APP“), globale Variablen
 75.068 Byte (22 %). Die Webseite liegt gzip-komprimiert im Flash (24 KB), die Schrift (Raleway, auf die benötigten Zeichen reduziert) als WOFF2 (30 KB).</p>
 
-<h2>3 Teileliste und Werkzeug</h2>
+<h2>3 Stand der Technik</h2>
+<h3>3.1 Die ursprüngliche Oscilloscope Clock</h3>
+<p>Die Idee stammt von Mauro Pintus (Mailand, 2018) [1]: Ein ESP32 zeichnet über seine beiden eingebauten Digital-Analog-Wandler
+[2] eine analoge Uhr auf ein Oszilloskop im X/Y-Betrieb, die Uhrzeit kommt per NTP aus dem Internet. Zifferblatt und Zeiger liegen
+als Tabellen von Linienzügen vor, die der Strahl nacheinander abfährt. Die Uhr braucht dafür außer dem ESP32 nur zwei Leitungen
+zum Oszilloskop.</p>
+<h3>3.2 Andere Oszilloskop-Uhren</h3>
+<p>Uhren und Grafiken auf dem Oszilloskop gibt es auch als Demonstrations- und Bausatzplatinen. Ein Beispiel ist das Demo Board
+von VintageTEK [7] für Tektronix-Röhrengeräte: Dort erzeugt ein Mikrocontroller ATmega328P die Ablenkspannungen über
+Widerstandsnetzwerke (R-2R), zeigt neben einer Uhr auch Spiele und verschiebt das Bild gegen Einbrennen. Gemeinsam ist allen
+diesen Geräten das Prinzip der <b>Vektorgrafik</b>: Der Strahl fährt die Linien direkt ab, statt wie beim Fernseher Zeile für
+Zeile zu schreiben.</p>
+<h3>3.3 Neu in Version 2.0</h3>
+<ul>
+ <li><b>Zwei Prozessorkerne:</b> Kern 1 zeichnet ohne Pause, Kern 0 übernimmt WLAN, Zeit, Webserver und OLED (Kapitel 2) –
+ auf Basis des Arduino-Cores für den ESP32 [3].</li>
+ <li><b>Gleich helle Linien</b> durch konstante Strahlgeschwindigkeit und eine Rundtour mit möglichst kurzen Sprüngen.</li>
+ <li><b>Profile ANALOG und DIGITAL</b> für Röhren- und Speicher-Oszilloskope, optional Dunkeltastung über den Z-Eingang.</li>
+ <li><b>Webinterface</b> mit Live-Vorschau, allen Einstellungen und WLAN-Verwaltung; Einrichtung über ein Setup-WLAN.</li>
+ <li><b>OLED-Anzeige</b> mit der Bibliothek U8g2 [4] und optionale <b>Echtzeituhr DS3231</b> [6].</li>
+ <li><b>Fünf Zifferblätter</b>, Bildverschiebung gegen Einbrennen und ein <b>Flimmerschutz</b>.</li>
+ <li><b>Installation im Browser</b> mit ESP Web Tools [5]; Bohrplan als technische Zeichnung nach [8, 9].</li>
+</ul>
+
+<h2>4 Teileliste und Werkzeug</h2>
 <p>Die Liste entspricht dem Aufbau des Prototyps. Die Signale verlassen das Gehäuse nicht über Einbaubuchsen, sondern über
 <b>BNC-Pigtail-Leitungen</b>, die mit <b>Kabelverschraubungen</b> durch die Gehäusewand geführt werden. Der BNC-Stecker am Ende
 kommt direkt in den Eingang des Oszilloskops, ein zusätzliches BNC-Kabel ist nicht nötig.</p>
@@ -207,7 +254,7 @@ kommt direkt in den Eingang des Oszilloskops, ein zusätzliches BNC-Kabel ist ni
  <tr><td>–</td><td>Kleinteile</td><td>7 Leitungen für das OLED (DuPont-Kabel oder Litze), Schrumpfschlauch, Aderendhülsen 0,25–0,5 mm² (optional), Abstandsbolzen M2,5 (OLED) und M3 (Breakout-Board), ggf. 2–3 Muttern M6</td></tr>
  <tr><td>1</td><td>USB-Netzteil 5 V, ≥ 1 A, mit USB-C-Kabel</td><td>Ein normales, ungeerdetes Steckernetzteil vermeidet Brummschleifen.</td></tr>
 </table>
-<h3>3.1 Werkzeug</h3>
+<h3>4.1 Werkzeug</h3>
 <ul>
  <li>Lötkolben (feine Spitze) und Lötzinn – nur für die beiden Widerstände in den Pigtails –, Schrumpfschlauch, Seitenschneider, Abisolierzange</li>
  <li>Kleiner Schraubendreher für die Schraubklemmen, Schraubenschlüssel SW 9 für die Kabelverschraubungen</li>
@@ -216,7 +263,7 @@ kommt direkt in den Eingang des Oszilloskops, ein zusätzliches BNC-Kabel ist ni
  <li>PC mit Arduino IDE 2.x (oder PlatformIO) und USB-C-Kabel</li>
 </ul>
 
-<h2>4 Aufbauanleitung Schritt für Schritt</h2>
+<h2>5 Aufbauanleitung Schritt für Schritt</h2>
 <figure><img src="images/verdrahtung.svg" style="width:100%"><figcaption>Abb. 5 – Verdrahtung. Das DevKit steckt im Breakout-Board; alle Leitungen kommen in die gleichnamigen Schraubklemmen.</figcaption></figure>
 <table style="font-size:8.2pt">
  <thead><tr><th>Klemme am Breakout-Board</th><th>Anschluss</th><th>Ziel</th><th>Funktion</th></tr></thead>
@@ -273,33 +320,33 @@ Das Flachbandkabel nicht scharf knicken.</div></div>
 nach der Tabelle oben in die Klemmen legen. Die Leitungen so lang lassen, dass sich der Scharnierdeckel ganz öffnen lässt.</div></div>
 <div class="step"><b class="n">9</b><div><b>Prüfen vor dem ersten Einschalten</b> (Multimeter): Kein Durchgang zwischen 3V3 und GND und zwischen 5V und GND.
 Zwischen dem Mittelstift jedes BNC-Steckers und der Klemme P25 bzw. P26 je ca. 220 Ω, zum Außenkontakt kein Durchgang.
-Der Außenkontakt hat Durchgang zu GND. Alle Schraubklemmen leicht nachziehen. Den <b>Deckel</b> erst nach der Inbetriebnahme schließen (Kapitel 6).</div></div>
+Der Außenkontakt hat Durchgang zu GND. Alle Schraubklemmen leicht nachziehen. Den <b>Deckel</b> erst nach der Inbetriebnahme schließen (Kapitel 7).</div></div>
 
-<h2>5 Firmware installieren</h2>
-<h3>5.1 Ohne Arduino-Software: im Browser</h3>
-<p>Die fertige Firmware lässt sich direkt von der <a href="https://holzholz123.github.io/ESP32_OscilloscopeClock/#kap5">Projektseite</a> auf den ESP32 schreiben – in <b>Chrome oder Edge
+<h2>6 Firmware installieren</h2>
+<h3>6.1 Ohne Arduino-Software: im Browser</h3>
+<p>Die fertige Firmware lässt sich direkt von der <a href="https://holzholz123.github.io/ESP32_OscilloscopeClock/#kap6">Projektseite</a> auf den ESP32 schreiben – in <b>Chrome oder Edge
 am PC</b> (Windows, macOS, Linux) oder auf dem Chromebook. GitHub baut sie bei jeder Änderung automatisch (Board „ESP32 Dev Module“,
-Variante B in Abschnitt 5.4).</p>
+Variante B in Abschnitt 6.4).</p>
 <ol>
  <li>ESP32 mit einem USB-Datenkabel an den PC anschließen.</li>
  <li>Auf <b>„Firmware installieren“</b> klicken und im Fenster den Anschluss des ESP32 wählen (z. B. „CP2102“, „CH340“ oder „USB Serial“).</li>
  <li><b>Install</b> wählen. Bei der ersten Installation „Erase device“ ankreuzen; bei einem Update weglassen – dann bleiben WLANs und Einstellungen erhalten.</li>
- <li>Nach etwa einer Minute startet die Uhr. Weiter mit Kapitel 6.</li>
+ <li>Nach etwa einer Minute startet die Uhr. Weiter mit Kapitel 7.</li>
 </ol>
 <!-- FIRMWARE-KNOPF -->
 <p>Erscheint kein Anschluss, fehlt meist der USB-Treiber (CP210x oder CH340) oder das Kabel kann nur laden. Bricht die Verbindung ab,
 beim Start der Installation den <b>BOOT-Taster</b> gedrückt halten. Eigene Startwerte in <code>config.h</code> gehen so nicht – dafür
 eine der folgenden Möglichkeiten nutzen.</p>
-<h3>5.2 Mit Arduino Cloud (app.arduino.cc)</h3>
+<h3>6.2 Mit Arduino Cloud (app.arduino.cc)</h3>
 <ol>
  <li><a href="https://holzholz123.github.io/ESP32_OscilloscopeClock/firmware/ESP32_OscilloscopeClock_v2.0.zip">Sketch als ZIP herunterladen</a> (Ordner <code>ESP32_OscilloscopeClock_v2.0</code> mit allen Dateien).</li>
  <li>Auf <a href="https://app.arduino.cc/">app.arduino.cc</a> anmelden, unter „Sketches“ → „Import“ die ZIP-Datei wählen.</li>
  <li>Einmalig den <b>Arduino Cloud Agent</b> installieren (der Editor bietet ihn an) – er verbindet den Browser mit dem USB-Anschluss.</li>
  <li>Board <b>ESP32 Dev Module</b> wählen, Bibliothek <b>U8g2</b> einbinden, bei Bedarf <code>config.h</code> anpassen und hochladen.</li>
 </ol>
-<p>Es gilt das Standard-Partitionsschema (Variante B, Abschnitt 5.4), „Huge APP“ ist nicht nötig. Arduino Cloud ist nicht mit GitHub verbunden: Für eine
+<p>Es gilt das Standard-Partitionsschema (Variante B, Abschnitt 6.4), „Huge APP“ ist nicht nötig. Arduino Cloud ist nicht mit GitHub verbunden: Für eine
 neue Version die ZIP-Datei erneut herunterladen und importieren.</p>
-<h3>5.3 Mit der Arduino IDE 2.x</h3>
+<h3>6.3 Mit der Arduino IDE 2.x</h3>
 <ol>
  <li>Boardverwalter: <b>esp32 by Espressif</b> installieren (Version 3.x, auch 2.0.x geht), Board <b>ESP32 Dev Module</b> wählen.</li>
  <li>Unter <b>Werkzeuge → Partition Scheme</b> eine der beiden Varianten aus der Tabelle unten wählen.</li>
@@ -307,7 +354,7 @@ neue Version die ZIP-Datei erneut herunterladen und importieren.</p>
  <li><code>ESP32_OscilloscopeClock_v2.0/ESP32_OscilloscopeClock_v2.0.ino</code> öffnen und hochladen.</li>
  <li>Seriellen Monitor auf <b>115200 Baud</b> stellen – dort erscheinen dieselben Meldungen wie im Debug-Bereich des Webinterfaces.</li>
 </ol>
-<h3>5.4 Partitionsschema: zwei Varianten</h3>
+<h3>6.4 Partitionsschema: zwei Varianten</h3>
 <table style="break-inside:avoid">
  <tr><th>Variante</th><th>Arduino IDE: Partition Scheme</th><th>PlatformIO</th><th>Programmspeicher</th></tr>
  <tr><td><b>A – Huge APP</b> (empfohlen)</td><td>„Huge APP (3MB No OTA/1MB SPIFFS)“</td><td><code>pio run -t upload</code></td><td>1.243.154 von 3.145.728 Byte (<b>39 %</b>)</td></tr>
@@ -320,8 +367,8 @@ Stelle und bleiben erhalten. Meldet die IDE beim Hochladen „Sketch too big“,
 <div class="note"><b>Zugangsdaten stehen nie im Quelltext.</b> WLANs werden nach dem Hochladen über das Webinterface eingetragen
 (bis zu 10 Netze). Die Startwerte aller Einstellungen stehen in <code>config.h</code>; im Betrieb ist das Webinterface bequemer.</div>
 
-<h2>6 Erste Inbetriebnahme</h2>
-<div class="step"><b class="n">1</b><div><b>Oszilloskop anschließen</b> und grob einstellen: X/Y-Betrieb, beide Kanäle DC, 0,5 V/Div (Abschnitt 7.1).</div></div>
+<h2>7 Erste Inbetriebnahme</h2>
+<div class="step"><b class="n">1</b><div><b>Oszilloskop anschließen</b> und grob einstellen: X/Y-Betrieb, beide Kanäle DC, 0,5 V/Div (Abschnitt 8.1).</div></div>
 <div class="step"><b class="n">2</b><div><b>Einschalten</b> (USB-Netzteil). Das Oszilloskop zeigt 10 Sekunden lang das Testbild, danach die Uhr.
 Das OLED zeigt die Uhrzeit (zunächst ab 10:08:37) und „Keine NTP-Verbindung“.</div></div>
 <div class="step"><b class="n">3</b><div><b>WLAN einrichten.</b> Ohne bekanntes Netz öffnet die Uhr nach kurzer Zeit das offene Setup-WLAN
@@ -331,10 +378,10 @@ automatisch, sonst <code>http://192.168.4.1</code> aufrufen. Die Gruppe <b>WLAN<
 <figure><img style="width:48%" src="images/oled_setup.png"><figcaption>Abb. 7 – OLED im Setup-WLAN</figcaption></figure>
 <div class="step"><b class="n">4</b><div><b>Verbinden.</b> Die Uhr verbindet sich mit dem stärksten bekannten Netz, holt die Zeit und schließt das Setup-WLAN.
 Das Webinterface ist danach unter <b>http://scope-clock.local</b> oder der IP-Adresse aus dem Status erreichbar.</div></div>
-<div class="step"><b class="n">5</b><div><b>Profil wählen und Bild einstellen:</b> DIGITAL (Standard) für Speicher-Oszilloskope, ANALOG für Röhren-Oszilloskope – im Webinterface oder BOOT-Taster 3 s halten (Abschnitt 8.3). Position und Größe mit dem Testbild nachstellen: „Einstellungen“ → „Oszilloskop“ → „Testbild“.</div></div>
+<div class="step"><b class="n">5</b><div><b>Profil wählen und Bild einstellen:</b> DIGITAL (Standard) für Speicher-Oszilloskope, ANALOG für Röhren-Oszilloskope – im Webinterface oder BOOT-Taster 3 s halten (Abschnitt 9.3). Position und Größe mit dem Testbild nachstellen: „Einstellungen“ → „Oszilloskop“ → „Testbild“.</div></div>
 
-<h2>7 Oszilloskop einstellen</h2>
-<h3>7.1 Anschließen</h3>
+<h2>8 Oszilloskop einstellen</h2>
+<h3>8.1 Anschließen</h3>
 <ul>
  <li>Die Pigtails stecken direkt im Oszilloskop – das ist die beste Verbindung. Wer stattdessen <b>Tastköpfe</b> benutzt, nimmt
  kurze Masseleitungen und stellt 10:1-Tastköpfe vorher am Kalibrierausgang des Oszilloskops sauber ein (Rechteck ohne Überschwinger);
@@ -366,7 +413,7 @@ Das Webinterface ist danach unter <b>http://scope-clock.local</b> oder der IP-Ad
  <tr><td>Nachleuchten</td><td>kurz bis mittel, falls vorhanden</td><td>beruhigt den Bildaufbau</td></tr>
  <tr><td>Bandbreitenbegrenzung</td><td>ein (z. B. 20 MHz)</td><td>weniger Rauschen</td></tr>
 </table>
-<h3>7.2 X/Y-Betrieb am digitalen Oszilloskop</h3>
+<h3>8.2 X/Y-Betrieb am digitalen Oszilloskop</h3>
 <p>Ein analoges Oszilloskop zeichnet in Echtzeit, ein digitales tastet beide Kanäle erst ab und stellt die Werte danach als Punkte
 oder verbundene Punkte dar. Daraus ergeben sich einige Unterschiede:</p>
 <ul>
@@ -380,7 +427,7 @@ oder verbundene Punkte dar. Daraus ergeben sich einige Unterschiede:</p>
  Nachleuchten zeigt auch die Bewegung des Sekundenzeigers als Fächer.</li>
  <li><b>Bildrate des Displays:</b> Viele digitale Oszilloskope erneuern den Schirm nur einige Male pro Sekunde; das Bild „pulsiert“ dann leicht – normal.</li>
 </ul>
-<h3>7.3 Helligkeit der Zeiger abgleichen</h3>
+<h3>8.3 Helligkeit der Zeiger abgleichen</h3>
 <p>Stunden- und Minutenzeiger sind schmale Nadeln aus zwei dicht nebeneinander liegenden Kanten. Je nachdem, wie ein Oszilloskop
 Helligkeit darstellt, wirken sie heller oder gleich hell wie der Rest. Der Regler <b>Helligkeit Stunden-/Minutenzeiger</b>
 (Einstellungen → Oszilloskop, standardmäßig 55 %) gleicht das aus. Richtwerte:</p>
@@ -398,7 +445,7 @@ Einbrennen</b> (Einstellungen → Oszilloskop, standardmäßig an) eingeschaltet
 hinsieht. Dunkler machen kann die Firmware das Bild nicht – die Helligkeitsregler verteilen nur die Zeit des Strahls; echtes
 Abdunkeln geht nur mit dem Intensitätsregler oder der Dunkeltastung (Z-Eingang). Digitale Oszilloskope mit LCD brennen nicht ein;
 dort ist die Bildverschiebung unnötig, schadet aber nicht. Ältere digitale Geräte mit Bildröhre (z. B. HP 54200A) brauchen sie.</div>
-<h3>7.4 Beispiele für einzelne Geräte (andere sinngemäß)</h3>
+<h3>8.4 Beispiele für einzelne Geräte (andere sinngemäß)</h3>
 <ul>
  <li><b>Tektronix TDS3012:</b> CH1 = X, CH2 = Y, XY im Display-Menü; kurzes Nachleuchten (Persist) beruhigt das Bild.</li>
  <li><b>HP 54200A:</b> X/Y-Möglichkeiten im Handbuch prüfen; unendliches Nachleuchten sammelt das Bild über mehrere Aufnahmen.</li>
@@ -406,8 +453,8 @@ dort ist die Bildverschiebung unnötig, schadet aber nicht. Ältere digitale Ger
  verbinden. WaveForms: 500 mV/Div, Offset −1,6 V, 1 ms/Div, Trigger Auto, View → XY.</li>
 </ul>
 
-<h2>8 Bedienung</h2>
-<h3>8.1 Webinterface</h3>
+<h2>9 Bedienung</h2>
+<h3>9.1 Webinterface</h3>
 <p>Aufruf über <b>http://scope-clock.local</b> (Name unter Einstellungen → System änderbar) oder die IP-Adresse. Die Seite ist für das
 Handy gemacht und lässt sich über „Zum Startbildschirm hinzufügen“ wie eine App ablegen.</p>
 <figure><img src="images/web_uebersicht.png" style="width:80%"><figcaption>Abb. 9 – Webinterface: Startansicht hell und dunkel, Seitenmenü</figcaption></figure>
@@ -420,12 +467,12 @@ Handy gemacht und lässt sich über „Zum Startbildschirm hinzufügen“ wie ei
  <li><b>Seitenmenü (☰):</b> springt in die Bereiche, dazu Sprache (Deutsch/English) und Darstellung (automatisch/hell/dunkel). Der Bereich, in dem man gerade ist, ist im Menü grün markiert; der schmale grüne Balken am oberen Bildschirmrand zeigt, wie weit man gescrollt hat.</li>
 </ul>
 <figure><img src="images/web_einstellungen.png" style="width:80%"><figcaption>Abb. 10 – Gruppe Oszilloskop, Gruppe WLAN mit Netzsuche, Debug-Bereich</figcaption></figure>
-<h3>8.2 OLED-Anzeige</h3>
+<h3>9.2 OLED-Anzeige</h3>
 <p>Oben die Uhrzeit im 7-Segment-Stil, darunter Kalenderwoche und Datum mit kleinen 7-Segment-Ziffern, dann das WLAN und die Signalstärke. Ohne gültige Zeit steht
 dort „Keine NTP-Verbindung“, im Setup-WLAN der Netzname „ScopeClock-Setup“ und die Adresse. Helligkeit 0–100 %, Sekunden,
 Drehung um 180° und Pixelverschiebung gegen Einbrennen sind einstellbar.</p>
 <figure><img src="images/oled_englisch_12h.png" style="width:48%"><figcaption>Abb. 11 – OLED auf Englisch im 12-Stunden-Format</figcaption></figure>
-<h3>8.3 BOOT-Taster</h3>
+<h3>9.3 BOOT-Taster</h3>
 <p><b>3 Sekunden halten</b> schaltet das Oszilloskop-Profil um (DIGITAL ↔ ANALOG). Das OLED zeigt den Wechsel mit Countdown 3, 2, 1;
 vorher loslassen bricht ab (Abb. 12 und 13). Die Einstellung wird gespeichert. <b>Nicht beim Einschalten drücken</b> – sonst startet der ESP32 im Download-Modus.</p>
 <div class="two">
@@ -435,13 +482,13 @@ vorher loslassen bricht ab (Abb. 12 und 13). Die Einstellung wird gespeichert. <
 <p><b>Werkseinstellungen: 10 Sekunden halten.</b> Ab 5 s zählt das OLED 5 … 1 herunter (Abb. 14), dann werden <b>alle Einstellungen und WLANs gelöscht</b> und die Uhr startet mit dem Setup-WLAN neu. Vorher loslassen bricht ab.</p>
 <figure><img src="images/oled_werksreset.png" style="width:48%"><figcaption>Abb. 14 – OLED kurz vor den Werkseinstellungen (BOOT-Taster gehalten)</figcaption></figure>
 
-<h2>9 Alle Einstellungen im Überblick</h2>
+<h2>10 Alle Einstellungen im Überblick</h2>
 <p>Alle Einstellungen wirken <b>sofort</b> – am Oszilloskop, auf dem OLED und in der Vorschau – und werden dauerhaft auf der
 Uhr gespeichert (Ausnahme: Testbild). Schieberegler senden erst beim Loslassen, damit der Speicher nicht bei jeder Bewegung
 beschrieben wird. Jede Gruppe hat „Auf Standardwerte zurücksetzen“; danach lässt sich die Änderung 8 Sekunden lang mit
 „Rückgängig“ wieder aufheben. Die Standardwerte stammen aus <code>config.h</code>.</p>
 
-<h3>9.1 Oszilloskop</h3>
+<h3>10.1 Oszilloskop</h3>
 <table>
  <tr><th style="width:24%">Einstellung</th><th style="width:16%">Bereich (Standard)</th><th>Wirkung</th></tr>
  <tr><td>Oszilloskop-Profil</td><td>DIGITAL / ANALOG (DIGITAL)</td><td>Legt fest, wie der Strahl zwischen zwei Linien springt.
@@ -463,7 +510,7 @@ beschrieben wird. Jede Gruppe hat „Auf Standardwerte zurücksetzen“; danach 
  sauberere Ecken, aber weniger Bilder pro Sekunde (mehr Flimmern). <b>Kürzer</b> = ruhigeres Bild, aber dunklere Linien; ein
  langsames Oszilloskop rundet dann Ecken ab. Die geschätzte Bildrate wird beim Ziehen angezeigt (Standard ca. 205 Bilder/s). <b>Flimmerschutz:</b> Würde das Bild unter 75 Bilder pro Sekunde fallen, zeichnet die Uhr automatisch mit einer kürzeren Verweilzeit; darunter steht dann, mit welcher.</td></tr>
  <tr><td>Helligkeit Stunden-/Minutenzeiger</td><td>0–100 % (55 %)</td><td>Verweilzeit auf den beiden Zeigern im Verhältnis zum Rest. Die schmalen, eng beieinander liegenden
- Doppellinien der Zeiger wirken sonst heller als Zifferblatt und Ziffern. Richtwerte je Oszilloskop und Einstellanleitung: Abschnitt 7.3.
+ Doppellinien der Zeiger wirken sonst heller als Zifferblatt und Ziffern. Richtwerte je Oszilloskop und Einstellanleitung: Abschnitt 8.3.
  0 % blendet die Zeiger aus. Der Sekundenzeiger ist davon nicht betroffen.</td></tr>
  <tr><td>Helligkeit Minutenstriche</td><td>0–100 % (100 %)</td><td>Helligkeit der 60 Striche am Rand. Weniger Helligkeit lässt die Zeiger stärker hervortreten und
  verkürzt das Bild etwas; 0 % blendet die Striche ganz aus.</td></tr>
@@ -474,7 +521,7 @@ beschrieben wird. Jede Gruppe hat „Auf Standardwerte zurücksetzen“; danach 
  <tr><td>Dunkeltastung (Z-Eingang)</td><td>an / aus (aus); High oder Low = dunkel (High)</td><td>Nur mit einem <b>dritten Kabel</b> von GPIO27 (Klemme P27) zum Z-Eingang des Oszilloskops – im beschriebenen Aufbau nicht vorhanden. Schaltet den Strahl bei jedem Sprung aus, die Rücklaufspuren verschwinden. Pegel laut Handbuch des Oszilloskops; ausgeschaltet ist GPIO27 hochohmig.</td></tr>
 </table>
 
-<h3>9.2 Uhrzeit</h3>
+<h3>10.2 Uhrzeit</h3>
 <table>
  <tr><th style="width:24%">Einstellung</th><th style="width:16%">Bereich (Standard)</th><th>Wirkung</th></tr>
  <tr><td>Uhrzeit stellen</td><td>Gerätezeit oder Datum + Uhrzeit</td><td>Erscheint nur, solange kein Zeitserver erreichbar ist (z. B. ohne Internet); die Gruppe Uhrzeit klappt
@@ -490,7 +537,7 @@ beschrieben wird. Jede Gruppe hat „Auf Standardwerte zurücksetzen“; danach 
  „Übernehmen“ speichert den Namen und gleicht sofort neu ab. Zwei weitere Server aus <code>config.h</code> dienen als Reserve.</td></tr>
 </table>
 
-<h3>9.3 Display (OLED)</h3>
+<h3>10.3 Display (OLED)</h3>
 <table>
  <tr><th style="width:24%">Einstellung</th><th style="width:16%">Bereich (Standard)</th><th>Wirkung</th></tr>
  <tr><td>OLED-Helligkeit</td><td>0–100 % (50 %)</td><td>Helligkeit des kleinen Displays an der Uhr. Niedrige Werte schonen das OLED (weniger Einbrennen,
@@ -501,7 +548,7 @@ beschrieben wird. Jede Gruppe hat „Auf Standardwerte zurücksetzen“; danach 
  <tr><td>OLED-Pixelverschiebung</td><td>an / aus (an)</td><td>Verschiebt das Bild jede Minute um wenige Pixel, damit dauerhaft leuchtende Punkte nicht einbrennen. Kaum zu sehen.</td></tr>
 </table>
 
-<h3>9.4 WLAN</h3>
+<h3>10.4 WLAN</h3>
 <table>
  <tr><th style="width:24%">Einstellung</th><th style="width:16%">Bereich</th><th>Wirkung</th></tr>
  <tr><td>Gespeicherte Netze</td><td>bis zu 10</td><td>Netze, mit denen sich die Uhr verbinden darf; sie wählt das stärkste. „Löschen“ entfernt ein Netz (danach Neustart).
@@ -514,7 +561,7 @@ beschrieben wird. Jede Gruppe hat „Auf Standardwerte zurücksetzen“; danach 
  „ScopeClock-Setup“ zum neuen Einrichten.</td></tr>
 </table>
 
-<h3>9.5 System und Seitenmenü</h3>
+<h3>10.5 System und Seitenmenü</h3>
 <table>
  <tr><th style="width:24%">Einstellung</th><th style="width:16%">Bereich (Standard)</th><th>Wirkung</th></tr>
  <tr><td>Gerätename</td><td>a–z, 0–9, Bindestrich, max. 32 (scope-clock)</td><td>Name im Router und Adresse <code>http://&lt;name&gt;.local</code> (im Router nach dem nächsten Verbinden). Praktisch bei mehreren Uhren im selben Netz.</td></tr>
@@ -525,7 +572,14 @@ beschrieben wird. Jede Gruppe hat „Auf Standardwerte zurücksetzen“; danach 
  <tr><td>Darstellung (Seitenmenü)</td><td>automatisch, hell, dunkel</td><td>Farbschema der Webseite; „Automatisch“ folgt dem Handy/PC. Nur im Browser gespeichert.</td></tr>
 </table>
 
-<h2>10 Fehlersuche</h2>
+<h2>11 Tests und Fehlersuche</h2>
+<h3>11.1 Stand der Tests</h3>
+<p>Die Firmware wird bei jeder Änderung automatisch gebaut (GitHub Actions, Arduino-CLI, esp32 3.3.12, Standard-Partitionsschema);
+Warnungen gelten dabei als Fehler. Strahlführung und Zifferblätter wurden am PC aus denselben Vektordaten berechnet und dargestellt
+(die Oszilloskop-Bilder dieser Anleitung), die OLED-Inhalte mit derselben Bibliothek U8g2 simuliert. Das Webinterface wurde im
+Browser mit simulierten Schnittstellen getestet (Testseite), die Installation im Browser ohne angeschlossenes Gerät: Die vier
+Teile ergeben Byte für Byte dasselbe Abbild wie die Arduino-Software. <b>Der Test an echter Hardware steht noch aus.</b></p>
+<h3>11.2 Fehlerbilder und Abhilfe</h3>
 <table>
  <tr><th>Beobachtung</th><th>Abhilfe</th></tr>
  <tr><td>Kein Bild auf dem Oszilloskop</td><td>X/Y-Betrieb, DC-Kopplung, 0,5 V/Div; Position auf Bildmitte; Pigtail X an Kanal 1, Y an Kanal 2; Testbild einschalten</td></tr>
@@ -548,7 +602,7 @@ beschrieben wird. Jede Gruppe hat „Auf Standardwerte zurücksetzen“; danach 
 </table>
 <p>Für eine Fehlermeldung im Debug-Bereich „Herunterladen“ antippen und die Textdatei weitergeben.</p>
 
-<h3>10.1 Debug-Meldungen (Beispiel)</h3>
+<h3>11.3 Debug-Meldungen (Beispiel)</h3>
 <pre>+0s ESP32 Oscilloscope Clock v2.0
 +0s [Scope] Profil: DIGITAL – BOOT-Taster 3 s halten zum Umschalten
 +0s [Scope] Rundtour: 122 Linienzuege, Spruenge gesamt 1348 DAC-Einheiten
@@ -573,8 +627,45 @@ Klammern steht der Teil der Firmware, von dem die Meldung kommt:</p>
 <p>Fehlt nach dem Einschalten die Zeile „[WiFi] verbunden“, stimmt meist das Passwort nicht oder das Netz ist zu weit entfernt.
 Steht dort „[RTC] kein DS3231 gefunden“, obwohl das Modul eingebaut ist, die Leitungen SDA und SCL prüfen.</p>
 
-<h2>11 Anhang</h2>
-<h3>11.1 Startwerte in <code>config.h</code></h3>
+<h2>12 Zusammenfassung und Ausblick</h2>
+<p>Die Uhr zeigt, dass ein ESP32 ohne zusätzliche Elektronik ein ruhiges, gleichmäßig helles Vektorbild auf analogen und
+digitalen Oszilloskopen erzeugen kann. Die Aufteilung auf zwei Prozessorkerne hält den Zeichenpfad frei von Unterbrechungen,
+die konstante Strahlgeschwindigkeit sorgt für gleich helle Linien, und Webinterface, OLED und Installation im Browser machen
+Einrichtung und Bedienung ohne Programmierkenntnisse möglich.</p>
+<h3>12.1 Grenzen</h3>
+<ul>
+ <li><b>Helligkeit:</b> Die Firmware verteilt nur die Zeit des Strahls. Dunkler wird das Bild nur mit dem Intensitätsregler des
+ Oszilloskops oder über den Z-Eingang (Abschnitt 8.3).</li>
+ <li><b>Bildrate und Helligkeit</b> hängen zusammen: Längere Verweilzeiten machen die Linien heller, senken aber die Bildrate –
+ der Flimmerschutz begrenzt das bei mindestens 75 Bildern pro Sekunde.</li>
+ <li><b>Auflösung:</b> Die DACs haben 8 Bit, also 256 Stufen je Achse. Für Zifferblatt und Ziffern reicht das; feinere Details
+ sind nicht möglich.</li>
+ <li><b>Digitale Oszilloskope</b> tasten das Bild ab; wie ruhig es wirkt, hängt von Zeitbasis, Abtastrate und Nachleuchten ab.</li>
+</ul>
+<h3>12.2 Ausblick</h3>
+<ul>
+ <li>Test des Prototyps an echter Hardware, Fotos des fertigen Geräts und gemessene Bildraten für diese Anleitung.</li>
+ <li>Weitere Zifferblätter oder eigene Motive lassen sich als zusätzliche Vektortabellen ergänzen (Anhang A.3).</li>
+ <li>Erfahrungen mit weiteren Oszilloskopen fließen in die Richtwerte in Abschnitt 8.3 ein.</li>
+</ul>
+
+<h2>Quellenverzeichnis</h2>
+<table class="refs">
+ <tr><td>[1]</td><td>M. Pintus: <i>ESP32 Oscilloscope Clock</i>, Mailand 2018 – <a href="https://github.com/maurohh/ESP32_OscilloscopeClock">github.com/maurohh/ESP32_OscilloscopeClock</a></td></tr>
+ <tr><td>[2]</td><td>Espressif Systems: <i>ESP32 Technical Reference Manual</i> (Digital-Analog-Wandler) – <a href="https://www.espressif.com/sites/default/files/documentation/esp32_technical_reference_manual_en.pdf">www.espressif.com/sites/default/files/documentation/esp32_technical_reference_manual_en.pdf</a></td></tr>
+ <tr><td>[3]</td><td>Espressif Systems: <i>Arduino core for the ESP32</i> (arduino-esp32), Version 3.3.12 – <a href="https://github.com/espressif/arduino-esp32">github.com/espressif/arduino-esp32</a></td></tr>
+ <tr><td>[4]</td><td>O. Kraus: <i>U8g2</i> – Bibliothek für monochrome Displays, Version 2.36 – <a href="https://github.com/olikraus/u8g2">github.com/olikraus/u8g2</a></td></tr>
+ <tr><td>[5]</td><td>ESPHome: <i>ESP Web Tools</i> – Firmware im Browser installieren, Version 10.4 – <a href="https://esphome.github.io/esp-web-tools/">esphome.github.io/esp-web-tools/</a></td></tr>
+ <tr><td>[6]</td><td>Analog Devices (Maxim Integrated): <i>DS3231</i> – Datenblatt der Echtzeituhr – <a href="https://www.analog.com/media/en/technical-documentation/data-sheets/DS3231.pdf">www.analog.com/media/en/technical-documentation/data-sheets/DS3231.pdf</a></td></tr>
+ <tr><td>[7]</td><td>VintageTEK – Museum für Tektronix-Geräte: <i>Demo Board</i> (Oszilloskop-Demonstrationsplatine mit Uhr und Spielen) – <a href="https://vintagetek.org/">vintagetek.org/</a></td></tr>
+ <tr><td>[8]</td><td>TU München, Werkstatt EWT: <i>Grundlagen des Technischen Zeichnens</i> – <a href="https://www.epe.ed.tum.de/fileadmin/w00bzo/ewt/Werkstatt/Zeichnungserstellung.pdf">www.epe.ed.tum.de/fileadmin/w00bzo/ewt/Werkstatt/Zeichnungserstellung.pdf</a></td></tr>
+ <tr><td>[9]</td><td>DIN ISO 128 (Darstellung) und DIN ISO 129 (Bemaßung) für technische Zeichnungen; DIN EN ISO 7200 (Schriftfeld)</td></tr>
+ <tr><td>[10]</td><td>The Raleway Project Authors: <i>Raleway</i>, SIL Open Font License 1.1 – <a href="https://fonts.google.com/specimen/Raleway">fonts.google.com/specimen/Raleway</a></td></tr>
+ <tr><td>[11]</td><td>TH Nürnberg, LEKO: <i>Die Struktur einer Arbeit in den Ingenieur- und Naturwissenschaften</i> (Gliederung dieser Anleitung) – <a href="https://leko.service.th-nuernberg.de/owl/artikel/die-struktur-einer-arbeit-in-den-ingenieur-und-naturwissenschaften-ing/">leko.service.th-nuernberg.de/owl/artikel/die-struktur-einer-arbeit-in-den-ingenieur-und-naturwissenschaften-ing/</a></td></tr>
+</table>
+
+<h2>A Anhang</h2>
+<h3>A.1 Startwerte in <code>config.h</code></h3>
 <p class="small">Fast alles lässt sich im Webinterface ändern; <code>config.h</code> liefert nur die Startwerte bzw. feste Pins.</p>
 <table>
  <tr><th>Parameter</th><th>Standard</th><th>Bedeutung</th></tr>
@@ -599,7 +690,7 @@ Steht dort „[RTC] kein DS3231 gefunden“, obwohl das Modul eingebaut ist, die
  <tr><td><code>BOOT_TEST_S</code>, <code>BUTTON_LONG_MS</code>, <code>BUTTON_FACTORY_MS</code></td><td>10, 3000, 10000</td><td>Start-Testbild (s), BOOT-Taster: Profil umschalten, Werkseinstellungen (ms)</td></tr>
  <tr><td><code>ZBLANK_PIN</code>, <code>ZBLANK_ENABLE</code>, <code>ZBLANK_ACTIVE_HIGH</code></td><td>27, 0, 1</td><td>Optionale Dunkeltastung: GPIO, Startwert aus, High = dunkel (im Webinterface umschaltbar)</td></tr>
 </table>
-<h3>11.2 Schnittstellen des Webservers</h3>
+<h3>A.2 Schnittstellen des Webservers</h3>
 <table>
  <tr><th>Aufruf</th><th>Funktion</th></tr>
  <tr><td><code>GET /</code></td><td>Webseite (gzip)</td></tr>
@@ -612,7 +703,7 @@ Steht dort „[RTC] kein DS3231 gefunden“, obwohl das Modul eingebaut ist, die
  <tr><td><code>GET /api/log</code>, <code>POST /api/log/clear</code></td><td>Debug-Protokoll lesen bzw. leeren</td></tr>
  <tr><td><code>GET /api/vectors</code></td><td>Vektordaten für die Vorschau (fertig erzeugt in <code>vectors.h</code>, gzip)</td></tr>
 </table>
-<h3>11.3 Dateien im Projekt</h3>
+<h3>A.3 Dateien im Projekt</h3>
 <table>
  <tr><th>Datei</th><th>Inhalt</th></tr>
  <tr><td><code>ESP32_OscilloscopeClock_v2.0/*.ino</code></td><td>Firmware</td></tr>
@@ -625,7 +716,7 @@ Steht dort „[RTC] kein DS3231 gefunden“, obwohl das Modul eingebaut ist, die
  <tr><td><code>docs/</code></td><td>diese Dokumentation auf Deutsch und Englisch (Quellen <code>dokumentation.html</code>, <code>documentation.en.html</code>), Bilder</td></tr>
  <tr><td><code>README.md</code>, <code>HARDWARE.md</code>, <code>SOFTWARE.md</code></td><td>Kurzfassung auf GitHub (Deutsch und Englisch)</td></tr>
 </table>
-<h3>11.4 Herkunft und Lizenzen</h3>
+<h3>A.4 Herkunft und Lizenzen</h3>
 <p>Die Idee stammt von der <b>ESP32 Oscilloscope Clock von Mauro Pintus</b> (Mailand 2018,
 github.com/maurohh/ESP32_OscilloscopeClock) – vielen Dank! Diese Version ist eine eigenständige Neufassung: Firmware,
 Webinterface und alle Vektorgrafiken sind neu. Die Schrift des Webinterfaces ist eine verkleinerte Fassung von

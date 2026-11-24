@@ -4,6 +4,7 @@ number_docs.py – nummeriert die Unterkapitel der Dokumentation und baut das In
 
   docs/dokumentation.html, docs/documentation.en.html
     <h2>6 Oszilloskop einstellen</h2>  →  Unterkapitel  <h3>6.1 …</h3>, <h3>6.2 …</h3>, …
+    <h2>A Anhang</h2>  →  <h3>A.1 …</h3>; Kapitel ohne Nummer (Quellenverzeichnis) bleiben ohne Nummer
     Inhaltsverzeichnis (<section class="toc">): je Kapitel eine Zeile, darunter klein die
     Unterkapitel mit Nummer (zwischen <!-- TOC --> und <!-- /TOC -->).
 
@@ -29,15 +30,14 @@ def number(path):
         nonlocal chap, sub
         level, attrs, inner = m.group(1), m.group(2), m.group(3)
         if level == '2':
-            mm = re.match(r'(\d+) (.*)', inner, re.S)
+            mm = re.match(r'(\d+|[A-Z]) (.*)', inner, re.S)       # Kapitel 1, 2 … oder Anhang A
             chap, sub = (mm.group(1), 0) if mm else (None, 0)
-            if mm:
-                toc.append([chap, mm.group(2).strip(), []])
+            toc.append([chap or '', mm.group(2).strip() if mm else inner.strip(), []])   # ohne Nummer: z. B. Quellenverzeichnis
             return m.group(0)
         if chap is None:
             return m.group(0)
         sub += 1
-        inner = re.sub(r'^\d+\.\d+\s+', '', inner.strip())
+        inner = re.sub(r'^(\d+|[A-Z])\.\d+\s+', '', inner.strip())
         num = f'{chap}.{sub}'
         toc[-1][2].append((num, inner))
         return f'<h3{attrs}>{num} {inner}</h3>'

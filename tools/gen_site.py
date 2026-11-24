@@ -2,7 +2,7 @@
 """Setzt die Kapitel der Dokumentation in die Projektseite docs/index.html (GitHub Pages) ein.
 
 Quelle sind dieselben Dateien wie für die PDFs: docs/dokumentation.html (Deutsch) und
-docs/documentation.en.html (Englisch). Übernommen werden die Kapitel 1–11 (ab der ersten
+docs/documentation.en.html (Englisch). Übernommen werden die Kapitel 1–12, das Quellenverzeichnis und Anhang A (ab der ersten
 <h2>-Überschrift nach dem Inhaltsverzeichnis bis vor die Bohrplan-Seite). Jedes Kapitel wird ein
 aufklappbarer Abschnitt im Stil des Webinterfaces, beide Sprachen stehen nebeneinander
 (data-l="de" / data-l="en"), das Seitenmenü bekommt einen Eintrag je Kapitel.
@@ -80,7 +80,7 @@ def chapters(path):
     out = []
     for i in range(1, len(parts), 2):
         title, content = parts[i].strip(), parts[i + 1].strip()
-        if not re.match(r'\d+ ', title):
+        if not re.match(r'(\d+|[A-Z]) ', title) and title not in ('Quellenverzeichnis', 'References'):
             continue
         # Tabellen: jede Zelle bekommt die Spaltenbezeichnung (data-th) – auf dem Handy stehen die
         # Zeilen dann als Einträge untereinander, jeweils mit Bezeichnung
