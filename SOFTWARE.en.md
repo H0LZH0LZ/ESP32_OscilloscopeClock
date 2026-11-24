@@ -169,7 +169,7 @@ time keeps running in the browser to the second.
 **Changing the dial:** swiping over the preview cycles through four dials – left for the next,
 right for the previous one (pointer events, at least 40 px horizontally; vertical swiping still
 scrolls the page, `touch-action: pan-y`). On a PC the arrow keys work too when the preview has
-focus. A plain tap does not change the dial. Order when swiping and in the drop-down list:
+focus. A **tap** (movement under 10 px) or ⛶ opens **full screen** (`fullscreen()`: Fullscreen API on `#uhr`, class `fs`, canvas 1024 px, wake lock against the screen switching off; without the Fullscreen API only page-filling). Order when swiping and in the drop-down list:
 numbers 1–12 → numbers 12 · 3 · 6 · 9 → station clock → Roman XII · III · VI · IX → Roman I–XII (style 0, 1, 4, 3, 2 – “station clock” sits in the middle):
 
 | Style | Digits | Table |

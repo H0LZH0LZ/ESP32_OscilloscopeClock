@@ -34,7 +34,7 @@ This documentation quotes the German labels and adds the English label in parent
 The oscilloscope and OLED pictures were generated on a PC from the real firmware data, the web interface
 pictures are screenshots of the page. Photos of the finished device will follow once the prototype is built.
 
-**The five dials and the test pattern** – switch by swiping over the preview in the web interface
+**The five dials and the test pattern** – switch by swiping over the preview in the web interface; tapping shows the clock full screen
 
 <img src="docs/images/oszilloskop_zifferblaetter_en.png" alt="Dials" width="100%">
 
@@ -151,12 +151,12 @@ interface.
 
 | Board package | Program memory | Global variables (RAM) |
 |---|---|---|
-| esp32 3.3.12 | 1,244,186 bytes (94 %) | 75,708 bytes (23 %) |
+| esp32 3.3.12 | 1,245,018 bytes (94 %) | 75,708 bytes (23 %) |
 | esp32 2.0.17 | 866,053 bytes (66 %) | 61,048 bytes (18 %) – state before the menu and dial switching |
 
 The configuration variants (profile ANALOG/DIGITAL, Z blanking, dial 0/1/2, `USE_FAST_DAC 0`,
 EXCEL mode) were also built without warnings before the web interface was added. With the
-recommended partition scheme **Huge APP** the same firmware uses 1,244,186 of 3,145,728
+recommended partition scheme **Huge APP** the same firmware uses 1,245,018 of 3,145,728
 bytes (**39 %**), with “Minimal SPIFFS” 62 %.
 
 Also simulated on a PC: beam path (brightness, retrace lines, frame rate), OLED content, BOOT
