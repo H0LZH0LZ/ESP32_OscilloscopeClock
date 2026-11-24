@@ -204,7 +204,7 @@ a.row>span:last-child{font-size:18px}
  <a href="#kap9"><span data-l="de">9 Bedienung</span><span data-l="en">9 Operation</span></a>
  <a href="#kap10"><span data-l="de">10 Alle Einstellungen im Überblick</span><span data-l="en">10 All settings at a glance</span></a>
  <a href="#kap11"><span data-l="de">11 Tests und Fehlersuche</span><span data-l="en">11 Tests and troubleshooting</span></a>
- <a href="#kap12"><span data-l="de">12 Zusammenfassung und Ausblick</span><span data-l="en">12 Summary and outlook</span></a>
+ <a href="#kap12"><span data-l="de">12 Zusammenfassung</span><span data-l="en">12 Summary</span></a>
  <a href="#kap13"><span data-l="de">Quellenverzeichnis</span><span data-l="en">References</span></a>
  <a href="#kap14"><span data-l="de">A Anhang</span><span data-l="en">A Appendix</span></a>
 <!-- /KAPITEL-MENUE -->
@@ -226,8 +226,8 @@ a.row>span:last-child{font-size:18px}
 <div class="grp"><h2 id="downloads-h" class="coll" role="button" tabindex="0" aria-expanded="true"><span data-l="de">0 Links &amp; Dokumente</span><span data-l="en">0 Links &amp; documents</span></h2>
 <section>
  <a class="row" target="_blank" rel="noopener" href="https://github.com/HolzHolz123/ESP32_OscilloscopeClock"><span><span data-l="de">GitHub – Version 2.0</span><span data-l="en">GitHub – version 2.0</span><small class="note" data-l="de">Diese Firmware mit Quellcode, Anleitung und Werkzeugen</small><small class="note" data-l="en">This firmware with source code, guide and tools</small></span><span>›</span></a>
- <a class="row" target="_blank" rel="noopener" data-l="de" href="ESP32_Oscilloscope_Clock_Dokumentation.pdf?v=79f80190"><span>Dokumentation (PDF)<small class="note">Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small></span><span>›</span></a>
- <a class="row" target="_blank" rel="noopener" data-l="en" href="ESP32_Oscilloscope_Clock_Documentation.pdf?v=d88f6570"><span>Documentation (PDF)<small class="note">Assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
+ <a class="row" target="_blank" rel="noopener" data-l="de" href="ESP32_Oscilloscope_Clock_Dokumentation.pdf?v=167b719f"><span>Dokumentation (PDF)<small class="note">Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small></span><span>›</span></a>
+ <a class="row" target="_blank" rel="noopener" data-l="en" href="ESP32_Oscilloscope_Clock_Documentation.pdf?v=6ba1654e"><span>Documentation (PDF)<small class="note">Assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" href="demo/"><span><span data-l="de">Testseite</span><span data-l="en">Test page</span><small class="note" data-l="de">Das Webinterface der Uhr ausprobieren – läuft im Browser, alle Werte sind simuliert</small><small class="note" data-l="en">Try the clock's web interface – runs in the browser, all values are simulated</small></span><span>›</span></a>
  <a class="row" href="#kap6"><span><span data-l="de">Firmware installieren</span><span data-l="en">Install firmware</span><small class="note" data-l="de">Direkt im Browser auf den ESP32 schreiben – oder den Sketch mit Arduino Cloud hochladen</small><small class="note" data-l="en">Write it to the ESP32 straight from the browser – or upload the sketch with Arduino Cloud</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" href="https://github.com/maurohh/ESP32_OscilloscopeClock"><span><span data-l="de">GitHub – Original</span><span data-l="en">GitHub – original</span><small class="note" data-l="de">Die ursprüngliche ESP32 Oscilloscope Clock von Mauro Pintus (2018), nach deren Idee diese Version entstand</small><small class="note" data-l="en">The original ESP32 Oscilloscope Clock by Mauro Pintus (2018) that inspired this version</small></span><span>›</span></a>
@@ -244,8 +244,13 @@ Zifferblatt, Ziffern und Zeiger etwa 200-mal pro Sekunde nach.</p>
 
 <p>Ziel ist eine Uhr, die sich aus wenigen fertigen Modulen ohne eigene Platine nachbauen lässt und an möglichst vielen
 Oszilloskopen läuft – vom Röhrengerät bis zum digitalen Speicher-Oszilloskop.</p>
+<h3>1.1 Aufbau dieser Anleitung</h3>
+<p>Kapitel 2 erklärt die Grundlagen, Kapitel 3 ordnet die Uhr in den Stand der Technik ein. Die Kapitel 4 bis 7 führen durch Teile,
+Aufbau, Firmware und erste Inbetriebnahme, die Kapitel 8 bis 10 durch das Einstellen des Oszilloskops, die Bedienung und alle
+Einstellungen. Kapitel 11 beschreibt die Tests und hilft bei der Fehlersuche, Kapitel 12 fasst zusammen. Es folgen das
+Quellenverzeichnis, Anhang A (Startwerte, Schnittstellen, Dateien) und Anhang B (Bohrplan zum Ausdrucken).</p>
 <figure><img loading="lazy" src="images/oszilloskop_zifferblaetter.png"><figcaption>Abb. 1 – Die fünf Zifferblätter und das Testbild, wie sie auf dem Oszilloskop erscheinen (Darstellung aus den Vektordaten der Firmware)</figcaption></figure>
-<h3>1.1 Funktionen</h3>
+<h3>1.2 Funktionen</h3>
 <ul>
  <li><b>Genaue Zeit</b> aus dem Internet (NTP), stündlich abgeglichen, Sommer-/Winterzeit automatisch. Ohne Internet lässt sich die Zeit im Webinterface stellen.</li>
  <li><b>Fünf Zifferblätter:</b> Ziffern 1–12, nur 12·3·6·9, Bahnhof (Stundenbalken statt Ziffern), römisch XII·III·VI·IX, römisch I–XII. Umschalten durch Wischen über die Vorschau im Webinterface.</li>
@@ -257,12 +262,6 @@ Oszilloskopen läuft – vom Röhrengerät bis zum digitalen Speicher-Oszillosko
 </ul>
 <figure><img loading="lazy" src="images/oled_normal.png"><figcaption>Abb. 2 – OLED im Betrieb</figcaption></figure>
 <figure><img loading="lazy" src="images/web_pc_hell.png"><figcaption>Abb. 3 – Webinterface am PC (helles Design)</figcaption></figure>
-
-<h3>1.2 Aufbau dieser Anleitung</h3>
-<p>Kapitel 2 erklärt die Grundlagen, Kapitel 3 ordnet die Uhr in den Stand der Technik ein. Die Kapitel 4 bis 7 führen durch Teile,
-Aufbau, Firmware und erste Inbetriebnahme, die Kapitel 8 bis 10 durch das Einstellen des Oszilloskops, die Bedienung und alle
-Einstellungen. Kapitel 11 beschreibt die Tests und hilft bei der Fehlersuche, Kapitel 12 fasst zusammen. Es folgen das
-Quellenverzeichnis, Anhang A (Startwerte, Schnittstellen, Dateien) und Anhang B (Bohrplan zum Ausdrucken).</p>
 </div><div data-l="en">
 <p>The <b>ESP32 Oscilloscope Clock</b> draws an analogue clock on the screen of an oscilloscope. The oscilloscope works in
 <b>X/Y mode</b>: two voltages deflect the beam horizontally and vertically. An ESP32 generates these two voltages with its
@@ -270,8 +269,13 @@ built-in digital-to-analogue converters (DACs) and traces the dial, numerals and
 
 <p>The goal is a clock that can be rebuilt from a few ready-made modules without a custom circuit board and that works with as
 many oscilloscopes as possible – from CRT instruments to digital storage oscilloscopes.</p>
+<h3>1.1 Structure of this guide</h3>
+<p>Chapter 2 explains the fundamentals, chapter 3 places the clock in the state of the art. Chapters 4 to 7 guide you through parts,
+assembly, firmware and first start-up, chapters 8 to 10 through setting up the oscilloscope, operation and all settings. Chapter
+11 describes the tests and helps with troubleshooting, chapter 12 sums up. Then follow the references, appendix A (defaults,
+interfaces, files) and appendix B (drilling template for printing).</p>
 <figure><img loading="lazy" src="images/oszilloskop_zifferblaetter_en.png"><figcaption>Fig. 1 – The five dials and the test pattern as they appear on the oscilloscope (rendered from the firmware's vector data)</figcaption></figure>
-<h3>1.1 Features</h3>
+<h3>1.2 Features</h3>
 <ul>
  <li><b>Accurate time</b> from the internet (NTP), synchronised every hour, automatic daylight saving time. Without internet the time can be set in the web interface.</li>
  <li><b>Five dials:</b> numerals 1–12, only 12·3·6·9, station clock (hour bars instead of numerals), Roman XII·III·VI·IX, Roman I–XII. Switch by swiping over the preview in the web interface.</li>
@@ -283,12 +287,6 @@ many oscilloscopes as possible – from CRT instruments to digital storage oscil
 </ul>
 <figure><img loading="lazy" src="images/oled_normal_en.png"><figcaption>Fig. 2 – OLED in operation</figcaption></figure>
 <figure><img loading="lazy" src="images/web_pc_hell_en.png"><figcaption>Fig. 3 – Web interface on a PC (light theme)</figcaption></figure>
-
-<h3>1.2 Structure of this guide</h3>
-<p>Chapter 2 explains the fundamentals, chapter 3 places the clock in the state of the art. Chapters 4 to 7 guide you through parts,
-assembly, firmware and first start-up, chapters 8 to 10 through setting up the oscilloscope, operation and all settings. Chapter
-11 describes the tests and helps with troubleshooting, chapter 12 sums up. Then follow the references, appendix A (defaults,
-interfaces, files) and appendix B (drilling template for printing).</p>
 </div></section></div>
 
 <div class="grp closed"><h2 id="kap2" class="coll" role="button" tabindex="0" aria-expanded="false"><span data-l="de">2 Grundlagen: wie die Uhr arbeitet</span><span data-l="en">2 Fundamentals: how the clock works</span></h2>
@@ -1300,7 +1298,7 @@ firmware the message comes from is shown in square brackets:</p>
 says “[RTC] no DS3231 found” although the module is fitted, check the SDA and SCL wires.</p>
 </div></section></div>
 
-<div class="grp closed"><h2 id="kap12" class="coll" role="button" tabindex="0" aria-expanded="false"><span data-l="de">12 Zusammenfassung und Ausblick</span><span data-l="en">12 Summary and outlook</span></h2>
+<div class="grp closed"><h2 id="kap12" class="coll" role="button" tabindex="0" aria-expanded="false"><span data-l="de">12 Zusammenfassung</span><span data-l="en">12 Summary</span></h2>
 <section class="doc"><div data-l="de">
 <p>Die Uhr zeigt, dass ein ESP32 ohne zusätzliche Elektronik ein ruhiges, gleichmäßig helles Vektorbild auf analogen und
 digitalen Oszilloskopen erzeugen kann. Die Aufteilung auf zwei Prozessorkerne hält den Zeichenpfad frei von Unterbrechungen,
@@ -1316,12 +1314,6 @@ Einrichtung und Bedienung ohne Programmierkenntnisse möglich.</p>
  sind nicht möglich.</li>
  <li><b>Digitale Oszilloskope</b> tasten das Bild ab; wie ruhig es wirkt, hängt von Zeitbasis, Abtastrate und Nachleuchten ab.</li>
 </ul>
-<h3>12.2 Ausblick</h3>
-<ul>
- <li>Test des Prototyps an echter Hardware, Fotos des fertigen Geräts und gemessene Bildraten für diese Anleitung.</li>
- <li>Weitere Zifferblätter oder eigene Motive lassen sich als zusätzliche Vektortabellen ergänzen (Anhang A.3).</li>
- <li>Erfahrungen mit weiteren Oszilloskopen fließen in die Richtwerte in Abschnitt 8.3 ein.</li>
-</ul>
 </div><div data-l="en">
 <p>The clock shows that an ESP32 can create a calm, evenly bright vector picture on analogue and digital oscilloscopes without
 additional electronics. Splitting the work over two processor cores keeps the drawing path free of interruptions, the constant
@@ -1336,12 +1328,6 @@ possible without programming skills.</p>
  <li><b>Resolution:</b> the DACs have 8 bits, i.e. 256 steps per axis. That is enough for dial and numerals; finer details are
  not possible.</li>
  <li><b>Digital oscilloscopes</b> sample the picture; how calm it looks depends on time base, sample rate and persistence.</li>
-</ul>
-<h3>12.2 Outlook</h3>
-<ul>
- <li>Test of the prototype on real hardware, photos of the finished device and measured frame rates for this guide.</li>
- <li>More dials or your own graphics can be added as additional vector tables (appendix A.3).</li>
- <li>Experience with further oscilloscopes goes into the guide values in section 8.3.</li>
 </ul>
 </div></section></div>
 

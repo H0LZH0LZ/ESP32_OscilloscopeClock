@@ -41,7 +41,6 @@ figcaption{font-size:8.8pt;color:#555;margin-top:1.2mm}
 .toc .tn{display:inline-block;width:8mm;font-weight:700;color:#0a5c33}
 .toc .tsub{font-size:8.6pt;color:#555;margin-left:8mm;line-height:1.4}
 .toc li.bp{margin-top:2.5mm}
-.abstract p{font-size:10.6pt;line-height:1.6}
 table.refs td{border:0;padding:1mm 2mm 1mm 0}table.refs td:first-child{width:9mm;white-space:nowrap;font-weight:700}table.refs a{overflow-wrap:anywhere}
 .two{display:flex;gap:4mm}.two figure{flex:1}
 .pb{break-before:page}
@@ -64,23 +63,11 @@ h3+ul>li:nth-child(2),h3+ol>li:nth-child(2),li:last-child{break-before:avoid}
  <div class="meta">Assembly · Commissioning · Operation · Technology<br>As of November 2026 · Firmware v2.0</div>
 </section>
 
-<section class="abstract">
-<h2>Abstract</h2>
-<p>The <b>ESP32 Oscilloscope Clock</b> shows an analogue clock on an oscilloscope in X/Y mode. An ESP32 generates the deflection
-voltages with its two 8-bit digital-to-analogue converters and draws the dial and hands about 200 times per second as vector
-graphics; the time comes from the internet via NTP or from an optional real-time clock.</p>
-<p>This guide explains how the clock works and places it in the state of the art. It describes the assembly in a junction box with
-parts list, wiring and drilling template, the installation of the firmware – also straight from the browser –, setting up
-analogue and digital oscilloscopes as well as operation, settings, tests and troubleshooting.</p>
-<p>Version 2.0 is a rewrite of the clock by Mauro Pintus (2018): drawing and networking run separately on the two processor
-cores, all lines are equally bright, and there are a web interface, an OLED display, five dials, profiles for CRT and storage
-oscilloscopes and a flicker guard.</p>
-</section>
 <section class="toc">
  <h2>Contents</h2>
 <!-- TOC -->
  <ol class="tl">
-  <li><span class="tn">1</span>Introduction<div class="tsub">1.1 Features · 1.2 Structure of this guide</div></li>
+  <li><span class="tn">1</span>Introduction<div class="tsub">1.1 Structure of this guide · 1.2 Features</div></li>
   <li><span class="tn">2</span>Fundamentals: how the clock works<div class="tsub">2.1 Two cores with separate jobs · 2.2 From number to deflection voltage · 2.3 Cycle-exact beam control · 2.4 Equal brightness · 2.5 One frame step by step · 2.6 Round trip and jumps · 2.7 Time · 2.8 Wi-Fi, web server and settings · 2.9 OLED and monitoring</div></li>
   <li><span class="tn">3</span>State of the art<div class="tsub">3.1 The original Oscilloscope Clock · 3.2 Other oscilloscope clocks · 3.3 New in version 2.0</div></li>
   <li><span class="tn">4</span>Parts list and tools<div class="tsub">4.1 Tools</div></li>
@@ -91,7 +78,7 @@ oscilloscopes and a flicker guard.</p>
   <li><span class="tn">9</span>Operation<div class="tsub">9.1 Web interface · 9.2 OLED display · 9.3 BOOT button</div></li>
   <li><span class="tn">10</span>All settings at a glance<div class="tsub">10.1 Oscilloscope · 10.2 Time · 10.3 Display (OLED) · 10.4 Wi-Fi · 10.5 System and side menu</div></li>
   <li><span class="tn">11</span>Tests and troubleshooting<div class="tsub">11.1 Test status · 11.2 Symptoms and remedies · 11.3 Debug messages (example, language English)</div></li>
-  <li><span class="tn">12</span>Summary and outlook<div class="tsub">12.1 Limitations · 12.2 Outlook</div></li>
+  <li><span class="tn">12</span>Summary<div class="tsub">12.1 Limitations</div></li>
   <li><span class="tn"></span>References</li>
   <li><span class="tn">A</span>Appendix<div class="tsub">A.1 Defaults in <code>config.h</code> · A.2 Web server interfaces · A.3 Files in the project · A.4 Origin and licences</div></li>
   <li class="bp"><span class="tn">B</span>Drilling template for printing (lid and side walls, scale 1:1)</li>
@@ -110,8 +97,13 @@ built-in digital-to-analogue converters (DACs) and traces the dial, numerals and
 
 <p>The goal is a clock that can be rebuilt from a few ready-made modules without a custom circuit board and that works with as
 many oscilloscopes as possible – from CRT instruments to digital storage oscilloscopes.</p>
+<h3>1.1 Structure of this guide</h3>
+<p>Chapter 2 explains the fundamentals, chapter 3 places the clock in the state of the art. Chapters 4 to 7 guide you through parts,
+assembly, firmware and first start-up, chapters 8 to 10 through setting up the oscilloscope, operation and all settings. Chapter
+11 describes the tests and helps with troubleshooting, chapter 12 sums up. Then follow the references, appendix A (defaults,
+interfaces, files) and appendix B (drilling template for printing).</p>
 <figure><img src="images/oszilloskop_zifferblaetter_en.png" style="width:100%"><figcaption>Fig. 1 – The five dials and the test pattern as they appear on the oscilloscope (rendered from the firmware's vector data)</figcaption></figure>
-<h3>1.1 Features</h3>
+<h3>1.2 Features</h3>
 <ul>
  <li><b>Accurate time</b> from the internet (NTP), synchronised every hour, automatic daylight saving time. Without internet the time can be set in the web interface.</li>
  <li><b>Five dials:</b> numerals 1–12, only 12·3·6·9, station clock (hour bars instead of numerals), Roman XII·III·VI·IX, Roman I–XII. Switch by swiping over the preview in the web interface.</li>
@@ -124,11 +116,6 @@ many oscilloscopes as possible – from CRT instruments to digital storage oscil
 <figure><img src="images/oled_normal_en.png" style="width:45%"><figcaption>Fig. 2 – OLED in operation</figcaption></figure>
 <figure><img src="images/web_pc_hell_en.png" style="width:100%"><figcaption>Fig. 3 – Web interface on a PC (light theme)</figcaption></figure>
 
-<h3>1.2 Structure of this guide</h3>
-<p>Chapter 2 explains the fundamentals, chapter 3 places the clock in the state of the art. Chapters 4 to 7 guide you through parts,
-assembly, firmware and first start-up, chapters 8 to 10 through setting up the oscilloscope, operation and all settings. Chapter
-11 describes the tests and helps with troubleshooting, chapter 12 sums up. Then follow the references, appendix A (defaults,
-interfaces, files) and appendix B (drilling template for printing).</p>
 
 <h2>2 Fundamentals: how the clock works</h2>
 <figure><img src="images/software_en.svg" style="width:96%"><figcaption>Fig. 4 – Distribution of the firmware over the two processor cores</figcaption></figure>
@@ -625,7 +612,7 @@ firmware the message comes from is shown in square brackets:</p>
 <p>If the line “[WiFi] connected” is missing after power-on, the password is usually wrong or the network is too far away. If it
 says “[RTC] no DS3231 found” although the module is fitted, check the SDA and SCL wires.</p>
 
-<h2>12 Summary and outlook</h2>
+<h2>12 Summary</h2>
 <p>The clock shows that an ESP32 can create a calm, evenly bright vector picture on analogue and digital oscilloscopes without
 additional electronics. Splitting the work over two processor cores keeps the drawing path free of interruptions, the constant
 beam speed gives equally bright lines, and the web interface, OLED and installation in the browser make set-up and operation
@@ -639,12 +626,6 @@ possible without programming skills.</p>
  <li><b>Resolution:</b> the DACs have 8 bits, i.e. 256 steps per axis. That is enough for dial and numerals; finer details are
  not possible.</li>
  <li><b>Digital oscilloscopes</b> sample the picture; how calm it looks depends on time base, sample rate and persistence.</li>
-</ul>
-<h3>12.2 Outlook</h3>
-<ul>
- <li>Test of the prototype on real hardware, photos of the finished device and measured frame rates for this guide.</li>
- <li>More dials or your own graphics can be added as additional vector tables (appendix A.3).</li>
- <li>Experience with further oscilloscopes goes into the guide values in section 8.3.</li>
 </ul>
 
 <h2>References</h2>

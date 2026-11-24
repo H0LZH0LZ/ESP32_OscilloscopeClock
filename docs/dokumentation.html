@@ -41,7 +41,6 @@ figcaption{font-size:8.8pt;color:#555;margin-top:1.2mm}
 .toc .tn{display:inline-block;width:8mm;font-weight:700;color:#0a5c33}
 .toc .tsub{font-size:8.6pt;color:#555;margin-left:8mm;line-height:1.4}
 .toc li.bp{margin-top:2.5mm}
-.abstract p{font-size:10.6pt;line-height:1.6}
 table.refs td{border:0;padding:1mm 2mm 1mm 0}table.refs td:first-child{width:9mm;white-space:nowrap;font-weight:700}table.refs a{overflow-wrap:anywhere}
 .two{display:flex;gap:4mm}.two figure{flex:1}
 .pb{break-before:page}
@@ -64,23 +63,11 @@ h3+ul>li:nth-child(2),h3+ol>li:nth-child(2),li:last-child{break-before:avoid}
  <div class="meta">Aufbau · Inbetriebnahme · Bedienung · Technik<br>Stand: November 2026 · Firmware v2.0</div>
 </section>
 
-<section class="abstract">
-<h2>Kurzfassung</h2>
-<p>Die <b>ESP32 Oscilloscope Clock</b> zeigt eine analoge Uhr auf einem Oszilloskop im X/Y-Betrieb. Ein ESP32 erzeugt mit seinen
-beiden 8-Bit-Digital-Analog-Wandlern die Ablenkspannungen und zeichnet Zifferblatt und Zeiger etwa 200-mal pro Sekunde als
-Vektorgrafik; die Uhrzeit kommt per NTP aus dem Internet oder von einer optionalen Echtzeituhr.</p>
-<p>Diese Anleitung erklärt die Funktionsweise und ordnet die Uhr in den Stand der Technik ein. Sie beschreibt den Aufbau in einer
-Abzweigdose mit Teileliste, Verdrahtung und Bohrplan, die Installation der Firmware – auch direkt im Browser –, das Einstellen
-analoger und digitaler Oszilloskope sowie Bedienung, Einstellungen, Tests und Fehlersuche.</p>
-<p>Version 2.0 ist eine Neufassung der Uhr von Mauro Pintus (2018): Zeichnen und Netzwerk laufen getrennt auf den beiden
-Prozessorkernen, alle Linien sind gleich hell, dazu kommen Webinterface, OLED-Anzeige, fünf Zifferblätter, Profile für
-Röhren- und Speicher-Oszilloskope und ein Flimmerschutz.</p>
-</section>
 <section class="toc">
  <h2>Inhalt</h2>
 <!-- TOC -->
  <ol class="tl">
-  <li><span class="tn">1</span>Einleitung<div class="tsub">1.1 Funktionen · 1.2 Aufbau dieser Anleitung</div></li>
+  <li><span class="tn">1</span>Einleitung<div class="tsub">1.1 Aufbau dieser Anleitung · 1.2 Funktionen</div></li>
   <li><span class="tn">2</span>Grundlagen: wie die Uhr arbeitet<div class="tsub">2.1 Zwei Kerne mit getrennten Aufgaben · 2.2 Vom Zahlenwert zur Ablenkspannung · 2.3 Taktgenaue Strahlführung · 2.4 Gleiche Helligkeit · 2.5 Ein Bild im Ablauf · 2.6 Rundtour und Sprünge · 2.7 Uhrzeit · 2.8 WLAN, Webserver und Einstellungen · 2.9 OLED und Überwachung</div></li>
   <li><span class="tn">3</span>Stand der Technik<div class="tsub">3.1 Die ursprüngliche Oscilloscope Clock · 3.2 Andere Oszilloskop-Uhren · 3.3 Neu in Version 2.0</div></li>
   <li><span class="tn">4</span>Teileliste und Werkzeug<div class="tsub">4.1 Werkzeug</div></li>
@@ -91,7 +78,7 @@ Röhren- und Speicher-Oszilloskope und ein Flimmerschutz.</p>
   <li><span class="tn">9</span>Bedienung<div class="tsub">9.1 Webinterface · 9.2 OLED-Anzeige · 9.3 BOOT-Taster</div></li>
   <li><span class="tn">10</span>Alle Einstellungen im Überblick<div class="tsub">10.1 Oszilloskop · 10.2 Uhrzeit · 10.3 Display (OLED) · 10.4 WLAN · 10.5 System und Seitenmenü</div></li>
   <li><span class="tn">11</span>Tests und Fehlersuche<div class="tsub">11.1 Stand der Tests · 11.2 Fehlerbilder und Abhilfe · 11.3 Debug-Meldungen (Beispiel)</div></li>
-  <li><span class="tn">12</span>Zusammenfassung und Ausblick<div class="tsub">12.1 Grenzen · 12.2 Ausblick</div></li>
+  <li><span class="tn">12</span>Zusammenfassung<div class="tsub">12.1 Grenzen</div></li>
   <li><span class="tn"></span>Quellenverzeichnis</li>
   <li><span class="tn">A</span>Anhang<div class="tsub">A.1 Startwerte in <code>config.h</code> · A.2 Schnittstellen des Webservers · A.3 Dateien im Projekt · A.4 Herkunft und Lizenzen</div></li>
   <li class="bp"><span class="tn">B</span>Bohrplan zum Ausdrucken (Deckel und Seitenteile, Maßstab 1:1)</li>
@@ -111,8 +98,13 @@ Zifferblatt, Ziffern und Zeiger etwa 200-mal pro Sekunde nach.</p>
 
 <p>Ziel ist eine Uhr, die sich aus wenigen fertigen Modulen ohne eigene Platine nachbauen lässt und an möglichst vielen
 Oszilloskopen läuft – vom Röhrengerät bis zum digitalen Speicher-Oszilloskop.</p>
+<h3>1.1 Aufbau dieser Anleitung</h3>
+<p>Kapitel 2 erklärt die Grundlagen, Kapitel 3 ordnet die Uhr in den Stand der Technik ein. Die Kapitel 4 bis 7 führen durch Teile,
+Aufbau, Firmware und erste Inbetriebnahme, die Kapitel 8 bis 10 durch das Einstellen des Oszilloskops, die Bedienung und alle
+Einstellungen. Kapitel 11 beschreibt die Tests und hilft bei der Fehlersuche, Kapitel 12 fasst zusammen. Es folgen das
+Quellenverzeichnis, Anhang A (Startwerte, Schnittstellen, Dateien) und Anhang B (Bohrplan zum Ausdrucken).</p>
 <figure><img src="images/oszilloskop_zifferblaetter.png" style="width:100%"><figcaption>Abb. 1 – Die fünf Zifferblätter und das Testbild, wie sie auf dem Oszilloskop erscheinen (Darstellung aus den Vektordaten der Firmware)</figcaption></figure>
-<h3>1.1 Funktionen</h3>
+<h3>1.2 Funktionen</h3>
 <ul>
  <li><b>Genaue Zeit</b> aus dem Internet (NTP), stündlich abgeglichen, Sommer-/Winterzeit automatisch. Ohne Internet lässt sich die Zeit im Webinterface stellen.</li>
  <li><b>Fünf Zifferblätter:</b> Ziffern 1–12, nur 12·3·6·9, Bahnhof (Stundenbalken statt Ziffern), römisch XII·III·VI·IX, römisch I–XII. Umschalten durch Wischen über die Vorschau im Webinterface.</li>
@@ -125,11 +117,6 @@ Oszilloskopen läuft – vom Röhrengerät bis zum digitalen Speicher-Oszillosko
 <figure><img src="images/oled_normal.png" style="width:45%"><figcaption>Abb. 2 – OLED im Betrieb</figcaption></figure>
 <figure><img src="images/web_pc_hell.png" style="width:100%"><figcaption>Abb. 3 – Webinterface am PC (helles Design)</figcaption></figure>
 
-<h3>1.2 Aufbau dieser Anleitung</h3>
-<p>Kapitel 2 erklärt die Grundlagen, Kapitel 3 ordnet die Uhr in den Stand der Technik ein. Die Kapitel 4 bis 7 führen durch Teile,
-Aufbau, Firmware und erste Inbetriebnahme, die Kapitel 8 bis 10 durch das Einstellen des Oszilloskops, die Bedienung und alle
-Einstellungen. Kapitel 11 beschreibt die Tests und hilft bei der Fehlersuche, Kapitel 12 fasst zusammen. Es folgen das
-Quellenverzeichnis, Anhang A (Startwerte, Schnittstellen, Dateien) und Anhang B (Bohrplan zum Ausdrucken).</p>
 
 <h2>2 Grundlagen: wie die Uhr arbeitet</h2>
 <figure><img src="images/software.svg" style="width:96%"><figcaption>Abb. 4 – Aufteilung der Firmware auf die beiden Prozessorkerne</figcaption></figure>
@@ -627,7 +614,7 @@ Klammern steht der Teil der Firmware, von dem die Meldung kommt:</p>
 <p>Fehlt nach dem Einschalten die Zeile „[WiFi] verbunden“, stimmt meist das Passwort nicht oder das Netz ist zu weit entfernt.
 Steht dort „[RTC] kein DS3231 gefunden“, obwohl das Modul eingebaut ist, die Leitungen SDA und SCL prüfen.</p>
 
-<h2>12 Zusammenfassung und Ausblick</h2>
+<h2>12 Zusammenfassung</h2>
 <p>Die Uhr zeigt, dass ein ESP32 ohne zusätzliche Elektronik ein ruhiges, gleichmäßig helles Vektorbild auf analogen und
 digitalen Oszilloskopen erzeugen kann. Die Aufteilung auf zwei Prozessorkerne hält den Zeichenpfad frei von Unterbrechungen,
 die konstante Strahlgeschwindigkeit sorgt für gleich helle Linien, und Webinterface, OLED und Installation im Browser machen
@@ -641,12 +628,6 @@ Einrichtung und Bedienung ohne Programmierkenntnisse möglich.</p>
  <li><b>Auflösung:</b> Die DACs haben 8 Bit, also 256 Stufen je Achse. Für Zifferblatt und Ziffern reicht das; feinere Details
  sind nicht möglich.</li>
  <li><b>Digitale Oszilloskope</b> tasten das Bild ab; wie ruhig es wirkt, hängt von Zeitbasis, Abtastrate und Nachleuchten ab.</li>
-</ul>
-<h3>12.2 Ausblick</h3>
-<ul>
- <li>Test des Prototyps an echter Hardware, Fotos des fertigen Geräts und gemessene Bildraten für diese Anleitung.</li>
- <li>Weitere Zifferblätter oder eigene Motive lassen sich als zusätzliche Vektortabellen ergänzen (Anhang A.3).</li>
- <li>Erfahrungen mit weiteren Oszilloskopen fließen in die Richtwerte in Abschnitt 8.3 ein.</li>
 </ul>
 
 <h2>Quellenverzeichnis</h2>
