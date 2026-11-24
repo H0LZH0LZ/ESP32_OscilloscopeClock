@@ -109,7 +109,7 @@ figcaption{font-size:13px;color:var(--mute);margin-top:8px}
 /* Seitenmenü wie im Webinterface */
 #menuBtn{position:fixed;top:calc(env(safe-area-inset-top) + 10px);left:calc(env(safe-area-inset-left) + 10px);z-index:30;
  width:44px;height:44px;padding:0;margin:0;border-radius:12px;background:var(--card);color:var(--fg);
- border:1px solid var(--line);font:22px/1 var(--sans);box-shadow:0 2px 8px rgba(0,0,0,.15);cursor:pointer}
+ border:1px solid var(--line);font:600 22px/1 var(--sans);box-shadow:0 2px 8px rgba(0,0,0,.15);cursor:pointer}
 #nav{position:fixed;top:0;bottom:0;left:0;z-index:40;width:min(78vw,280px);background:var(--card);
  padding:calc(env(safe-area-inset-top) + 16px) 12px 16px calc(env(safe-area-inset-left) + 12px);
  transform:translateX(-105%);transition:transform .25s ease;box-shadow:2px 0 16px rgba(0,0,0,.25);overflow-y:auto}
@@ -127,12 +127,12 @@ figcaption{font-size:13px;color:var(--mute);margin-top:8px}
 html[lang="de"] [data-l="en"],html[lang="en"] [data-l="de"]{display:none!important}
 /* ===== Layout im Industrie-Stil (nach dem Vorbild von Siemens iX): Kopfleiste, eckige Karten, Kacheln, festes Menü am PC ===== */
 /* Kopfleiste über die volle Breite, Titel links */
-h1{position:fixed;inset:0 0 auto;height:56px;min-height:0;justify-content:flex-start;padding:0 16px 0 64px;
- background:var(--card);border-bottom:1px solid var(--line);color:var(--fg);font-size:16px;letter-spacing:.02em;text-transform:none;font-weight:700}
-h1>span{font-size:clamp(13px,4.2vw,16px)}
-h1 .ver{display:inline-block;margin-left:8px;padding:1px 8px;border-radius:var(--rad);background:var(--acc);color:var(--accfg);font-size:12px;font-weight:700;vertical-align:2px}
-main{padding-top:72px}
-#menuBtn{top:6px;left:8px;width:44px;height:44px;border-radius:var(--rad);box-shadow:none;border:0;background:transparent;color:var(--fg);z-index:30}
+h1{position:fixed;inset:0 0 auto;top:env(safe-area-inset-top);height:64px;min-height:0;justify-content:flex-start;padding:0 16px 0 calc(env(safe-area-inset-left) + 68px);   /* wie im Webinterface */
+ background:var(--card);border-bottom:1px solid var(--line);color:var(--fg);font-size:17px;letter-spacing:.01em;text-transform:none;font-weight:600}
+h1>span{font-size:clamp(13px,4.4vw,17px)}
+h1 .ver{display:inline-block;margin-left:8px;padding:1px 8px;border-radius:var(--rad);background:var(--acc);color:var(--accfg);font-size:12px;font-weight:600;letter-spacing:.02em;vertical-align:2px}
+main{padding-top:80px}
+#menuBtn{top:calc(env(safe-area-inset-top) + 10px);left:calc(env(safe-area-inset-left) + 10px);width:44px;height:44px;border-radius:var(--rad);box-shadow:none;border:0;background:transparent;color:var(--fg);z-index:30}
 #menuBtn:hover{background:var(--hov)}
 /* Abschnittsüberschriften: fett, normal geschrieben, Akzentlinie */
 h2{font-size:18px;font-weight:700;color:var(--fg);text-transform:none;letter-spacing:0;min-height:52px;padding:0;scroll-margin-top:64px}
@@ -166,10 +166,10 @@ a.row>span:last-child{font-size:18px}
 #nav select{border-radius:var(--rad);background:var(--card2)}
 /* Breite Bildschirme: Menü bleibt links stehen */
 @media (min-width:1100px){
- #nav{transform:none;width:280px;z-index:20;top:56px;padding-top:16px}   /* unter der Titelleiste: scrollt nicht dahinter */
+ #nav{transform:none;width:280px;z-index:20;top:calc(env(safe-area-inset-top) + 64px);padding-top:16px}   /* unter der Titelleiste: scrollt nicht dahinter */
  #menuBtn{display:none}
  h1{padding-left:24px}
- main{margin-left:280px;max-width:none;padding:72px 40px 40px}
+ main{margin-left:280px;max-width:none;padding:80px 40px 40px}
  main>*:not(h1){max-width:900px}
  #shade{display:none}}
 @media (max-width:600px){.hero{flex-direction:column}.hero img{width:140px;height:140px}}
