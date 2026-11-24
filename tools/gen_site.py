@@ -21,7 +21,7 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DOCS = os.path.join(ROOT, 'docs')
-SITE = 'https://holzholz123.github.io/ESP32_OscilloscopeClock/'
+SITE = 'https://h0lzh0lz.github.io/ESP32_OscilloscopeClock/'
 
 # Knopf zum Installieren im Browser (ESP Web Tools); die Dateien in docs/firmware/ baut GitHub
 # (tools/gen_firmware.py, .github/workflows/firmware.yml). Im PDF steht an dieser Stelle nichts.

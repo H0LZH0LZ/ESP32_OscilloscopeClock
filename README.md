@@ -9,9 +9,9 @@ Angepasst für einen ESP32-WROOM-32U DevKitC V4 mit externer Antenne, BNC-Ausgä
 optionalem 2,42"-OLED.
 
 ### Links & Dokumente
-- **[Projektseite](https://holzholz123.github.io/ESP32_OscilloscopeClock/)** – Überblick und komplette Dokumentation im Browser
-- **[Testseite](https://holzholz123.github.io/ESP32_OscilloscopeClock/demo/)** – das Webinterface ausprobieren, alle Werte sind simuliert
-- **[Firmware installieren](https://holzholz123.github.io/ESP32_OscilloscopeClock/#flash-h)** – direkt im Browser auf den ESP32 schreiben (Chrome/Edge am PC), ohne Arduino-Software · [Sketch als ZIP](docs/firmware/ESP32_OscilloscopeClock_v2.0.zip) für den Arduino Cloud Editor
+- **[Projektseite](https://h0lzh0lz.github.io/ESP32_OscilloscopeClock/)** – Überblick und komplette Dokumentation im Browser
+- **[Testseite](https://h0lzh0lz.github.io/ESP32_OscilloscopeClock/demo/)** – das Webinterface ausprobieren, alle Werte sind simuliert
+- **[Firmware installieren](https://h0lzh0lz.github.io/ESP32_OscilloscopeClock/#kap6)** – direkt im Browser auf den ESP32 schreiben (Chrome/Edge am PC), ohne Arduino-Software · [Sketch als ZIP](docs/firmware/ESP32_OscilloscopeClock_v2.0.zip) für den Arduino Cloud Editor
 - **[Dokumentation (PDF)](docs/ESP32_Oscilloscope_Clock_Dokumentation.pdf)** – Aufbauanleitung, Bohrplan 1:1, Bedienung · [English](docs/ESP32_Oscilloscope_Clock_Documentation.pdf)
 - **[Hardware](HARDWARE.md)** – Teileliste mit Links, Verdrahtung, Gehäuse
 - **[Software](SOFTWARE.md)** – Aufbau der Firmware

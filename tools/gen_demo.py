@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Erzeugt die Testseite (Demo) des Webinterfaces: docs/demo/index.html
-(veröffentlicht über GitHub Pages: https://holzholz123.github.io/ESP32_OscilloscopeClock/demo/)
+(veröffentlicht über GitHub Pages: https://h0lzh0lz.github.io/ESP32_OscilloscopeClock/demo/)
 
 Die Testseite ist genau die Webseite, die auf der Uhr liegt (aus webpage.h entpackt),
 ergänzt um eine Demo-Schicht, die die Schnittstellen der Uhr im Browser simuliert.
