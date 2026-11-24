@@ -692,7 +692,7 @@ $('scope').addEventListener('pointercancel',()=>{swX=null});
 $('scope').addEventListener('keydown',e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();nextDial(e.key==='ArrowRight'?1:-1)}
  else if(e.key==='ArrowUp'||e.key==='ArrowDown'){e.preventDefault();nextTint(e.key==='ArrowUp'?1:-1)}});
 // Farbe der Uhr reihum wechseln (Wischen hoch/runter, Pfeiltasten hoch/runter) – wie die Auswahl im Seitenmenü
-function nextTint(d){const s=$('sTint'),n=s.options.length;s.selectedIndex=(s.selectedIndex+d+n)%n;s.onchange({target:s});showTag(s.options[s.selectedIndex].text)}
+function nextTint(d){const s=$('sTint'),n=s.options.length;s.selectedIndex=(s.selectedIndex+d+n)%n;s.onchange({target:s})}
 // Seitenmenü
 function menu(open){$('nav').classList.toggle('open',open);$('shade').classList.toggle('open',open);
  $('menuBtn').setAttribute('aria-expanded',open);$('nav').setAttribute('aria-hidden',!open);$('menuBtn').textContent=open?'✕':'☰'}

@@ -1039,7 +1039,7 @@ addEventListener('keydown',e=>{if(e.key==='Escape'&&$('uhr').classList.contains(
 $('scope').addEventListener('pointercancel',()=>{swX=null});
 $('scope').addEventListener('keydown',e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();nextDial(e.key==='ArrowRight'?1:-1)}
  else if(e.key==='ArrowUp'||e.key==='ArrowDown'){e.preventDefault();nextTint(e.key==='ArrowUp'?1:-1)}});
-function nextTint(d){const s=$('sTint'),n=s.options.length;s.selectedIndex=(s.selectedIndex+d+n)%n;s.onchange({target:s});showTag(s.options[s.selectedIndex].text)}
+function nextTint(d){const s=$('sTint'),n=s.options.length;s.selectedIndex=(s.selectedIndex+d+n)%n;s.onchange({target:s})}
 function menu(open){$('nav').classList.toggle('open',open);$('shade').classList.toggle('open',open);
  $('menuBtn').setAttribute('aria-expanded',open);$('nav').setAttribute('aria-hidden',!open);$('menuBtn').textContent=open?'✕':'☰'}
 $('menuBtn').onclick=()=>menu(!$('nav').classList.contains('open'));
