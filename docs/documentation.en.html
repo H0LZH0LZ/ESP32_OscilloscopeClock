@@ -75,7 +75,7 @@ h3+ul>li:nth-child(2),h3+ol>li:nth-child(2),li:last-child{break-before:avoid}
   <li><span class="tn">2</span>Fundamentals: how the clock works<div class="tsub">2.1 Two cores with separate jobs · 2.2 From number to deflection voltage · 2.3 Cycle-exact beam control · 2.4 Equal brightness · 2.5 One frame step by step · 2.6 Round trip and jumps · 2.7 Time · 2.8 Wi-Fi, web server and settings · 2.9 OLED and monitoring</div></li>
   <li><span class="tn">3</span>State of the art<div class="tsub">3.1 The original Oscilloscope Clock · 3.2 Other oscilloscope clocks · 3.3 New in version 2.0</div></li>
   <li><span class="tn">4</span>Parts list and tools<div class="tsub">4.1 Tools</div></li>
-  <li><span class="tn">5</span>Step-by-step assembly</li>
+  <li><span class="tn">5</span>Step-by-step assembly<div class="tsub">5.1 Preparing the enclosure · 5.2 Fitting cables and sockets · 5.3 Mounting the breakout board · 5.4 Wiring · 5.5 Checking before the first power-on</div></li>
   <li><span class="tn">6</span>Installing the firmware<div class="tsub">6.1 Without Arduino software: in the browser · 6.2 With Arduino Cloud (app.arduino.cc) · 6.3 With the Arduino IDE 2.x · 6.4 Partition scheme: two variants</div></li>
   <li><span class="tn">7</span>First start-up</li>
   <li><span class="tn">8</span>Setting up the oscilloscope<div class="tsub">8.1 Connecting · 8.2 Basic set-up step by step · 8.3 X/Y mode on a digital oscilloscope · 8.4 Matching the brightness of the hands · 8.5 Typical picture faults while setting up · 8.6 Examples of individual devices (others likewise)</div></li>
@@ -303,7 +303,66 @@ oscilloscope input; no additional BNC cable is needed.</p>
 </ul>
 
 <h2>5 Step-by-step assembly</h2>
-<figure><img src="images/verdrahtung_en.svg" style="width:100%"><figcaption>Fig. 5 – Wiring. The DevKit sits in the breakout board; all wires go into the screw terminals of the same name.</figcaption></figure>
+<p>The assembly has five parts: preparing the enclosure, fitting cables and sockets, mounting the breakout board, wiring and
+checking. Only the two resistors in the pigtails are soldered, everything else is plugged or screwed. With a little practice the
+assembly takes two to three hours.</p>
+<h3>5.1 Preparing the enclosure</h3>
+<div class="step"><b class="n">1</b><div><b>Print the drilling template.</b> Print the <b>last two pages of this documentation</b> (drilling template lid and side walls) on
+<b>A4 at 100 % (not “fit to page”)</b> and measure the test line on each sheet: it must be 50 mm long. Cut out the templates and tape
+them onto the lid, the connector side and the opposite side. For the side walls, first measure the height of the base (without lid) and
+place the template's centre line at half that height; the left edge of the template at the outer edge of the side wall.</div></div>
+<div class="step"><b class="n">2</b><div><b>Drill.</b> Mark all hole centres through the paper with a centre punch or a pointed screw, remove the templates and
+<b>pre-drill</b> all holes <b>with 3 mm</b>. Drill ABS at low speed without pressing, so that it neither melts nor tears.
+<b>Connector side</b> (short side, 100 mm): open the holes for pigtails X and Y at 28 and 72 mm <b>to 5.0 mm and tap an M6
+thread</b> (ABS holds the thread well) – or drill 6.2 mm and later screw an M6 nut on from the inside. In the middle (50 mm), use the step
+drill for <b>16 mm</b> for the USB-C socket. <b>Opposite side:</b> <b>6.5 mm</b> centred for the SMA socket. Deburr all holes inside and
+outside with a larger drill bit or the utility knife.</div></div>
+<div class="step"><b class="n">3</b><div><b>OLED window in the lid.</b> Drill a 3 mm hole into each of the four corners of the window (55 × 28 mm), score the edges between
+the holes several times from the outside with the utility knife along a ruler and cut through, then file them straight. Hold the OLED
+module against the inside so that the active area sits centred in the window and mark the four mounting holes (hole spacing
+61.5 × 39.5 mm); drill them with <b>2.7 mm</b> for M2.5.</div></div>
+<h3>5.2 Fitting cables and sockets</h3>
+<div class="step"><b class="n">4</b><div><b>Lead the pigtails through the cable glands.</b> First confirm with the continuity tester that red goes to the centre pin and brown
+to the outer contact of the BNC plug. <b>Cut off the DuPont plugs</b> – they do not fit through the gland; the stripped leads go into the
+screw terminals later. Screw the glands into the two threads of the connector side from the outside (or lock them with the M6 nut inside),
+loosen the dome nut and push the cable from the outside through the dome nut, seal and enclosure. Leave about <b>10 cm</b> of cable inside
+and pull the BNC plug out as far as needed. Tighten the dome nut with the spanner (9 mm) hand-tight plus a quarter turn – the cable must
+then no longer pull through. Label the pigtails “X” and “Y”.</div></div>
+<div class="step"><b class="n">5</b><div><b>Strip the leads and solder on the resistors.</b> Only now, because with the resistor and heat-shrink tubing the cable no longer fits
+through the gland. Remove about 3 cm of the outer insulation and strip both leads by about 5 mm. Slide a piece of heat-shrink tubing
+(approx. 2 cm) over the red lead, solder the <b>220 Ω resistor</b> to the red lead (core), pull the tubing over the joint and shrink it.
+Shorten the free leg of the resistor to about 8 mm – it goes into the terminal later. Twist and tin the brown lead (shield) or fit a
+wire-end ferrule.</div></div>
+<div class="step"><b class="n">6</b><div><b>Fit the USB-C panel socket and the antenna.</b> Insert the USB-C socket with its sealing ring from the outside into the 16 mm hole
+of the connector side and tighten the nut on the inside; the flat cable points inwards. Push the SMA socket of the antenna pigtail (from
+the DevKit's antenna kit) from the inside through the 6.5 mm hole of the opposite side, screw on the toothed washer and nut from the outside
+and screw on the Bingfu antenna. Antenna plug and socket must match (SMA, not RP-SMA).</div></div>
+<h3>5.3 Mounting the breakout board</h3>
+<div class="step"><b class="n">7</b><div><b>Mount the breakout board.</b> Plug the DevKit in <b>the right way round</b>: DevKit pin “3V3” at the board's terminal “3V3”, all
+pins fully inserted. The board is mounted <b>together with the DevKit rotated by 180°</b> – the module with the antenna socket faces the
+connector side, the DevKit's USB-C socket faces the antenna side, terminals P25/P26 are then on the right (fig. 5). Never plug the DevKit in
+the wrong way round on its own, otherwise the terminal labels no longer match.
+<br>Screw the board onto the perforated mounting plate with four <b>M3 standoffs</b>. If the holes of the plate do not match, lay the
+board on it, mark the holes and drill them with 3.2 mm. Lay the two cables in place first: the antenna cable and the USB flat cable are a
+little too long and run <b>once underneath the board</b> to the opposite side. Press the small IPEX plug straight onto the socket on the
+module until it clicks audibly; plug the flat cable into the DevKit's USB-C socket and do not kink it sharply.</div></div>
+<figure><img src="images/aufbau_en.svg" style="width:48%"><figcaption>Fig. 5 – Layout in the junction box (to scale); dashed: cables under the board</figcaption></figure>
+<h3>5.4 Wiring</h3>
+<p>Fig. 6 shows all wires, the table at the end of this section the same connections terminal by terminal. Strip each wire by about 5 mm, open the
+terminal screw, insert the lead fully, tighten and check with a light pull that it holds. Twist and tin stranded wires first or fit
+wire-end ferrules.</p>
+<figure><img src="images/verdrahtung_en.svg" style="width:100%"><figcaption>Fig. 6 – Wiring. The DevKit sits in the breakout board; all wires go into the screw terminals of the same name.</figcaption></figure>
+<div class="warn"><b>Important:</b> terminal P0 (GPIO0) is the BOOT button – do not connect anything there. Connect the OLED to
+<b>3V3</b>, not to 5V. Never run the -32U module on Wi-Fi without an antenna.</div>
+<div class="step"><b class="n">8</b><div><b>Connect the pigtails:</b> the free resistor leg of X into terminal <b>P25</b>, of Y into <b>P26</b>. Both brown leads (shield)
+together into the <b>GND terminal of the left row</b> – ideally twisted together or in a twin wire-end ferrule.</div></div>
+<div class="step"><b class="n">9</b><div><b>Connect the OLED.</b> Fix the module behind the window in the lid with four M2.5 standoffs. It comes set to 4-wire SPI; do not
+resolder anything. Plug seven wires with DuPont sockets onto the pin header (VCC, GND, DIN, CLK, CS, DC, RST), strip the other ends and
+put them into the terminals according to the table: VCC to <b>3V3</b> (not 5V), GND to GND of the right row, DIN → P23, CLK → P18,
+CS → P5, DC → P17, RST → P4. Leave the wires long enough for the hinged lid to open fully and bundle them with a cable tie.</div></div>
+<div class="step"><b class="n">10</b><div><b>Optional: DS3231 real-time clock.</b> Fix the module next to the board with double-sided tape, insert a CR2032 coin cell and
+connect four wires: VCC to <b>3V3</b>, GND to GND of the right row, SDA → <b>P21</b>, SCL → <b>P22</b>. At 3.3 V the module's charging
+circuit does not charge the coin cell. The clock is switched on later in the web interface.</div></div>
 <table style="font-size:8.2pt">
  <thead><tr><th>Terminal on the breakout board</th><th>Connection</th><th>Target</th><th>Function</th></tr></thead>
  <tr><td>P25 (GPIO25, DAC1)</td><td>via 220 Ω</td><td>pigtail “X”, red lead → oscilloscope channel 1</td><td>analogue output DAC1: voltage for the X deflection</td></tr>
@@ -320,46 +379,12 @@ oscilloscope input; no additional BNC cable is needed.</p>
  <tr><td>IPEX socket on the module</td><td>antenna pigtail</td><td>SMA socket in the opposite side → antenna</td><td>Wi-Fi signal 2.4 GHz</td></tr>
  <tr><td>USB-C of the DevKit</td><td>flat cable</td><td>USB-C panel socket in the connector side</td><td>5 V supply, firmware upload, serial monitor</td></tr>
 </table>
-<div class="warn"><b>Important:</b> terminal P0 (GPIO0) is the BOOT button – do not connect anything there. Connect the OLED to
-<b>3V3</b>, not to 5V. Never run the -32U module on Wi-Fi without an antenna.</div>
-
-<div class="step"><b class="n">1</b><div><b>Print the drilling template.</b> Print the <b>last two pages of this documentation</b> (drilling template lid and side walls) on <b>A4 at 100 % (not “fit to page”)</b>
-and measure the test line on each sheet: it must be 50 mm long. Cut out the templates and tape them onto the lid,
-the connector side and the opposite side. For the side walls, place the centre line at half the height of the base.</div></div>
-<div class="step"><b class="n">2</b><div><b>Drill the enclosure.</b> Pre-drill all holes with 3 mm.
-<b>Connector side</b> (one short side, 100 mm): pigtail X, <b>the USB-C socket in the middle</b>, pigtail Y.
-<b>Pigtails:</b> 2 holes at 28 and 72 mm for the cable glands: <b>drill 5.0 mm and tap an M6 thread</b>
-(ABS holds the thread well) – or drill 6.2 mm and screw an M6 nut on from the inside.
-<b>USB-C:</b> <b>16 mm</b> in the middle (50 mm, step drill).
-<b>Opposite side:</b> <b>6.5 mm</b> centred for the antenna's SMA socket.
-<b>Lid:</b> prepare the OLED window 55 × 28 mm with holes in the corners, cut it out with a utility knife and file it clean.</div></div>
-<div class="step"><b class="n">3</b><div><b>Lead the pigtails through the cable glands.</b> First confirm with the continuity tester
-that red goes to the centre pin and brown to the outer contact of the BNC plug. <b>Cut off the DuPont plugs</b> – they do not fit
-through the gland; the stripped leads go into the screw terminals later. Screw the glands into the connector side, loosen the dome nut
-and push the cable from the outside through the dome nut, seal and enclosure. Pull the BNC plug out as far as needed and tighten the
-dome nut. Label the pigtails “X” and “Y”.</div></div>
-<div class="step"><b class="n">4</b><div><b>Strip the leads and solder on the resistors.</b> With the resistor and
-heat-shrink tubing the cable no longer fits through the gland. Strip both leads by about 5 mm. Solder the 220 Ω resistor to the red
-lead (core) and insulate the joint with heat-shrink tubing; shorten the free leg of the resistor to about 8 mm – it goes into the
-terminal later. Twist and tin the brown lead (shield) or fit a wire-end ferrule.</div></div>
-<div class="step"><b class="n">5</b><div><b>Fit the USB-C panel socket and the antenna.</b> Insert the USB-C socket into the middle 16 mm hole of the connector side
-and screw it on from the inside. Screw the SMA socket of the antenna pigtail (from the DevKit's antenna kit) into the 6.5 mm hole
-of the opposite side and screw the Bingfu antenna on from the outside.</div></div>
-<div class="step"><b class="n">6</b><div><b>Mount the breakout board.</b> Screw the board onto the perforated mounting plate of the junction box with M3 standoffs.
-Plug the DevKit in <b>the right way round</b> (DevKit pin “3V3” at the board's terminal “3V3”) and mount the board
-<b>together with the DevKit rotated by 180°</b>: the module with the antenna socket faces the connector side, the DevKit's USB-C socket
-faces the antenna side (terminals P25/P26 are then on the right). Never plug the DevKit into the board the wrong way round –
-the terminal labels would then no longer match. Carefully press the small IPEX plug of the antenna cable
-straight onto the socket on the module until it clicks. The antenna cable and the USB flat cable are a little too long: run both
-<b>once underneath the breakout board</b> to the opposite side – the antenna cable to the antenna, the flat cable to the USB-C
-panel socket – and lay them in place before screwing the board down. Do not kink the flat cable sharply.</div></div>
-<figure><img src="images/aufbau_en.svg" style="width:48%"><figcaption>Fig. 6 – Layout in the junction box (to scale); dashed: cables under the board</figcaption></figure>
-<div class="step"><b class="n">7</b><div><b>Connect the pigtails:</b> red lead (with resistor) of X into terminal <b>P25</b>, of Y into <b>P26</b>, both brown leads (shield) into <b>GND</b>.</div></div>
-<div class="step"><b class="n">8</b><div><b>Fit the OLED in the lid:</b> mount it behind the window with M2.5 standoffs and put the 7 wires into the terminals
-according to the table above. Leave the wires long enough for the hinged lid to open fully.</div></div>
-<div class="step"><b class="n">9</b><div><b>Check before the first power-on</b> (multimeter): no continuity between 3V3 and GND and between 5V and GND.
-Approx. 220 Ω between the centre pin of each BNC plug and terminal P25 or P26, no continuity to the outer contact.
-The outer contact has continuity to GND. Retighten all screw terminals slightly. <b>Close the lid</b> only after commissioning (chapter 7) so that everything is still accessible if needed.</div></div>
+<h3>5.5 Checking before the first power-on</h3>
+<div class="step"><b class="n">11</b><div><b>Visual check:</b> is the DevKit the right way round and fully seated in the board (3V3 at 3V3)? Nothing in terminal P0? Is the
+OLED on 3V3? No stray strands between neighbouring terminals? Retighten all screw terminals slightly.</div></div>
+<div class="step"><b class="n">12</b><div><b>Measure</b> (multimeter, without USB cable): no continuity between 3V3 and GND and between 5V and GND. Approx. 220 Ω between the
+centre pin of each BNC plug and terminal P25 or P26, no continuity to the outer contact; the outer contact has continuity to GND. Only
+then power on for the first time (chapter 7). Close the <b>lid</b> only after commissioning so that everything stays accessible.</div></div>
 
 <h2>6 Installing the firmware</h2>
 <h3>6.1 Without Arduino software: in the browser</h3>
