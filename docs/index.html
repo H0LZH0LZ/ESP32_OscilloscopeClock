@@ -42,7 +42,7 @@ esp-web-install-button{display:block;margin:10px 0 14px}
 .flashmsg{display:block;padding:10px 12px;border-left:4px solid #b45309;background:var(--card2);border-radius:var(--rad)}
 #allBtn{margin-left:auto;height:34px;padding:0 12px;border:1px solid var(--line);border-radius:var(--rad);background:var(--card);color:var(--acc);font:600 13px var(--sans);cursor:pointer;white-space:nowrap;text-transform:none;letter-spacing:0}
 #allBtn:hover{background:var(--hov)}
-#allBtn .ic{font-size:17px;line-height:1;margin-right:6px;vertical-align:-2px}
+#allBtn{display:inline-flex;align-items:center}#allBtn .ic{width:14px;height:14px;margin-right:7px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}   /* Doppelpfeil wie die Pfeile der Abschnitte */
 @media (max-width:360px){#allBtn{width:40px;padding:0}#allBtn .tx{display:none}#allBtn .ic{margin:0}}
 tr.hl td{background:var(--hov);transition:background .3s}
 /* Fortschrittsbalken oben (wie im Webinterface): zeigt, wie weit die Seite gelesen ist */
@@ -1763,7 +1763,7 @@ function openSec(g,o){g.classList.toggle('closed',!o);g.firstElementChild.setAtt
 // Knopf oben rechts: alle Abschnitte auf- bzw. zuklappen (Beschriftung folgt dem Zustand)
 const grps=()=>[...document.querySelectorAll('.grp')].filter(g=>g.firstElementChild&&g.firstElementChild.classList.contains('coll'));
 function allLabel(){const b=document.getElementById('allBtn');if(!b)return;const open=grps().every(g=>!g.classList.contains('closed'));
- b.dataset.open=open?'1':'';b.innerHTML=(open?'<span class="ic">⊟</span><span class="tx"><span data-l="de">Alle einklappen</span><span data-l="en">Collapse all</span></span>':'<span class="ic">⊞</span><span class="tx"><span data-l="de">Alle aufklappen</span><span data-l="en">Expand all</span></span>');
+ b.dataset.open=open?'1':'';b.innerHTML=(open?'<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 12.5 8 8l4.5 4.5M3.5 7.5 8 3l4.5 4.5"/></svg><span class="tx"><span data-l="de">Alle einklappen</span><span data-l="en">Collapse all</span></span>':'<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 3.5 8 8l4.5-4.5M3.5 8.5 8 13l4.5-4.5"/></svg><span class="tx"><span data-l="de">Alle aufklappen</span><span data-l="en">Expand all</span></span>');
  b.title=open?(document.documentElement.lang==='en'?'Collapse all':'Alle einklappen'):(document.documentElement.lang==='en'?'Expand all':'Alle aufklappen')}
 document.getElementById('allBtn').onclick=()=>{const o=!document.getElementById('allBtn').dataset.open;grps().forEach(g=>{g.classList.toggle('closed',!o);g.firstElementChild.setAttribute('aria-expanded',String(o))});allLabel();if(typeof spy==='function')spy()};
 allLabel();
