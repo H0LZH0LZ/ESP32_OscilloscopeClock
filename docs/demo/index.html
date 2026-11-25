@@ -128,9 +128,9 @@ header.fs .fscopy{display:block;position:fixed;right:calc(env(safe-area-inset-ri
 header.fs #clock{font-size:min(8vw,6.4vh)}header.fs #date{font-size:max(14px,min(4vw,2.8vh))}
 header.fs .fsbtn{position:fixed;top:calc(env(safe-area-inset-top) + 10px);right:calc(env(safe-area-inset-right) + 10px)}
 html:has(header.fs){overflow:hidden}
-.cal{display:none;margin-top:6vh;color:var(--scope-trace);font-size:max(12px,min(1.5vw,2.6vh))}
+.cal{display:none;margin:6vh auto 0;color:var(--scope-trace);font-size:max(12px,min(1.5vw,2.6vh))}
 .cal .cm{text-align:center;letter-spacing:.04em;margin-bottom:.5em;text-shadow:0 0 .2em var(--scope-glow)}
-.cal table{border-collapse:collapse;margin:0 auto}
+.cal table{border-collapse:collapse;margin:0 auto;width:100%;table-layout:fixed}
 .cal th,.cal td{width:2.3em;height:1.8em;text-align:center;font-weight:300;padding:0}
 .cal th{opacity:.6;font-size:.85em}.cal .kw{opacity:.45;font-size:.8em;border-right:1px solid color-mix(in srgb,var(--scope-trace) 30%,transparent)}
 .cal .we{opacity:.7}.cal td.today{border:1px solid var(--scope-trace);border-radius:4px;box-shadow:0 0 .4em var(--scope-glow);opacity:1}
@@ -1047,7 +1047,13 @@ async function keepAwake(on){try{if(on&&!wake&&navigator.wakeLock){wake=await na
  else if(!on&&wake){await wake.release();wake=null}}catch(e){}}
 function fsLayout(on){const h=$('uhr'),c=$('scope');h.classList.toggle('fs',on);
  $('fsBtn').setAttribute('aria-label',t(on?'Vollbild beenden':'Vollbild'));$('fsBtn').textContent=on?'✕':'⛶';
- c.width=c.height=on?1024:512;drawScope();keepAwake(on)}
+ c.width=c.height=on?1024:512;drawScope();keepAwake(on);fitFs()}
+function fitFs(){const d=$('date'),c=$('cal');d.style.fontSize=c.style.fontSize=c.style.width='';
+ if(!$('uhr').classList.contains('fs')||!matchMedia('(orientation:landscape)').matches)return;
+ const iw=e=>{e.style.display='inline-block';const r=e.getBoundingClientRect().width;e.style.display='';return r};const w=iw($('clock')),dw=iw(d);
+ if(dw>0)d.style.fontSize=parseFloat(getComputedStyle(d).fontSize)*w/dw+'px';
+ c.style.width=w+'px';c.style.fontSize=w/18.4+'px'}   /* 8 Spalten zu 2,3 em */
+addEventListener('resize',fitFs);document.fonts&&document.fonts.ready.then(fitFs);
 function fullscreen(on){const h=$('uhr');
  if(on){fsLayout(true);if(h.requestFullscreen&&!document.fullscreenElement)h.requestFullscreen().catch(()=>{})}
  else{if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});fsLayout(false)}}
@@ -1259,7 +1265,7 @@ async function status(){
   curSsid=s.wifi.connected?s.wifi.ssid:'';
   {const noNet=!s.wifi.connected;if(noNet!==lastNoNet){if(noNet||lastNoNet!==null)autoGroup('wlan-h',noNet);lastNoNet=noNet}}   // ohne WLAN: Gruppe WLAN aufklappen
   if(S&&!setBusy&&typeof s.test==='boolean'&&s.test!==!!S.test){S.test=s.test;renderSettings()}
-  if(S&&!setBusy){const p=s.profile==='DIGITAL'?1:0;if(p!==S.profile||s.dial!==S.dial){S.profile=p;S.dial=s.dial;renderSettings()}}renderCal(s.date);$('date').textContent=s.date?(t('KW')+' '+s.kw+' – '+(lang==='en'?s.date.split('.').reverse().join('-'):s.date)):t('Keine NTP-Verbindung');
+  if(S&&!setBusy){const p=s.profile==='DIGITAL'?1:0;if(p!==S.profile||s.dial!==S.dial){S.profile=p;S.dial=s.dial;renderSettings()}}renderCal(s.date);{const dt=s.date?(t('KW')+' '+s.kw+' – '+(lang==='en'?s.date.split('.').reverse().join('-'):s.date)):t('Keine NTP-Verbindung');if($('date').textContent!==dt){$('date').textContent=dt;fitFs()}}
   const st=$('status');st.replaceChildren(
    row(t('WLAN'),s.wifi.connected?s.wifi.ssid:(s.wifi.configured?t('Sucht Netz …'):t('Kein Netz eingetragen')),s.wifi.connected?'':'warn',t('Verbundenes Netz')),
    ...(s.wifi.connected?[row(t('Signalstärke'),bars(s.wifi.rssi).trim()+'  '+s.wifi.rssi+' dBm',s.wifi.rssi<-80?'warn':'',t('Über −67 dBm gut, unter −80 dBm schwach')),row(t('Netzwerkadresse'),s.wifi.ip+'\n'+s.wifi.host,'addr',t('Unter dieser Adresse ist die Uhr im Browser erreichbar'))]:[]),
