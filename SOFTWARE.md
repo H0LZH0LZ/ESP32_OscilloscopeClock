@@ -167,7 +167,7 @@ gezeichnet; der Sekundenzeiger springt wie am Oszilloskop von Sekunde zu Sekunde
 **Zifferblatt wechseln:** Wischen über die Vorschau wechselt reihum zwischen fünf Zifferblättern –
 nach links zum nächsten, nach rechts zum vorigen (Pointer-Events, ab 40 px waagerecht; senkrechtes
 Wischen scrollt weiter die Seite, `touch-action: pan-y`). Am PC gehen auch die Pfeiltasten, wenn die
-Vorschau den Fokus hat. **Antippen** (Bewegung unter 10 px) oder ⛶ öffnet das **Vollbild**; senkrechtes Wischen (Touch nur im Vollbild, Maus immer) oder ↑/↓ wechselt die Farbe der Uhr (`nextTint()`) (`fullscreen()`: Fullscreen-API auf `#uhr`, Klasse `fs`, Canvas 1024 px, Wake Lock gegen das Abschalten des Bildschirms; ohne Fullscreen-API nur seitenfüllend). Reihenfolge beim Wischen und in der
+Vorschau den Fokus hat. **Antippen** (Bewegung unter 10 px) oder ⛶ öffnet das **Vollbild**; senkrechtes Wischen (Touch nur im Vollbild, Maus immer) oder ↑/↓ wechselt die Farbe der Uhr (`nextTint()`) (`fullscreen()`: Fullscreen-API auf `#uhr`, Klasse `fs`, Canvas 1024 px, im Querformat Monatskalender `#cal` aus dem Datum der Uhr (`renderCal()`, ISO-KW), Wake Lock gegen das Abschalten des Bildschirms; ohne Fullscreen-API nur seitenfüllend). Reihenfolge beim Wischen und in der
 Auswahlliste: Ziffern 1–12 → Ziffern 12 · 3 · 6 · 9 → Bahnhof → Römisch XII · III · VI · IX → Römisch I–XII
 (Stil 0, 1, 4, 3, 2 – „Bahnhof“ steht in der Mitte):
 

@@ -128,7 +128,13 @@ header.fs .fscopy{display:block;position:fixed;right:calc(env(safe-area-inset-ri
 header.fs #clock{font-size:min(8vw,6.4vh)}header.fs #date{font-size:max(14px,min(4vw,2.8vh))}
 header.fs .fsbtn{position:fixed;top:calc(env(safe-area-inset-top) + 10px);right:calc(env(safe-area-inset-right) + 10px)}
 html:has(header.fs){overflow:hidden}
-@media (orientation:landscape){header.fs{flex-direction:row;gap:5vw}header.fs .scope canvas{width:min(56vw,90vh)}header.fs #clock{font-size:min(5.2vw,9.6vh)}header.fs #date{font-size:max(14px,min(2.2vw,4vh))}}
+.cal{display:none;margin-top:3.6vh;color:var(--scope-trace);font-size:max(12px,min(1.5vw,2.6vh))}
+.cal .cm{text-align:center;letter-spacing:.04em;margin-bottom:.5em;text-shadow:0 0 .2em var(--scope-glow)}
+.cal table{border-collapse:collapse;margin:0 auto}
+.cal th,.cal td{width:2.3em;height:1.8em;text-align:center;font-weight:300;padding:0}
+.cal th{opacity:.6;font-size:.85em}.cal .kw{opacity:.45;font-size:.8em;border-right:1px solid color-mix(in srgb,var(--scope-trace) 30%,transparent)}
+.cal .we{opacity:.7}.cal td.today{border:1px solid var(--scope-trace);border-radius:4px;box-shadow:0 0 .4em var(--scope-glow);opacity:1}
+@media (orientation:landscape){header.fs{flex-direction:row;gap:5vw}header.fs .scope canvas{width:min(56vw,90vh)}header.fs #clock{font-size:min(5.2vw,9.6vh)}header.fs #date{font-size:max(14px,min(2.2vw,4vh))}header.fs .cal{display:block}}
 .scopehint{color:var(--mute);font-size:13px;margin:0 0 6px}
 html{scroll-behavior:smooth}
 .grp{position:relative}
@@ -241,7 +247,7 @@ button,input,.set select,.logsel,#nav select,pre,.scope,#nav a{border-radius:var
  aria-label="Vorschau des Oszilloskop-Bildes – antippen für Vollbild, nach links oder rechts wischen (oder Pfeiltasten), um das Zifferblatt zu wechseln"></canvas><div class="dialtag" id="dialTag"></div>
  <button type="button" class="fsbtn" id="fsBtn" aria-label="Vollbild">⛶</button></div>
 <div class="dots" id="dots"><button type="button" id="dPrev" aria-label="Voriges Zifferblatt">‹</button><span id="dotList" style="display:flex"></span><button type="button" id="dNext" aria-label="Nächstes Zifferblatt">›</button></div>
-<div class="tbox"><div id="clock">--:--:--</div><div id="date">&nbsp;</div></div>
+<div class="tbox"><div id="clock">--:--:--</div><div id="date">&nbsp;</div><div id="cal" class="cal" aria-hidden="true"></div></div>
 <div class="fscopy">© Christian Holz</div></header>
 <div class="demo" id="demoBar"><span><b>Demo-Vorschau</b> – keine Verbindung zu einer Uhr, alle Werte sind simuliert. Die Uhrzeit ist die deines Geräts.</span>
 <button type="button" class="sec" id="demoSetup">Setup-WLAN simulieren</button></div>
@@ -1025,6 +1031,17 @@ $('scope').addEventListener('pointerup',e=>{if(swX===null)return;const dx=e.clie
  if(Math.abs(dx)>=40&&Math.abs(dx)>Math.abs(dy)*1.5)nextDial(dx<0?1:-1);
  else if(Math.abs(dy)>=40&&Math.abs(dy)>Math.abs(dx)*1.5&&(e.pointerType==='mouse'||$('uhr').classList.contains('fs')))nextTint(dy<0?1:-1);   // hoch/runter: Farbe (Touch nur im Vollbild, sonst scrollt die Seite)
  else if(Math.abs(dx)<10&&Math.abs(dy)<10)fullscreen(!$('uhr').classList.contains('fs'))});   // Tippen: Vollbild an/aus
+let calKey='';
+function renderCal(ds){const m=/^(\d+)\.(\d+)\.(\d+)$/.exec(ds||'');const k=(m?ds:'')+lang;if(k===calKey)return;calKey=k;const el=$('cal');if(!m){el.innerHTML='';return}
+ const t0=+m[1],mo=m[2]-1,y=+m[3],en=lang==='en';
+ const MN=en?['January','February','March','April','May','June','July','August','September','October','November','December']:['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+ const WD=en?['Mo','Tu','We','Th','Fr','Sa','Su']:['Mo','Di','Mi','Do','Fr','Sa','So'];
+ const kw=(yy,mm,dd)=>{const a=new Date(Date.UTC(yy,mm,dd));a.setUTCDate(dd+4-(a.getUTCDay()||7));return Math.ceil(((a-Date.UTC(a.getUTCFullYear(),0,1))/864e5+1)/7)};
+ const off=(new Date(y,mo,1).getDay()+6)%7,n=new Date(y,mo+1,0).getDate();
+ let h='<div class="cm">'+MN[mo]+' '+y+'</div><table><tr><th class="kw">'+(en?'Wk':'KW')+'</th>'+WD.map((w,i)=>'<th'+(i>4?' class="we"':'')+'>'+w+'</th>').join('')+'</tr>';
+ for(let d=1-off;d<=n;){h+='<tr><td class="kw">'+kw(y,mo,Math.max(d,1))+'</td>';
+  for(let i=0;i<7;i++,d++){const v=d>=1&&d<=n,c=[v&&d===t0?'today':'',i>4?'we':''].join(' ').trim();h+='<td'+(c?' class="'+c+'"':'')+'>'+(v?d:'')+'</td>'}h+='</tr>'}
+ el.innerHTML=h+'</table>'}
 let wake=null;
 async function keepAwake(on){try{if(on&&!wake&&navigator.wakeLock){wake=await navigator.wakeLock.request('screen');wake.addEventListener('release',()=>{wake=null})}
  else if(!on&&wake){await wake.release();wake=null}}catch(e){}}
@@ -1242,7 +1259,7 @@ async function status(){
   curSsid=s.wifi.connected?s.wifi.ssid:'';
   {const noNet=!s.wifi.connected;if(noNet!==lastNoNet){if(noNet||lastNoNet!==null)autoGroup('wlan-h',noNet);lastNoNet=noNet}}   // ohne WLAN: Gruppe WLAN aufklappen
   if(S&&!setBusy&&typeof s.test==='boolean'&&s.test!==!!S.test){S.test=s.test;renderSettings()}
-  if(S&&!setBusy){const p=s.profile==='DIGITAL'?1:0;if(p!==S.profile||s.dial!==S.dial){S.profile=p;S.dial=s.dial;renderSettings()}}$('date').textContent=s.date?(t('KW')+' '+s.kw+' – '+(lang==='en'?s.date.split('.').reverse().join('-'):s.date)):t('Keine NTP-Verbindung');
+  if(S&&!setBusy){const p=s.profile==='DIGITAL'?1:0;if(p!==S.profile||s.dial!==S.dial){S.profile=p;S.dial=s.dial;renderSettings()}}renderCal(s.date);$('date').textContent=s.date?(t('KW')+' '+s.kw+' – '+(lang==='en'?s.date.split('.').reverse().join('-'):s.date)):t('Keine NTP-Verbindung');
   const st=$('status');st.replaceChildren(
    row(t('WLAN'),s.wifi.connected?s.wifi.ssid:(s.wifi.configured?t('Sucht Netz …'):t('Kein Netz eingetragen')),s.wifi.connected?'':'warn',t('Verbundenes Netz')),
    ...(s.wifi.connected?[row(t('Signalstärke'),bars(s.wifi.rssi).trim()+'  '+s.wifi.rssi+' dBm',s.wifi.rssi<-80?'warn':'',t('Über −67 dBm gut, unter −80 dBm schwach')),row(t('Netzwerkadresse'),s.wifi.ip+'\n'+s.wifi.host,'addr',t('Unter dieser Adresse ist die Uhr im Browser erreichbar'))]:[]),
