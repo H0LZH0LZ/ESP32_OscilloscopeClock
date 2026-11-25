@@ -292,7 +292,8 @@ h2.coll::after{content:"";width:8px;height:8px;margin:0 10px 4px 0;border:solid 
 :root[data-theme="dark"]{--hov:#2c2c2e}
 h1{position:fixed;inset:0 0 auto;top:env(safe-area-inset-top);justify-content:flex-start;height:64px;padding:0 16px 0 calc(env(safe-area-inset-left) + 68px);
  background:var(--card);border-bottom:1px solid var(--line);color:var(--fg);font-size:17px;font-weight:600;text-transform:none;letter-spacing:.01em}
-main{padding-top:64px}
+main{padding-top:calc(64px + env(safe-area-inset-top))}
+h1::before{content:"";position:absolute;left:0;right:0;bottom:100%;height:env(safe-area-inset-top);background:var(--card)}   /* Streifen über der Titelleiste (Safari: Seite reicht unter die Browserleiste) schließen */
 h1{white-space:nowrap;font-size:clamp(14px,4.4vw,17px)}
 h1 .ver{display:inline-block;margin-left:8px;padding:1px 8px;border-radius:var(--rad);background:var(--acc);color:var(--bg);font-size:12px;font-weight:600;letter-spacing:.02em}
 #menuBtn{border:0;box-shadow:none;background:transparent;border-radius:var(--rad)}
@@ -310,7 +311,7 @@ button,input,.set select,.logsel,#nav select,pre,.scope,#nav a{border-radius:var
  #nav{transform:none;width:280px;z-index:20;top:calc(env(safe-area-inset-top) + 64px);padding-top:16px}   /* unter der Titelleiste: scrollt nicht dahinter */
  #menuBtn,#shade{display:none}
  h1{padding-left:24px}
- main{margin-left:280px;max-width:none;padding:64px 40px 40px}
+ main{margin-left:280px;max-width:none;padding:calc(64px + env(safe-area-inset-top)) 40px 40px}
  main>*:not(h1){max-width:760px;margin-left:auto;margin-right:auto}}
 footer.copy{text-align:center;font-size:12px;color:var(--mute);opacity:.7;padding:8px 16px calc(24px + env(safe-area-inset-bottom))}   /* Fußzeile mit Copyright */
 @media (min-width:1100px){footer.copy{margin-left:280px}}
