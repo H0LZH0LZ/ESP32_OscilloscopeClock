@@ -40,10 +40,10 @@ esp-web-install-button{display:block;margin:10px 0 14px}
 .flashbtn{font:inherit;font-weight:700;font-size:16px;padding:12px 20px;border:0;border-radius:var(--rad);background:var(--acc);color:var(--accfg);cursor:pointer}
 .flashbtn:hover{filter:brightness(1.08)}
 .flashmsg{display:block;padding:10px 12px;border-left:4px solid #b45309;background:var(--card2);border-radius:var(--rad)}
-#allBtn{position:fixed;top:calc(env(safe-area-inset-top) + 14px);right:calc(env(safe-area-inset-right) + 12px);z-index:30;height:36px;padding:0 12px;border:1px solid var(--line);border-radius:var(--rad);background:var(--card);color:var(--acc);font:600 13px var(--sans);cursor:pointer;white-space:nowrap}
+#allBtn{margin-left:auto;height:34px;padding:0 12px;border:1px solid var(--line);border-radius:var(--rad);background:var(--card);color:var(--acc);font:600 13px var(--sans);cursor:pointer;white-space:nowrap;text-transform:none;letter-spacing:0}
 #allBtn:hover{background:var(--hov)}
 #allBtn .ic{font-size:17px;line-height:1;margin-right:6px;vertical-align:-2px}
-@media (max-width:600px){#allBtn{width:40px;padding:0}#allBtn .tx{display:none}#allBtn .ic{margin:0}}
+@media (max-width:360px){#allBtn{width:40px;padding:0}#allBtn .tx{display:none}#allBtn .ic{margin:0}}
 tr.hl td{background:var(--hov);transition:background .3s}
 /* Fortschrittsbalken oben (wie im Webinterface): zeigt, wie weit die Seite gelesen ist */
 #prog{position:fixed;top:env(safe-area-inset-top);left:0;right:0;height:3px;z-index:36;background:var(--acc);transform:scaleX(0);transform-origin:0 0;pointer-events:none}
@@ -218,10 +218,10 @@ a.row>span:last-child{font-size:18px}
 <div id="shade"></div>
 <main>
 <h1><span>ESP32 Oscilloscope Clock<span class="ver">v2.0</span></span></h1>
-<!-- Alle Abschnitte auf-/zuklappen -->
-<button type="button" id="allBtn" aria-label="Alle Abschnitte aufklappen / Expand all sections"><span data-l="de">Alle aufklappen</span><span data-l="en">Expand all</span></button>
 
-<div class="grp"><h2 id="projekt-h"><span data-l="de">Projekt</span><span data-l="en">Project</span></h2>
+<div class="grp"><h2 id="projekt-h"><span data-l="de">Projekt</span><span data-l="en">Project</span>
+ <!-- Alle Abschnitte auf-/zuklappen -->
+ <button type="button" id="allBtn" aria-label="Alle Abschnitte aufklappen / Expand all sections"></button></h2>
 <section class="intro">
  <div class="hero">
   <img src="images/oszilloskop_uhr.png" alt="Die Uhr auf dem Oszilloskop" width="520" height="520">
