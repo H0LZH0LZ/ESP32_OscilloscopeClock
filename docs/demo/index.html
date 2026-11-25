@@ -37,7 +37,7 @@ header{padding:0 0 4px;text-align:center;scroll-margin-top:calc(env(safe-area-in
 #clock{font:300 50px/1.1 var(--sans);letter-spacing:.02em;margin:4px 0 0;color:var(--scope-trace)}
 #clock i{display:inline-block;width:.62em;font-style:normal;text-align:center}
 #clock .ap{font-size:.4em;margin-left:.25em;letter-spacing:.04em}
-#date{color:var(--scope-trace);font-size:21px;margin-top:2px}
+#date{color:var(--scope-trace);font-size:21px;margin-top:2px;letter-spacing:.02em}
 .scope canvas{margin:0 auto}
 section{background:var(--card);border-radius:14px;margin:0 0 14px;padding:6px 16px}
 h2{position:sticky;top:calc(env(safe-area-inset-top) + 64px);scroll-margin-top:calc(env(safe-area-inset-top) + 64px);
@@ -119,8 +119,10 @@ header.fs{position:fixed;inset:0;z-index:100;margin:0!important;max-width:none!i
 header.fs .scope{margin:0;padding:0;background:transparent}
 header.fs .scope canvas{width:min(92vw,74vh);max-width:none}
 header.fs .dots{display:none}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) header.fs{background:var(--scope-bg)}}
+:root[data-theme="dark"] header.fs{background:var(--scope-bg)}
 header.fs .scope canvas{touch-action:none}
-header.fs #clock,header.fs #date{text-shadow:0 0 .06em var(--scope-halo),0 0 .3em var(--scope-glow),0 0 .6em var(--scope-glow)}
+header.fs #clock,header.fs #date{text-shadow:0 0 .05em var(--scope-halo),0 0 .22em var(--scope-glow)}
 .fscopy{display:none}
 header.fs .fscopy{display:block;position:fixed;right:calc(env(safe-area-inset-right) + 12px);bottom:calc(env(safe-area-inset-bottom) + 8px);font-size:9px;color:var(--mute);opacity:.5;pointer-events:none}
 header.fs #clock{font-size:min(8vw,6.4vh)}header.fs #date{font-size:max(14px,min(4vw,2.8vh))}

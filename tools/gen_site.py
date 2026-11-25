@@ -98,6 +98,10 @@ def chapters(path):
         content = re.sub(r'from the <a href="#kap\d+">project page</a>', 'from this page', content)
         # Kapitel 4: Knopf "Firmware installieren" (ESP Web Tools, Skript am Ende von docs/index.html)
         content = content.replace('<!-- FIRMWARE-KNOPF -->', FLASH_BUTTON['en' if path.endswith('.en.html') else 'de'])
+        # Quellenverweise [n] → Zeile im Quellenverzeichnis; englische IDs eindeutig (beide Sprachen stehen auf der Seite)
+        if path.endswith('.en.html'):
+            content = re.sub(r'(id="q\d+)"', r'\1-en"', content)
+            content = re.sub(r'(href="#q\d+)"', r'\1-en"', content)
         # externe Links (Händler, GitHub …) in einem neuen Tab öffnen
         content = re.sub(r'<a href="(https?://[^"]*)"', r'<a href="\1" target="_blank" rel="noopener"', content)
         out.append((title, content))

@@ -44,6 +44,7 @@ figcaption{font-size:8.8pt;color:#555;margin-top:1.2mm}
 .abk table{font-size:8.6pt;column-count:1}
 .abk td{border:0;border-bottom:1px solid #e3e6e9;padding:1mm 2mm}.abk td:first-child{width:18mm;font-weight:700;white-space:nowrap}
 .abk .cols{display:flex;gap:6mm;align-items:flex-start}.abk .cols table{flex:1}
+a.ref{text-decoration:none}
 table.refs td{border:0;padding:1mm 2mm 1mm 0}table.refs td:first-child{width:9mm;white-space:nowrap;font-weight:700}table.refs a{overflow-wrap:anywhere}
 .two{display:flex;gap:4mm}.two figure{flex:1}
 .pb{break-before:page}
@@ -252,13 +253,13 @@ Die Pixelverschiebung versetzt die Anzeige jede Minute um einen Pixel, damit kei
 landen in einem 8-KB-Ringpuffer, den der Debug-Bereich anzeigt.</p>
 <p><b>Vektordaten:</b> Zifferblatt, Ziffern, Zeiger und Testbild sind eigene Zeichnungen, erzeugt mit <code>tools/gen_vectors.py</code>
 (Koordinaten 0–255, 8 Bit je Achse).</p>
-<p><b>Speicher:</b> Programmspeicher 1.245.898 Byte (95 % beim Standard-Partitionsschema, ca. 39 % mit „Huge APP“), globale Variablen
+<p><b>Speicher:</b> Programmspeicher 1.245.930 Byte (95 % beim Standard-Partitionsschema, ca. 39 % mit „Huge APP“), globale Variablen
 75.708 Byte (23 %). Die Webseite liegt gzip-komprimiert im Flash (26 KB), die Schrift (Raleway, auf die benötigten Zeichen reduziert) als WOFF2 (30 KB).</p>
 
 <h2>3 Stand der Technik</h2>
 <h3>3.1 Die ursprüngliche Oscilloscope Clock</h3>
-<p>Die Idee stammt von Mauro Pintus (Mailand, 2018) [1]: Ein ESP32 zeichnet über seine beiden eingebauten Digital-Analog-Wandler
-[2] eine analoge Uhr auf ein Oszilloskop im X/Y-Betrieb, die Uhrzeit kommt per NTP aus dem Internet. Zifferblatt und Zeiger liegen
+<p>Die Idee stammt von Mauro Pintus (Mailand, 2018) [<a class="ref" href="#q1">1</a>]: Ein ESP32 zeichnet über seine beiden eingebauten Digital-Analog-Wandler
+[<a class="ref" href="#q2">2</a>] eine analoge Uhr auf ein Oszilloskop im X/Y-Betrieb, die Uhrzeit kommt per NTP aus dem Internet. Zifferblatt und Zeiger liegen
 als Tabellen von Linienzügen vor, die der Strahl nacheinander abfährt. Die Uhr braucht dafür außer dem ESP32 nur zwei Leitungen
 zum Oszilloskop.</p>
 <h3>3.2 Andere Oszilloskop-Uhren</h3>
@@ -269,13 +270,13 @@ Zeile zu schreiben.</p>
 <h3>3.3 Neu in Version 2.0</h3>
 <ul>
  <li><b>Zwei Prozessorkerne:</b> Kern 1 zeichnet ohne Pause, Kern 0 übernimmt WLAN, Zeit, Webserver und OLED (Kapitel 2) –
- auf Basis des Arduino-Cores für den ESP32 [3].</li>
+ auf Basis des Arduino-Cores für den ESP32 [<a class="ref" href="#q3">3</a>].</li>
  <li><b>Gleich helle Linien</b> durch konstante Strahlgeschwindigkeit und eine Rundtour mit möglichst kurzen Sprüngen.</li>
  <li><b>Profile ANALOG und DIGITAL</b> für Röhren- und Speicher-Oszilloskope, optional Dunkeltastung über den Z-Eingang.</li>
  <li><b>Webinterface</b> mit Live-Vorschau, allen Einstellungen und WLAN-Verwaltung; Einrichtung über ein Setup-WLAN.</li>
- <li><b>OLED-Anzeige</b> mit der Bibliothek U8g2 [4] und optionale <b>Echtzeituhr DS3231</b> [6].</li>
+ <li><b>OLED-Anzeige</b> mit der Bibliothek U8g2 [<a class="ref" href="#q4">4</a>] und optionale <b>Echtzeituhr DS3231</b> [<a class="ref" href="#q6">6</a>].</li>
  <li><b>Fünf Zifferblätter</b>, Bildverschiebung gegen Einbrennen und ein <b>Flimmerschutz</b>.</li>
- <li><b>Installation im Browser</b> mit ESP Web Tools [5]; Bohrplan als technische Zeichnung nach [7, 8].</li>
+ <li><b>Installation im Browser</b> mit ESP Web Tools [<a class="ref" href="#q5">5</a>]; Bohrplan als technische Zeichnung nach [<a class="ref" href="#q7">7</a>, <a class="ref" href="#q8">8</a>].</li>
 </ul>
 
 <h2>4 Teileliste und Werkzeug</h2>
@@ -427,8 +428,8 @@ neue Version die ZIP-Datei erneut herunterladen und importieren.</p>
 <h3>6.4 Partitionsschema: zwei Varianten</h3>
 <table style="break-inside:avoid">
  <tr><th>Variante</th><th>Arduino IDE: Partition Scheme</th><th>PlatformIO</th><th>Programmspeicher</th></tr>
- <tr><td><b>A – Huge APP</b> (empfohlen)</td><td>„Huge APP (3MB No OTA/1MB SPIFFS)“</td><td><code>pio run -t upload</code></td><td>1.245.898 von 3.145.728 Byte (<b>39 %</b>)</td></tr>
- <tr><td><b>B – Standard</b></td><td>„Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)“ – Voreinstellung, nichts umstellen</td><td><code>pio run -e standard -t upload</code></td><td>1.245.898 von 1.310.720 Byte (<b>95 %</b>)</td></tr>
+ <tr><td><b>A – Huge APP</b> (empfohlen)</td><td>„Huge APP (3MB No OTA/1MB SPIFFS)“</td><td><code>pio run -t upload</code></td><td>1.245.930 von 3.145.728 Byte (<b>39 %</b>)</td></tr>
+ <tr><td><b>B – Standard</b></td><td>„Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)“ – Voreinstellung, nichts umstellen</td><td><code>pio run -e standard -t upload</code></td><td>1.245.930 von 1.310.720 Byte (<b>95 %</b>)</td></tr>
 </table>
 <p>Beide Varianten laufen gleich. <b>A</b> lässt rund 1,9 MB Platz für Erweiterungen; die Uhr nutzt weder OTA-Updates noch
 SPIFFS, deshalb fehlt dabei nichts. <b>B</b> funktioniert ohne Umstellen, hat aber nur noch etwa 64 KB Reserve. Ein Wechsel
@@ -767,16 +768,16 @@ Teile ergeben Byte für Byte dasselbe Abbild wie die Arduino-Software. <b>Der Te
 
 <h2>Quellenverzeichnis</h2>
 <table class="refs">
- <tr><td>[1]</td><td>M. Pintus: <i>ESP32 Oscilloscope Clock</i>, Mailand 2018 – <a href="https://github.com/maurohh/ESP32_OscilloscopeClock">github.com/maurohh/ESP32_OscilloscopeClock</a></td></tr>
- <tr><td>[2]</td><td>Espressif Systems: <i>ESP32 Technical Reference Manual</i> (Digital-Analog-Wandler) – <a href="https://www.espressif.com/sites/default/files/documentation/esp32_technical_reference_manual_en.pdf">www.espressif.com/sites/default/files/documentation/esp32_technical_reference_manual_en.pdf</a></td></tr>
- <tr><td>[3]</td><td>Espressif Systems: <i>Arduino core for the ESP32</i> (arduino-esp32), Version 3.3.12 – <a href="https://github.com/espressif/arduino-esp32">github.com/espressif/arduino-esp32</a></td></tr>
- <tr><td>[4]</td><td>O. Kraus: <i>U8g2</i> – Bibliothek für monochrome Displays, Version 2.36 – <a href="https://github.com/olikraus/u8g2">github.com/olikraus/u8g2</a></td></tr>
- <tr><td>[5]</td><td>ESPHome: <i>ESP Web Tools</i> – Firmware im Browser installieren, Version 10.4 – <a href="https://esphome.github.io/esp-web-tools/">esphome.github.io/esp-web-tools/</a></td></tr>
- <tr><td>[6]</td><td>Analog Devices (Maxim Integrated): <i>DS3231</i> – Datenblatt der Echtzeituhr – <a href="https://www.analog.com/media/en/technical-documentation/data-sheets/DS3231.pdf">www.analog.com/media/en/technical-documentation/data-sheets/DS3231.pdf</a></td></tr>
- <tr><td>[7]</td><td>TU München, Werkstatt EWT: <i>Grundlagen des Technischen Zeichnens</i> – <a href="https://www.epe.ed.tum.de/fileadmin/w00bzo/ewt/Werkstatt/Zeichnungserstellung.pdf">www.epe.ed.tum.de/fileadmin/w00bzo/ewt/Werkstatt/Zeichnungserstellung.pdf</a></td></tr>
- <tr><td>[8]</td><td>DIN ISO 128 (Darstellung) und DIN ISO 129 (Bemaßung) für technische Zeichnungen; DIN EN ISO 7200 (Schriftfeld)</td></tr>
- <tr><td>[9]</td><td>The Raleway Project Authors: <i>Raleway</i>, SIL Open Font License 1.1 – <a href="https://fonts.google.com/specimen/Raleway">fonts.google.com/specimen/Raleway</a></td></tr>
- <tr><td>[10]</td><td>TH Nürnberg, LEKO: <i>Die Struktur einer Arbeit in den Ingenieur- und Naturwissenschaften</i> (Gliederung dieser Anleitung) – <a href="https://leko.service.th-nuernberg.de/owl/artikel/die-struktur-einer-arbeit-in-den-ingenieur-und-naturwissenschaften-ing/">leko.service.th-nuernberg.de/owl/artikel/die-struktur-einer-arbeit-in-den-ingenieur-und-naturwissenschaften-ing/</a></td></tr>
+ <tr id="q1"><td>[1]</td><td>M. Pintus: <i>ESP32 Oscilloscope Clock</i>, Mailand 2018 – <a href="https://github.com/maurohh/ESP32_OscilloscopeClock">github.com/maurohh/ESP32_OscilloscopeClock</a></td></tr>
+ <tr id="q2"><td>[2]</td><td>Espressif Systems: <i>ESP32 Technical Reference Manual</i> (Digital-Analog-Wandler) – <a href="https://www.espressif.com/sites/default/files/documentation/esp32_technical_reference_manual_en.pdf">www.espressif.com/sites/default/files/documentation/esp32_technical_reference_manual_en.pdf</a></td></tr>
+ <tr id="q3"><td>[3]</td><td>Espressif Systems: <i>Arduino core for the ESP32</i> (arduino-esp32), Version 3.3.12 – <a href="https://github.com/espressif/arduino-esp32">github.com/espressif/arduino-esp32</a></td></tr>
+ <tr id="q4"><td>[4]</td><td>O. Kraus: <i>U8g2</i> – Bibliothek für monochrome Displays, Version 2.36 – <a href="https://github.com/olikraus/u8g2">github.com/olikraus/u8g2</a></td></tr>
+ <tr id="q5"><td>[5]</td><td>ESPHome: <i>ESP Web Tools</i> – Firmware im Browser installieren, Version 10.4 – <a href="https://esphome.github.io/esp-web-tools/">esphome.github.io/esp-web-tools/</a></td></tr>
+ <tr id="q6"><td>[6]</td><td>Analog Devices (Maxim Integrated): <i>DS3231</i> – Datenblatt der Echtzeituhr – <a href="https://www.analog.com/media/en/technical-documentation/data-sheets/DS3231.pdf">www.analog.com/media/en/technical-documentation/data-sheets/DS3231.pdf</a></td></tr>
+ <tr id="q7"><td>[7]</td><td>TU München, Werkstatt EWT: <i>Grundlagen des Technischen Zeichnens</i> – <a href="https://www.epe.ed.tum.de/fileadmin/w00bzo/ewt/Werkstatt/Zeichnungserstellung.pdf">www.epe.ed.tum.de/fileadmin/w00bzo/ewt/Werkstatt/Zeichnungserstellung.pdf</a></td></tr>
+ <tr id="q8"><td>[8]</td><td>DIN ISO 128 (Darstellung) und DIN ISO 129 (Bemaßung) für technische Zeichnungen; DIN EN ISO 7200 (Schriftfeld)</td></tr>
+ <tr id="q9"><td>[9]</td><td>The Raleway Project Authors: <i>Raleway</i>, SIL Open Font License 1.1 – <a href="https://fonts.google.com/specimen/Raleway">fonts.google.com/specimen/Raleway</a></td></tr>
+ <tr id="q10"><td>[10]</td><td>TH Nürnberg, LEKO: <i>Die Struktur einer Arbeit in den Ingenieur- und Naturwissenschaften</i> (Gliederung dieser Anleitung) – <a href="https://leko.service.th-nuernberg.de/owl/artikel/die-struktur-einer-arbeit-in-den-ingenieur-und-naturwissenschaften-ing/">leko.service.th-nuernberg.de/owl/artikel/die-struktur-einer-arbeit-in-den-ingenieur-und-naturwissenschaften-ing/</a></td></tr>
 </table>
 
 <h2>A Anhang</h2>

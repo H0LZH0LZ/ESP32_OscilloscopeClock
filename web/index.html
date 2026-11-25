@@ -100,7 +100,7 @@ header{padding:0 0 4px;text-align:center;scroll-margin-top:calc(env(safe-area-in
    damit die Uhrzeit beim Weiterzählen nicht hin und her springt. */
 #clock i{display:inline-block;width:.62em;font-style:normal;text-align:center}
 #clock .ap{font-size:.4em;margin-left:.25em;letter-spacing:.04em}
-#date{color:var(--scope-trace);font-size:21px;margin-top:2px}   /* Uhrzeit und Datum im Grün der Uhr */
+#date{color:var(--scope-trace);font-size:21px;margin-top:2px;letter-spacing:.02em}   /* Uhrzeit und Datum im Grün der Uhr */
 .scope canvas{margin:0 auto}
 section{background:var(--card);border-radius:14px;margin:0 0 14px;padding:6px 16px}   /* oben/unten 6 px + Innenabstand der Zeilen ≈ 16 px wie links/rechts */
 /* Abschnittsüberschriften bleiben beim Scrollen direkt unter der Titelleiste
@@ -198,8 +198,11 @@ header.fs{position:fixed;inset:0;z-index:100;margin:0!important;max-width:none!i
 header.fs .scope{margin:0;padding:0;background:transparent}
 header.fs .scope canvas{width:min(92vw,74vh);max-width:none}
 header.fs .dots{display:none}
+/* Vollbild dunkel: Hintergrund = Schirmfarbe der Uhr, damit kein Rand um das Zifferblatt sichtbar ist */
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) header.fs{background:var(--scope-bg)}}
+:root[data-theme="dark"] header.fs{background:var(--scope-bg)}
 header.fs .scope canvas{touch-action:none}   /* im Vollbild: senkrechtes Wischen wechselt die Farbe statt zu scrollen */
-header.fs #clock,header.fs #date{text-shadow:0 0 .06em var(--scope-halo),0 0 .3em var(--scope-glow),0 0 .6em var(--scope-glow)}   /* Leuchtschein wie die Spur der Uhr */
+header.fs #clock,header.fs #date{text-shadow:0 0 .05em var(--scope-halo),0 0 .22em var(--scope-glow)}   /* Leuchtschein wie die Spur der Uhr */
 .fscopy{display:none}   /* nur im Vollbild: klein unten rechts */
 header.fs .fscopy{display:block;position:fixed;right:calc(env(safe-area-inset-right) + 12px);bottom:calc(env(safe-area-inset-bottom) + 8px);font-size:9px;color:var(--mute);opacity:.5;pointer-events:none}
 header.fs #clock{font-size:min(8vw,6.4vh)}header.fs #date{font-size:max(14px,min(4vw,2.8vh))}

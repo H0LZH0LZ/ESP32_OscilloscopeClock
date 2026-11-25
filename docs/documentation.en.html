@@ -44,6 +44,7 @@ figcaption{font-size:8.8pt;color:#555;margin-top:1.2mm}
 .abk table{font-size:8.6pt;column-count:1}
 .abk td{border:0;border-bottom:1px solid #e3e6e9;padding:1mm 2mm}.abk td:first-child{width:18mm;font-weight:700;white-space:nowrap}
 .abk .cols{display:flex;gap:6mm;align-items:flex-start}.abk .cols table{flex:1}
+a.ref{text-decoration:none}
 table.refs td{border:0;padding:1mm 2mm 1mm 0}table.refs td:first-child{width:9mm;white-space:nowrap;font-weight:700}table.refs a{overflow-wrap:anywhere}
 .two{display:flex;gap:4mm}.two figure{flex:1}
 .pb{break-before:page}
@@ -249,13 +250,13 @@ its frames (frame rate in the status), an idle hook measures the load of core 0,
 the debug section.</p>
 <p><b>Vector data:</b> dial, numerals, hands and test pattern are original drawings, generated with <code>tools/gen_vectors.py</code>
 (coordinates 0–255, 8 bits per axis).</p>
-<p><b>Memory:</b> program memory 1,245,898 bytes (95 % with the default partition scheme, approx. 39 % with “Huge APP”), global variables
+<p><b>Memory:</b> program memory 1,245,930 bytes (95 % with the default partition scheme, approx. 39 % with “Huge APP”), global variables
 75,708 bytes (23 %). The web page is stored gzip-compressed in flash (26 KB), the font (Raleway, reduced to the characters needed) as WOFF2 (30 KB).</p>
 
 <h2>3 State of the art</h2>
 <h3>3.1 The original Oscilloscope Clock</h3>
-<p>The idea comes from Mauro Pintus (Milan, 2018) [1]: an ESP32 draws an analogue clock on an oscilloscope in X/Y mode via its two
-built-in digital-to-analogue converters [2], the time comes from the internet via NTP. Dial and hands are stored as tables of
+<p>The idea comes from Mauro Pintus (Milan, 2018) [<a class="ref" href="#q1">1</a>]: an ESP32 draws an analogue clock on an oscilloscope in X/Y mode via its two
+built-in digital-to-analogue converters [<a class="ref" href="#q2">2</a>], the time comes from the internet via NTP. Dial and hands are stored as tables of
 polylines which the beam traces one after another. Apart from the ESP32, the clock only needs two wires to the oscilloscope.</p>
 <h3>3.2 Other oscilloscope clocks</h3>
 <p>Clocks and graphics on the oscilloscope also exist as demonstration and kit boards. Usually a microcontroller generates the deflection
@@ -264,13 +265,13 @@ graphics</b>: the beam traces the lines directly instead of writing line by line
 <h3>3.3 New in version 2.0</h3>
 <ul>
  <li><b>Two processor cores:</b> core 1 draws without pause, core 0 handles Wi-Fi, time, web server and OLED (chapter 2) – based
- on the Arduino core for the ESP32 [3].</li>
+ on the Arduino core for the ESP32 [<a class="ref" href="#q3">3</a>].</li>
  <li><b>Equally bright lines</b> thanks to a constant beam speed and a round trip with jumps as short as possible.</li>
  <li><b>Profiles ANALOG and DIGITAL</b> for CRT and storage oscilloscopes, optional Z blanking via the Z input.</li>
  <li><b>Web interface</b> with live preview, all settings and Wi-Fi management; set-up via a setup network.</li>
- <li><b>OLED display</b> with the U8g2 library [4] and optional <b>DS3231 real-time clock</b> [6].</li>
+ <li><b>OLED display</b> with the U8g2 library [<a class="ref" href="#q4">4</a>] and optional <b>DS3231 real-time clock</b> [<a class="ref" href="#q6">6</a>].</li>
  <li><b>Five dials</b>, picture shift against burn-in and a <b>flicker guard</b>.</li>
- <li><b>Installation in the browser</b> with ESP Web Tools [5]; drilling template as a technical drawing according to [7, 8].</li>
+ <li><b>Installation in the browser</b> with ESP Web Tools [<a class="ref" href="#q5">5</a>]; drilling template as a technical drawing according to [<a class="ref" href="#q7">7</a>, <a class="ref" href="#q8">8</a>].</li>
 </ul>
 
 <h2>4 Parts list and tools</h2>
@@ -420,8 +421,8 @@ version download and import the ZIP file again.</p>
 <h3>6.4 Partition scheme: two variants</h3>
 <table style="break-inside:avoid">
  <tr><th>Variant</th><th>Arduino IDE: Partition Scheme</th><th>PlatformIO</th><th>Program memory</th></tr>
- <tr><td><b>A – Huge APP</b> (recommended)</td><td>“Huge APP (3MB No OTA/1MB SPIFFS)”</td><td><code>pio run -t upload</code></td><td>1,245,898 of 3,145,728 bytes (<b>39 %</b>)</td></tr>
- <tr><td><b>B – Standard</b></td><td>“Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)” – the default, nothing to change</td><td><code>pio run -e standard -t upload</code></td><td>1,245,898 of 1,310,720 bytes (<b>95 %</b>)</td></tr>
+ <tr><td><b>A – Huge APP</b> (recommended)</td><td>“Huge APP (3MB No OTA/1MB SPIFFS)”</td><td><code>pio run -t upload</code></td><td>1,245,930 of 3,145,728 bytes (<b>39 %</b>)</td></tr>
+ <tr><td><b>B – Standard</b></td><td>“Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)” – the default, nothing to change</td><td><code>pio run -e standard -t upload</code></td><td>1,245,930 of 1,310,720 bytes (<b>95 %</b>)</td></tr>
 </table>
 <p>Both variants work the same. <b>A</b> leaves about 1.9 MB for extensions; the clock uses neither OTA updates nor SPIFFS,
 so nothing is lost. <b>B</b> works without changing anything but leaves only about 64 KB. You can switch at any time (choose
@@ -761,16 +762,16 @@ byte the same image as the Arduino software. <b>The test on real hardware is sti
 
 <h2>References</h2>
 <table class="refs">
- <tr><td>[1]</td><td>M. Pintus: <i>ESP32 Oscilloscope Clock</i>, Milan 2018 – <a href="https://github.com/maurohh/ESP32_OscilloscopeClock">github.com/maurohh/ESP32_OscilloscopeClock</a></td></tr>
- <tr><td>[2]</td><td>Espressif Systems: <i>ESP32 Technical Reference Manual</i> (digital-to-analogue converter) – <a href="https://www.espressif.com/sites/default/files/documentation/esp32_technical_reference_manual_en.pdf">www.espressif.com/sites/default/files/documentation/esp32_technical_reference_manual_en.pdf</a></td></tr>
- <tr><td>[3]</td><td>Espressif Systems: <i>Arduino core for the ESP32</i> (arduino-esp32), version 3.3.12 – <a href="https://github.com/espressif/arduino-esp32">github.com/espressif/arduino-esp32</a></td></tr>
- <tr><td>[4]</td><td>O. Kraus: <i>U8g2</i> – library for monochrome displays, version 2.36 – <a href="https://github.com/olikraus/u8g2">github.com/olikraus/u8g2</a></td></tr>
- <tr><td>[5]</td><td>ESPHome: <i>ESP Web Tools</i> – install firmware from the browser, version 10.4 – <a href="https://esphome.github.io/esp-web-tools/">esphome.github.io/esp-web-tools/</a></td></tr>
- <tr><td>[6]</td><td>Analog Devices (Maxim Integrated): <i>DS3231</i> – real-time clock data sheet – <a href="https://www.analog.com/media/en/technical-documentation/data-sheets/DS3231.pdf">www.analog.com/media/en/technical-documentation/data-sheets/DS3231.pdf</a></td></tr>
- <tr><td>[7]</td><td>TU Munich, EWT workshop: <i>Grundlagen des Technischen Zeichnens</i> (basics of technical drawing) – <a href="https://www.epe.ed.tum.de/fileadmin/w00bzo/ewt/Werkstatt/Zeichnungserstellung.pdf">www.epe.ed.tum.de/fileadmin/w00bzo/ewt/Werkstatt/Zeichnungserstellung.pdf</a></td></tr>
- <tr><td>[8]</td><td>DIN ISO 128 (presentation) and DIN ISO 129 (dimensioning) for technical drawings; DIN EN ISO 7200 (title block)</td></tr>
- <tr><td>[9]</td><td>The Raleway Project Authors: <i>Raleway</i>, SIL Open Font License 1.1 – <a href="https://fonts.google.com/specimen/Raleway">fonts.google.com/specimen/Raleway</a></td></tr>
- <tr><td>[10]</td><td>TH Nürnberg, LEKO: <i>Die Struktur einer Arbeit in den Ingenieur- und Naturwissenschaften</i> (structure of this guide) – <a href="https://leko.service.th-nuernberg.de/owl/artikel/die-struktur-einer-arbeit-in-den-ingenieur-und-naturwissenschaften-ing/">leko.service.th-nuernberg.de/owl/artikel/die-struktur-einer-arbeit-in-den-ingenieur-und-naturwissenschaften-ing/</a></td></tr>
+ <tr id="q1"><td>[1]</td><td>M. Pintus: <i>ESP32 Oscilloscope Clock</i>, Milan 2018 – <a href="https://github.com/maurohh/ESP32_OscilloscopeClock">github.com/maurohh/ESP32_OscilloscopeClock</a></td></tr>
+ <tr id="q2"><td>[2]</td><td>Espressif Systems: <i>ESP32 Technical Reference Manual</i> (digital-to-analogue converter) – <a href="https://www.espressif.com/sites/default/files/documentation/esp32_technical_reference_manual_en.pdf">www.espressif.com/sites/default/files/documentation/esp32_technical_reference_manual_en.pdf</a></td></tr>
+ <tr id="q3"><td>[3]</td><td>Espressif Systems: <i>Arduino core for the ESP32</i> (arduino-esp32), version 3.3.12 – <a href="https://github.com/espressif/arduino-esp32">github.com/espressif/arduino-esp32</a></td></tr>
+ <tr id="q4"><td>[4]</td><td>O. Kraus: <i>U8g2</i> – library for monochrome displays, version 2.36 – <a href="https://github.com/olikraus/u8g2">github.com/olikraus/u8g2</a></td></tr>
+ <tr id="q5"><td>[5]</td><td>ESPHome: <i>ESP Web Tools</i> – install firmware from the browser, version 10.4 – <a href="https://esphome.github.io/esp-web-tools/">esphome.github.io/esp-web-tools/</a></td></tr>
+ <tr id="q6"><td>[6]</td><td>Analog Devices (Maxim Integrated): <i>DS3231</i> – real-time clock data sheet – <a href="https://www.analog.com/media/en/technical-documentation/data-sheets/DS3231.pdf">www.analog.com/media/en/technical-documentation/data-sheets/DS3231.pdf</a></td></tr>
+ <tr id="q7"><td>[7]</td><td>TU Munich, EWT workshop: <i>Grundlagen des Technischen Zeichnens</i> (basics of technical drawing) – <a href="https://www.epe.ed.tum.de/fileadmin/w00bzo/ewt/Werkstatt/Zeichnungserstellung.pdf">www.epe.ed.tum.de/fileadmin/w00bzo/ewt/Werkstatt/Zeichnungserstellung.pdf</a></td></tr>
+ <tr id="q8"><td>[8]</td><td>DIN ISO 128 (presentation) and DIN ISO 129 (dimensioning) for technical drawings; DIN EN ISO 7200 (title block)</td></tr>
+ <tr id="q9"><td>[9]</td><td>The Raleway Project Authors: <i>Raleway</i>, SIL Open Font License 1.1 – <a href="https://fonts.google.com/specimen/Raleway">fonts.google.com/specimen/Raleway</a></td></tr>
+ <tr id="q10"><td>[10]</td><td>TH Nürnberg, LEKO: <i>Die Struktur einer Arbeit in den Ingenieur- und Naturwissenschaften</i> (structure of this guide) – <a href="https://leko.service.th-nuernberg.de/owl/artikel/die-struktur-einer-arbeit-in-den-ingenieur-und-naturwissenschaften-ing/">leko.service.th-nuernberg.de/owl/artikel/die-struktur-einer-arbeit-in-den-ingenieur-und-naturwissenschaften-ing/</a></td></tr>
 </table>
 
 <h2>A Appendix</h2>
