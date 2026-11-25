@@ -1052,7 +1052,7 @@ async function keepAwake(on){try{if(on&&!wake&&navigator.wakeLock){wake=await na
 let fsY=0;const pageScroller=()=>document.body.scrollHeight>document.body.clientHeight?document.body:document.scrollingElement;
 function fixViewport(){const go=()=>{const e=pageScroller();e.scrollTo({top:fsY+1,behavior:'instant'});e.scrollTo({top:fsY,behavior:'instant'})};
  requestAnimationFrame(go);setTimeout(go,150);setTimeout(go,500)}
-function fsLayout(on){const h=$('uhr'),c=$('scope');if(on&&!h.classList.contains('fs'))fsY=pageScroller().scrollTop;h.classList.toggle('fs',on);if(!on)fixViewport();
+function fsLayout(on){const h=$('uhr'),c=$('scope');if(on&&!h.classList.contains('fs'))fsY=pageScroller().scrollTop;h.classList.toggle('fs',on);if(!on){fixViewport();fsFromLink=false;if(fsHash())history.replaceState(null,'',location.pathname+location.search)}
  $('fsBtn').setAttribute('aria-label',t(on?'Vollbild beenden':'Vollbild'));$('fsBtn').textContent=on?'✕':'⛶';
  c.width=c.height=on?1024:512;drawScope();keepAwake(on);fitFs()}
 const fitCtx=document.createElement('canvas').getContext('2d');
@@ -1067,12 +1067,17 @@ function fitFs(){const d=$('date'),c=$('cal');d.style.fontSize=d.style.transform
  c.style.width=T+'px';c.style.fontSize=T/18.4+'px'}   /* 8 Spalten zu 2,3 em */
 addEventListener('resize',fitFs);document.fonts&&document.fonts.ready.then(fitFs);
 function fullscreen(on){const h=$('uhr');
+ if(!on&&fsFromLink&&!document.fullscreenElement&&h.requestFullscreen){fsFromLink=false;h.requestFullscreen().catch(()=>{});return}   // Direktlink: erstes Antippen = echtes Vollbild
  if(on){fsLayout(true);if(h.requestFullscreen&&!document.fullscreenElement)h.requestFullscreen().catch(()=>{})}
  else{if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});fsLayout(false)}}
-$('fsBtn').onclick=e=>{e.stopPropagation();fullscreen(!$('uhr').classList.contains('fs'))};
+$('fsBtn').onclick=e=>{e.stopPropagation();const on=$('uhr').classList.contains('fs');if(on)fsFromLink=false;fullscreen(!on)};   // ✕ beendet immer
 for(const ev of ['fullscreenchange','webkitfullscreenchange'])document.addEventListener(ev,()=>{if(document.fullscreenElement||document.webkitFullscreenElement)return;
  if($('uhr').classList.contains('fs'))fsLayout(false);else fixViewport()});
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&$('uhr').classList.contains('fs'))keepAwake(true)});
+const fsHash=()=>/^#(vollbild|fullscreen)$/i.test(location.hash);
+let fsFromLink=false;
+function fsFromHash(){if(fsHash()&&!$('uhr').classList.contains('fs')){fsFromLink=true;fsLayout(true)}}
+addEventListener('hashchange',fsFromHash);fsFromHash();
 addEventListener('keydown',e=>{if(e.key==='Escape'&&$('uhr').classList.contains('fs'))fullscreen(false)});
 $('scope').addEventListener('pointercancel',()=>{swX=null});
 $('scope').addEventListener('keydown',e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();nextDial(e.key==='ArrowRight'?1:-1)}
