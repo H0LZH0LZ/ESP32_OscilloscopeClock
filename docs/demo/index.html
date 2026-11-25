@@ -124,7 +124,7 @@ header.fs .dots{display:none}
 header.fs .scope canvas{touch-action:none}
 header.fs #clock,header.fs #date{text-shadow:0 0 .05em var(--scope-halo),0 0 .22em var(--scope-glow)}
 .fscopy{display:none}
-header.fs .fscopy{display:block;position:fixed;right:calc(env(safe-area-inset-right) + 12px);bottom:calc(env(safe-area-inset-bottom) + 8px);font-size:9px;color:var(--mute);opacity:.5;pointer-events:none}
+header.fs .fscopy{display:block;position:fixed;right:calc(env(safe-area-inset-right) + 12px);bottom:calc(env(safe-area-inset-bottom) + 8px);font-size:12px;color:var(--mute);opacity:.6;pointer-events:none}
 header.fs #clock{font-size:min(8vw,6.4vh)}header.fs #date{font-size:max(14px,min(4vw,2.8vh))}
 header.fs .fsbtn{position:fixed;top:calc(env(safe-area-inset-top) + 10px);right:calc(env(safe-area-inset-right) + 10px)}
 html:has(header.fs){overflow:hidden}
@@ -213,6 +213,8 @@ button,input,.set select,.logsel,#nav select,pre,.scope,#nav a{border-radius:var
  h1{padding-left:24px}
  main{margin-left:280px;max-width:none;padding:64px 40px 40px}
  main>*:not(h1){max-width:760px;margin-left:auto;margin-right:auto}}
+footer.copy{text-align:center;font-size:12px;color:var(--mute);opacity:.7;padding:8px 16px calc(24px + env(safe-area-inset-bottom))}
+@media (min-width:1100px){footer.copy{margin-left:280px}}
 :root[data-theme="dark"]{--scope-bg:#050805;--scope-trace:#b6ffc4;--scope-glow:rgba(80,255,120,.18);--scope-halo:#3dff6a;--scope-grid:rgba(120,255,140,.08);--bg:#000;--card:#1c1c1e;--fg:#fff;--mute:#d0d0d6;--line:#2c2c2e;--acc:#30d158;--warn:#ffb340;--err:#ff6961}
 .demo{background:var(--card);border:1px dashed var(--line);border-radius:12px;padding:10px 14px;margin:10px auto 0;font-size:14px;color:var(--mute);display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;justify-content:center;text-align:center}
 .demo b{color:var(--fg)}.demo button{width:auto;min-height:36px;margin:0;font-size:14px}
@@ -402,6 +404,7 @@ button,input,.set select,.logsel,#nav select,pre,.scope,#nav a{border-radius:var
  <p class="hint">„Aktualisieren“ lädt sofort neu. „Herunterladen“ speichert das ganze Protokoll als Textdatei, etwa für eine Fehlermeldung. „Leeren“ löscht den Protokollspeicher der Uhr, etwa vor einem Test. Die Uhr speichert die letzten 8 KB (ca. 120 Zeilen).</p>
 </section></div>
 </main>
+<footer class="copy">© Christian Holz</footer>
 
 
 <script>// ===== Demo-Schicht: ersetzt die Schnittstellen der Uhr (nur in dieser Vorschau) =====
