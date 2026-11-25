@@ -316,7 +316,7 @@ button,input,.set select,.logsel,#nav select,pre,.scope,#nav a{border-radius:var
 footer.copy{text-align:center;font-size:12px;color:var(--mute);background:var(--card);border-top:1px solid var(--line);padding:16px 16px calc(16px + env(safe-area-inset-bottom))}   /* Fußzeile mit Copyright, Farbe wie die Titelleiste */
 /* Safari zeigt beim Herunterziehen (Aktualisieren) und Hochschieben über den Seitenrand hinaus die Farbe von <html>:
    Farbe der Titelleiste bzw. Fußzeile; die Seite selbst trägt ihren Hintergrund auf <body> */
-html{background:var(--card)}body{min-height:100vh}
+html{background:var(--card);overscroll-behavior-y:none}body{min-height:100vh}   /* kein Nachfedern über den Rand: keine Lücke über der Titelleiste (Aktualisieren über ↻) */
 @media (min-width:1100px){footer.copy{margin-left:280px}}
 </style></head>
 <body>
