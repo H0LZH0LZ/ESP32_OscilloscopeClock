@@ -707,6 +707,7 @@ group has “Reset to defaults”; the change can then be undone with “Undo”
  <tr><td>“No NTP connection”</td><td>check Wi-Fi (status); without internet set the time under Settings → Time – with a DS3231 module it is then kept even after a power failure</td></tr>
  <tr><td>Time off by whole hours</td><td>check the time zone; summer/winter time when setting by hand</td></tr>
  <tr><td>http://scope-clock.local does not work</td><td>use the IP address from the status or the router (some Android devices do not support .local)</td></tr>
+ <tr><td>Clock on a guest network (e.g. FRITZ!Box guest access) not reachable, not even by IP</td><td>Guest networks isolate devices from each other. Allow devices on the guest network to communicate with each other in the router, or move the clock to the normal home network</td></tr>
  <tr><td>OLED stays dark</td><td>check “OLED display” in the status: “Off” = brightness 0 %, increase it under Settings → Display. If it says “On”, check the wiring: CLK GPIO18, DIN GPIO23, CS GPIO5, DC GPIO17, RST GPIO4, VCC to 3V3 (the clock cannot detect whether a display is connected)</td></tr>
  <tr><td>OLED picture shifted by 2 pixels</td><td>replace <code>NONAME0</code> with <code>NONAME2</code> in the <code>.ino</code></td></tr>
  <tr><td>Upload fails</td><td>partition scheme “Huge APP”; if necessary press the BOOT button when the upload starts</td></tr>
