@@ -41,6 +41,28 @@ FLASH_BUTTON = {
 }
 
 
+# Serielle Konsole (Kapitel 11.3): liest die Meldungen der Uhr über USB mit (Web Serial, 115200 Baud).
+# Anzeige über <ewt-console> aus ESP Web Tools (docs/ewt/console.js), Steuerung im Skript der Projektseite.
+CONSOLE = {
+    'de': ('<div class="sercon">\n'
+           ' <div class="scbar"><button type="button" class="flashbtn sc-open">Konsole verbinden</button>'
+           '<button type="button" class="scbtn sc-reset" disabled>Neu starten</button>'
+           '<button type="button" class="scbtn sc-dl" disabled>Herunterladen</button>'
+           '<button type="button" class="scbtn sc-close" disabled>Trennen</button></div>\n'
+           ' <div class="scbox" hidden></div>\n'
+           ' <span class="flashmsg sc-unsup" hidden>Dieser Browser kann nicht auf USB-Geräte zugreifen. Bitte Chrome oder Edge am PC verwenden.</span>\n'
+           '</div>'),
+    'en': ('<div class="sercon">\n'
+           ' <div class="scbar"><button type="button" class="flashbtn sc-open">Connect console</button>'
+           '<button type="button" class="scbtn sc-reset" disabled>Restart</button>'
+           '<button type="button" class="scbtn sc-dl" disabled>Download</button>'
+           '<button type="button" class="scbtn sc-close" disabled>Disconnect</button></div>\n'
+           ' <div class="scbox" hidden></div>\n'
+           ' <span class="flashmsg sc-unsup" hidden>This browser cannot access USB devices. Please use Chrome or Edge on a PC.</span>\n'
+           '</div>'),
+}
+
+
 def label_cells(m):
     """Schreibt die Texte der Kopfzeile als data-th in die Zellen der übrigen Zeilen."""
     t = m.group(0)
@@ -98,6 +120,7 @@ def chapters(path):
         content = re.sub(r'from the <a href="#kap\d+">project page</a>', 'from this page', content)
         # Kapitel 4: Knopf "Firmware installieren" (ESP Web Tools, Skript am Ende von docs/index.html)
         content = content.replace('<!-- FIRMWARE-KNOPF -->', FLASH_BUTTON['en' if path.endswith('.en.html') else 'de'])
+        content = content.replace('<!-- KONSOLE -->', CONSOLE['en' if path.endswith('.en.html') else 'de'])
         # Quellenverweise [n] → Zeile im Quellenverzeichnis; englische IDs eindeutig (beide Sprachen stehen auf der Seite)
         if path.endswith('.en.html'):
             content = re.sub(r'(id="q\d+)"', r'\1-en"', content)

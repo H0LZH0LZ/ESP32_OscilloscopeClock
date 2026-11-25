@@ -40,6 +40,12 @@ esp-web-install-button{display:block;margin:10px 0 14px}
 .flashbtn{font:inherit;font-weight:700;font-size:16px;padding:12px 20px;border:0;border-radius:var(--rad);background:var(--acc);color:var(--accfg);cursor:pointer}
 .flashbtn:hover{filter:brightness(1.08)}
 .flashmsg{display:block;padding:10px 12px;border-left:4px solid #b45309;background:var(--card2);border-radius:var(--rad)}
+/* Serielle Konsole (Kapitel 11.3) */
+.sercon{margin:10px 0 14px}.scbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.scbtn{font:inherit;font-weight:600;font-size:14px;padding:10px 14px;border:1px solid var(--line);border-radius:var(--rad);background:var(--card);color:var(--acc);cursor:pointer}
+.scbtn:hover:not(:disabled){background:var(--hov)}.scbtn:disabled{color:var(--mute);opacity:.5;cursor:default}
+.scbox{margin-top:10px;border-radius:var(--rad);overflow:hidden}.scbox ewt-console{height:min(60vh,420px);font-size:12px}
+.sercon .flashmsg{margin-top:10px}.sercon [hidden]{display:none!important}.flashbtn:disabled{opacity:.45;cursor:default;filter:none}
 #allBtn{margin-left:auto;height:34px;padding:0 12px;border:1px solid var(--line);border-radius:var(--rad);background:var(--card);color:var(--acc);font:600 13px var(--sans);cursor:pointer;white-space:nowrap;text-transform:none;letter-spacing:0}
 #allBtn:hover{background:var(--hov)}
 #allBtn{display:inline-flex;align-items:center}#allBtn .ic{width:14px;height:14px;margin-right:7px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}   /* Doppelpfeil wie die Pfeile der Abschnitte */
@@ -241,8 +247,8 @@ html{background:var(--card)}body{min-height:100vh}   /* Safari zeigt beim Herunt
 <div class="grp"><h2 id="downloads-h" class="coll" role="button" tabindex="0" aria-expanded="true"><span data-l="de">Links &amp; Dokumente</span><span data-l="en">Links &amp; documents</span></h2>
 <section>
  <a class="row" target="_blank" rel="noopener" href="https://github.com/H0LZH0LZ/ESP32_OscilloscopeClock"><span><span data-l="de">GitHub – Version 2.0</span><span data-l="en">GitHub – version 2.0</span><small class="note" data-l="de">Diese Firmware mit Quellcode, Anleitung und Werkzeugen</small><small class="note" data-l="en">This firmware with source code, guide and tools</small></span><span>›</span></a>
- <a class="row" target="_blank" rel="noopener" data-l="de" href="ESP32_Oscilloscope_Clock_Dokumentation.pdf?v=8d136635"><span>Dokumentation (PDF)<small class="note">Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small></span><span>›</span></a>
- <a class="row" target="_blank" rel="noopener" data-l="en" href="ESP32_Oscilloscope_Clock_Documentation.pdf?v=156dd810"><span>Documentation (PDF)<small class="note">Assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
+ <a class="row" target="_blank" rel="noopener" data-l="de" href="ESP32_Oscilloscope_Clock_Dokumentation.pdf?v=5372d949"><span>Dokumentation (PDF)<small class="note">Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small></span><span>›</span></a>
+ <a class="row" target="_blank" rel="noopener" data-l="en" href="ESP32_Oscilloscope_Clock_Documentation.pdf?v=f04165c8"><span>Documentation (PDF)<small class="note">Assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" href="demo/"><span><span data-l="de">Testseite</span><span data-l="en">Test page</span><small class="note" data-l="de">Das Webinterface der Uhr ausprobieren – läuft im Browser, alle Werte sind simuliert</small><small class="note" data-l="en">Try the clock's web interface – runs in the browser, all values are simulated</small></span><span>›</span></a>
  <a class="row" href="#kap6"><span><span data-l="de">Firmware installieren</span><span data-l="en">Install firmware</span><small class="note" data-l="de">Direkt im Browser auf den ESP32 schreiben – oder den Sketch mit Arduino Cloud hochladen</small><small class="note" data-l="en">Write it to the ESP32 straight from the browser – or upload the sketch with Arduino Cloud</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" href="https://github.com/maurohh/ESP32_OscilloscopeClock"><span><span data-l="de">GitHub – Original</span><span data-l="en">GitHub – original</span><small class="note" data-l="de">Die ursprüngliche ESP32 Oscilloscope Clock von Mauro Pintus (2018), nach deren Idee diese Version entstand</small><small class="note" data-l="en">The original ESP32 Oscilloscope Clock by Mauro Pintus (2018) that inspired this version</small></span><span>›</span></a>
@@ -754,7 +760,7 @@ Variante B in Abschnitt 6.4).</p>
  <span slot="not-allowed" class="flashmsg">Die Installation geht nur über eine sichere Verbindung (https).</span>
 </esp-web-install-button>
 <p>Erscheint kein Anschluss, fehlt meist der USB-Treiber (CP210x oder CH340) oder das Kabel kann nur laden. Bricht die Verbindung ab,
-beim Start der Installation den <b>BOOT-Taster</b> gedrückt halten. Meldet die Installation „Failed to write compressed data to flash …“, einfach noch einmal auf <b>„Installieren“</b> klicken – das passiert gelegentlich beim ersten Schreiben direkt nach dem Löschen des Speichers; der zweite Versuch läuft in der Regel durch.</p>
+beim Start der Installation den <b>BOOT-Taster</b> gedrückt halten. Meldet die Installation „Failed to write compressed data to flash …“ oder „Invalid head of packet …“, einfach noch einmal auf <b>„Installieren“</b> klicken – solche Übertragungsfehler passieren gelegentlich, der zweite Versuch läuft in der Regel durch. Klappt es wieder nicht: beim Klick den <b>BOOT-Taster</b> gedrückt halten (dann sendet die laufende Uhr nichts dazwischen) und die <b>Kabel zum Oszilloskop abziehen</b> – über die Masse von Oszilloskop und PC können Störungen auf die USB-Leitung kommen.</p>
 <p><b>Mehrere Uhren im selben WLAN:</b> Alle Uhren starten mit dem Namen <code>scope-clock</code>. Ist der Name im Netz schon vergeben,
 nimmt die nächste Uhr selbst <code>scope-clock-2</code>, dann <code>scope-clock-3</code> usw.; die tatsächliche Adresse steht im Protokoll
 („erreichbar unter …“) und im Status unter „Netzwerkadresse“. Eindeutiger ist ein eigener Name je Uhr, z. B. <code>scope-clock-buero</code>
@@ -805,7 +811,7 @@ variant B in section 6.4).</p>
  <span slot="not-allowed" class="flashmsg">Installing only works over a secure connection (https).</span>
 </esp-web-install-button>
 <p>If no port appears, the USB driver (CP210x or CH340) is usually missing or the cable only charges. If the connection drops, hold the
-<b>BOOT button</b> when the installation starts. If the installation reports “Failed to write compressed data to flash …”, simply click <b>Install</b> again – this occasionally happens on the first write right after erasing the flash; the second attempt usually completes.</p>
+<b>BOOT button</b> when the installation starts. If the installation reports “Failed to write compressed data to flash …” or “Invalid head of packet …”, simply click <b>Install</b> again – such transmission errors happen occasionally, the second attempt usually completes. If it fails again: hold the <b>BOOT button</b> while clicking (then the running clock sends nothing in between) and <b>unplug the cables to the oscilloscope</b> – interference can reach the USB line through the ground of oscilloscope and PC.</p>
 <p><b>Several clocks on the same Wi-Fi:</b> all clocks start with the name <code>scope-clock</code>. If the name is already taken on the
 network, the next clock automatically uses <code>scope-clock-2</code>, then <code>scope-clock-3</code> etc.; the actual address is shown in
 the log (“reachable at …”) and in the status under “Network address”. A clearer option is a name of its own for each clock, e.g.
@@ -1379,7 +1385,7 @@ group has “Reset to defaults”; the change can then be undone with “Undo”
  <tr><td data-th="Beobachtung">„Keine NTP-Verbindung“</td><td data-th="Abhilfe">WLAN prüfen (Status); ohne Internet die Zeit unter Einstellungen → Uhrzeit stellen – mit DS3231-Modul bleibt sie dann auch nach einem Stromausfall erhalten</td></tr>
  <tr><td data-th="Beobachtung">Zeit um ganze Stunden falsch</td><td data-th="Abhilfe">Zeitzone prüfen; Sommer-/Winterzeit beim Stellen von Hand</td></tr>
  <tr><td data-th="Beobachtung">http://scope-clock.local geht nicht</td><td data-th="Abhilfe">IP-Adresse aus dem Status oder dem Router verwenden (manche Android-Geräte unterstützen .local nicht)</td></tr>
- <tr><td data-th="Beobachtung">Installation im Browser bricht ab („Failed to write compressed data to flash …“)</td><td data-th="Abhilfe">Noch einmal auf Install klicken; hilft das nicht, anderes USB-Kabel oder einen USB-Anschluss direkt am PC (ohne Hub) nehmen und beim Start den BOOT-Taster halten</td></tr>
+ <tr><td data-th="Beobachtung">Installation im Browser bricht ab („Failed to write compressed data to flash …“, „Invalid head of packet …“)</td><td data-th="Abhilfe">Noch einmal auf „Installieren“ klicken; hilft das nicht, beim Klick den BOOT-Taster halten, die Kabel zum Oszilloskop abziehen, anderes USB-Kabel oder einen USB-Anschluss direkt am PC (ohne Hub) nehmen</td></tr>
  <tr><td data-th="Beobachtung">Uhr im Gastnetz (z. B. Gastzugang der FRITZ!Box) nicht erreichbar, auch nicht per IP</td><td data-th="Abhilfe">Gastnetze trennen die Geräte voneinander. Im Router erlauben, dass Geräte im Gastnetz untereinander kommunizieren dürfen, oder die Uhr ins normale Heimnetz bringen</td></tr>
  <tr><td data-th="Beobachtung">OLED bleibt dunkel</td><td data-th="Abhilfe">Im Status „OLED-Anzeige“ ansehen: „Aus“ = Helligkeit 0 %, unter Einstellungen → Display erhöhen. Steht dort „An“, die Verdrahtung prüfen: CLK GPIO18, DIN GPIO23, CS GPIO5, DC GPIO17, RST GPIO4, VCC an 3V3 (ob ein Display angeschlossen ist, kann die Uhr nicht erkennen)</td></tr>
  <tr><td data-th="Beobachtung">OLED-Bild 2 Pixel versetzt</td><td data-th="Abhilfe">in der <code>.ino</code> <code>NONAME0</code> durch <code>NONAME2</code> ersetzen</td></tr>
@@ -1388,7 +1394,8 @@ group has “Reset to defaults”; the change can then be undone with “Undo”
 <p>Für eine Fehlermeldung im Debug-Bereich „Herunterladen“ antippen und die Textdatei weitergeben.</p>
 
 <h3>11.2 Debug-Meldungen (Beispiel)</h3>
-<pre>+0s ESP32 Oscilloscope Clock v2.0
+<pre>+0s ESP32 Oscilloscope Clock v2.0 (Idee nach Mauro Pintus 2018)
++0s CPU: 240 MHz · © Christian Holz
 +0s [Scope] Profil: DIGITAL – BOOT-Taster 3 s halten zum Umschalten
 +0s [Scope] Rundtour: 122 Linienzuege, Spruenge gesamt 1348 DAC-Einheiten
 +0s [Scope] laeuft auf Core 1
@@ -1411,6 +1418,17 @@ Klammern steht der Teil der Firmware, von dem die Meldung kommt:</p>
 </ul>
 <p>Fehlt nach dem Einschalten die Zeile „[WiFi] verbunden“, stimmt meist das Passwort nicht oder das Netz ist zu weit entfernt.
 Steht dort „[RTC] kein DS3231 gefunden“, obwohl das Modul eingebaut ist, die Leitungen SDA und SCL prüfen.</p>
+<h3>11.3 Serielle Konsole im Browser</h3>
+<p>Dieselben Meldungen gibt die Uhr auch über USB aus – schon beim Start und auch ohne WLAN. Auf der
+<a href="#kap11">Projektseite</a> lassen sie sich direkt im Browser mitlesen
+(Chrome oder Edge am PC): ESP32 per USB anschließen, <b>„Konsole verbinden“</b> klicken und den Anschluss wählen. <b>„Neu starten“</b>
+startet die Uhr neu, damit auch die ersten Zeilen zu sehen sind; <b>„Herunterladen“</b> speichert die Meldungen als Textdatei, z. B. für
+eine Fehlermeldung. Programme, die den Anschluss gerade nutzen (etwa der serielle Monitor der Arduino IDE), vorher schließen.</p>
+<div class="sercon">
+ <div class="scbar"><button type="button" class="flashbtn sc-open">Konsole verbinden</button><button type="button" class="scbtn sc-reset" disabled>Neu starten</button><button type="button" class="scbtn sc-dl" disabled>Herunterladen</button><button type="button" class="scbtn sc-close" disabled>Trennen</button></div>
+ <div class="scbox" hidden></div>
+ <span class="flashmsg sc-unsup" hidden>Dieser Browser kann nicht auf USB-Geräte zugreifen. Bitte Chrome oder Edge am PC verwenden.</span>
+</div>
 </div><div data-l="en">
 <h3>11.1 Symptoms and remedies</h3>
 <div class="tw"><table>
@@ -1429,7 +1447,7 @@ Steht dort „[RTC] kein DS3231 gefunden“, obwohl das Modul eingebaut ist, die
  <tr><td data-th="Observation">“No NTP connection”</td><td data-th="Remedy">check Wi-Fi (status); without internet set the time under Settings → Time – with a DS3231 module it is then kept even after a power failure</td></tr>
  <tr><td data-th="Observation">Time off by whole hours</td><td data-th="Remedy">check the time zone; summer/winter time when setting by hand</td></tr>
  <tr><td data-th="Observation">http://scope-clock.local does not work</td><td data-th="Remedy">use the IP address from the status or the router (some Android devices do not support .local)</td></tr>
- <tr><td data-th="Observation">Installation in the browser aborts (“Failed to write compressed data to flash …”)</td><td data-th="Remedy">Click Install again; if that does not help, use another USB cable or a USB port directly on the PC (no hub) and hold the BOOT button at the start</td></tr>
+ <tr><td data-th="Observation">Installation in the browser aborts (“Failed to write compressed data to flash …”, “Invalid head of packet …”)</td><td data-th="Remedy">Click Install again; if that does not help, hold the BOOT button while clicking, unplug the cables to the oscilloscope, use another USB cable or a USB port directly on the PC (no hub)</td></tr>
  <tr><td data-th="Observation">Clock on a guest network (e.g. FRITZ!Box guest access) not reachable, not even by IP</td><td data-th="Remedy">Guest networks isolate devices from each other. Allow devices on the guest network to communicate with each other in the router, or move the clock to the normal home network</td></tr>
  <tr><td data-th="Observation">OLED stays dark</td><td data-th="Remedy">check “OLED display” in the status: “Off” = brightness 0 %, increase it under Settings → Display. If it says “On”, check the wiring: CLK GPIO18, DIN GPIO23, CS GPIO5, DC GPIO17, RST GPIO4, VCC to 3V3 (the clock cannot detect whether a display is connected)</td></tr>
  <tr><td data-th="Observation">OLED picture shifted by 2 pixels</td><td data-th="Remedy">replace <code>NONAME0</code> with <code>NONAME2</code> in the <code>.ino</code></td></tr>
@@ -1438,7 +1456,8 @@ Steht dort „[RTC] kein DS3231 gefunden“, obwohl das Modul eingebaut ist, die
 <p>For a bug report tap “Download” in the debug section and pass on the text file.</p>
 
 <h3>11.2 Debug messages (example, language English)</h3>
-<pre>+0s ESP32 Oscilloscope Clock v2.0
+<pre>+0s ESP32 Oscilloscope Clock v2.0 (idea by Mauro Pintus 2018)
++0s CPU: 240 MHz · © Christian Holz
 +0s [Scope] profile: DIGITAL – hold BOOT button 3 s to switch
 +0s [Scope] round trip: 122 polylines, jumps total 1348 DAC units
 +0s [Scope] running on core 1
@@ -1461,6 +1480,17 @@ firmware the message comes from is shown in square brackets:</p>
 </ul>
 <p>If the line “[WiFi] connected” is missing after power-on, the password is usually wrong or the network is too far away. If it
 says “[RTC] no DS3231 found” although the module is fitted, check the SDA and SCL wires.</p>
+<h3>11.3 Serial console in the browser</h3>
+<p>The clock also sends the same messages over USB – already at start-up and even without Wi-Fi. On the
+<a href="#kap11">project page</a> you can read them directly in the browser
+(Chrome or Edge on a PC): connect the ESP32 via USB, click <b>“Connect console”</b> and choose the port. <b>“Restart”</b> restarts the
+clock so the first lines are visible too; <b>“Download”</b> saves the messages as a text file, e.g. for a bug report. Close programs
+that are using the port (such as the serial monitor of the Arduino IDE) first.</p>
+<div class="sercon">
+ <div class="scbar"><button type="button" class="flashbtn sc-open">Connect console</button><button type="button" class="scbtn sc-reset" disabled>Restart</button><button type="button" class="scbtn sc-dl" disabled>Download</button><button type="button" class="scbtn sc-close" disabled>Disconnect</button></div>
+ <div class="scbox" hidden></div>
+ <span class="flashmsg sc-unsup" hidden>This browser cannot access USB devices. Please use Chrome or Edge on a PC.</span>
+</div>
 </div></section></div>
 
 <div class="grp closed"><h2 id="kap12" class="coll" role="button" tabindex="0" aria-expanded="false"><span data-l="de">12 Zusammenfassung</span><span data-l="en">12 Summary</span></h2>
@@ -1813,6 +1843,25 @@ $('sLang').onchange=e=>{root.lang=e.target.value;themeLabels();try{localStorage.
 $('sTheme').value=root.dataset.theme||'auto';
 $('sTheme').onchange=e=>{const m=e.target.value;if(m==='auto'){delete root.dataset.theme;root.style.colorScheme=''}else{root.dataset.theme=m;root.style.colorScheme=m}
  try{localStorage.setItem('theme',m)}catch(x){}};
+// Serielle Konsole (Kapitel 11.3): Anschluss wählen, Meldungen der Uhr mitlesen (115200 Baud)
+document.querySelectorAll('.sercon').forEach(w=>{
+ const q=c=>w.querySelector(c),box=q('.scbox');let port=null,con=null;
+ const busy=on=>{q('.sc-open').disabled=on;q('.sc-reset').disabled=q('.sc-dl').disabled=q('.sc-close').disabled=!on};
+ const stop=async()=>{try{if(con)await con.disconnect()}catch(e){}try{if(port)await port.close()}catch(e){}if(con)con.remove();con=port=null;box.hidden=true;busy(false)};
+ q('.sc-open').onclick=async()=>{
+  if(!('serial' in navigator)){q('.sc-unsup').hidden=false;return}
+  try{port=await navigator.serial.requestPort();await port.open({baudRate:115200})}catch(e){port=null;return}   // kein Anschluss gewählt
+  await import('./ewt/console.js');
+  con=document.createElement('ewt-console');con.port=port;con.logger=console;con.allowInput=false;
+  box.append(con);box.hidden=false;busy(true)};
+ q('.sc-reset').onclick=()=>con&&con.reset();
+ q('.sc-dl').onclick=()=>{if(!con)return;const d=new Date(),p=n=>String(n).padStart(2,'0');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([con.logs()],{type:'text/plain'}));
+  a.download='scope-clock-'+(root.lang==='en'?'console':'konsole')+'-'+d.getFullYear()+p(d.getMonth()+1)+p(d.getDate())+'-'+p(d.getHours())+p(d.getMinutes())+'.txt';
+  document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};
+ q('.sc-close').onclick=stop;
+ if('serial' in navigator)navigator.serial.addEventListener('disconnect',e=>{if(e.target===port)stop()});   // Kabel gezogen
+});
 </script>
 <script type="module" src="ewt/install-button.js"></script>   <!-- ESP Web Tools mit deutschen Dialogen: tools/gen_ewt.py -->
 </body>

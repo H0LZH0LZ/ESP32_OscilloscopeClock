@@ -82,7 +82,7 @@ h3+ul>li:nth-child(2),h3+ol>li:nth-child(2),li:last-child{break-before:avoid}
   <li><span class="tn">8</span>Setting up the oscilloscope<div class="tsub">8.1 Connecting · 8.2 Basic set-up step by step · 8.3 X/Y mode on a digital oscilloscope · 8.4 Matching the brightness of the hands · 8.5 Typical picture faults while setting up · 8.6 Examples of individual devices (others likewise)</div></li>
   <li><span class="tn">9</span>Operation<div class="tsub">9.1 Web interface · 9.2 OLED display · 9.3 BOOT button</div></li>
   <li><span class="tn">10</span>All settings at a glance<div class="tsub">10.1 Oscilloscope · 10.2 Time · 10.3 Display (OLED) · 10.4 Wi-Fi · 10.5 System and side menu</div></li>
-  <li><span class="tn">11</span>Troubleshooting<div class="tsub">11.1 Symptoms and remedies · 11.2 Debug messages (example, language English)</div></li>
+  <li><span class="tn">11</span>Troubleshooting<div class="tsub">11.1 Symptoms and remedies · 11.2 Debug messages (example, language English) · 11.3 Serial console in the browser</div></li>
   <li><span class="tn">12</span>Summary<div class="tsub">12.1 Test status · 12.2 Limitations</div></li>
   <li><span class="tn"></span>References</li>
   <li><span class="tn">A</span>Appendix<div class="tsub">A.1 Defaults in <code>config.h</code> · A.2 Web server interfaces · A.3 Files in the project · A.4 Origin and licences</div></li>
@@ -399,7 +399,7 @@ variant B in section 6.4).</p>
 </ol>
 <!-- FIRMWARE-KNOPF -->
 <p>If no port appears, the USB driver (CP210x or CH340) is usually missing or the cable only charges. If the connection drops, hold the
-<b>BOOT button</b> when the installation starts. If the installation reports “Failed to write compressed data to flash …”, simply click <b>Install</b> again – this occasionally happens on the first write right after erasing the flash; the second attempt usually completes.</p>
+<b>BOOT button</b> when the installation starts. If the installation reports “Failed to write compressed data to flash …” or “Invalid head of packet …”, simply click <b>Install</b> again – such transmission errors happen occasionally, the second attempt usually completes. If it fails again: hold the <b>BOOT button</b> while clicking (then the running clock sends nothing in between) and <b>unplug the cables to the oscilloscope</b> – interference can reach the USB line through the ground of oscilloscope and PC.</p>
 <p><b>Several clocks on the same Wi-Fi:</b> all clocks start with the name <code>scope-clock</code>. If the name is already taken on the
 network, the next clock automatically uses <code>scope-clock-2</code>, then <code>scope-clock-3</code> etc.; the actual address is shown in
 the log (“reachable at …”) and in the status under “Network address”. A clearer option is a name of its own for each clock, e.g.
@@ -710,7 +710,7 @@ group has “Reset to defaults”; the change can then be undone with “Undo”
  <tr><td>“No NTP connection”</td><td>check Wi-Fi (status); without internet set the time under Settings → Time – with a DS3231 module it is then kept even after a power failure</td></tr>
  <tr><td>Time off by whole hours</td><td>check the time zone; summer/winter time when setting by hand</td></tr>
  <tr><td>http://scope-clock.local does not work</td><td>use the IP address from the status or the router (some Android devices do not support .local)</td></tr>
- <tr><td>Installation in the browser aborts (“Failed to write compressed data to flash …”)</td><td>Click Install again; if that does not help, use another USB cable or a USB port directly on the PC (no hub) and hold the BOOT button at the start</td></tr>
+ <tr><td>Installation in the browser aborts (“Failed to write compressed data to flash …”, “Invalid head of packet …”)</td><td>Click Install again; if that does not help, hold the BOOT button while clicking, unplug the cables to the oscilloscope, use another USB cable or a USB port directly on the PC (no hub)</td></tr>
  <tr><td>Clock on a guest network (e.g. FRITZ!Box guest access) not reachable, not even by IP</td><td>Guest networks isolate devices from each other. Allow devices on the guest network to communicate with each other in the router, or move the clock to the normal home network</td></tr>
  <tr><td>OLED stays dark</td><td>check “OLED display” in the status: “Off” = brightness 0 %, increase it under Settings → Display. If it says “On”, check the wiring: CLK GPIO18, DIN GPIO23, CS GPIO5, DC GPIO17, RST GPIO4, VCC to 3V3 (the clock cannot detect whether a display is connected)</td></tr>
  <tr><td>OLED picture shifted by 2 pixels</td><td>replace <code>NONAME0</code> with <code>NONAME2</code> in the <code>.ino</code></td></tr>
@@ -719,7 +719,8 @@ group has “Reset to defaults”; the change can then be undone with “Undo”
 <p>For a bug report tap “Download” in the debug section and pass on the text file.</p>
 
 <h3>11.2 Debug messages (example, language English)</h3>
-<pre>+0s ESP32 Oscilloscope Clock v2.0
+<pre>+0s ESP32 Oscilloscope Clock v2.0 (idea by Mauro Pintus 2018)
++0s CPU: 240 MHz · © Christian Holz
 +0s [Scope] profile: DIGITAL – hold BOOT button 3 s to switch
 +0s [Scope] round trip: 122 polylines, jumps total 1348 DAC units
 +0s [Scope] running on core 1
@@ -742,6 +743,13 @@ firmware the message comes from is shown in square brackets:</p>
 </ul>
 <p>If the line “[WiFi] connected” is missing after power-on, the password is usually wrong or the network is too far away. If it
 says “[RTC] no DS3231 found” although the module is fitted, check the SDA and SCL wires.</p>
+<h3>11.3 Serial console in the browser</h3>
+<p>The clock also sends the same messages over USB – already at start-up and even without Wi-Fi. On the
+<a href="https://h0lzh0lz.github.io/ESP32_OscilloscopeClock/#kap11">project page</a> you can read them directly in the browser
+(Chrome or Edge on a PC): connect the ESP32 via USB, click <b>“Connect console”</b> and choose the port. <b>“Restart”</b> restarts the
+clock so the first lines are visible too; <b>“Download”</b> saves the messages as a text file, e.g. for a bug report. Close programs
+that are using the port (such as the serial monitor of the Arduino IDE) first.</p>
+<!-- KONSOLE -->
 
 <h2>12 Summary</h2>
 <p>The clock shows that an ESP32 can create a calm, evenly bright vector picture on analogue and digital oscilloscopes without

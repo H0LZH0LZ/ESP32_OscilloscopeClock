@@ -82,7 +82,7 @@ h3+ul>li:nth-child(2),h3+ol>li:nth-child(2),li:last-child{break-before:avoid}
   <li><span class="tn">8</span>Oszilloskop einstellen<div class="tsub">8.1 Anschließen · 8.2 Grundeinstellung Schritt für Schritt · 8.3 X/Y-Betrieb am digitalen Oszilloskop · 8.4 Helligkeit der Zeiger abgleichen · 8.5 Typische Bildfehler beim Einstellen · 8.6 Beispiele für einzelne Geräte (andere sinngemäß)</div></li>
   <li><span class="tn">9</span>Bedienung<div class="tsub">9.1 Webinterface · 9.2 OLED-Anzeige · 9.3 BOOT-Taster</div></li>
   <li><span class="tn">10</span>Alle Einstellungen im Überblick<div class="tsub">10.1 Oszilloskop · 10.2 Uhrzeit · 10.3 Display (OLED) · 10.4 WLAN · 10.5 System und Seitenmenü</div></li>
-  <li><span class="tn">11</span>Fehlersuche<div class="tsub">11.1 Fehlerbilder und Abhilfe · 11.2 Debug-Meldungen (Beispiel)</div></li>
+  <li><span class="tn">11</span>Fehlersuche<div class="tsub">11.1 Fehlerbilder und Abhilfe · 11.2 Debug-Meldungen (Beispiel) · 11.3 Serielle Konsole im Browser</div></li>
   <li><span class="tn">12</span>Zusammenfassung<div class="tsub">12.1 Stand der Tests · 12.2 Grenzen</div></li>
   <li><span class="tn"></span>Quellenverzeichnis</li>
   <li><span class="tn">A</span>Anhang<div class="tsub">A.1 Startwerte in <code>config.h</code> · A.2 Schnittstellen des Webservers · A.3 Dateien im Projekt · A.4 Herkunft und Lizenzen</div></li>
@@ -406,7 +406,7 @@ Variante B in Abschnitt 6.4).</p>
 </ol>
 <!-- FIRMWARE-KNOPF -->
 <p>Erscheint kein Anschluss, fehlt meist der USB-Treiber (CP210x oder CH340) oder das Kabel kann nur laden. Bricht die Verbindung ab,
-beim Start der Installation den <b>BOOT-Taster</b> gedrückt halten. Meldet die Installation „Failed to write compressed data to flash …“, einfach noch einmal auf <b>„Installieren“</b> klicken – das passiert gelegentlich beim ersten Schreiben direkt nach dem Löschen des Speichers; der zweite Versuch läuft in der Regel durch.</p>
+beim Start der Installation den <b>BOOT-Taster</b> gedrückt halten. Meldet die Installation „Failed to write compressed data to flash …“ oder „Invalid head of packet …“, einfach noch einmal auf <b>„Installieren“</b> klicken – solche Übertragungsfehler passieren gelegentlich, der zweite Versuch läuft in der Regel durch. Klappt es wieder nicht: beim Klick den <b>BOOT-Taster</b> gedrückt halten (dann sendet die laufende Uhr nichts dazwischen) und die <b>Kabel zum Oszilloskop abziehen</b> – über die Masse von Oszilloskop und PC können Störungen auf die USB-Leitung kommen.</p>
 <p><b>Mehrere Uhren im selben WLAN:</b> Alle Uhren starten mit dem Namen <code>scope-clock</code>. Ist der Name im Netz schon vergeben,
 nimmt die nächste Uhr selbst <code>scope-clock-2</code>, dann <code>scope-clock-3</code> usw.; die tatsächliche Adresse steht im Protokoll
 („erreichbar unter …“) und im Status unter „Netzwerkadresse“. Eindeutiger ist ein eigener Name je Uhr, z. B. <code>scope-clock-buero</code>
@@ -716,7 +716,7 @@ beschrieben wird. Jede Gruppe hat „Auf Standardwerte zurücksetzen“; danach 
  <tr><td>„Keine NTP-Verbindung“</td><td>WLAN prüfen (Status); ohne Internet die Zeit unter Einstellungen → Uhrzeit stellen – mit DS3231-Modul bleibt sie dann auch nach einem Stromausfall erhalten</td></tr>
  <tr><td>Zeit um ganze Stunden falsch</td><td>Zeitzone prüfen; Sommer-/Winterzeit beim Stellen von Hand</td></tr>
  <tr><td>http://scope-clock.local geht nicht</td><td>IP-Adresse aus dem Status oder dem Router verwenden (manche Android-Geräte unterstützen .local nicht)</td></tr>
- <tr><td>Installation im Browser bricht ab („Failed to write compressed data to flash …“)</td><td>Noch einmal auf Install klicken; hilft das nicht, anderes USB-Kabel oder einen USB-Anschluss direkt am PC (ohne Hub) nehmen und beim Start den BOOT-Taster halten</td></tr>
+ <tr><td>Installation im Browser bricht ab („Failed to write compressed data to flash …“, „Invalid head of packet …“)</td><td>Noch einmal auf „Installieren“ klicken; hilft das nicht, beim Klick den BOOT-Taster halten, die Kabel zum Oszilloskop abziehen, anderes USB-Kabel oder einen USB-Anschluss direkt am PC (ohne Hub) nehmen</td></tr>
  <tr><td>Uhr im Gastnetz (z. B. Gastzugang der FRITZ!Box) nicht erreichbar, auch nicht per IP</td><td>Gastnetze trennen die Geräte voneinander. Im Router erlauben, dass Geräte im Gastnetz untereinander kommunizieren dürfen, oder die Uhr ins normale Heimnetz bringen</td></tr>
  <tr><td>OLED bleibt dunkel</td><td>Im Status „OLED-Anzeige“ ansehen: „Aus“ = Helligkeit 0 %, unter Einstellungen → Display erhöhen. Steht dort „An“, die Verdrahtung prüfen: CLK GPIO18, DIN GPIO23, CS GPIO5, DC GPIO17, RST GPIO4, VCC an 3V3 (ob ein Display angeschlossen ist, kann die Uhr nicht erkennen)</td></tr>
  <tr><td>OLED-Bild 2 Pixel versetzt</td><td>in der <code>.ino</code> <code>NONAME0</code> durch <code>NONAME2</code> ersetzen</td></tr>
@@ -725,7 +725,8 @@ beschrieben wird. Jede Gruppe hat „Auf Standardwerte zurücksetzen“; danach 
 <p>Für eine Fehlermeldung im Debug-Bereich „Herunterladen“ antippen und die Textdatei weitergeben.</p>
 
 <h3>11.2 Debug-Meldungen (Beispiel)</h3>
-<pre>+0s ESP32 Oscilloscope Clock v2.0
+<pre>+0s ESP32 Oscilloscope Clock v2.0 (Idee nach Mauro Pintus 2018)
++0s CPU: 240 MHz · © Christian Holz
 +0s [Scope] Profil: DIGITAL – BOOT-Taster 3 s halten zum Umschalten
 +0s [Scope] Rundtour: 122 Linienzuege, Spruenge gesamt 1348 DAC-Einheiten
 +0s [Scope] laeuft auf Core 1
@@ -748,6 +749,13 @@ Klammern steht der Teil der Firmware, von dem die Meldung kommt:</p>
 </ul>
 <p>Fehlt nach dem Einschalten die Zeile „[WiFi] verbunden“, stimmt meist das Passwort nicht oder das Netz ist zu weit entfernt.
 Steht dort „[RTC] kein DS3231 gefunden“, obwohl das Modul eingebaut ist, die Leitungen SDA und SCL prüfen.</p>
+<h3>11.3 Serielle Konsole im Browser</h3>
+<p>Dieselben Meldungen gibt die Uhr auch über USB aus – schon beim Start und auch ohne WLAN. Auf der
+<a href="https://h0lzh0lz.github.io/ESP32_OscilloscopeClock/#kap11">Projektseite</a> lassen sie sich direkt im Browser mitlesen
+(Chrome oder Edge am PC): ESP32 per USB anschließen, <b>„Konsole verbinden“</b> klicken und den Anschluss wählen. <b>„Neu starten“</b>
+startet die Uhr neu, damit auch die ersten Zeilen zu sehen sind; <b>„Herunterladen“</b> speichert die Meldungen als Textdatei, z. B. für
+eine Fehlermeldung. Programme, die den Anschluss gerade nutzen (etwa der serielle Monitor der Arduino IDE), vorher schließen.</p>
+<!-- KONSOLE -->
 
 <h2>12 Zusammenfassung</h2>
 <p>Die Uhr zeigt, dass ein ESP32 ohne zusätzliche Elektronik ein ruhiges, gleichmäßig helles Vektorbild auf analogen und

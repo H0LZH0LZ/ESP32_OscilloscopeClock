@@ -113,7 +113,7 @@ DIALOG_RAW = [
     ('label="Network"', '.label=${ewtT("Netz","Network")}'),
     ('label="Password"', '.label=${ewtT("Passwort","Password")}'),
     ('.label=${this._installState.message}',
-     '.label=${ewtT(this._installState.message+" – einfach noch einmal „Installieren“ wählen.",this._installState.message)}'),
+     '.label=${ewtT(this._installState.message+" – noch einmal „Installieren“ wählen. Klappt es wieder nicht: beim Klick den BOOT-Taster gedrückt halten und die Kabel zum Oszilloskop abziehen.",this._installState.message)}'),
 ]
 
 PORT_TEXT = [
@@ -218,7 +218,17 @@ def main():
         sys.exit('Installationsdialog: Installations-Frage nicht gefunden')
     seg = patch(seg, DIALOG_TEXT, DIALOG_STR, DIALOG_RAW, 'Installationsdialog')
     seg = seg.replace('e=`Logs`', 'e=ewtT("Protokoll","Logs")')
-    files[dlg[0]] = HELPER + s[:a] + seg
+    # Konsole (ewt-console, vor der Dialog-Klasse): Meldung beim Trennen
+    head = s[:a]
+    for en, de in (('"Terminal disconnected"', 'ewtT("Verbindung getrennt","Terminal disconnected")'),
+                   ('`Terminal disconnected: ${e}`', 'ewtT(`Verbindung getrennt: ${e}`,`Terminal disconnected: ${e}`)')):
+        if head.count(en) != 1:
+            sys.exit(f'Konsole: Stelle nicht gefunden: {en}')
+        head = head.replace(en, de)
+    files[dlg[0]] = HELPER + head + seg
+    # Einstieg für die serielle Konsole der Projektseite (Kapitel 11.3): lädt den Dialog-Code,
+    # der das Element <ewt-console> definiert – der Dateiname mit Prüfsumme ändert sich je Version
+    files['console.js'] = f'import "./{dlg[0]}";\n'
 
     # Hinweis „No port selected“
     s = files[idx[0]]
