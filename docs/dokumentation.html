@@ -406,7 +406,7 @@ Variante B in Abschnitt 6.4).</p>
 </ol>
 <!-- FIRMWARE-KNOPF -->
 <p>Erscheint kein Anschluss, fehlt meist der USB-Treiber (CP210x oder CH340) oder das Kabel kann nur laden. Bricht die Verbindung ab,
-beim Start der Installation den <b>BOOT-Taster</b> gedrückt halten. Eigene Startwerte in <code>config.h</code> gehen so nicht – dafür
+beim Start der Installation den <b>BOOT-Taster</b> gedrückt halten. Meldet die Installation „Failed to write compressed data to flash …“, einfach noch einmal auf <b>Install</b> klicken – das passiert gelegentlich beim ersten Schreiben direkt nach dem Löschen des Speichers; der zweite Versuch läuft in der Regel durch. Eigene Startwerte in <code>config.h</code> gehen so nicht – dafür
 eine der folgenden Möglichkeiten nutzen.</p>
 <h3>6.2 Mit Arduino Cloud (app.arduino.cc)</h3>
 <ol>
@@ -713,6 +713,7 @@ beschrieben wird. Jede Gruppe hat „Auf Standardwerte zurücksetzen“; danach 
  <tr><td>„Keine NTP-Verbindung“</td><td>WLAN prüfen (Status); ohne Internet die Zeit unter Einstellungen → Uhrzeit stellen – mit DS3231-Modul bleibt sie dann auch nach einem Stromausfall erhalten</td></tr>
  <tr><td>Zeit um ganze Stunden falsch</td><td>Zeitzone prüfen; Sommer-/Winterzeit beim Stellen von Hand</td></tr>
  <tr><td>http://scope-clock.local geht nicht</td><td>IP-Adresse aus dem Status oder dem Router verwenden (manche Android-Geräte unterstützen .local nicht)</td></tr>
+ <tr><td>Installation im Browser bricht ab („Failed to write compressed data to flash …“)</td><td>Noch einmal auf Install klicken; hilft das nicht, anderes USB-Kabel oder einen USB-Anschluss direkt am PC (ohne Hub) nehmen und beim Start den BOOT-Taster halten</td></tr>
  <tr><td>Uhr im Gastnetz (z. B. Gastzugang der FRITZ!Box) nicht erreichbar, auch nicht per IP</td><td>Gastnetze trennen die Geräte voneinander. Im Router erlauben, dass Geräte im Gastnetz untereinander kommunizieren dürfen, oder die Uhr ins normale Heimnetz bringen</td></tr>
  <tr><td>OLED bleibt dunkel</td><td>Im Status „OLED-Anzeige“ ansehen: „Aus“ = Helligkeit 0 %, unter Einstellungen → Display erhöhen. Steht dort „An“, die Verdrahtung prüfen: CLK GPIO18, DIN GPIO23, CS GPIO5, DC GPIO17, RST GPIO4, VCC an 3V3 (ob ein Display angeschlossen ist, kann die Uhr nicht erkennen)</td></tr>
  <tr><td>OLED-Bild 2 Pixel versetzt</td><td>in der <code>.ino</code> <code>NONAME0</code> durch <code>NONAME2</code> ersetzen</td></tr>

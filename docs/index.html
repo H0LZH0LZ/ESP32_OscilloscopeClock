@@ -241,8 +241,8 @@ html{background:var(--card)}body{min-height:100vh}   /* Safari zeigt beim Herunt
 <div class="grp"><h2 id="downloads-h" class="coll" role="button" tabindex="0" aria-expanded="true"><span data-l="de">Links &amp; Dokumente</span><span data-l="en">Links &amp; documents</span></h2>
 <section>
  <a class="row" target="_blank" rel="noopener" href="https://github.com/H0LZH0LZ/ESP32_OscilloscopeClock"><span><span data-l="de">GitHub – Version 2.0</span><span data-l="en">GitHub – version 2.0</span><small class="note" data-l="de">Diese Firmware mit Quellcode, Anleitung und Werkzeugen</small><small class="note" data-l="en">This firmware with source code, guide and tools</small></span><span>›</span></a>
- <a class="row" target="_blank" rel="noopener" data-l="de" href="ESP32_Oscilloscope_Clock_Dokumentation.pdf?v=9ccf0b7c"><span>Dokumentation (PDF)<small class="note">Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small></span><span>›</span></a>
- <a class="row" target="_blank" rel="noopener" data-l="en" href="ESP32_Oscilloscope_Clock_Documentation.pdf?v=cac7b3b8"><span>Documentation (PDF)<small class="note">Assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
+ <a class="row" target="_blank" rel="noopener" data-l="de" href="ESP32_Oscilloscope_Clock_Dokumentation.pdf?v=b59eefc1"><span>Dokumentation (PDF)<small class="note">Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small></span><span>›</span></a>
+ <a class="row" target="_blank" rel="noopener" data-l="en" href="ESP32_Oscilloscope_Clock_Documentation.pdf?v=46086de4"><span>Documentation (PDF)<small class="note">Assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" href="demo/"><span><span data-l="de">Testseite</span><span data-l="en">Test page</span><small class="note" data-l="de">Das Webinterface der Uhr ausprobieren – läuft im Browser, alle Werte sind simuliert</small><small class="note" data-l="en">Try the clock's web interface – runs in the browser, all values are simulated</small></span><span>›</span></a>
  <a class="row" href="#kap6"><span><span data-l="de">Firmware installieren</span><span data-l="en">Install firmware</span><small class="note" data-l="de">Direkt im Browser auf den ESP32 schreiben – oder den Sketch mit Arduino Cloud hochladen</small><small class="note" data-l="en">Write it to the ESP32 straight from the browser – or upload the sketch with Arduino Cloud</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" href="https://github.com/maurohh/ESP32_OscilloscopeClock"><span><span data-l="de">GitHub – Original</span><span data-l="en">GitHub – original</span><small class="note" data-l="de">Die ursprüngliche ESP32 Oscilloscope Clock von Mauro Pintus (2018), nach deren Idee diese Version entstand</small><small class="note" data-l="en">The original ESP32 Oscilloscope Clock by Mauro Pintus (2018) that inspired this version</small></span><span>›</span></a>
@@ -754,7 +754,7 @@ Variante B in Abschnitt 6.4).</p>
  <span slot="not-allowed" class="flashmsg">Die Installation geht nur über eine sichere Verbindung (https).</span>
 </esp-web-install-button>
 <p>Erscheint kein Anschluss, fehlt meist der USB-Treiber (CP210x oder CH340) oder das Kabel kann nur laden. Bricht die Verbindung ab,
-beim Start der Installation den <b>BOOT-Taster</b> gedrückt halten. Eigene Startwerte in <code>config.h</code> gehen so nicht – dafür
+beim Start der Installation den <b>BOOT-Taster</b> gedrückt halten. Meldet die Installation „Failed to write compressed data to flash …“, einfach noch einmal auf <b>Install</b> klicken – das passiert gelegentlich beim ersten Schreiben direkt nach dem Löschen des Speichers; der zweite Versuch läuft in der Regel durch. Eigene Startwerte in <code>config.h</code> gehen so nicht – dafür
 eine der folgenden Möglichkeiten nutzen.</p>
 <h3>6.2 Mit Arduino Cloud (app.arduino.cc)</h3>
 <ol>
@@ -802,7 +802,7 @@ variant B in section 6.4).</p>
  <span slot="not-allowed" class="flashmsg">Installing only works over a secure connection (https).</span>
 </esp-web-install-button>
 <p>If no port appears, the USB driver (CP210x or CH340) is usually missing or the cable only charges. If the connection drops, hold the
-<b>BOOT button</b> when the installation starts. Your own start values in <code>config.h</code> are not possible this way – use one of
+<b>BOOT button</b> when the installation starts. If the installation reports “Failed to write compressed data to flash …”, simply click <b>Install</b> again – this occasionally happens on the first write right after erasing the flash; the second attempt usually completes. Your own start values in <code>config.h</code> are not possible this way – use one of
 the following options for that.</p>
 <h3>6.2 With Arduino Cloud (app.arduino.cc)</h3>
 <ol>
@@ -1373,6 +1373,7 @@ group has “Reset to defaults”; the change can then be undone with “Undo”
  <tr><td data-th="Beobachtung">„Keine NTP-Verbindung“</td><td data-th="Abhilfe">WLAN prüfen (Status); ohne Internet die Zeit unter Einstellungen → Uhrzeit stellen – mit DS3231-Modul bleibt sie dann auch nach einem Stromausfall erhalten</td></tr>
  <tr><td data-th="Beobachtung">Zeit um ganze Stunden falsch</td><td data-th="Abhilfe">Zeitzone prüfen; Sommer-/Winterzeit beim Stellen von Hand</td></tr>
  <tr><td data-th="Beobachtung">http://scope-clock.local geht nicht</td><td data-th="Abhilfe">IP-Adresse aus dem Status oder dem Router verwenden (manche Android-Geräte unterstützen .local nicht)</td></tr>
+ <tr><td data-th="Beobachtung">Installation im Browser bricht ab („Failed to write compressed data to flash …“)</td><td data-th="Abhilfe">Noch einmal auf Install klicken; hilft das nicht, anderes USB-Kabel oder einen USB-Anschluss direkt am PC (ohne Hub) nehmen und beim Start den BOOT-Taster halten</td></tr>
  <tr><td data-th="Beobachtung">Uhr im Gastnetz (z. B. Gastzugang der FRITZ!Box) nicht erreichbar, auch nicht per IP</td><td data-th="Abhilfe">Gastnetze trennen die Geräte voneinander. Im Router erlauben, dass Geräte im Gastnetz untereinander kommunizieren dürfen, oder die Uhr ins normale Heimnetz bringen</td></tr>
  <tr><td data-th="Beobachtung">OLED bleibt dunkel</td><td data-th="Abhilfe">Im Status „OLED-Anzeige“ ansehen: „Aus“ = Helligkeit 0 %, unter Einstellungen → Display erhöhen. Steht dort „An“, die Verdrahtung prüfen: CLK GPIO18, DIN GPIO23, CS GPIO5, DC GPIO17, RST GPIO4, VCC an 3V3 (ob ein Display angeschlossen ist, kann die Uhr nicht erkennen)</td></tr>
  <tr><td data-th="Beobachtung">OLED-Bild 2 Pixel versetzt</td><td data-th="Abhilfe">in der <code>.ino</code> <code>NONAME0</code> durch <code>NONAME2</code> ersetzen</td></tr>
@@ -1422,6 +1423,7 @@ Steht dort „[RTC] kein DS3231 gefunden“, obwohl das Modul eingebaut ist, die
  <tr><td data-th="Observation">“No NTP connection”</td><td data-th="Remedy">check Wi-Fi (status); without internet set the time under Settings → Time – with a DS3231 module it is then kept even after a power failure</td></tr>
  <tr><td data-th="Observation">Time off by whole hours</td><td data-th="Remedy">check the time zone; summer/winter time when setting by hand</td></tr>
  <tr><td data-th="Observation">http://scope-clock.local does not work</td><td data-th="Remedy">use the IP address from the status or the router (some Android devices do not support .local)</td></tr>
+ <tr><td data-th="Observation">Installation in the browser aborts (“Failed to write compressed data to flash …”)</td><td data-th="Remedy">Click Install again; if that does not help, use another USB cable or a USB port directly on the PC (no hub) and hold the BOOT button at the start</td></tr>
  <tr><td data-th="Observation">Clock on a guest network (e.g. FRITZ!Box guest access) not reachable, not even by IP</td><td data-th="Remedy">Guest networks isolate devices from each other. Allow devices on the guest network to communicate with each other in the router, or move the clock to the normal home network</td></tr>
  <tr><td data-th="Observation">OLED stays dark</td><td data-th="Remedy">check “OLED display” in the status: “Off” = brightness 0 %, increase it under Settings → Display. If it says “On”, check the wiring: CLK GPIO18, DIN GPIO23, CS GPIO5, DC GPIO17, RST GPIO4, VCC to 3V3 (the clock cannot detect whether a display is connected)</td></tr>
  <tr><td data-th="Observation">OLED picture shifted by 2 pixels</td><td data-th="Remedy">replace <code>NONAME0</code> with <code>NONAME2</code> in the <code>.ino</code></td></tr>
