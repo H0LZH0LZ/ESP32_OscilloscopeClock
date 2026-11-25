@@ -1296,9 +1296,63 @@ static bool ntpOverdue()
   return g_ntpSynced && time(nullptr) - lastSyncEpoch() > (time_t)(2 * NTP_SYNC_INTERVAL_MS / 1000UL);
 }
 
+// mDNS (http://<name>.local) mit freiem Namen starten. Mehrere Uhren im selben WLAN:
+// ist der Gerätename schon vergeben, nimmt die Uhr <name>-2, <name>-3 … bis -9.
+// Ablauf in einer eigenen Task (Abfragen dauern je bis 1,5 s, das UI läuft weiter):
+//   1. mDNS unter einem sicher freien Hilfsnamen (<name>-<MAC>) starten, damit Abfragen gehen
+//   2. <name>, <name>-2 … abfragen; frei ist ein Name, auf den niemand (oder die Uhr selbst) antwortet
+//   3. mDNS unter dem freien Namen neu starten, Name in s_mdnsName (Status, Protokoll)
+static char          s_mdnsName[40] = "";    // tatsächlich verwendeter Name ohne .local ("" = noch keiner)
+static volatile bool s_mdnsBusy     = false; // Task läuft
+static volatile bool s_mdnsAgain    = false; // Gerätename während der Suche geändert → noch einmal
+
+static void mdnsTask(void *)
+{
+  do {
+    s_mdnsAgain = false;
+    char base[33];
+    strlcpy(base, s_host, sizeof(base));
+    uint8_t mac[6];
+    WiFi.macAddress(mac);
+    char name[40];
+    snprintf(name, sizeof(name), "%s-%02x%02x%02x", base, mac[3], mac[4], mac[5]);
+    MDNS.end();
+    if (MDNS.begin(name)) {
+      const IPAddress me = WiFi.localIP();
+      bool found = false;
+      for (int n = 1; n <= 9 && !found; n++) {
+        char cand[40];
+        if (n == 1) strlcpy(cand, base, sizeof(cand));
+        else        snprintf(cand, sizeof(cand), "%s-%d", base, n);
+        const IPAddress ip = MDNS.queryHost(cand, 1500);
+        if (ip == IPAddress() || ip == me) { strlcpy(name, cand, sizeof(name)); found = true; }
+        else logMsg(tr("[Web] Name \"%s\" ist im Netz schon vergeben (%s)", "[Web] name \"%s\" is already taken on the network (%s)"),
+                    cand, ip.toString().c_str());
+      }
+      MDNS.end();                                        // nichts frei: Hilfsname mit MAC bleibt
+      if (MDNS.begin(name)) {
+        MDNS.addService("http", "tcp", 80);
+        strlcpy(s_mdnsName, name, sizeof(s_mdnsName));
+        logMsg(tr("[Web] erreichbar unter http://%s.local und http://%s", "[Web] reachable at http://%s.local and http://%s"),
+               name, me.toString().c_str());
+      }
+    }
+  } while (s_mdnsAgain && WiFi.status() == WL_CONNECTED);
+  s_mdnsBusy = false;
+  vTaskDelete(nullptr);
+}
+
+static void mdnsStart()
+{
+  if (WiFi.status() != WL_CONNECTED) return;
+  if (s_mdnsBusy) { s_mdnsAgain = true; return; }
+  s_mdnsBusy = true;
+  if (xTaskCreatePinnedToCore(mdnsTask, "mdns", 4096, nullptr, 1, nullptr, 0) != pdPASS) s_mdnsBusy = false;
+}
+
 // Schreibt Statusänderungen ins Log (aufgerufen 1× pro Sekunde):
 //  - WLAN verbunden (mit SSID, IP, Signal) / Verbindung verloren
-//  - beim ersten Verbinden: mDNS starten (http://<WIFI_HOSTNAME>.local)
+//  - beim ersten Verbinden: mDNS mit freiem Namen starten (mdnsStart)
 //  - jede NTP-Synchronisierung mit Datum und Uhrzeit
 //  - einmalige Warnung, wenn der letzte Sync länger als 2 Intervalle her ist
 static void wifiLogChanges()
@@ -1313,12 +1367,7 @@ static void wifiLogChanges()
     if (st == WL_CONNECTED) {
       logMsg(tr("[WiFi] verbunden mit \"%s\", IP %s, RSSI %d dBm", "[WiFi] connected to \"%s\", IP %s, RSSI %d dBm"),
              WiFi.SSID().c_str(), WiFi.localIP().toString().c_str(), WiFi.RSSI());
-      if (!mdnsStarted && MDNS.begin(s_host)) {
-        MDNS.addService("http", "tcp", 80);
-        mdnsStarted = true;
-        logMsg(tr("[Web] erreichbar unter http://%s.local und http://%s", "[Web] reachable at http://%s.local and http://%s"),
-               s_host, WiFi.localIP().toString().c_str());
-      }
+      if (!mdnsStarted) { mdnsStarted = true; mdnsStart(); }
     } else if (last == WL_CONNECTED) {
       logMsg(tr("[WiFi] Verbindung verloren – versuche erneut", "[WiFi] connection lost – retrying"));
     }
@@ -1461,7 +1510,7 @@ static void handleStatus()
   o += ",\"ssid\":";                 jsonStr(o, conn ? WiFi.SSID().c_str() : "");
   o += ",\"rssi\":";                 o += conn ? WiFi.RSSI() : 0;
   o += ",\"ip\":";                   jsonStr(o, conn ? WiFi.localIP().toString().c_str() : "");
-  o += ",\"host\":";                 jsonStr(o, (String(s_host) + ".local").c_str());
+  o += ",\"host\":";                 jsonStr(o, (String(s_mdnsName[0] ? s_mdnsName : s_host) + ".local").c_str());
   o += "},\"ap\":{\"active\":";      o += s_apActive ? "true" : "false";
   o += ",\"ssid\":";                 jsonStr(o, WEB_SETUP_AP_SSID);
   o += ",\"ip\":";                   jsonStr(o, WiFi.softAPIP().toString().c_str());
@@ -2032,8 +2081,8 @@ static void handleSettingsPost()
     if (hostValid(v)) {
       strlcpy(s_host, v.c_str(), sizeof(s_host)); p.putString("host", s_host); changed++;
       WiFi.setHostname(s_host);
-      if (WiFi.status() == WL_CONNECTED) { MDNS.end(); if (MDNS.begin(s_host)) MDNS.addService("http", "tcp", 80); }
-      logMsg(tr("[Web] Geraetename: %s (http://%s.local)", "[Web] device name: %s (http://%s.local)"), s_host, s_host);
+      logMsg(tr("[Web] Geraetename: %s", "[Web] device name: %s"), s_host);
+      mdnsStart();                                      // prüft, ob der Name frei ist (sonst -2, -3 …)
     } else bad(tr("Gerätename: 1–32 Zeichen, nur a–z, 0–9 und Bindestrich", "Device name: 1–32 characters, only a–z, 0–9 and hyphen"));
   }
   // Testbild: nur bis zum Ausschalten oder Neustart (wird nicht gespeichert)
@@ -2129,7 +2178,7 @@ static void handleSettingsReset()
     if (strcmp(s_host, WIFI_HOSTNAME) != 0) {           // Gerätename zurück auf WIFI_HOSTNAME
       strlcpy(s_host, WIFI_HOSTNAME, sizeof(s_host));
       WiFi.setHostname(s_host);
-      if (WiFi.status() == WL_CONNECTED) { MDNS.end(); if (MDNS.begin(s_host)) MDNS.addService("http", "tcp", 80); }
+      mdnsStart();
     }
   }
   const char *name = all ? tr("alle", "all") : scope ? tr("Oszilloskop", "oscilloscope")

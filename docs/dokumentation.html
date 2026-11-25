@@ -253,8 +253,8 @@ Die Pixelverschiebung versetzt die Anzeige jede Minute um einen Pixel, damit kei
 landen in einem 8-KB-Ringpuffer, den der Debug-Bereich anzeigt.</p>
 <p><b>Vektordaten:</b> Zifferblatt, Ziffern, Zeiger und Testbild sind eigene Zeichnungen, erzeugt mit <code>tools/gen_vectors.py</code>
 (Koordinaten 0–255, 8 Bit je Achse).</p>
-<p><b>Speicher:</b> Programmspeicher 1.247.706 Byte (95 % beim Standard-Partitionsschema, ca. 39 % mit „Huge APP“), globale Variablen
-75.708 Byte (23 %). Die Webseite liegt gzip-komprimiert im Flash (26 KB), die Schrift (Raleway, auf die benötigten Zeichen reduziert) als WOFF2 (30 KB).</p>
+<p><b>Speicher:</b> Programmspeicher 1.249.222 Byte (95 % beim Standard-Partitionsschema, ca. 39 % mit „Huge APP“), globale Variablen
+75.756 Byte (23 %). Die Webseite liegt gzip-komprimiert im Flash (26 KB), die Schrift (Raleway, auf die benötigten Zeichen reduziert) als WOFF2 (30 KB).</p>
 
 <h2>3 Stand der Technik</h2>
 <h3>3.1 Die ursprüngliche Oscilloscope Clock</h3>
@@ -401,13 +401,17 @@ Variante B in Abschnitt 6.4).</p>
 <ol>
  <li>ESP32 mit einem USB-Datenkabel an den PC anschließen.</li>
  <li>Auf <b>„Firmware installieren“</b> klicken und im Fenster den Anschluss des ESP32 wählen (z. B. „CP2102“, „CH340“ oder „USB Serial“).</li>
- <li><b>Install</b> wählen. Bei der ersten Installation „Erase device“ ankreuzen; bei einem Update weglassen – dann bleiben WLANs und Einstellungen erhalten.</li>
+ <li><b>„… installieren“</b> wählen. Bei der ersten Installation „Gerät löschen“ ankreuzen; bei einem Update weglassen – dann bleiben WLANs und Einstellungen erhalten.</li>
  <li>Nach etwa einer Minute startet die Uhr. Weiter mit Kapitel 7.</li>
 </ol>
 <!-- FIRMWARE-KNOPF -->
 <p>Erscheint kein Anschluss, fehlt meist der USB-Treiber (CP210x oder CH340) oder das Kabel kann nur laden. Bricht die Verbindung ab,
-beim Start der Installation den <b>BOOT-Taster</b> gedrückt halten. Meldet die Installation „Failed to write compressed data to flash …“, einfach noch einmal auf <b>Install</b> klicken – das passiert gelegentlich beim ersten Schreiben direkt nach dem Löschen des Speichers; der zweite Versuch läuft in der Regel durch. Eigene Startwerte in <code>config.h</code> gehen so nicht – dafür
+beim Start der Installation den <b>BOOT-Taster</b> gedrückt halten. Meldet die Installation „Failed to write compressed data to flash …“, einfach noch einmal auf <b>„Installieren“</b> klicken – das passiert gelegentlich beim ersten Schreiben direkt nach dem Löschen des Speichers; der zweite Versuch läuft in der Regel durch. Eigene Startwerte in <code>config.h</code> gehen so nicht – dafür
 eine der folgenden Möglichkeiten nutzen.</p>
+<p><b>Mehrere Uhren im selben WLAN:</b> Alle Uhren starten mit dem Namen <code>scope-clock</code>. Ist der Name im Netz schon vergeben,
+nimmt die nächste Uhr selbst <code>scope-clock-2</code>, dann <code>scope-clock-3</code> usw.; die tatsächliche Adresse steht im Protokoll
+(„erreichbar unter …“) und im Status unter „Netzwerkadresse“. Eindeutiger ist ein eigener Name je Uhr, z. B. <code>scope-clock-buero</code>
+(Einstellungen → System → Gerätename).</p>
 <h3>6.2 Mit Arduino Cloud (app.arduino.cc)</h3>
 <ol>
  <li><a href="https://h0lzh0lz.github.io/ESP32_OscilloscopeClock/firmware/ESP32_OscilloscopeClock_v2.0.zip">Sketch als ZIP herunterladen</a> (Ordner <code>ESP32_OscilloscopeClock_v2.0</code> mit allen Dateien).</li>
@@ -428,8 +432,8 @@ neue Version die ZIP-Datei erneut herunterladen und importieren.</p>
 <h3>6.4 Partitionsschema: zwei Varianten</h3>
 <table style="break-inside:avoid">
  <tr><th>Variante</th><th>Arduino IDE: Partition Scheme</th><th>PlatformIO</th><th>Programmspeicher</th></tr>
- <tr><td><b>A – Huge APP</b> (empfohlen)</td><td>„Huge APP (3MB No OTA/1MB SPIFFS)“</td><td><code>pio run -t upload</code></td><td>1.247.706 von 3.145.728 Byte (<b>39 %</b>)</td></tr>
- <tr><td><b>B – Standard</b></td><td>„Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)“ – Voreinstellung, nichts umstellen</td><td><code>pio run -e standard -t upload</code></td><td>1.247.706 von 1.310.720 Byte (<b>95 %</b>)</td></tr>
+ <tr><td><b>A – Huge APP</b> (empfohlen)</td><td>„Huge APP (3MB No OTA/1MB SPIFFS)“</td><td><code>pio run -t upload</code></td><td>1.249.222 von 3.145.728 Byte (<b>39 %</b>)</td></tr>
+ <tr><td><b>B – Standard</b></td><td>„Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)“ – Voreinstellung, nichts umstellen</td><td><code>pio run -e standard -t upload</code></td><td>1.249.222 von 1.310.720 Byte (<b>95 %</b>)</td></tr>
 </table>
 <p>Beide Varianten laufen gleich. <b>A</b> lässt rund 1,9 MB Platz für Erweiterungen; die Uhr nutzt weder OTA-Updates noch
 SPIFFS, deshalb fehlt dabei nichts. <b>B</b> funktioniert ohne Umstellen, hat aber nur noch etwa 64 KB Reserve. Ein Wechsel
@@ -686,7 +690,7 @@ beschrieben wird. Jede Gruppe hat „Auf Standardwerte zurücksetzen“; danach 
 <h3>10.5 System und Seitenmenü</h3>
 <table>
  <tr><th style="width:24%">Einstellung</th><th style="width:16%">Bereich (Standard)</th><th>Wirkung</th></tr>
- <tr><td>Gerätename</td><td>a–z, 0–9, Bindestrich, max. 32 (scope-clock)</td><td>Name im Router und Adresse <code>http://&lt;name&gt;.local</code> (im Router nach dem nächsten Verbinden). Praktisch bei mehreren Uhren im selben Netz.</td></tr>
+ <tr><td>Gerätename</td><td>a–z, 0–9, Bindestrich, max. 32 (scope-clock)</td><td>Name im Router und Adresse <code>http://&lt;name&gt;.local</code> (im Router nach dem nächsten Verbinden). Ist der Name im Netz schon vergeben, hängt die Uhr selbst -2, -3 … an.</td></tr>
  <tr><td>Einstellungen sichern / laden</td><td>JSON-Datei</td><td>„Sichern“ lädt alle Einstellungen (außer WLANs) als Datei herunter, „Laden“ spielt sie wieder ein – etwa nach einem Tausch des ESP32.</td></tr>
  <tr><td>Alle Einstellungen zurücksetzen</td><td>–</td><td>Setzt alle Gruppen, die Sprache und den Gerätenamen auf die Werte aus <code>config.h</code> und schaltet
  das Testbild aus. WLANs bleiben erhalten; 8 Sekunden lang „Rückgängig“.</td></tr>

@@ -217,7 +217,7 @@ Below follow three sections. Every setting and every button has a short descript
   file `<device-name>-log-YYYYMMDD-HHMM.txt`. „Leeren“ (clear) empties the clock's ring buffer after a confirmation
   (`POST /api/log/clear`); the first new line is “log cleared”.
 - **„System“ (group in the settings):** device name (`host`, a–z, 0–9, hyphen, max. 32; applies at once
-  to mDNS `http://<name>.local` and to the router on the next connection), back up
+  to mDNS `http://<name>.local` – if the name is taken on the network, the clock uses `<name>-2`, `-3` … (`mdnsTask()`) and to the router on the next connection), back up
   settings (JSON file with all settings except Wi-Fi networks) and load them (sent to
   `POST /api/settings`), „Alle Einstellungen zurücksetzen“ (reset all settings: all groups, language and
   device name to `config.h`, test pattern off; Wi-Fi networks are kept; “Undo” for 8 s).
@@ -324,7 +324,7 @@ that group; Wi-Fi networks are kept.
 | Show seconds („Sekunden anzeigen“) | `osec` | on/off | OLED time HH:MM:SS or HH:MM |
 | OLED pixel shift („OLED-Pixelverschiebung“) | `shift` | on/off | offset against burn-in |
 | Rotate OLED by 180° („OLED um 180° drehen“) | `flip` | on/off | `u8g2.setDisplayRotation(U8G2_R2)`, for a display mounted upside down |
-| Device name („Gerätename“) | `host` | a–z, 0–9, hyphen, max. 32 | `WiFi.setHostname()`, `MDNS.begin()` again |
+| Device name („Gerätename“) | `host` | a–z, 0–9, hyphen, max. 32 | `WiFi.setHostname()`, `mdnsStart()`: name free? otherwise `-2` … `-9` |
 | Test pattern („Testbild“) | – | on/off | `g_testPattern`: `scopeTask` draws `TestData` instead of the clock; not saved |
 | Language („Sprache“) | `lang` | Deutsch / English | `s_lang`: web interface, OLED, log |
 | Time format („Zeitformat“) | `h12` | 24 hours / 12 hours (AM/PM) | `s_h12`: time on OLED and web page (log stays 24 h) |

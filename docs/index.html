@@ -241,8 +241,8 @@ html{background:var(--card)}body{min-height:100vh}   /* Safari zeigt beim Herunt
 <div class="grp"><h2 id="downloads-h" class="coll" role="button" tabindex="0" aria-expanded="true"><span data-l="de">Links &amp; Dokumente</span><span data-l="en">Links &amp; documents</span></h2>
 <section>
  <a class="row" target="_blank" rel="noopener" href="https://github.com/H0LZH0LZ/ESP32_OscilloscopeClock"><span><span data-l="de">GitHub – Version 2.0</span><span data-l="en">GitHub – version 2.0</span><small class="note" data-l="de">Diese Firmware mit Quellcode, Anleitung und Werkzeugen</small><small class="note" data-l="en">This firmware with source code, guide and tools</small></span><span>›</span></a>
- <a class="row" target="_blank" rel="noopener" data-l="de" href="ESP32_Oscilloscope_Clock_Dokumentation.pdf?v=1fa15f96"><span>Dokumentation (PDF)<small class="note">Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small></span><span>›</span></a>
- <a class="row" target="_blank" rel="noopener" data-l="en" href="ESP32_Oscilloscope_Clock_Documentation.pdf?v=ddc37814"><span>Documentation (PDF)<small class="note">Assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
+ <a class="row" target="_blank" rel="noopener" data-l="de" href="ESP32_Oscilloscope_Clock_Dokumentation.pdf?v=ea411258"><span>Dokumentation (PDF)<small class="note">Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small></span><span>›</span></a>
+ <a class="row" target="_blank" rel="noopener" data-l="en" href="ESP32_Oscilloscope_Clock_Documentation.pdf?v=0b7a77bb"><span>Documentation (PDF)<small class="note">Assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" href="demo/"><span><span data-l="de">Testseite</span><span data-l="en">Test page</span><small class="note" data-l="de">Das Webinterface der Uhr ausprobieren – läuft im Browser, alle Werte sind simuliert</small><small class="note" data-l="en">Try the clock's web interface – runs in the browser, all values are simulated</small></span><span>›</span></a>
  <a class="row" href="#kap6"><span><span data-l="de">Firmware installieren</span><span data-l="en">Install firmware</span><small class="note" data-l="de">Direkt im Browser auf den ESP32 schreiben – oder den Sketch mit Arduino Cloud hochladen</small><small class="note" data-l="en">Write it to the ESP32 straight from the browser – or upload the sketch with Arduino Cloud</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" href="https://github.com/maurohh/ESP32_OscilloscopeClock"><span><span data-l="de">GitHub – Original</span><span data-l="en">GitHub – original</span><small class="note" data-l="de">Die ursprüngliche ESP32 Oscilloscope Clock von Mauro Pintus (2018), nach deren Idee diese Version entstand</small><small class="note" data-l="en">The original ESP32 Oscilloscope Clock by Mauro Pintus (2018) that inspired this version</small></span><span>›</span></a>
@@ -382,8 +382,8 @@ Die Pixelverschiebung versetzt die Anzeige jede Minute um einen Pixel, damit kei
 landen in einem 8-KB-Ringpuffer, den der Debug-Bereich anzeigt.</p>
 <p><b>Vektordaten:</b> Zifferblatt, Ziffern, Zeiger und Testbild sind eigene Zeichnungen, erzeugt mit <code>tools/gen_vectors.py</code>
 (Koordinaten 0–255, 8 Bit je Achse).</p>
-<p><b>Speicher:</b> Programmspeicher 1.247.706 Byte (95 % beim Standard-Partitionsschema, ca. 39 % mit „Huge APP“), globale Variablen
-75.708 Byte (23 %). Die Webseite liegt gzip-komprimiert im Flash (26 KB), die Schrift (Raleway, auf die benötigten Zeichen reduziert) als WOFF2 (30 KB).</p>
+<p><b>Speicher:</b> Programmspeicher 1.249.222 Byte (95 % beim Standard-Partitionsschema, ca. 39 % mit „Huge APP“), globale Variablen
+75.756 Byte (23 %). Die Webseite liegt gzip-komprimiert im Flash (26 KB), die Schrift (Raleway, auf die benötigten Zeichen reduziert) als WOFF2 (30 KB).</p>
 </div><div data-l="en">
 <figure><img loading="lazy" src="images/software_en.svg"><figcaption>Fig. 4 – Distribution of the firmware over the two processor cores</figcaption></figure>
 <h3>2.1 Two cores with separate jobs</h3>
@@ -459,8 +459,8 @@ its frames (frame rate in the status), an idle hook measures the load of core 0,
 the debug section.</p>
 <p><b>Vector data:</b> dial, numerals, hands and test pattern are original drawings, generated with <code>tools/gen_vectors.py</code>
 (coordinates 0–255, 8 bits per axis).</p>
-<p><b>Memory:</b> program memory 1,247,706 bytes (95 % with the default partition scheme, approx. 39 % with “Huge APP”), global variables
-75,708 bytes (23 %). The web page is stored gzip-compressed in flash (26 KB), the font (Raleway, reduced to the characters needed) as WOFF2 (30 KB).</p>
+<p><b>Memory:</b> program memory 1,249,222 bytes (95 % with the default partition scheme, approx. 39 % with “Huge APP”), global variables
+75,756 bytes (23 %). The web page is stored gzip-compressed in flash (26 KB), the font (Raleway, reduced to the characters needed) as WOFF2 (30 KB).</p>
 </div></section></div>
 
 <div class="grp closed"><h2 id="kap3" class="coll" role="button" tabindex="0" aria-expanded="false"><span data-l="de">3 Stand der Technik</span><span data-l="en">3 State of the art</span></h2>
@@ -745,7 +745,7 @@ Variante B in Abschnitt 6.4).</p>
 <ol>
  <li>ESP32 mit einem USB-Datenkabel an den PC anschließen.</li>
  <li>Auf <b>„Firmware installieren“</b> klicken und im Fenster den Anschluss des ESP32 wählen (z. B. „CP2102“, „CH340“ oder „USB Serial“).</li>
- <li><b>Install</b> wählen. Bei der ersten Installation „Erase device“ ankreuzen; bei einem Update weglassen – dann bleiben WLANs und Einstellungen erhalten.</li>
+ <li><b>„… installieren“</b> wählen. Bei der ersten Installation „Gerät löschen“ ankreuzen; bei einem Update weglassen – dann bleiben WLANs und Einstellungen erhalten.</li>
  <li>Nach etwa einer Minute startet die Uhr. Weiter mit Kapitel 7.</li>
 </ol>
 <esp-web-install-button manifest="firmware/manifest.json">
@@ -754,8 +754,12 @@ Variante B in Abschnitt 6.4).</p>
  <span slot="not-allowed" class="flashmsg">Die Installation geht nur über eine sichere Verbindung (https).</span>
 </esp-web-install-button>
 <p>Erscheint kein Anschluss, fehlt meist der USB-Treiber (CP210x oder CH340) oder das Kabel kann nur laden. Bricht die Verbindung ab,
-beim Start der Installation den <b>BOOT-Taster</b> gedrückt halten. Meldet die Installation „Failed to write compressed data to flash …“, einfach noch einmal auf <b>Install</b> klicken – das passiert gelegentlich beim ersten Schreiben direkt nach dem Löschen des Speichers; der zweite Versuch läuft in der Regel durch. Eigene Startwerte in <code>config.h</code> gehen so nicht – dafür
+beim Start der Installation den <b>BOOT-Taster</b> gedrückt halten. Meldet die Installation „Failed to write compressed data to flash …“, einfach noch einmal auf <b>„Installieren“</b> klicken – das passiert gelegentlich beim ersten Schreiben direkt nach dem Löschen des Speichers; der zweite Versuch läuft in der Regel durch. Eigene Startwerte in <code>config.h</code> gehen so nicht – dafür
 eine der folgenden Möglichkeiten nutzen.</p>
+<p><b>Mehrere Uhren im selben WLAN:</b> Alle Uhren starten mit dem Namen <code>scope-clock</code>. Ist der Name im Netz schon vergeben,
+nimmt die nächste Uhr selbst <code>scope-clock-2</code>, dann <code>scope-clock-3</code> usw.; die tatsächliche Adresse steht im Protokoll
+(„erreichbar unter …“) und im Status unter „Netzwerkadresse“. Eindeutiger ist ein eigener Name je Uhr, z. B. <code>scope-clock-buero</code>
+(Einstellungen → System → Gerätename).</p>
 <h3>6.2 Mit Arduino Cloud (app.arduino.cc)</h3>
 <ol>
  <li><a href="firmware/ESP32_OscilloscopeClock_v2.0.zip">Sketch als ZIP herunterladen</a> (Ordner <code>ESP32_OscilloscopeClock_v2.0</code> mit allen Dateien).</li>
@@ -776,8 +780,8 @@ neue Version die ZIP-Datei erneut herunterladen und importieren.</p>
 <h3>6.4 Partitionsschema: zwei Varianten</h3>
 <div class="tw"><table style="break-inside:avoid">
  <tr><th>Variante</th><th>Arduino IDE: Partition Scheme</th><th>PlatformIO</th><th>Programmspeicher</th></tr>
- <tr><td data-th="Variante"><b>A – Huge APP</b> (empfohlen)</td><td data-th="Arduino IDE: Partition Scheme">„Huge APP (3MB No OTA/1MB SPIFFS)“</td><td data-th="PlatformIO"><code>pio run -t upload</code></td><td data-th="Programmspeicher">1.247.706 von 3.145.728 Byte (<b>39 %</b>)</td></tr>
- <tr><td data-th="Variante"><b>B – Standard</b></td><td data-th="Arduino IDE: Partition Scheme">„Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)“ – Voreinstellung, nichts umstellen</td><td data-th="PlatformIO"><code>pio run -e standard -t upload</code></td><td data-th="Programmspeicher">1.247.706 von 1.310.720 Byte (<b>95 %</b>)</td></tr>
+ <tr><td data-th="Variante"><b>A – Huge APP</b> (empfohlen)</td><td data-th="Arduino IDE: Partition Scheme">„Huge APP (3MB No OTA/1MB SPIFFS)“</td><td data-th="PlatformIO"><code>pio run -t upload</code></td><td data-th="Programmspeicher">1.249.222 von 3.145.728 Byte (<b>39 %</b>)</td></tr>
+ <tr><td data-th="Variante"><b>B – Standard</b></td><td data-th="Arduino IDE: Partition Scheme">„Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)“ – Voreinstellung, nichts umstellen</td><td data-th="PlatformIO"><code>pio run -e standard -t upload</code></td><td data-th="Programmspeicher">1.249.222 von 1.310.720 Byte (<b>95 %</b>)</td></tr>
 </table></div>
 <p>Beide Varianten laufen gleich. <b>A</b> lässt rund 1,9 MB Platz für Erweiterungen; die Uhr nutzt weder OTA-Updates noch
 SPIFFS, deshalb fehlt dabei nichts. <b>B</b> funktioniert ohne Umstellen, hat aber nur noch etwa 64 KB Reserve. Ein Wechsel
@@ -804,6 +808,10 @@ variant B in section 6.4).</p>
 <p>If no port appears, the USB driver (CP210x or CH340) is usually missing or the cable only charges. If the connection drops, hold the
 <b>BOOT button</b> when the installation starts. If the installation reports “Failed to write compressed data to flash …”, simply click <b>Install</b> again – this occasionally happens on the first write right after erasing the flash; the second attempt usually completes. Your own start values in <code>config.h</code> are not possible this way – use one of
 the following options for that.</p>
+<p><b>Several clocks on the same Wi-Fi:</b> all clocks start with the name <code>scope-clock</code>. If the name is already taken on the
+network, the next clock automatically uses <code>scope-clock-2</code>, then <code>scope-clock-3</code> etc.; the actual address is shown in
+the log (“reachable at …”) and in the status under “Network address”. A clearer option is a name of its own for each clock, e.g.
+<code>scope-clock-office</code> (Settings → System → Device name).</p>
 <h3>6.2 With Arduino Cloud (app.arduino.cc)</h3>
 <ol>
  <li><a href="firmware/ESP32_OscilloscopeClock_v2.0.zip">Download the sketch as a ZIP</a> (folder <code>ESP32_OscilloscopeClock_v2.0</code> with all files).</li>
@@ -824,8 +832,8 @@ version download and import the ZIP file again.</p>
 <h3>6.4 Partition scheme: two variants</h3>
 <div class="tw"><table style="break-inside:avoid">
  <tr><th>Variant</th><th>Arduino IDE: Partition Scheme</th><th>PlatformIO</th><th>Program memory</th></tr>
- <tr><td data-th="Variant"><b>A – Huge APP</b> (recommended)</td><td data-th="Arduino IDE: Partition Scheme">“Huge APP (3MB No OTA/1MB SPIFFS)”</td><td data-th="PlatformIO"><code>pio run -t upload</code></td><td data-th="Program memory">1,247,706 of 3,145,728 bytes (<b>39 %</b>)</td></tr>
- <tr><td data-th="Variant"><b>B – Standard</b></td><td data-th="Arduino IDE: Partition Scheme">“Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)” – the default, nothing to change</td><td data-th="PlatformIO"><code>pio run -e standard -t upload</code></td><td data-th="Program memory">1,247,706 of 1,310,720 bytes (<b>95 %</b>)</td></tr>
+ <tr><td data-th="Variant"><b>A – Huge APP</b> (recommended)</td><td data-th="Arduino IDE: Partition Scheme">“Huge APP (3MB No OTA/1MB SPIFFS)”</td><td data-th="PlatformIO"><code>pio run -t upload</code></td><td data-th="Program memory">1,249,222 of 3,145,728 bytes (<b>39 %</b>)</td></tr>
+ <tr><td data-th="Variant"><b>B – Standard</b></td><td data-th="Arduino IDE: Partition Scheme">“Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)” – the default, nothing to change</td><td data-th="PlatformIO"><code>pio run -e standard -t upload</code></td><td data-th="Program memory">1,249,222 of 1,310,720 bytes (<b>95 %</b>)</td></tr>
 </table></div>
 <p>Both variants work the same. <b>A</b> leaves about 1.9 MB for extensions; the clock uses neither OTA updates nor SPIFFS,
 so nothing is lost. <b>B</b> works without changing anything but leaves only about 64 KB. You can switch at any time (choose
@@ -1253,7 +1261,7 @@ beschrieben wird. Jede Gruppe hat „Auf Standardwerte zurücksetzen“; danach 
 <h3>10.5 System und Seitenmenü</h3>
 <div class="tw"><table>
  <tr><th style="width:24%">Einstellung</th><th style="width:16%">Bereich (Standard)</th><th>Wirkung</th></tr>
- <tr><td data-th="Einstellung">Gerätename</td><td data-th="Bereich (Standard)">a–z, 0–9, Bindestrich, max. 32 (scope-clock)</td><td data-th="Wirkung">Name im Router und Adresse <code>http://&lt;name&gt;.local</code> (im Router nach dem nächsten Verbinden). Praktisch bei mehreren Uhren im selben Netz.</td></tr>
+ <tr><td data-th="Einstellung">Gerätename</td><td data-th="Bereich (Standard)">a–z, 0–9, Bindestrich, max. 32 (scope-clock)</td><td data-th="Wirkung">Name im Router und Adresse <code>http://&lt;name&gt;.local</code> (im Router nach dem nächsten Verbinden). Ist der Name im Netz schon vergeben, hängt die Uhr selbst -2, -3 … an.</td></tr>
  <tr><td data-th="Einstellung">Einstellungen sichern / laden</td><td data-th="Bereich (Standard)">JSON-Datei</td><td data-th="Wirkung">„Sichern“ lädt alle Einstellungen (außer WLANs) als Datei herunter, „Laden“ spielt sie wieder ein – etwa nach einem Tausch des ESP32.</td></tr>
  <tr><td data-th="Einstellung">Alle Einstellungen zurücksetzen</td><td data-th="Bereich (Standard)">–</td><td data-th="Wirkung">Setzt alle Gruppen, die Sprache und den Gerätenamen auf die Werte aus <code>config.h</code> und schaltet
  das Testbild aus. WLANs bleiben erhalten; 8 Sekunden lang „Rückgängig“.</td></tr>
@@ -1342,7 +1350,7 @@ group has “Reset to defaults”; the change can then be undone with “Undo”
 <div class="tw"><table>
  <tr><th style="width:24%">Setting</th><th style="width:16%">Range (default)</th><th>Effect</th></tr>
  <tr><td data-th="Setting">Device name</td><td data-th="Range (default)">a–z, 0–9, hyphen, max. 32 (scope-clock)</td><td data-th="Effect">Name of the clock in the router and address in the browser: <code>http://&lt;name&gt;.local</code>. Applies
- immediately to the .local address, in the router after the next connection. Useful if several clocks run in the same network.</td></tr>
+ immediately to the .local address, in the router after the next connection. If the name is already taken on the network, the clock appends -2, -3 … by itself.</td></tr>
  <tr><td data-th="Setting">Back up / load settings</td><td data-th="Range (default)">JSON file</td><td data-th="Effect">“Save” downloads all settings (except Wi-Fi networks) as a file, “Load” imports such a file again
  – e.g. after replacing the ESP32 or to configure several clocks the same way.</td></tr>
  <tr><td data-th="Setting">Reset all settings</td><td data-th="Range (default)">–</td><td data-th="Effect">Resets all groups, the language and the device name to the values from <code>config.h</code> and switches the

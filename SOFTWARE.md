@@ -216,7 +216,7 @@ Darunter folgen drei Bereiche. **Status** und **Protokoll** sind einklappbar (Pf
   „Leeren“ löscht nach Rückfrage den Ringpuffer der Uhr (`POST /api/log/clear`); die erste neue Zeile
   ist „Protokoll geloescht“.
 - **System** (Gruppe in den Einstellungen): Gerätename (`host`, a–z, 0–9, Bindestrich, max. 32; gilt
-  sofort für mDNS `http://<name>.local` und beim nächsten Verbinden für den Router), Einstellungen
+  sofort für mDNS `http://<name>.local` – ist der Name im Netz vergeben, nimmt die Uhr `<name>-2`, `-3` … (`mdnsTask()`) und beim nächsten Verbinden für den Router), Einstellungen
   sichern (JSON-Datei mit allen Einstellungen außer WLANs)
   und laden (sendet die Werte an `POST /api/settings`), „Alle Einstellungen zurücksetzen“ (alle Gruppen,
   Sprache und Gerätename auf `config.h`, Testbild aus; WLANs bleiben; 8 s „Rückgängig“).
@@ -317,7 +317,7 @@ Knopf „Auf Standardwerte zurücksetzen“: Er löscht nur die gespeicherten We
 | Sekunden anzeigen | `osec` | an/aus | OLED-Uhrzeit HH:MM:SS oder HH:MM |
 | OLED-Pixelverschiebung | `shift` | an/aus | Versatz gegen Einbrennen |
 | OLED um 180° drehen | `flip` | an/aus | `u8g2.setDisplayRotation(U8G2_R2)`, für ein kopfüber eingebautes Display |
-| Gerätename | `host` | a–z, 0–9, Bindestrich, max. 32 | `WiFi.setHostname()`, `MDNS.begin()` neu |
+| Gerätename | `host` | a–z, 0–9, Bindestrich, max. 32 | `WiFi.setHostname()`, `mdnsStart()`: Name frei? sonst `-2` … `-9` |
 | Testbild | – | an/aus | `g_testPattern`: `scopeTask` zeichnet `TestData` statt der Uhr; nicht gespeichert |
 | Sprache | `lang` | Deutsch / English | `s_lang`: Webinterface, OLED, Protokoll |
 | Zeitformat | `h12` | 24 Stunden / 12 Stunden (AM/PM) | `s_h12`: Uhrzeit auf OLED und Webseite (Protokoll bleibt 24 h) |
