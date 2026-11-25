@@ -97,7 +97,7 @@ def main():
     ui = read(os.path.join(DEMO, 'demo-ui.js'))
 
     page = ('<!doctype html>\n<html lang="de"><head><meta charset="utf-8">\n'
-            '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">\n'
+            '<meta name="viewport" content="width=device-width,initial-scale=1">\n'
             '<title>Scope Clock Webinterface – Demo</title>\n'
             f'<script>{head_js}</script>\n<style>{style}</style></head><body>\n{body}\n'
             f'<script>{api}</script>\n<script>{settings}</script>\n<script>{script}\n{ui}</script>\n'
