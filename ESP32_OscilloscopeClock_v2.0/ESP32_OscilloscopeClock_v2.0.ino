@@ -2854,8 +2854,7 @@ void setup()
   zblankApply(g_zblank, g_zblankHigh);      // Z-Ausgang wie gespeichert (aus = Pin hochohmig)
   if (BOOT_TEST_S > 0) logMsg(tr("[Scope] Testbild fuer %d s", "[Scope] test pattern for %d s"), (int)BOOT_TEST_S);
   logMsg(tr("ESP32 Oscilloscope Clock v" FW_VERSION " (Idee nach Mauro Pintus 2018)", "ESP32 Oscilloscope Clock v" FW_VERSION " (idea by Mauro Pintus 2018)"));
-  logMsg("\xC2\xA9 Christian Holz");      // © in UTF-8 – wie Webinterface und Projektseite
-  logMsg("CPU: %lu MHz", (unsigned long)getCpuFrequencyMhz());
+  logMsg("CPU: %lu MHz \xC2\xB7 \xC2\xA9 Christian Holz", (unsigned long)getCpuFrequencyMhz());   // · und © in UTF-8
 
   // Bis zum ersten publishTime() die Startzeit anzeigen
   g_timePacked = packTime(FALLBACK_H, FALLBACK_M, FALLBACK_S);

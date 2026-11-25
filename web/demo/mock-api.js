@@ -10,7 +10,7 @@ const st={setup:false,ssid:'Heimnetz',rssi:-61,nets:[{ssid:'Heimnetz',source:'we
 const log=[];
 function L(msg){const up=Math.floor((Date.now()-t0)/1000);log.push(hms(new Date())+' '+msg)}
 const b=new Date(t0-180000), f=s=>'+'+s+'s ';
-log.push(f(0)+'ESP32 Oscilloscope Clock v2.0 (Idee nach Mauro Pintus 2018)',f(0)+'© Christian Holz',f(0)+'CPU: 240 MHz',f(0)+'[Scope] Profil: DIGITAL – BOOT-Taster 3 s halten zum Umschalten',
+log.push(f(0)+'ESP32 Oscilloscope Clock v2.0 (Idee nach Mauro Pintus 2018)',f(0)+'CPU: 240 MHz · © Christian Holz',f(0)+'[Scope] Profil: DIGITAL – BOOT-Taster 3 s halten zum Umschalten',
  f(0)+'[UI] laeuft auf Core 0',f(0)+'[Scope] laeuft auf Core 1',f(0)+'[Scope] Rundtour: 122 Linienzuege, Spruenge gesamt 1348 DAC-Einheiten',
  f(0)+'[WiFi] bekanntes Netz: "Heimnetz"',f(0)+'[WiFi] bekanntes Netz: "Werkstatt"',f(0)+'[Web] Webserver gestartet (Port 80)',
  f(3)+'[WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -61 dBm',f(3)+'[Web] erreichbar unter http://scope-clock.local und http://192.168.178.42',

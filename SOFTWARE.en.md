@@ -374,8 +374,7 @@ Both show the same lines, with a timestamp (`+<s>s` until the time is valid):
 
 ```
 +0s ESP32 Oscilloscope Clock v2.0 (Idee nach Mauro Pintus 2018)
-+0s © Christian Holz
-+0s CPU: 240 MHz
++0s CPU: 240 MHz · © Christian Holz
 +0s Letzter Neustart: Einschalten
 +0s [Scope] Profil: DIGITAL – BOOT-Taster 3 s halten zum Umschalten
 +0s [UI] laeuft auf Core 0
