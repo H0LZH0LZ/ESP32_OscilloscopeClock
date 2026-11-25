@@ -207,7 +207,7 @@ header.fs #clock,header.fs #date{text-shadow:0 0 .05em var(--scope-halo),0 0 .22
 header.fs .fscopy{display:block;position:fixed;right:calc(env(safe-area-inset-right) + 12px);bottom:calc(env(safe-area-inset-bottom) + 8px);font-size:12px;color:var(--mute);opacity:.6;pointer-events:none}
 header.fs #clock{font-size:min(8vw,6.4vh)}header.fs #date{font-size:max(14px,min(4vw,2.8vh))}
 header.fs .fsbtn{position:fixed;top:calc(env(safe-area-inset-top) + 10px);right:calc(env(safe-area-inset-right) + 10px)}
-html:has(header.fs){overflow:hidden}
+html:has(header.fs),body:has(header.fs){overflow:hidden}
 /* Monatskalender unter dem Datum – nur im Vollbild und im Querformat */
 .cal{display:none;margin:6vh auto 0;color:var(--scope-trace);font-size:max(12px,min(1.5vw,2.6vh))}
 .cal .cm{text-align:center;letter-spacing:.04em;margin-bottom:.5em;text-shadow:0 0 .2em var(--scope-glow)}
@@ -217,7 +217,7 @@ html:has(header.fs){overflow:hidden}
 .cal .we{opacity:.7}.cal td.today{border:1px solid var(--scope-trace);border-radius:4px;box-shadow:0 0 .4em var(--scope-glow);opacity:1}
 @media (orientation:landscape){header.fs{flex-direction:row;gap:5vw}header.fs .scope canvas{width:min(56vw,90vh)}header.fs #clock{font-size:min(5.2vw,9.6vh)}header.fs #date{font-size:max(14px,min(2.2vw,4vh))}header.fs .cal{display:block}}
 .scopehint{color:var(--mute);font-size:13px;margin:0 0 6px}
-html{scroll-behavior:smooth}
+
 /* Jede Überschrift ist nur innerhalb ihres Abschnitts (.grp) angeheftet:
    endet der Abschnitt, schiebt die nächste Überschrift die vorige hinaus. */
 .grp{position:relative}
@@ -316,7 +316,9 @@ button,input,.set select,.logsel,#nav select,pre,.scope,#nav a{border-radius:var
 footer.copy{text-align:center;font-size:12px;color:var(--mute);background:var(--card);border-top:1px solid var(--line);padding:16px 16px calc(16px + env(safe-area-inset-bottom))}   /* Fußzeile mit Copyright, Farbe wie die Titelleiste */
 /* Safari zeigt beim Herunterziehen (Aktualisieren) und Hochschieben über den Seitenrand hinaus die Farbe von <html>:
    Farbe der Titelleiste bzw. Fußzeile; die Seite selbst trägt ihren Hintergrund auf <body> */
-html{background:var(--card);overscroll-behavior-y:none}body{min-height:100vh}   /* kein Nachfedern über den Rand: keine Lücke über der Titelleiste (Aktualisieren über ↻) */
+html{background:var(--card);height:100%;overflow:hidden}
+body{height:100%;overflow-y:auto;overscroll-behavior-y:none;scroll-behavior:smooth}   /* Safari (iPad) federt das Dokument trotz overscroll-behavior nach und verschiebt dabei die
+   Titelleiste: deshalb scrollt nicht das Dokument, sondern <body> – die Titelleiste bleibt stehen. Aktualisieren über ↻ */
 @media (min-width:1100px){footer.copy{margin-left:280px}}
 </style></head>
 <body>
@@ -709,10 +711,10 @@ async function keepAwake(on){try{if(on&&!wake&&navigator.wakeLock){wake=await na
  else if(!on&&wake){await wake.release();wake=null}}catch(e){}}
 // iPad (Safari/Chrome = WebKit): nach dem Verlassen des Vollbilds bleibt die Seite manchmal um einige Pixel
 // nach unten verschoben (Lücke über der Titelleiste) – kurzes Hin- und Zurückscrollen setzt sie zurück.
-let fsY=0;
-function fixViewport(){const go=()=>{scrollTo({top:fsY+1,behavior:'instant'});scrollTo({top:fsY,behavior:'instant'})};
+let fsY=0;const pageScroller=()=>document.body.scrollHeight>document.body.clientHeight?document.body:document.scrollingElement;
+function fixViewport(){const go=()=>{const e=pageScroller();e.scrollTo({top:fsY+1,behavior:'instant'});e.scrollTo({top:fsY,behavior:'instant'})};
  requestAnimationFrame(go);setTimeout(go,150);setTimeout(go,500)}
-function fsLayout(on){const h=$('uhr'),c=$('scope');if(on&&!h.classList.contains('fs'))fsY=scrollY;h.classList.toggle('fs',on);if(!on)fixViewport();
+function fsLayout(on){const h=$('uhr'),c=$('scope');if(on&&!h.classList.contains('fs'))fsY=pageScroller().scrollTop;h.classList.toggle('fs',on);if(!on)fixViewport();
  $('fsBtn').setAttribute('aria-label',t(on?'Vollbild beenden':'Vollbild'));$('fsBtn').textContent=on?'✕':'⛶';
  c.width=c.height=on?1024:512;drawScope();keepAwake(on);fitFs()}
 // Vollbild quer: Datum und Kalender sichtbar so breit wie die Uhrzeit. Die Ziffern der Uhrzeit stehen in
