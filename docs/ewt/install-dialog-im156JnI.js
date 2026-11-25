@@ -833,13 +833,13 @@ const ewtT=(d,e)=>document.documentElement.lang==="en"?e:d;import{e,_ as t,o as 
         <ewt-page-message
           slot="content"
           .icon=${Sa}
-          .label=${ewtT(this._installState.message+" – noch einmal „Installieren“ wählen. Klappt es wieder nicht: beim Klick den BOOT-Taster gedrückt halten und die Kabel zum Oszilloskop abziehen.",this._installState.message)}
+          .label=${ewtT(this._installState.message+" – Fenster schließen, USB-Kabel kurz abziehen (oder EN-Taster drücken) und erneut „Firmware installieren“ klicken; dabei den BOOT-Taster gedrückt halten, Kabel zum Oszilloskop vorher abziehen.",this._installState.message+" – close this window, unplug the USB cable briefly (or press the EN button) and click “Install firmware” again while holding the BOOT button; unplug the cables to the oscilloscope first.")}
         ></ewt-page-message>
         <div slot="actions">
           <ew-text-button
-            @click=${async()=>{this._initialize(),this._state="DASHBOARD"}}
+            @click=${this._closeDialog}
           >
-            ${ewtT("Zurück","Back")}
+            ${ewtT("Schließen","Close")}
           </ew-text-button>
         </div>
       `);else e=ewtT("Installation läuft","Installing"),t=this._renderProgress(ewtT("Installation wird vorbereitet","Preparing installation"));else{e=ewtT("Installation bestätigen","Confirm Installation");const r=i?"update to":"install";t=s`

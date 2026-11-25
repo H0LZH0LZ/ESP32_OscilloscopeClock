@@ -113,7 +113,8 @@ DIALOG_RAW = [
     ('label="Network"', '.label=${ewtT("Netz","Network")}'),
     ('label="Password"', '.label=${ewtT("Passwort","Password")}'),
     ('.label=${this._installState.message}',
-     '.label=${ewtT(this._installState.message+" – noch einmal „Installieren“ wählen. Klappt es wieder nicht: beim Klick den BOOT-Taster gedrückt halten und die Kabel zum Oszilloskop abziehen.",this._installState.message)}'),
+     '.label=${ewtT(this._installState.message+" – Fenster schließen, USB-Kabel kurz abziehen (oder EN-Taster drücken) und erneut „Firmware installieren“ klicken; dabei den BOOT-Taster gedrückt halten, Kabel zum Oszilloskop vorher abziehen.",'
+     'this._installState.message+" – close this window, unplug the USB cable briefly (or press the EN button) and click “Install firmware” again while holding the BOOT button; unplug the cables to the oscilloscope first.")}'),
 ]
 
 PORT_TEXT = [
@@ -216,6 +217,13 @@ def main():
                       's`Do you want to ${r} ${this._manifest.name}&nbsp;${this._manifest.version}?`)}', seg)
     if n != 1:
         sys.exit('Installationsdialog: Installations-Frage nicht gefunden')
+    # Nach einem Fehler hängt der ESP32 meist im Lademodus: „Back“ (zurück zur Übersicht) hilft dann
+    # nicht – stattdessen „Schließen“; neu starten und „Firmware installieren“ erklärt die Meldung
+    i = seg.index('e="Installation failed"')
+    old = '@click=${async()=>{this._initialize(),this._state="DASHBOARD"}}\n          >\n            Back\n'
+    if seg.find(old, i, i + 600) < 0:
+        sys.exit('Installationsdialog: Knopf nach Fehler nicht gefunden')
+    seg = seg[:i] + seg[i:].replace(old, '@click=${this._closeDialog}\n          >\n            Close\n', 1)
     seg = patch(seg, DIALOG_TEXT, DIALOG_STR, DIALOG_RAW, 'Installationsdialog')
     seg = seg.replace('e=`Logs`', 'e=ewtT("Protokoll","Logs")')
     # Konsole (ewt-console, vor der Dialog-Klasse): Meldung beim Trennen
