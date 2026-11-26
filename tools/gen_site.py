@@ -162,7 +162,7 @@ def main():
         strip = lambda t: html.unescape(re.sub(r'<[^>]+>', '', t))
         nav.append(f' <a href="#{cid}"><span data-l="de">{html.escape(strip(td))}</span>'
                    f'<span data-l="en">{html.escape(strip(te))}</span></a>')
-        body.append(f'<div class="grp closed"><h2 id="{cid}" class="coll" role="button" tabindex="0" aria-expanded="false">'
+        body.append(f'<div class="grp"><h2 id="{cid}" class="coll" role="button" tabindex="0" aria-expanded="true">'
                     f'<span data-l="de">{td}</span><span data-l="en">{te}</span></h2>\n'
                     f'<section class="doc"><div data-l="de">\n{cd}\n</div><div data-l="en">\n{ce}\n</div></section></div>')
     f = os.path.join(DOCS, 'index.html')
