@@ -146,7 +146,7 @@ def verdrahtung():
     # Beschriftung auf dem DevKit (wie aufgedruckt) – die Klemmen tragen die Namen des Breakout-Boards (L, R)
     DL = ['3V3','EN','VP','VN','34','35','32','33','25','26','27','14','12','GND','13','D2','D3','CMD','5V']
     DR = ['GND','23','22','TX','RX','21','GND','19','18','5','17','16','4','0','2','15','D1','D0','CLK']
-    used = {('L',1):'#d62828',('L',9):'#8e44ad',('L',10):'#0aa39a',('L',14):'#111',
+    used = {('L',1):'#d62828',('L',9):'#9a5b2e',('L',10):'#9a5b2e',('L',14):'#111',
             ('R',1):'#111',('R',2):'#1f5fd1',('R',9):'#f2c200',('R',10):'#f07b1d',('R',11):'#1f9d55',('R',13):'#f7f7f7'}   # Farben wie an den Kabeln (OLED)
     wired = set(used) | {('R',3), ('R',6), ('R',7)}                # dazu die optionalen RTC-Klemmen
     # --- Breakout-Board wie das Original: hellgrün, Klemmleisten außen, Beschriftung am Rand
@@ -281,8 +281,8 @@ def verdrahtung():
     WX = 175
     a(f"<line x1='{WX}' y1='190' x2='{WX}' y2='440' stroke='#999' stroke-width='6' stroke-dasharray='14 6'/>")
     a(f"<text x='{WX}' y='182' text-anchor='middle' font-size='11' fill='#555'>Gehäusewand</text>")
-    for lab, sub, by, pin, col, dash in [('Pigtail X', '→ Oszilloskop Kanal 1', 250, 9, '#8e44ad', False),
-                                        ('Pigtail Y', '→ Oszilloskop Kanal 2', 370, 10, '#0aa39a', False)]:
+    for lab, sub, by, pin, col, dash in [('Pigtail X', '→ Oszilloskop Kanal 1', 250, 9, '#9a5b2e', False),
+                                        ('Pigtail Y', '→ Oszilloskop Kanal 2', 370, 10, '#9a5b2e', False)]:
         d = 'stroke-dasharray="6 4"' if dash else ''
         a(f"<line x1='76' y1='{by}' x2='212' y2='{by}' stroke='#b57452' stroke-width='6' {d}/>")         # RG316 (braun)
         # BNC-Stecker: Steckerkopf mit Bajonett-Schlitz, geriffelte Überwurfhülse, Crimphülse, Knickschutz
@@ -377,8 +377,8 @@ def verdrahtung():
     # VCC von 3V3: von der roten Leitung oben gerade nach unten (zwischen Board und OLED),
     # dann von links an VCC – wie die übrigen RTC-Leitungen
     wire([(840, vb), (846, vb), (846, rpins['VCC']), (RX - 6, rpins['VCC'])], '#d62828', True)
-    leg = [('#d62828', '3V3 → OLED VCC'), ('#111', 'GND (Masse)'), ('#8e44ad', 'P25 (DAC1) → X'),
-           ('#0aa39a', 'P26 (DAC2) → Y'), ('#1f5fd1', 'P23 → DIN'), ('#f2c200', 'P18 → CLK'),
+    leg = [('#d62828', '3V3 → OLED VCC'), ('#111', 'GND (Masse)'), ('#9a5b2e', 'P25 (DAC1) → X'),
+           ('#9a5b2e', 'P26 (DAC2) → Y'), ('#1f5fd1', 'P23 → DIN'), ('#f2c200', 'P18 → CLK'),
            ('#f07b1d', 'P5 → CS'), ('#1f9d55', 'P17 → DC'), (WHITE, 'P4 → RST'),
            (SDA, 'P21 → SDA (RTC)'), (SCL, 'P22 → SCL (RTC)')]
     for k, (c, t) in enumerate(leg):
@@ -618,7 +618,7 @@ def aufbau():
     rot = lambda p: (2 * cx - p[0], 2 * cy - p[1])
     L = ['3V3','EN','SVP','SVN','P34','P35','P32','P33','P25','P26','P27','P14','P12','GND','P13','SD2','SD3','CMD','5V']
     R = ['GND','P23','P22','TX','RX','P21','GND','P19','P18','P5','P17','P16','P4','P0','P2','P15','SD1','SD0','CLK']
-    used = {('L', 9): '#8e44ad', ('L', 10): '#0aa39a'}        # P25/P26 (Pigtails); die optionale RTC zeigt nur der Schaltplan
+    used = {('L', 9): '#9a5b2e', ('L', 10): '#9a5b2e'}        # P25/P26 (Pigtails); die optionale RTC zeigt nur der Schaltplan
     g = []
     pos, dk = breakout_top(g.append, bx, by_, k, L, R, used)
     a(f"<g transform='rotate(180 {cx} {cy})'>" + '\n'.join(g) + "</g>")

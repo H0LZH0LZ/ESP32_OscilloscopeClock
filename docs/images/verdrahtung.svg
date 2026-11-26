@@ -337,7 +337,7 @@
 <line x1='357' y1='310' x2='383' y2='310' stroke='#4aa35a' stroke-width='1'/>
 <circle cx='370' cy='322' r='8' fill='#7fd18c' stroke='#4aa35a'/><circle cx='370' cy='322' r='6' fill='#dfe3e6' stroke='#7b8187'/>
 <line x1='366' y1='322' x2='374' y2='322' stroke='#5b6066' stroke-width='1.6'/><line x1='370' y1='318' x2='370' y2='326' stroke='#5b6066' stroke-width='1.6'/>
-<circle cx='370' cy='322' r='3' fill='#8e44ad' stroke='#5b6066' stroke-width='.8'/>
+<circle cx='370' cy='322' r='3' fill='#9a5b2e' stroke='#5b6066' stroke-width='.8'/>
 <line x1='657' y1='310' x2='683' y2='310' stroke='#4aa35a' stroke-width='1'/>
 <circle cx='670' cy='322' r='8' fill='#7fd18c' stroke='#4aa35a'/><circle cx='670' cy='322' r='6' fill='#dfe3e6' stroke='#7b8187'/>
 <line x1='666' y1='322' x2='674' y2='322' stroke='#5b6066' stroke-width='1.6'/><line x1='670' y1='318' x2='670' y2='326' stroke='#5b6066' stroke-width='1.6'/>
@@ -345,7 +345,7 @@
 <line x1='357' y1='334' x2='383' y2='334' stroke='#4aa35a' stroke-width='1'/>
 <circle cx='370' cy='346' r='8' fill='#7fd18c' stroke='#4aa35a'/><circle cx='370' cy='346' r='6' fill='#dfe3e6' stroke='#7b8187'/>
 <line x1='366' y1='346' x2='374' y2='346' stroke='#5b6066' stroke-width='1.6'/><line x1='370' y1='342' x2='370' y2='350' stroke='#5b6066' stroke-width='1.6'/>
-<circle cx='370' cy='346' r='3' fill='#0aa39a' stroke='#5b6066' stroke-width='.8'/>
+<circle cx='370' cy='346' r='3' fill='#9a5b2e' stroke='#5b6066' stroke-width='.8'/>
 <line x1='657' y1='334' x2='683' y2='334' stroke='#4aa35a' stroke-width='1'/>
 <circle cx='670' cy='346' r='8' fill='#7fd18c' stroke='#4aa35a'/><circle cx='670' cy='346' r='6' fill='#dfe3e6' stroke='#7b8187'/>
 <line x1='666' y1='346' x2='674' y2='346' stroke='#5b6066' stroke-width='1.6'/><line x1='670' y1='342' x2='670' y2='350' stroke='#5b6066' stroke-width='1.6'/>
@@ -434,7 +434,7 @@
 <rect x='270' y='243' width='3.5' height='14' fill='#c9a227'/>
 <text x='262' y='271' text-anchor='middle' font-size='10'>220 Ω</text>
 <polyline points='212,250 240,250' fill='none' stroke='#d62828' stroke-width='3' stroke-linejoin='round' />
-<polyline points='284,250 300,250 300,322 360,322' fill='none' stroke='#8e44ad' stroke-width='3' stroke-linejoin='round' />
+<polyline points='284,250 300,250 300,322 360,322' fill='none' stroke='#9a5b2e' stroke-width='3' stroke-linejoin='round' />
 <polyline points='212,250 212,268' fill='none' stroke='#7a4a2a' stroke-width='3' stroke-linejoin='round' />
 <line x1='212' y1='268' x2='212' y2='276' stroke='#111' stroke-width='2'/>
 <line x1='200' y1='276' x2='224' y2='276' stroke='#111' stroke-width='2'/>
@@ -465,7 +465,7 @@
 <rect x='270' y='363' width='3.5' height='14' fill='#c9a227'/>
 <text x='262' y='391' text-anchor='middle' font-size='10'>220 Ω</text>
 <polyline points='212,370 240,370' fill='none' stroke='#d62828' stroke-width='3' stroke-linejoin='round' />
-<polyline points='284,370 318,370 318,346 360,346' fill='none' stroke='#0aa39a' stroke-width='3' stroke-linejoin='round' />
+<polyline points='284,370 318,370 318,346 360,346' fill='none' stroke='#9a5b2e' stroke-width='3' stroke-linejoin='round' />
 <polyline points='212,370 212,388' fill='none' stroke='#7a4a2a' stroke-width='3' stroke-linejoin='round' />
 <line x1='212' y1='388' x2='212' y2='396' stroke='#111' stroke-width='2'/>
 <line x1='200' y1='396' x2='224' y2='396' stroke='#111' stroke-width='2'/>
@@ -620,8 +620,8 @@
 <polyline points='840,62 846,62 846,763.8303030303031 900,763.8303030303031' fill='none' stroke='#d62828' stroke-width='3' stroke-linejoin='round' stroke-dasharray="8 6"/>
 <line x1='862' y1='420' x2='888' y2='420' stroke='#d62828' stroke-width='4'/><text x='894' y='424' font-size='11'>3V3 → OLED VCC</text>
 <line x1='862' y1='442' x2='888' y2='442' stroke='#111' stroke-width='4'/><text x='894' y='446' font-size='11'>GND (Masse)</text>
-<line x1='862' y1='464' x2='888' y2='464' stroke='#8e44ad' stroke-width='4'/><text x='894' y='468' font-size='11'>P25 (DAC1) → X</text>
-<line x1='862' y1='486' x2='888' y2='486' stroke='#0aa39a' stroke-width='4'/><text x='894' y='490' font-size='11'>P26 (DAC2) → Y</text>
+<line x1='862' y1='464' x2='888' y2='464' stroke='#9a5b2e' stroke-width='4'/><text x='894' y='468' font-size='11'>P25 (DAC1) → X</text>
+<line x1='862' y1='486' x2='888' y2='486' stroke='#9a5b2e' stroke-width='4'/><text x='894' y='490' font-size='11'>P26 (DAC2) → Y</text>
 <line x1='862' y1='508' x2='888' y2='508' stroke='#1f5fd1' stroke-width='4'/><text x='894' y='512' font-size='11'>P23 → DIN</text>
 <line x1='862' y1='530' x2='888' y2='530' stroke='#f2c200' stroke-width='4'/><text x='894' y='534' font-size='11'>P18 → CLK</text>
 <line x1='1028' y1='420' x2='1054' y2='420' stroke='#f07b1d' stroke-width='4'/><text x='1060' y='424' font-size='11'>P5 → CS</text>
