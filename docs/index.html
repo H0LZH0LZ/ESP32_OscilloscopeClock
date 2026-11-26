@@ -51,6 +51,9 @@ esp-web-install-button{display:block;margin:10px 0 14px}
 #allBtn{display:inline-flex;align-items:center}#allBtn .ic{width:14px;height:14px;margin-right:7px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}   /* Doppelpfeil wie die Pfeile der Abschnitte */
 @media (max-width:360px){#allBtn{width:40px;padding:0}#allBtn .tx{display:none}#allBtn .ic{margin:0}}
 tr.hl td{background:var(--hov);transition:background .3s}
+a.back{white-space:nowrap;text-decoration:none}a.back:hover{text-decoration:underline}   /* Quellenverzeichnis: zurück zur Textstelle */
+a.ref{scroll-margin-top:140px;border-radius:3px;transition:background .3s}a.ref.hl{background:var(--hov);outline:4px solid var(--hov)}
+tr[id^="q"]{scroll-margin-top:140px}
 /* Fortschrittsbalken oben (wie im Webinterface): zeigt, wie weit die Seite gelesen ist */
 #prog{position:fixed;top:env(safe-area-inset-top);left:0;right:0;height:3px;z-index:36;background:var(--acc);transform:scaleX(0);transform-origin:0 0;pointer-events:none}
 /* Abschnitte: Überschrift in Großbuchstaben (bleibt unter der Titelleiste stehen), Inhalt als Karte */
@@ -555,8 +558,8 @@ the debug section.</p>
 <div class="grp"><h2 id="kap3" class="coll" role="button" tabindex="0" aria-expanded="true"><span data-l="de">3 Stand der Technik</span><span data-l="en">3 State of the art</span></h2>
 <section class="doc"><div data-l="de">
 <h3>3.1 Die ursprüngliche Oscilloscope Clock</h3>
-<p>Die Idee stammt von Mauro Pintus (Mailand, 2018) [<a class="ref" href="#q1">1</a>]: Ein ESP32 zeichnet über seine beiden eingebauten Digital-Analog-Wandler
-[<a class="ref" href="#q2">2</a>] eine analoge Uhr auf ein Oszilloskop im X/Y-Betrieb, die Uhrzeit kommt per NTP aus dem Internet. Zifferblatt und Zeiger liegen
+<p>Die Idee stammt von Mauro Pintus (Mailand, 2018) [<a class="ref" id="zq1-1" href="#q1">1</a>]: Ein ESP32 zeichnet über seine beiden eingebauten Digital-Analog-Wandler
+[<a class="ref" id="zq2-1" href="#q2">2</a>] eine analoge Uhr auf ein Oszilloskop im X/Y-Betrieb, die Uhrzeit kommt per NTP aus dem Internet. Zifferblatt und Zeiger liegen
 als Tabellen von Linienzügen vor, die der Strahl nacheinander abfährt. Die Uhr braucht dafür außer dem ESP32 nur zwei Leitungen
 zum Oszilloskop.</p>
 <h3>3.2 Andere Oszilloskop-Uhren</h3>
@@ -567,18 +570,18 @@ Zeile zu schreiben.</p>
 <h3>3.3 Neu in Version 2.0</h3>
 <ul>
  <li><b>Zwei Prozessorkerne:</b> Kern 1 zeichnet ohne Pause, Kern 0 übernimmt WLAN, Zeit, Webserver und OLED (Kapitel 2) –
- auf Basis des Arduino-Cores für den ESP32 [<a class="ref" href="#q3">3</a>].</li>
+ auf Basis des Arduino-Cores für den ESP32 [<a class="ref" id="zq3-1" href="#q3">3</a>].</li>
  <li><b>Gleich helle Linien</b> durch konstante Strahlgeschwindigkeit und eine Rundtour mit möglichst kurzen Sprüngen.</li>
  <li><b>Profile ANALOG und DIGITAL</b> für Röhren- und Speicher-Oszilloskope, optional Dunkeltastung über den Z-Eingang.</li>
  <li><b>Webinterface</b> mit Live-Vorschau, allen Einstellungen und WLAN-Verwaltung; Einrichtung über ein Setup-WLAN.</li>
- <li><b>OLED-Anzeige</b> mit der Bibliothek U8g2 [<a class="ref" href="#q4">4</a>] und optionale <b>Echtzeituhr DS3231</b> [<a class="ref" href="#q6">6</a>].</li>
+ <li><b>OLED-Anzeige</b> mit der Bibliothek U8g2 [<a class="ref" id="zq4-1" href="#q4">4</a>] und optionale <b>Echtzeituhr DS3231</b> [<a class="ref" id="zq6-1" href="#q6">6</a>].</li>
  <li><b>Fünf Zifferblätter</b>, Bildverschiebung gegen Einbrennen und ein <b>Flimmerschutz</b>.</li>
- <li><b>Installation im Browser</b> mit ESP Web Tools [<a class="ref" href="#q5">5</a>]; Bohrplan als technische Zeichnung nach [<a class="ref" href="#q7">7</a>, <a class="ref" href="#q8">8</a>].</li>
+ <li><b>Installation im Browser</b> mit ESP Web Tools [<a class="ref" id="zq5-1" href="#q5">5</a>]; Bohrplan als technische Zeichnung nach [<a class="ref" id="zq7-1" href="#q7">7</a>, <a class="ref" id="zq8-1" href="#q8">8</a>].</li>
 </ul>
 </div><div data-l="en">
 <h3>3.1 The original Oscilloscope Clock</h3>
-<p>The idea comes from Mauro Pintus (Milan, 2018) [<a class="ref" href="#q1-en">1</a>]: an ESP32 draws an analogue clock on an oscilloscope in X/Y mode via its two
-built-in digital-to-analogue converters [<a class="ref" href="#q2-en">2</a>], the time comes from the internet via NTP. Dial and hands are stored as tables of
+<p>The idea comes from Mauro Pintus (Milan, 2018) [<a class="ref" id="zq1-1-en" href="#q1-en">1</a>]: an ESP32 draws an analogue clock on an oscilloscope in X/Y mode via its two
+built-in digital-to-analogue converters [<a class="ref" id="zq2-1-en" href="#q2-en">2</a>], the time comes from the internet via NTP. Dial and hands are stored as tables of
 polylines which the beam traces one after another. Apart from the ESP32, the clock only needs two wires to the oscilloscope.</p>
 <h3>3.2 Other oscilloscope clocks</h3>
 <p>Clocks and graphics on the oscilloscope also exist as demonstration and kit boards. Usually a microcontroller generates the deflection
@@ -587,13 +590,13 @@ graphics</b>: the beam traces the lines directly instead of writing line by line
 <h3>3.3 New in version 2.0</h3>
 <ul>
  <li><b>Two processor cores:</b> core 1 draws without pause, core 0 handles Wi-Fi, time, web server and OLED (chapter 2) – based
- on the Arduino core for the ESP32 [<a class="ref" href="#q3-en">3</a>].</li>
+ on the Arduino core for the ESP32 [<a class="ref" id="zq3-1-en" href="#q3-en">3</a>].</li>
  <li><b>Equally bright lines</b> thanks to a constant beam speed and a round trip with jumps as short as possible.</li>
  <li><b>Profiles ANALOG and DIGITAL</b> for CRT and storage oscilloscopes, optional Z blanking via the Z input.</li>
  <li><b>Web interface</b> with live preview, all settings and Wi-Fi management; set-up via a setup network.</li>
- <li><b>OLED display</b> with the U8g2 library [<a class="ref" href="#q4-en">4</a>] and optional <b>DS3231 real-time clock</b> [<a class="ref" href="#q6-en">6</a>].</li>
+ <li><b>OLED display</b> with the U8g2 library [<a class="ref" id="zq4-1-en" href="#q4-en">4</a>] and optional <b>DS3231 real-time clock</b> [<a class="ref" id="zq6-1-en" href="#q6-en">6</a>].</li>
  <li><b>Five dials</b>, picture shift against burn-in and a <b>flicker guard</b>.</li>
- <li><b>Installation in the browser</b> with ESP Web Tools [<a class="ref" href="#q5-en">5</a>]; drilling template as a technical drawing according to [<a class="ref" href="#q7-en">7</a>, <a class="ref" href="#q8-en">8</a>].</li>
+ <li><b>Installation in the browser</b> with ESP Web Tools [<a class="ref" id="zq5-1-en" href="#q5-en">5</a>]; drilling template as a technical drawing according to [<a class="ref" id="zq7-1-en" href="#q7-en">7</a>, <a class="ref" id="zq8-1-en" href="#q8-en">8</a>].</li>
 </ul>
 </div></section></div>
 
@@ -2176,27 +2179,27 @@ byte the same image as the Arduino software. <b>The test on real hardware is sti
 <div class="grp"><h2 id="quellen" class="coll" role="button" tabindex="0" aria-expanded="true"><span data-l="de">Quellenverzeichnis</span><span data-l="en">References</span></h2>
 <section class="doc"><div data-l="de">
 <div class="tw"><table class="refs">
- <tr id="q1"><td>[1]</td><td>M. Pintus: <i>ESP32 Oscilloscope Clock</i>, Mailand 2018 – <a href="https://github.com/maurohh/ESP32_OscilloscopeClock" target="_blank" rel="noopener">github.com/maurohh/ESP32_OscilloscopeClock</a></td></tr>
- <tr id="q2"><td>[2]</td><td>Espressif Systems: <i>ESP32 Technical Reference Manual</i> (Digital-Analog-Wandler) – <a href="https://www.espressif.com/sites/default/files/documentation/esp32_technical_reference_manual_en.pdf" target="_blank" rel="noopener">www.espressif.com/sites/default/files/documentation/esp32_technical_reference_manual_en.pdf</a></td></tr>
- <tr id="q3"><td>[3]</td><td>Espressif Systems: <i>Arduino core for the ESP32</i> (arduino-esp32), Version 3.3.12 – <a href="https://github.com/espressif/arduino-esp32" target="_blank" rel="noopener">github.com/espressif/arduino-esp32</a></td></tr>
- <tr id="q4"><td>[4]</td><td>O. Kraus: <i>U8g2</i> – Bibliothek für monochrome Displays, Version 2.36 – <a href="https://github.com/olikraus/u8g2" target="_blank" rel="noopener">github.com/olikraus/u8g2</a></td></tr>
- <tr id="q5"><td>[5]</td><td>ESPHome: <i>ESP Web Tools</i> – Firmware im Browser installieren, Version 10.4 – <a href="https://esphome.github.io/esp-web-tools/" target="_blank" rel="noopener">esphome.github.io/esp-web-tools/</a></td></tr>
- <tr id="q6"><td>[6]</td><td>Analog Devices (Maxim Integrated): <i>DS3231</i> – Datenblatt der Echtzeituhr – <a href="https://www.analog.com/media/en/technical-documentation/data-sheets/DS3231.pdf" target="_blank" rel="noopener">www.analog.com/media/en/technical-documentation/data-sheets/DS3231.pdf</a></td></tr>
- <tr id="q7"><td>[7]</td><td>TU München, Werkstatt EWT: <i>Grundlagen des Technischen Zeichnens</i> – <a href="https://www.epe.ed.tum.de/fileadmin/w00bzo/ewt/Werkstatt/Zeichnungserstellung.pdf" target="_blank" rel="noopener">www.epe.ed.tum.de/fileadmin/w00bzo/ewt/Werkstatt/Zeichnungserstellung.pdf</a></td></tr>
- <tr id="q8"><td>[8]</td><td>DIN ISO 128 (Darstellung) und DIN ISO 129 (Bemaßung) für technische Zeichnungen; DIN EN ISO 7200 (Schriftfeld)</td></tr>
+ <tr id="q1"><td><a class="back" href="#zq1-1" title="Zur Textstelle">[1]&nbsp;↑</a></td><td>M. Pintus: <i>ESP32 Oscilloscope Clock</i>, Mailand 2018 – <a href="https://github.com/maurohh/ESP32_OscilloscopeClock" target="_blank" rel="noopener">github.com/maurohh/ESP32_OscilloscopeClock</a></td></tr>
+ <tr id="q2"><td><a class="back" href="#zq2-1" title="Zur Textstelle">[2]&nbsp;↑</a></td><td>Espressif Systems: <i>ESP32 Technical Reference Manual</i> (Digital-Analog-Wandler) – <a href="https://www.espressif.com/sites/default/files/documentation/esp32_technical_reference_manual_en.pdf" target="_blank" rel="noopener">www.espressif.com/sites/default/files/documentation/esp32_technical_reference_manual_en.pdf</a></td></tr>
+ <tr id="q3"><td><a class="back" href="#zq3-1" title="Zur Textstelle">[3]&nbsp;↑</a></td><td>Espressif Systems: <i>Arduino core for the ESP32</i> (arduino-esp32), Version 3.3.12 – <a href="https://github.com/espressif/arduino-esp32" target="_blank" rel="noopener">github.com/espressif/arduino-esp32</a></td></tr>
+ <tr id="q4"><td><a class="back" href="#zq4-1" title="Zur Textstelle">[4]&nbsp;↑</a></td><td>O. Kraus: <i>U8g2</i> – Bibliothek für monochrome Displays, Version 2.36 – <a href="https://github.com/olikraus/u8g2" target="_blank" rel="noopener">github.com/olikraus/u8g2</a></td></tr>
+ <tr id="q5"><td><a class="back" href="#zq5-1" title="Zur Textstelle">[5]&nbsp;↑</a></td><td>ESPHome: <i>ESP Web Tools</i> – Firmware im Browser installieren, Version 10.4 – <a href="https://esphome.github.io/esp-web-tools/" target="_blank" rel="noopener">esphome.github.io/esp-web-tools/</a></td></tr>
+ <tr id="q6"><td><a class="back" href="#zq6-1" title="Zur Textstelle">[6]&nbsp;↑</a></td><td>Analog Devices (Maxim Integrated): <i>DS3231</i> – Datenblatt der Echtzeituhr – <a href="https://www.analog.com/media/en/technical-documentation/data-sheets/DS3231.pdf" target="_blank" rel="noopener">www.analog.com/media/en/technical-documentation/data-sheets/DS3231.pdf</a></td></tr>
+ <tr id="q7"><td><a class="back" href="#zq7-1" title="Zur Textstelle">[7]&nbsp;↑</a></td><td>TU München, Werkstatt EWT: <i>Grundlagen des Technischen Zeichnens</i> – <a href="https://www.epe.ed.tum.de/fileadmin/w00bzo/ewt/Werkstatt/Zeichnungserstellung.pdf" target="_blank" rel="noopener">www.epe.ed.tum.de/fileadmin/w00bzo/ewt/Werkstatt/Zeichnungserstellung.pdf</a></td></tr>
+ <tr id="q8"><td><a class="back" href="#zq8-1" title="Zur Textstelle">[8]&nbsp;↑</a></td><td>DIN ISO 128 (Darstellung) und DIN ISO 129 (Bemaßung) für technische Zeichnungen; DIN EN ISO 7200 (Schriftfeld)</td></tr>
  <tr id="q9"><td>[9]</td><td>The Raleway Project Authors: <i>Raleway</i>, SIL Open Font License 1.1 – <a href="https://fonts.google.com/specimen/Raleway" target="_blank" rel="noopener">fonts.google.com/specimen/Raleway</a></td></tr>
  <tr id="q10"><td>[10]</td><td>TH Nürnberg, LEKO: <i>Die Struktur einer Arbeit in den Ingenieur- und Naturwissenschaften</i> (Gliederung dieser Anleitung) – <a href="https://leko.service.th-nuernberg.de/owl/artikel/die-struktur-einer-arbeit-in-den-ingenieur-und-naturwissenschaften-ing/" target="_blank" rel="noopener">leko.service.th-nuernberg.de/owl/artikel/die-struktur-einer-arbeit-in-den-ingenieur-und-naturwissenschaften-ing/</a></td></tr>
 </table></div>
 </div><div data-l="en">
 <div class="tw"><table class="refs">
- <tr id="q1-en"><td>[1]</td><td>M. Pintus: <i>ESP32 Oscilloscope Clock</i>, Milan 2018 – <a href="https://github.com/maurohh/ESP32_OscilloscopeClock" target="_blank" rel="noopener">github.com/maurohh/ESP32_OscilloscopeClock</a></td></tr>
- <tr id="q2-en"><td>[2]</td><td>Espressif Systems: <i>ESP32 Technical Reference Manual</i> (digital-to-analogue converter) – <a href="https://www.espressif.com/sites/default/files/documentation/esp32_technical_reference_manual_en.pdf" target="_blank" rel="noopener">www.espressif.com/sites/default/files/documentation/esp32_technical_reference_manual_en.pdf</a></td></tr>
- <tr id="q3-en"><td>[3]</td><td>Espressif Systems: <i>Arduino core for the ESP32</i> (arduino-esp32), version 3.3.12 – <a href="https://github.com/espressif/arduino-esp32" target="_blank" rel="noopener">github.com/espressif/arduino-esp32</a></td></tr>
- <tr id="q4-en"><td>[4]</td><td>O. Kraus: <i>U8g2</i> – library for monochrome displays, version 2.36 – <a href="https://github.com/olikraus/u8g2" target="_blank" rel="noopener">github.com/olikraus/u8g2</a></td></tr>
- <tr id="q5-en"><td>[5]</td><td>ESPHome: <i>ESP Web Tools</i> – install firmware from the browser, version 10.4 – <a href="https://esphome.github.io/esp-web-tools/" target="_blank" rel="noopener">esphome.github.io/esp-web-tools/</a></td></tr>
- <tr id="q6-en"><td>[6]</td><td>Analog Devices (Maxim Integrated): <i>DS3231</i> – real-time clock data sheet – <a href="https://www.analog.com/media/en/technical-documentation/data-sheets/DS3231.pdf" target="_blank" rel="noopener">www.analog.com/media/en/technical-documentation/data-sheets/DS3231.pdf</a></td></tr>
- <tr id="q7-en"><td>[7]</td><td>TU Munich, EWT workshop: <i>Grundlagen des Technischen Zeichnens</i> (basics of technical drawing) – <a href="https://www.epe.ed.tum.de/fileadmin/w00bzo/ewt/Werkstatt/Zeichnungserstellung.pdf" target="_blank" rel="noopener">www.epe.ed.tum.de/fileadmin/w00bzo/ewt/Werkstatt/Zeichnungserstellung.pdf</a></td></tr>
- <tr id="q8-en"><td>[8]</td><td>DIN ISO 128 (presentation) and DIN ISO 129 (dimensioning) for technical drawings; DIN EN ISO 7200 (title block)</td></tr>
+ <tr id="q1-en"><td><a class="back" href="#zq1-1-en" title="Back to the text">[1]&nbsp;↑</a></td><td>M. Pintus: <i>ESP32 Oscilloscope Clock</i>, Milan 2018 – <a href="https://github.com/maurohh/ESP32_OscilloscopeClock" target="_blank" rel="noopener">github.com/maurohh/ESP32_OscilloscopeClock</a></td></tr>
+ <tr id="q2-en"><td><a class="back" href="#zq2-1-en" title="Back to the text">[2]&nbsp;↑</a></td><td>Espressif Systems: <i>ESP32 Technical Reference Manual</i> (digital-to-analogue converter) – <a href="https://www.espressif.com/sites/default/files/documentation/esp32_technical_reference_manual_en.pdf" target="_blank" rel="noopener">www.espressif.com/sites/default/files/documentation/esp32_technical_reference_manual_en.pdf</a></td></tr>
+ <tr id="q3-en"><td><a class="back" href="#zq3-1-en" title="Back to the text">[3]&nbsp;↑</a></td><td>Espressif Systems: <i>Arduino core for the ESP32</i> (arduino-esp32), version 3.3.12 – <a href="https://github.com/espressif/arduino-esp32" target="_blank" rel="noopener">github.com/espressif/arduino-esp32</a></td></tr>
+ <tr id="q4-en"><td><a class="back" href="#zq4-1-en" title="Back to the text">[4]&nbsp;↑</a></td><td>O. Kraus: <i>U8g2</i> – library for monochrome displays, version 2.36 – <a href="https://github.com/olikraus/u8g2" target="_blank" rel="noopener">github.com/olikraus/u8g2</a></td></tr>
+ <tr id="q5-en"><td><a class="back" href="#zq5-1-en" title="Back to the text">[5]&nbsp;↑</a></td><td>ESPHome: <i>ESP Web Tools</i> – install firmware from the browser, version 10.4 – <a href="https://esphome.github.io/esp-web-tools/" target="_blank" rel="noopener">esphome.github.io/esp-web-tools/</a></td></tr>
+ <tr id="q6-en"><td><a class="back" href="#zq6-1-en" title="Back to the text">[6]&nbsp;↑</a></td><td>Analog Devices (Maxim Integrated): <i>DS3231</i> – real-time clock data sheet – <a href="https://www.analog.com/media/en/technical-documentation/data-sheets/DS3231.pdf" target="_blank" rel="noopener">www.analog.com/media/en/technical-documentation/data-sheets/DS3231.pdf</a></td></tr>
+ <tr id="q7-en"><td><a class="back" href="#zq7-1-en" title="Back to the text">[7]&nbsp;↑</a></td><td>TU Munich, EWT workshop: <i>Grundlagen des Technischen Zeichnens</i> (basics of technical drawing) – <a href="https://www.epe.ed.tum.de/fileadmin/w00bzo/ewt/Werkstatt/Zeichnungserstellung.pdf" target="_blank" rel="noopener">www.epe.ed.tum.de/fileadmin/w00bzo/ewt/Werkstatt/Zeichnungserstellung.pdf</a></td></tr>
+ <tr id="q8-en"><td><a class="back" href="#zq8-1-en" title="Back to the text">[8]&nbsp;↑</a></td><td>DIN ISO 128 (presentation) and DIN ISO 129 (dimensioning) for technical drawings; DIN EN ISO 7200 (title block)</td></tr>
  <tr id="q9-en"><td>[9]</td><td>The Raleway Project Authors: <i>Raleway</i>, SIL Open Font License 1.1 – <a href="https://fonts.google.com/specimen/Raleway" target="_blank" rel="noopener">fonts.google.com/specimen/Raleway</a></td></tr>
  <tr id="q10-en"><td>[10]</td><td>TH Nürnberg, LEKO: <i>Die Struktur einer Arbeit in den Ingenieur- und Naturwissenschaften</i> (structure of this guide) – <a href="https://leko.service.th-nuernberg.de/owl/artikel/die-struktur-einer-arbeit-in-den-ingenieur-und-naturwissenschaften-ing/" target="_blank" rel="noopener">leko.service.th-nuernberg.de/owl/artikel/die-struktur-einer-arbeit-in-den-ingenieur-und-naturwissenschaften-ing/</a></td></tr>
 </table></div>
@@ -2456,7 +2459,8 @@ document.querySelectorAll('h2.coll').forEach(h=>{h.onclick=()=>{openSec(h.parent
 document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{const t=document.querySelector(a.getAttribute('href'));if(!t)return;
  if(t.classList.contains('coll'))openSec(t.parentNode,true);
  else{const g=t.closest('.grp');if(g&&g.classList.contains('closed')){e.preventDefault();openSec(g,true);t.scrollIntoView({block:'center'});
-  t.classList.add('hl');setTimeout(()=>t.classList.remove('hl'),1600)}}}));   // z. B. Quellenverweis [3] → Zeile im Quellenverzeichnis
+  t.classList.add('hl');setTimeout(()=>t.classList.remove('hl'),1600)}
+ else if(t.matches('tr,a.ref')){t.classList.add('hl');setTimeout(()=>t.classList.remove('hl'),1600)}}}));   // Quelle ↔ Textstelle kurz hervorheben   // z. B. Quellenverweis [3] → Zeile im Quellenverzeichnis
 {const t=location.hash&&document.querySelector(location.hash);if(t&&t.classList.contains('coll'))openSec(t.parentNode,true)}
 let jumped=-1,jumpAt=0;   // nach einem Sprung aus dem Menü den angesprungenen Abschnitt markieren
 document.querySelectorAll('#nav a').forEach(a=>a.addEventListener('click',()=>{menu(false);jumped=navA.indexOf(a);jumpAt=Date.now();setTimeout(spy,50)}));

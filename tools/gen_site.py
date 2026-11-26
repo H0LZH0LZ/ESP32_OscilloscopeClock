@@ -128,6 +128,22 @@ def chapters(path):
         # externe Links (Händler, GitHub …) in einem neuen Tab öffnen
         content = re.sub(r'<a href="(https?://[^"]*)"', r'<a href="\1" target="_blank" rel="noopener"', content)
         out.append((title, content))
+    # Rückweg Quelle → Textstelle: jeder Verweis [n] bekommt eine ID (zqn-k), die Nummer in der Zeile
+    # des Quellenverzeichnisses springt zur ersten Textstelle, weitere als ↑ a, b …
+    en = '-en' if path.endswith('.en.html') else ''
+    seen = {}
+    def mark(m):
+        n = m.group(1); seen[n] = seen.get(n, 0) + 1
+        return f'<a class="ref" id="zq{n}-{seen[n]}{en}" href="#q{n}{en}">'
+    out = [(t, re.sub(r'<a class="ref" href="#q(\d+)' + en + '">', mark, c)) for t, c in out]
+    tip = 'Zur Textstelle' if not en else 'Back to the text'
+    def back(m):
+        n = m.group(1); k = seen.get(n, 0)
+        if not k:
+            return m.group(0)                                        # nur im Verzeichnis, im Text nicht zitiert
+        more = ''.join(f' <a class="back" href="#zq{n}-{i}{en}" title="{tip}">{chr(96 + i)}</a>' for i in range(2, k + 1))
+        return f'<tr id="q{n}{en}"><td><a class="back" href="#zq{n}-1{en}" title="{tip}">[{n}]&nbsp;↑</a>{more}</td>'
+    out = [(t, re.sub(r'<tr id="q(\d+)' + en + r'"><td>\[\1\]</td>', back, c)) for t, c in out]
     return out
 
 
