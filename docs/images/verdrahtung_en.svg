@@ -286,18 +286,18 @@
 <line x1='357' y1='118' x2='383' y2='118' stroke='#4aa35a' stroke-width='1'/>
 <circle cx='370' cy='130' r='8' fill='#7fd18c' stroke='#4aa35a'/><circle cx='370' cy='130' r='6' fill='#dfe3e6' stroke='#7b8187'/>
 <line x1='366' y1='130' x2='374' y2='130' stroke='#5b6066' stroke-width='1.6'/><line x1='370' y1='126' x2='370' y2='134' stroke='#5b6066' stroke-width='1.6'/>
-<circle cx='370' cy='130' r='3' fill='#d62828'/>
+<circle cx='370' cy='130' r='3' fill='#d62828' stroke='#5b6066' stroke-width='.8'/>
 <line x1='657' y1='118' x2='683' y2='118' stroke='#4aa35a' stroke-width='1'/>
 <circle cx='670' cy='130' r='8' fill='#7fd18c' stroke='#4aa35a'/><circle cx='670' cy='130' r='6' fill='#dfe3e6' stroke='#7b8187'/>
 <line x1='666' y1='130' x2='674' y2='130' stroke='#5b6066' stroke-width='1.6'/><line x1='670' y1='126' x2='670' y2='134' stroke='#5b6066' stroke-width='1.6'/>
-<circle cx='670' cy='130' r='3' fill='#111'/>
+<circle cx='670' cy='130' r='3' fill='#111' stroke='#5b6066' stroke-width='.8'/>
 <line x1='357' y1='142' x2='383' y2='142' stroke='#4aa35a' stroke-width='1'/>
 <circle cx='370' cy='154' r='8' fill='#7fd18c' stroke='#4aa35a'/><circle cx='370' cy='154' r='6' fill='#dfe3e6' stroke='#7b8187'/>
 <line x1='366' y1='154' x2='374' y2='154' stroke='#5b6066' stroke-width='1.6'/><line x1='370' y1='150' x2='370' y2='158' stroke='#5b6066' stroke-width='1.6'/>
 <line x1='657' y1='142' x2='683' y2='142' stroke='#4aa35a' stroke-width='1'/>
 <circle cx='670' cy='154' r='8' fill='#7fd18c' stroke='#4aa35a'/><circle cx='670' cy='154' r='6' fill='#dfe3e6' stroke='#7b8187'/>
 <line x1='666' y1='154' x2='674' y2='154' stroke='#5b6066' stroke-width='1.6'/><line x1='670' y1='150' x2='670' y2='158' stroke='#5b6066' stroke-width='1.6'/>
-<circle cx='670' cy='154' r='3' fill='#2a9d48'/>
+<circle cx='670' cy='154' r='3' fill='#1f5fd1' stroke='#5b6066' stroke-width='.8'/>
 <line x1='357' y1='166' x2='383' y2='166' stroke='#4aa35a' stroke-width='1'/>
 <circle cx='370' cy='178' r='8' fill='#7fd18c' stroke='#4aa35a'/><circle cx='370' cy='178' r='6' fill='#dfe3e6' stroke='#7b8187'/>
 <line x1='366' y1='178' x2='374' y2='178' stroke='#5b6066' stroke-width='1.6'/><line x1='370' y1='174' x2='370' y2='182' stroke='#5b6066' stroke-width='1.6'/>
@@ -337,26 +337,26 @@
 <line x1='357' y1='310' x2='383' y2='310' stroke='#4aa35a' stroke-width='1'/>
 <circle cx='370' cy='322' r='8' fill='#7fd18c' stroke='#4aa35a'/><circle cx='370' cy='322' r='6' fill='#dfe3e6' stroke='#7b8187'/>
 <line x1='366' y1='322' x2='374' y2='322' stroke='#5b6066' stroke-width='1.6'/><line x1='370' y1='318' x2='370' y2='326' stroke='#5b6066' stroke-width='1.6'/>
-<circle cx='370' cy='322' r='3' fill='#e09f00'/>
+<circle cx='370' cy='322' r='3' fill='#8e44ad' stroke='#5b6066' stroke-width='.8'/>
 <line x1='657' y1='310' x2='683' y2='310' stroke='#4aa35a' stroke-width='1'/>
 <circle cx='670' cy='322' r='8' fill='#7fd18c' stroke='#4aa35a'/><circle cx='670' cy='322' r='6' fill='#dfe3e6' stroke='#7b8187'/>
 <line x1='666' y1='322' x2='674' y2='322' stroke='#5b6066' stroke-width='1.6'/><line x1='670' y1='318' x2='670' y2='326' stroke='#5b6066' stroke-width='1.6'/>
-<circle cx='670' cy='322' r='3' fill='#7b3fb5'/>
+<circle cx='670' cy='322' r='3' fill='#f2c200' stroke='#5b6066' stroke-width='.8'/>
 <line x1='357' y1='334' x2='383' y2='334' stroke='#4aa35a' stroke-width='1'/>
 <circle cx='370' cy='346' r='8' fill='#7fd18c' stroke='#4aa35a'/><circle cx='370' cy='346' r='6' fill='#dfe3e6' stroke='#7b8187'/>
 <line x1='366' y1='346' x2='374' y2='346' stroke='#5b6066' stroke-width='1.6'/><line x1='370' y1='342' x2='370' y2='350' stroke='#5b6066' stroke-width='1.6'/>
-<circle cx='370' cy='346' r='3' fill='#1d6fd6'/>
+<circle cx='370' cy='346' r='3' fill='#0aa39a' stroke='#5b6066' stroke-width='.8'/>
 <line x1='657' y1='334' x2='683' y2='334' stroke='#4aa35a' stroke-width='1'/>
 <circle cx='670' cy='346' r='8' fill='#7fd18c' stroke='#4aa35a'/><circle cx='670' cy='346' r='6' fill='#dfe3e6' stroke='#7b8187'/>
 <line x1='666' y1='346' x2='674' y2='346' stroke='#5b6066' stroke-width='1.6'/><line x1='670' y1='342' x2='670' y2='350' stroke='#5b6066' stroke-width='1.6'/>
-<circle cx='670' cy='346' r='3' fill='#d1495b'/>
+<circle cx='670' cy='346' r='3' fill='#f07b1d' stroke='#5b6066' stroke-width='.8'/>
 <line x1='357' y1='358' x2='383' y2='358' stroke='#4aa35a' stroke-width='1'/>
 <circle cx='370' cy='370' r='8' fill='#7fd18c' stroke='#4aa35a'/><circle cx='370' cy='370' r='6' fill='#dfe3e6' stroke='#7b8187'/>
 <line x1='366' y1='370' x2='374' y2='370' stroke='#5b6066' stroke-width='1.6'/><line x1='370' y1='366' x2='370' y2='374' stroke='#5b6066' stroke-width='1.6'/>
 <line x1='657' y1='358' x2='683' y2='358' stroke='#4aa35a' stroke-width='1'/>
 <circle cx='670' cy='370' r='8' fill='#7fd18c' stroke='#4aa35a'/><circle cx='670' cy='370' r='6' fill='#dfe3e6' stroke='#7b8187'/>
 <line x1='666' y1='370' x2='674' y2='370' stroke='#5b6066' stroke-width='1.6'/><line x1='670' y1='366' x2='670' y2='374' stroke='#5b6066' stroke-width='1.6'/>
-<circle cx='670' cy='370' r='3' fill='#00a6a6'/>
+<circle cx='670' cy='370' r='3' fill='#1f9d55' stroke='#5b6066' stroke-width='.8'/>
 <line x1='357' y1='382' x2='383' y2='382' stroke='#4aa35a' stroke-width='1'/>
 <circle cx='370' cy='394' r='8' fill='#7fd18c' stroke='#4aa35a'/><circle cx='370' cy='394' r='6' fill='#dfe3e6' stroke='#7b8187'/>
 <line x1='366' y1='394' x2='374' y2='394' stroke='#5b6066' stroke-width='1.6'/><line x1='370' y1='390' x2='370' y2='398' stroke='#5b6066' stroke-width='1.6'/>
@@ -369,11 +369,11 @@
 <line x1='657' y1='406' x2='683' y2='406' stroke='#4aa35a' stroke-width='1'/>
 <circle cx='670' cy='418' r='8' fill='#7fd18c' stroke='#4aa35a'/><circle cx='670' cy='418' r='6' fill='#dfe3e6' stroke='#7b8187'/>
 <line x1='666' y1='418' x2='674' y2='418' stroke='#5b6066' stroke-width='1.6'/><line x1='670' y1='414' x2='670' y2='422' stroke='#5b6066' stroke-width='1.6'/>
-<circle cx='670' cy='418' r='3' fill='#a0522d'/>
+<circle cx='670' cy='418' r='3' fill='#f7f7f7' stroke='#5b6066' stroke-width='.8'/>
 <line x1='357' y1='430' x2='383' y2='430' stroke='#4aa35a' stroke-width='1'/>
 <circle cx='370' cy='442' r='8' fill='#7fd18c' stroke='#4aa35a'/><circle cx='370' cy='442' r='6' fill='#dfe3e6' stroke='#7b8187'/>
 <line x1='366' y1='442' x2='374' y2='442' stroke='#5b6066' stroke-width='1.6'/><line x1='370' y1='438' x2='370' y2='446' stroke='#5b6066' stroke-width='1.6'/>
-<circle cx='370' cy='442' r='3' fill='#111'/>
+<circle cx='370' cy='442' r='3' fill='#111' stroke='#5b6066' stroke-width='.8'/>
 <line x1='657' y1='430' x2='683' y2='430' stroke='#4aa35a' stroke-width='1'/>
 <circle cx='670' cy='442' r='8' fill='#7fd18c' stroke='#4aa35a'/><circle cx='670' cy='442' r='6' fill='#dfe3e6' stroke='#7b8187'/>
 <line x1='666' y1='442' x2='674' y2='442' stroke='#5b6066' stroke-width='1.6'/><line x1='670' y1='438' x2='670' y2='446' stroke='#5b6066' stroke-width='1.6'/>
@@ -434,7 +434,7 @@
 <rect x='270' y='243' width='3.5' height='14' fill='#c9a227'/>
 <text x='262' y='271' text-anchor='middle' font-size='10'>220 Ω</text>
 <polyline points='212,250 240,250' fill='none' stroke='#d62828' stroke-width='3' stroke-linejoin='round' />
-<polyline points='284,250 300,250 300,322 360,322' fill='none' stroke='#e09f00' stroke-width='3' stroke-linejoin='round' />
+<polyline points='284,250 300,250 300,322 360,322' fill='none' stroke='#8e44ad' stroke-width='3' stroke-linejoin='round' />
 <polyline points='212,250 212,268' fill='none' stroke='#7a4a2a' stroke-width='3' stroke-linejoin='round' />
 <line x1='212' y1='268' x2='212' y2='276' stroke='#111' stroke-width='2'/>
 <line x1='200' y1='276' x2='224' y2='276' stroke='#111' stroke-width='2'/>
@@ -465,7 +465,7 @@
 <rect x='270' y='363' width='3.5' height='14' fill='#c9a227'/>
 <text x='262' y='391' text-anchor='middle' font-size='10'>220 Ω</text>
 <polyline points='212,370 240,370' fill='none' stroke='#d62828' stroke-width='3' stroke-linejoin='round' />
-<polyline points='284,370 318,370 318,346 360,346' fill='none' stroke='#1d6fd6' stroke-width='3' stroke-linejoin='round' />
+<polyline points='284,370 318,370 318,346 360,346' fill='none' stroke='#0aa39a' stroke-width='3' stroke-linejoin='round' />
 <polyline points='212,370 212,388' fill='none' stroke='#7a4a2a' stroke-width='3' stroke-linejoin='round' />
 <line x1='212' y1='388' x2='212' y2='396' stroke='#111' stroke-width='2'/>
 <line x1='200' y1='396' x2='224' y2='396' stroke='#111' stroke-width='2'/>
@@ -506,11 +506,12 @@
 <text x='1146' y='258' font-size='9' fill='#222' font-weight='bold'>GND</text>
 <rect x='1120' y='281' width='6' height='6' fill='#333'/><rect x='1126' y='282.5' width='16' height='3' fill='#d4af37'/>
 <text x='1146' y='280' font-size='9' fill='#222' font-weight='bold'>VCC</text>
-<polyline points='680,418 826,418 826,122 1180,122 1180,152 1142,152' fill='none' stroke='#a0522d' stroke-width='3' stroke-linejoin='round' />
-<polyline points='680,370 810,370 810,112 1190,112 1190,174 1142,174' fill='none' stroke='#00a6a6' stroke-width='3' stroke-linejoin='round' />
-<polyline points='680,346 794,346 794,102 1200,102 1200,196 1142,196' fill='none' stroke='#d1495b' stroke-width='3' stroke-linejoin='round' />
-<polyline points='680,322 778,322 778,92 1210,92 1210,218 1142,218' fill='none' stroke='#7b3fb5' stroke-width='3' stroke-linejoin='round' />
-<polyline points='680,154 762,154 762,82 1220,82 1220,240 1142,240' fill='none' stroke='#2a9d48' stroke-width='3' stroke-linejoin='round' />
+<polyline points='680,418 826,418 826,122 1180,122 1180,152 1142,152' fill='none' stroke='#8a8f94' stroke-width='5' stroke-linejoin='round' />
+<polyline points='680,418 826,418 826,122 1180,122 1180,152 1142,152' fill='none' stroke='#f7f7f7' stroke-width='3' stroke-linejoin='round' />
+<polyline points='680,370 810,370 810,112 1190,112 1190,174 1142,174' fill='none' stroke='#1f9d55' stroke-width='3' stroke-linejoin='round' />
+<polyline points='680,346 794,346 794,102 1200,102 1200,196 1142,196' fill='none' stroke='#f07b1d' stroke-width='3' stroke-linejoin='round' />
+<polyline points='680,322 778,322 778,92 1210,92 1210,218 1142,218' fill='none' stroke='#f2c200' stroke-width='3' stroke-linejoin='round' />
+<polyline points='680,154 762,154 762,82 1220,82 1220,240 1142,240' fill='none' stroke='#1f5fd1' stroke-width='3' stroke-linejoin='round' />
 <polyline points='680,130 746,130 746,72 1230,72 1230,262 1142,262' fill='none' stroke='#111' stroke-width='3' stroke-linejoin='round' />
 <polyline points='360,130 322,130 322,62 1240,62 1240,284 1142,284' fill='none' stroke='#d62828' stroke-width='3' stroke-linejoin='round' />
 <circle cx='840' cy='62' r='4' fill='#d62828'/>
@@ -603,30 +604,33 @@
 <line x1='657' y1='166' x2='683' y2='166' stroke='#4aa35a' stroke-width='1'/>
 <circle cx='670' cy='178' r='8' fill='#7fd18c' stroke='#4aa35a'/><circle cx='670' cy='178' r='6' fill='#dfe3e6' stroke='#7b8187'/>
 <line x1='666' y1='178' x2='674' y2='178' stroke='#5b6066' stroke-width='1.6'/><line x1='670' y1='174' x2='670' y2='182' stroke='#5b6066' stroke-width='1.6'/>
-<circle cx='670' cy='178' r='3' fill='#5d6d7e'/>
-<polyline points='680,178 734,178 734,450 824,450 824,732.1575757575757 900,732.1575757575757' fill='none' stroke='#5d6d7e' stroke-width='3' stroke-linejoin='round' stroke-dasharray="8 6"/>
+<circle cx='670' cy='178' r='3' fill='#9a9ea3' stroke='#5b6066' stroke-width='.8'/>
+<polyline points='680,178 734,178 734,450 824,450 824,732.1575757575757 900,732.1575757575757' fill='none' stroke='#9a9ea3' stroke-width='3' stroke-linejoin='round' stroke-dasharray="8 6"/>
 <line x1='657' y1='238' x2='683' y2='238' stroke='#4aa35a' stroke-width='1'/>
 <circle cx='670' cy='250' r='8' fill='#7fd18c' stroke='#4aa35a'/><circle cx='670' cy='250' r='6' fill='#dfe3e6' stroke='#7b8187'/>
 <line x1='666' y1='250' x2='674' y2='250' stroke='#5b6066' stroke-width='1.6'/><line x1='670' y1='246' x2='670' y2='254' stroke='#5b6066' stroke-width='1.6'/>
-<circle cx='670' cy='250' r='3' fill='#c99a00'/>
-<polyline points='680,250 726,250 726,462 816,462 816,747.9939393939394 900,747.9939393939394' fill='none' stroke='#c99a00' stroke-width='3' stroke-linejoin='round' stroke-dasharray="8 6"/>
+<circle cx='670' cy='250' r='3' fill='#f7f7f7' stroke='#5b6066' stroke-width='.8'/>
+<polyline points='680,250 726,250 726,462 816,462 816,747.9939393939394 900,747.9939393939394' fill='none' stroke='#8a8f94' stroke-width='5' stroke-linejoin='round' stroke-dasharray="8 6"/>
+<polyline points='680,250 726,250 726,462 816,462 816,747.9939393939394 900,747.9939393939394' fill='none' stroke='#f7f7f7' stroke-width='3' stroke-linejoin='round' stroke-dasharray="8 6"/>
 <line x1='657' y1='262' x2='683' y2='262' stroke='#4aa35a' stroke-width='1'/>
 <circle cx='670' cy='274' r='8' fill='#7fd18c' stroke='#4aa35a'/><circle cx='670' cy='274' r='6' fill='#dfe3e6' stroke='#7b8187'/>
 <line x1='666' y1='274' x2='674' y2='274' stroke='#5b6066' stroke-width='1.6'/><line x1='670' y1='270' x2='670' y2='278' stroke='#5b6066' stroke-width='1.6'/>
-<circle cx='670' cy='274' r='3' fill='#111'/>
+<circle cx='670' cy='274' r='3' fill='#111' stroke='#5b6066' stroke-width='.8'/>
 <polyline points='680,274 718,274 718,474 808,474 808,779.6666666666666 900,779.6666666666666' fill='none' stroke='#111' stroke-width='3' stroke-linejoin='round' stroke-dasharray="8 6"/>
 <polyline points='840,62 846,62 846,763.8303030303031 900,763.8303030303031' fill='none' stroke='#d62828' stroke-width='3' stroke-linejoin='round' stroke-dasharray="8 6"/>
 <line x1='862' y1='420' x2='888' y2='420' stroke='#d62828' stroke-width='4'/><text x='894' y='424' font-size='11'>3V3 → OLED VCC</text>
 <line x1='862' y1='442' x2='888' y2='442' stroke='#111' stroke-width='4'/><text x='894' y='446' font-size='11'>GND (ground)</text>
-<line x1='862' y1='464' x2='888' y2='464' stroke='#e09f00' stroke-width='4'/><text x='894' y='468' font-size='11'>P25 (DAC1) → X</text>
-<line x1='862' y1='486' x2='888' y2='486' stroke='#1d6fd6' stroke-width='4'/><text x='894' y='490' font-size='11'>P26 (DAC2) → Y</text>
-<line x1='862' y1='508' x2='888' y2='508' stroke='#2a9d48' stroke-width='4'/><text x='894' y='512' font-size='11'>P23 → DIN</text>
-<line x1='862' y1='530' x2='888' y2='530' stroke='#7b3fb5' stroke-width='4'/><text x='894' y='534' font-size='11'>P18 → CLK</text>
-<line x1='1028' y1='420' x2='1054' y2='420' stroke='#d1495b' stroke-width='4'/><text x='1060' y='424' font-size='11'>P5 → CS</text>
-<line x1='1028' y1='442' x2='1054' y2='442' stroke='#00a6a6' stroke-width='4'/><text x='1060' y='446' font-size='11'>P17 → DC</text>
-<line x1='1028' y1='464' x2='1054' y2='464' stroke='#a0522d' stroke-width='4'/><text x='1060' y='468' font-size='11'>P4 → RST</text>
-<line x1='1028' y1='486' x2='1054' y2='486' stroke='#c99a00' stroke-width='4'/><text x='1060' y='490' font-size='11'>P21 → SDA (RTC)</text>
-<line x1='1028' y1='508' x2='1054' y2='508' stroke='#5d6d7e' stroke-width='4'/><text x='1060' y='512' font-size='11'>P22 → SCL (RTC)</text>
+<line x1='862' y1='464' x2='888' y2='464' stroke='#8e44ad' stroke-width='4'/><text x='894' y='468' font-size='11'>P25 (DAC1) → X</text>
+<line x1='862' y1='486' x2='888' y2='486' stroke='#0aa39a' stroke-width='4'/><text x='894' y='490' font-size='11'>P26 (DAC2) → Y</text>
+<line x1='862' y1='508' x2='888' y2='508' stroke='#1f5fd1' stroke-width='4'/><text x='894' y='512' font-size='11'>P23 → DIN</text>
+<line x1='862' y1='530' x2='888' y2='530' stroke='#f2c200' stroke-width='4'/><text x='894' y='534' font-size='11'>P18 → CLK</text>
+<line x1='1028' y1='420' x2='1054' y2='420' stroke='#f07b1d' stroke-width='4'/><text x='1060' y='424' font-size='11'>P5 → CS</text>
+<line x1='1028' y1='442' x2='1054' y2='442' stroke='#1f9d55' stroke-width='4'/><text x='1060' y='446' font-size='11'>P17 → DC</text>
+<line x1='1028' y1='464' x2='1054' y2='464' stroke='#8a8f94' stroke-width='6'/>
+<line x1='1028' y1='464' x2='1054' y2='464' stroke='#f7f7f7' stroke-width='4'/><text x='1060' y='468' font-size='11'>P4 → RST</text>
+<line x1='1028' y1='486' x2='1054' y2='486' stroke='#8a8f94' stroke-width='6'/>
+<line x1='1028' y1='486' x2='1054' y2='486' stroke='#f7f7f7' stroke-width='4'/><text x='1060' y='490' font-size='11'>P21 → SDA (RTC)</text>
+<line x1='1028' y1='508' x2='1054' y2='508' stroke='#9a9ea3' stroke-width='4'/><text x='1060' y='512' font-size='11'>P22 → SCL (RTC)</text>
 <line x1='1028' y1='552' x2='1054' y2='552' stroke='#555' stroke-width='3' stroke-dasharray='6 4'/><text x='1060' y='556' font-size='11'>optional</text>
 <text x='862' y='576' font-size='11' fill='#444'>Labels as printed on the breakout board (P25 = GPIO25 …).</text>
 <text x='862' y='592' font-size='11' fill='#444'>P0 = BOOT button – do not connect anything there.</text>

@@ -146,8 +146,8 @@ def verdrahtung():
     # Beschriftung auf dem DevKit (wie aufgedruckt) – die Klemmen tragen die Namen des Breakout-Boards (L, R)
     DL = ['3V3','EN','VP','VN','34','35','32','33','25','26','27','14','12','GND','13','D2','D3','CMD','5V']
     DR = ['GND','23','22','TX','RX','21','GND','19','18','5','17','16','4','0','2','15','D1','D0','CLK']
-    used = {('L',1):'#d62828',('L',9):'#e09f00',('L',10):'#1d6fd6',('L',14):'#111',
-            ('R',1):'#111',('R',2):'#2a9d48',('R',9):'#7b3fb5',('R',10):'#d1495b',('R',11):'#00a6a6',('R',13):'#a0522d'}
+    used = {('L',1):'#d62828',('L',9):'#8e44ad',('L',10):'#0aa39a',('L',14):'#111',
+            ('R',1):'#111',('R',2):'#1f5fd1',('R',9):'#f2c200',('R',10):'#f07b1d',('R',11):'#1f9d55',('R',13):'#f7f7f7'}   # Farben wie an den Kabeln (OLED)
     wired = set(used) | {('R',3), ('R',6), ('R',7)}                # dazu die optionalen RTC-Klemmen
     # --- Breakout-Board wie das Original: hellgrün, Klemmleisten außen, Beschriftung am Rand
     BX0, BX1 = X0-40, X1+40
@@ -257,11 +257,14 @@ def verdrahtung():
         a(f"<line x1='{x-13}' y1='{yy-12}' x2='{x+13}' y2='{yy-12}' stroke='#4aa35a' stroke-width='1'/>")
         a(f"<circle cx='{x}' cy='{yy}' r='8' fill='#7fd18c' stroke='#4aa35a'/><circle cx='{x}' cy='{yy}' r='6' fill='#dfe3e6' stroke='#7b8187'/>")
         a(f"<line x1='{x-4}' y1='{yy}' x2='{x+4}' y2='{yy}' stroke='#5b6066' stroke-width='1.6'/><line x1='{x}' y1='{yy-4}' x2='{x}' y2='{yy+4}' stroke='#5b6066' stroke-width='1.6'/>")
-        if c: a(f"<circle cx='{x}' cy='{yy}' r='3' fill='{c}'/>")
+        if c: a(f"<circle cx='{x}' cy='{yy}' r='3' fill='{c}' stroke='#5b6066' stroke-width='.8'/>")
     for i in range(1, 20):
         terminal(X0, y(i), used.get(('L', i))); terminal(X1, y(i), used.get(('R', i)))
+    WHITE = '#f7f7f7'                                            # weiße Ader: mit grauem Rand, sonst unsichtbar
     def wire(pts, col, dash=False):
         p = ' '.join(f'{x},{yy}' for x, yy in pts)
+        if col == WHITE:
+            a(f"<polyline points='{p}' fill='none' stroke='#8a8f94' stroke-width='5' stroke-linejoin='round' {'stroke-dasharray=\"8 6\"' if dash else ''}/>")
         a(f"<polyline points='{p}' fill='none' stroke='{col}' stroke-width='3' stroke-linejoin='round' {'stroke-dasharray=\"8 6\"' if dash else ''}/>")
     def res(x, yy, col):
         a(f"<line x1='{x-24}' y1='{yy}' x2='{x+24}' y2='{yy}' stroke='#9aa0a6' stroke-width='2'/>")
@@ -278,8 +281,8 @@ def verdrahtung():
     WX = 175
     a(f"<line x1='{WX}' y1='190' x2='{WX}' y2='440' stroke='#999' stroke-width='6' stroke-dasharray='14 6'/>")
     a(f"<text x='{WX}' y='182' text-anchor='middle' font-size='11' fill='#555'>Gehäusewand</text>")
-    for lab, sub, by, pin, col, dash in [('Pigtail X', '→ Oszilloskop Kanal 1', 250, 9, '#e09f00', False),
-                                        ('Pigtail Y', '→ Oszilloskop Kanal 2', 370, 10, '#1d6fd6', False)]:
+    for lab, sub, by, pin, col, dash in [('Pigtail X', '→ Oszilloskop Kanal 1', 250, 9, '#8e44ad', False),
+                                        ('Pigtail Y', '→ Oszilloskop Kanal 2', 370, 10, '#0aa39a', False)]:
         d = 'stroke-dasharray="6 4"' if dash else ''
         a(f"<line x1='76' y1='{by}' x2='212' y2='{by}' stroke='#b57452' stroke-width='6' {d}/>")         # RG316 (braun)
         # BNC-Stecker: Steckerkopf mit Bajonett-Schlitz, geriffelte Überwurfhülse, Crimphülse, Knickschutz
@@ -336,8 +339,9 @@ def verdrahtung():
         a(f"<text x='{OX+ow+16}' y='{py-4}' font-size='9' fill='#222' font-weight='bold'>{n}</text>")
     # Leitungen zum OLED: über das Modul hinweg zur Stiftleiste rechts – ineinander geschachtelt,
     # damit sich keine Leitungen kreuzen (unterste Klemme → oberster Pin, VCC ganz außen)
-    order = [('RST', 13, '#a0522d'), ('DC', 11, '#00a6a6'), ('CS', 10, '#d1495b'), ('CLK', 9, '#7b3fb5'),
-             ('DIN', 2, '#2a9d48'), ('GND', 1, '#111')]
+    # Farben wie am Kabel des Waveshare-OLED: RST weiß, DC grün, CS orange, CLK gelb, DIN blau, GND schwarz, VCC rot
+    order = [('RST', 13, WHITE), ('DC', 11, '#1f9d55'), ('CS', 10, '#f07b1d'), ('CLK', 9, '#f2c200'),
+             ('DIN', 2, '#1f5fd1'), ('GND', 1, '#111')]
     for k, (n, rp, col) in enumerate(order):
         cx, by, dx = 826 - k * 16, oy0 - 10 - k * 10, OX + ow + 50 + k * 10
         wire([(X1 + 10, y(rp)), (cx, y(rp)), (cx, by), (dx, by), (dx, pins[n]), (OX + ow + 12, pins[n])], col)
@@ -359,7 +363,7 @@ def verdrahtung():
     a(f"<text x='{X1+272}' y='40' font-size='11' fill='#444'>(IPEX→SMA-Pigtail aus dem Antennen-Kit)</text>")
     # Legende
     # --- Optional: Echtzeituhr DS3231 (Modul ZS-042, 38 × 22 mm), gestrichelt angeschlossen
-    SDA, SCL = '#c99a00', '#5d6d7e'
+    SDA, SCL = WHITE, '#9a9ea3'                                   # DuPont-Kabel: SDA weiß, SCL grau, VCC rot, GND schwarz
     RX, RY, rw, rh = 906, 668, 232, 134
     a(f"<rect x='{RX-28}' y='{RY-46}' width='{rw+42}' height='{rh+62}' rx='8' fill='none' stroke='#888' stroke-dasharray='6 5'/>")
     a(f"<text x='{RX-18}' y='{RY-28}' font-size='12' font-weight='bold' fill='#444'>Optional: Echtzeituhr DS3231 (ZS-042)</text>")
@@ -373,12 +377,13 @@ def verdrahtung():
     # VCC von 3V3: von der roten Leitung oben gerade nach unten (zwischen Board und OLED),
     # dann von links an VCC – wie die übrigen RTC-Leitungen
     wire([(840, vb), (846, vb), (846, rpins['VCC']), (RX - 6, rpins['VCC'])], '#d62828', True)
-    leg = [('#d62828', '3V3 → OLED VCC'), ('#111', 'GND (Masse)'), ('#e09f00', 'P25 (DAC1) → X'),
-           ('#1d6fd6', 'P26 (DAC2) → Y'), ('#2a9d48', 'P23 → DIN'), ('#7b3fb5', 'P18 → CLK'),
-           ('#d1495b', 'P5 → CS'), ('#00a6a6', 'P17 → DC'), ('#a0522d', 'P4 → RST'),
+    leg = [('#d62828', '3V3 → OLED VCC'), ('#111', 'GND (Masse)'), ('#8e44ad', 'P25 (DAC1) → X'),
+           ('#0aa39a', 'P26 (DAC2) → Y'), ('#1f5fd1', 'P23 → DIN'), ('#f2c200', 'P18 → CLK'),
+           ('#f07b1d', 'P5 → CS'), ('#1f9d55', 'P17 → DC'), (WHITE, 'P4 → RST'),
            (SDA, 'P21 → SDA (RTC)'), (SCL, 'P22 → SCL (RTC)')]
     for k, (c, t) in enumerate(leg):
         lx, ly = 862 + (k // 6) * 166, 420 + (k % 6) * 22
+        if c == WHITE: a(f"<line x1='{lx}' y1='{ly}' x2='{lx+26}' y2='{ly}' stroke='#8a8f94' stroke-width='6'/>")
         a(f"<line x1='{lx}' y1='{ly}' x2='{lx+26}' y2='{ly}' stroke='{c}' stroke-width='4'/><text x='{lx+32}' y='{ly+4}' font-size='11'>{t}</text>")
     a("<line x1='1028' y1='552' x2='1054' y2='552' stroke='#555' stroke-width='3' stroke-dasharray='6 4'/><text x='1060' y='556' font-size='11'>optional</text>")
     a("<text x='862' y='576' font-size='11' fill='#444'>Beschriftung wie auf dem Breakout-Board (P25 = GPIO25 …).</text>")
@@ -613,7 +618,7 @@ def aufbau():
     rot = lambda p: (2 * cx - p[0], 2 * cy - p[1])
     L = ['3V3','EN','SVP','SVN','P34','P35','P32','P33','P25','P26','P27','P14','P12','GND','P13','SD2','SD3','CMD','5V']
     R = ['GND','P23','P22','TX','RX','P21','GND','P19','P18','P5','P17','P16','P4','P0','P2','P15','SD1','SD0','CLK']
-    used = {('L', 9): '#e09f00', ('L', 10): '#1d6fd6'}        # P25/P26 (Pigtails); die optionale RTC zeigt nur der Schaltplan
+    used = {('L', 9): '#8e44ad', ('L', 10): '#0aa39a'}        # P25/P26 (Pigtails); die optionale RTC zeigt nur der Schaltplan
     g = []
     pos, dk = breakout_top(g.append, bx, by_, k, L, R, used)
     a(f"<g transform='rotate(180 {cx} {cy})'>" + '\n'.join(g) + "</g>")
