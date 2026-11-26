@@ -253,8 +253,8 @@ html{background:var(--card)}body{min-height:100vh}   /* Safari zeigt beim Herunt
 <div class="grp"><h2 id="downloads-h" class="coll" role="button" tabindex="0" aria-expanded="true"><span data-l="de">Links &amp; Dokumente</span><span data-l="en">Links &amp; documents</span></h2>
 <section>
  <a class="row" target="_blank" rel="noopener" href="https://github.com/H0LZH0LZ/ESP32_OscilloscopeClock"><span><span data-l="de">GitHub – Version 2.0</span><span data-l="en">GitHub – version 2.0</span><small class="note" data-l="de">Diese Firmware mit Quellcode, Anleitung und Werkzeugen</small><small class="note" data-l="en">This firmware with source code, guide and tools</small></span><span>›</span></a>
- <a class="row" target="_blank" rel="noopener" data-l="de" href="ESP32_Oscilloscope_Clock_Dokumentation.pdf?v=f63a2604"><span>Dokumentation (PDF)<small class="note">Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small></span><span>›</span></a>
- <a class="row" target="_blank" rel="noopener" data-l="en" href="ESP32_Oscilloscope_Clock_Documentation.pdf?v=a0bcf9a0"><span>Documentation (PDF)<small class="note">Assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
+ <a class="row" target="_blank" rel="noopener" data-l="de" href="ESP32_Oscilloscope_Clock_Dokumentation.pdf?v=d7d9d821"><span>Dokumentation (PDF)<small class="note">Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small></span><span>›</span></a>
+ <a class="row" target="_blank" rel="noopener" data-l="en" href="ESP32_Oscilloscope_Clock_Documentation.pdf?v=497fc8c7"><span>Documentation (PDF)<small class="note">Assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" href="demo/"><span><span data-l="de">Testseite</span><span data-l="en">Test page</span><small class="note" data-l="de">Das Webinterface der Uhr ausprobieren – läuft im Browser, alle Werte sind simuliert</small><small class="note" data-l="en">Try the clock's web interface – runs in the browser, all values are simulated</small></span><span>›</span></a>
  <a class="row" href="#kap6"><span><span data-l="de">Firmware installieren</span><span data-l="en">Install firmware</span><small class="note" data-l="de">Direkt im Browser auf den ESP32 schreiben – oder den Sketch mit Arduino Cloud hochladen</small><small class="note" data-l="en">Write it to the ESP32 straight from the browser – or upload the sketch with Arduino Cloud</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" href="https://github.com/maurohh/ESP32_OscilloscopeClock"><span><span data-l="de">GitHub – Original</span><span data-l="en">GitHub – original</span><small class="note" data-l="de">Die ursprüngliche ESP32 Oscilloscope Clock von Mauro Pintus (2018), nach deren Idee diese Version entstand</small><small class="note" data-l="en">The original ESP32 Oscilloscope Clock by Mauro Pintus (2018) that inspired this version</small></span><span>›</span></a>
@@ -609,7 +609,7 @@ kommt direkt in den Eingang des Oszilloskops, ein zusätzliches BNC-Kabel ist ni
  <tr><th>Anz.</th><th>Teil</th><th>Hinweis</th></tr>
  <tr><td class="qty" data-th="Anz.">1</td><td data-qty="1 ×" data-th="Teil"><b><a href="https://www.amazon.de/dp/B0F65G3V81" target="_blank" rel="noopener">ESP32-WROOM-32U DevKitC V4</a></b> mit USB-C und Antennen-Kit (DUBEUYEW, „2 Stück ESP32-WROOM-32U ESP32 DevKitC V4 USB-C mit Antennen-Kit“), 48,5 × 28,5 mm</td><td data-th="Hinweis">Klassischer ESP32 mit zwei 8-Bit-DACs an GPIO25/26, USB-Seriell-Wandler CP2102. Das Antennen-Kit enthält das IPEX→SMA-Pigtail. Andere ESP32-Varianten (S2, S3, C3) haben keine bzw. andere DACs und passen nicht.</td></tr>
  <tr><td class="qty" data-th="Anz.">1</td><td data-qty="1 ×" data-th="Teil"><b><a href="https://www.amazon.de/dp/B0BCWBW4SR" target="_blank" rel="noopener">ESP32-Breakout-Board mit Schraubklemmen</a></b> (XTVTX, „ESP32 Breakout Board Erweiterungskarte GPIO 1 in 2“, 2er-Pack)</td><td data-th="Hinweis">Das DevKit wird aufgesteckt, alle Leitungen kommen in Schraubklemmen – am DevKit wird nichts gelötet. Die Klemmen sind wie die Stifte beschriftet (3V3, GND, P25, P26, P23 …).</td></tr>
- <tr><td class="qty" data-th="Anz.">2</td><td data-qty="2 ×" data-th="Teil"><b><a href="https://de.aliexpress.com/item/1005006318978533.html" target="_blank" rel="noopener">BNC-Pigtail-Leitung</a></b> BNC-Stecker auf 2,54-mm-DuPont-Stift, RG316 (TEJIATE, „SMA to DuPont BNC/Q9/N … RG316“, Variante <b>BNC-J to J</b>)</td><td data-th="Hinweis">X und Y. Länge passend zum Abstand zum Oszilloskop wählen (30–80 cm erhältlich; 50 cm ist ein guter Wert). Rot = Innenleiter (Signal), braun = Schirm (Masse) – mit dem Durchgangsprüfer bestätigen. Die DuPont-Stecker werden beim Aufbau abgeschnitten.</td></tr>
+ <tr><td class="qty" data-th="Anz.">2</td><td data-qty="2 ×" data-th="Teil"><b><a href="https://de.aliexpress.com/item/1005006318978533.html" target="_blank" rel="noopener">BNC-Pigtail-Leitung</a></b> BNC-Stecker auf 2,54-mm-DuPont-Stift, RG316 (TEJIATE, „SMA to DuPont BNC/Q9/N … RG316“, Variante <b>BNC-J to J</b>)</td><td data-th="Hinweis">X und Y. Länge passend zum Abstand zum Oszilloskop wählen (30–80 cm erhältlich; 50 cm ist ein guter Wert). Rot = Innenleiter (Signal), schwarz = Schirm (Masse) – mit dem Durchgangsprüfer bestätigen. Die DuPont-Stecker werden beim Aufbau abgeschnitten.</td></tr>
  <tr><td class="qty" data-th="Anz.">2</td><td data-qty="2 ×" data-th="Teil"><b><a href="https://de.rs-online.com/web/p/kabelverschraubungen/4583953" target="_blank" rel="noopener">Kabelverschraubung Lapp SKINDICHT MINI</a></b> M6×1, Messing vernickelt, Klemmbereich 2–3 mm, IP68 (Lapp 52001860, RS 458-3953)</td><td data-th="Hinweis">Je Pigtail eine; hält und dichtet das RG316 (Ø ca. 2,5 mm) in der Gehäusewand.</td></tr>
  <tr><td class="qty" data-th="Anz.">1</td><td data-qty="1 ×" data-th="Teil"><b><a href="https://www.amazon.de/dp/B0FM7RLQTF" target="_blank" rel="noopener">USB-C-Einbauverlängerung</a></b> USB 3.1, IP67, 0,2 m, Stecker auf Buchse, FPC-Flachbandkabel, Einbauöffnung 16 mm (Plinkwirekb)</td><td data-th="Hinweis">USB-C-Buchse in der Gehäusewand; das Flachbandkabel steckt innen im DevKit. Darüber wird die Uhr versorgt und programmiert.</td></tr>
  <tr><td class="qty" data-th="Anz.">1</td><td data-qty="1 ×" data-th="Teil"><b><a href="https://www.amazon.de/dp/B0B5RGNNXV" target="_blank" rel="noopener">Abzweigdose ABS 150 × 100 × 70 mm</a></b>, IP67, mit Scharnierdeckel, Edelstahlverschlüssen und Montageplatte (Yunseity)</td><td data-th="Hinweis">Kunststoff, damit das WLAN-Signal durchkommt. Das Breakout-Board wird auf die gelochte Montageplatte geschraubt.</td></tr>
@@ -636,7 +636,7 @@ oscilloscope input; no additional BNC cable is needed.</p>
  <tr><th>Qty</th><th>Part</th><th>Note</th></tr>
  <tr><td class="qty" data-th="Qty">1</td><td data-qty="1 ×" data-th="Part"><b><a href="https://www.amazon.de/dp/B0F65G3V81" target="_blank" rel="noopener">ESP32-WROOM-32U DevKitC V4</a></b> with USB-C and antenna kit (DUBEUYEW, “2 pcs ESP32-WROOM-32U ESP32 DevKitC V4 USB-C with antenna kit”), 48.5 × 28.5 mm</td><td data-th="Note">Classic ESP32 with two 8-bit DACs on GPIO25/26, USB-serial converter CP2102. The antenna kit contains the IPEX→SMA pigtail. Other ESP32 variants (S2, S3, C3) have no or different DACs and do not fit.</td></tr>
  <tr><td class="qty" data-th="Qty">1</td><td data-qty="1 ×" data-th="Part"><b><a href="https://www.amazon.de/dp/B0BCWBW4SR" target="_blank" rel="noopener">ESP32 breakout board with screw terminals</a></b> (XTVTX, “ESP32 breakout board expansion board GPIO 1 in 2”, pack of 2)</td><td data-th="Note">The DevKit is plugged in and all wires go into screw terminals – nothing is soldered on the DevKit. The terminals are labelled like the pins (3V3, GND, P25, P26, P23 …).</td></tr>
- <tr><td class="qty" data-th="Qty">2</td><td data-qty="2 ×" data-th="Part"><b><a href="https://de.aliexpress.com/item/1005006318978533.html" target="_blank" rel="noopener">BNC pigtail cable</a></b>, BNC plug to 2.54 mm DuPont pin, RG316 (TEJIATE, “SMA to DuPont BNC/Q9/N … RG316”, variant <b>BNC-J to J</b>)</td><td data-th="Note">X and Y. Choose the length to suit the distance to the oscilloscope (30–80 cm available; 50 cm is a good choice). Red = core (signal), brown = shield (ground) – confirm with a continuity tester. The DuPont plugs are cut off during assembly.</td></tr>
+ <tr><td class="qty" data-th="Qty">2</td><td data-qty="2 ×" data-th="Part"><b><a href="https://de.aliexpress.com/item/1005006318978533.html" target="_blank" rel="noopener">BNC pigtail cable</a></b>, BNC plug to 2.54 mm DuPont pin, RG316 (TEJIATE, “SMA to DuPont BNC/Q9/N … RG316”, variant <b>BNC-J to J</b>)</td><td data-th="Note">X and Y. Choose the length to suit the distance to the oscilloscope (30–80 cm available; 50 cm is a good choice). Red = core (signal), black = shield (ground) – confirm with a continuity tester. The DuPont plugs are cut off during assembly.</td></tr>
  <tr><td class="qty" data-th="Qty">2</td><td data-qty="2 ×" data-th="Part"><b><a href="https://de.rs-online.com/web/p/kabelverschraubungen/4583953" target="_blank" rel="noopener">Cable gland Lapp SKINDICHT MINI</a></b> M6×1, nickel-plated brass, clamping range 2–3 mm, IP68 (Lapp 52001860, RS 458-3953)</td><td data-th="Note">One per pigtail; holds and seals the RG316 (approx. Ø 2.5 mm) in the enclosure wall.</td></tr>
  <tr><td class="qty" data-th="Qty">1</td><td data-qty="1 ×" data-th="Part"><b><a href="https://www.amazon.de/dp/B0FM7RLQTF" target="_blank" rel="noopener">USB-C panel-mount extension</a></b> USB 3.1, IP67, 0.2 m, plug to socket, FPC flat cable, 16 mm cut-out (Plinkwirekb)</td><td data-th="Note">USB-C socket in the enclosure wall; the flat cable plugs into the DevKit inside. It powers and programs the clock.</td></tr>
  <tr><td class="qty" data-th="Qty">1</td><td data-qty="1 ×" data-th="Part"><b><a href="https://www.amazon.de/dp/B0B5RGNNXV" target="_blank" rel="noopener">ABS junction box 150 × 100 × 70 mm</a></b>, IP67, with hinged lid, stainless steel latches and mounting plate (Yunseity)</td><td data-th="Note">Plastic so that the Wi-Fi signal gets through. The breakout board is screwed onto the perforated mounting plate.</td></tr>
@@ -679,7 +679,7 @@ Löchern mit dem Cuttermesser von außen mehrmals entlang einem Lineal anritzen 
 innen anhalten, so dass die aktive Fläche mittig im Fenster liegt, und die vier Befestigungslöcher (Lochabstand 61,5 × 39,5 mm)
 anzeichnen; mit <b>2,7 mm</b> für M2,5 bohren.</div></div>
 <h3>5.2 Kabel und Buchsen einbauen</h3>
-<div class="step"><b class="n">4</b><div><b>Pigtails durch die Kabelverschraubungen führen.</b> Vorher mit dem Durchgangsprüfer bestätigen, dass Rot zum Mittelstift und Braun
+<div class="step"><b class="n">4</b><div><b>Pigtails durch die Kabelverschraubungen führen.</b> Vorher mit dem Durchgangsprüfer bestätigen, dass Rot zum Mittelstift und Schwarz
 zum Außenkontakt des BNC-Steckers führt. Die <b>DuPont-Stecker abschneiden</b> – sie passen nicht durch die Verschraubung; an die
 Schraubklemmen kommen später die abisolierten Adern. Die Verschraubungen von außen in die beiden Gewinde der Anschlussseite drehen (bzw.
 innen mit der M6-Mutter kontern), Hutmutter lösen und das Kabel von außen durch Hutmutter, Dichteinsatz und Gehäuse schieben. Innen etwa
@@ -688,7 +688,7 @@ eine Vierteldrehung anziehen – das Kabel darf sich dann nicht mehr ziehen lass
 <div class="step"><b class="n">5</b><div><b>Adern abisolieren und Widerstände anlöten.</b> Erst jetzt, denn mit Widerstand und Schrumpfschlauch passt das Kabel nicht mehr durch
 die Verschraubung. Die Außenisolierung etwa 3 cm entfernen, beide Adern etwa 5 mm abisolieren. Ein Stück Schrumpfschlauch (ca. 2 cm)
 über die rote Ader schieben, den <b>220-Ω-Widerstand</b> an die rote Ader (Innenleiter) löten, Schrumpfschlauch über die Lötstelle
-ziehen und schrumpfen. Das freie Bein des Widerstands auf etwa 8 mm kürzen – es kommt später in die Klemme. Die braune Ader (Schirm)
+ziehen und schrumpfen. Das freie Bein des Widerstands auf etwa 8 mm kürzen – es kommt später in die Klemme. Die schwarze Ader (Schirm)
 verdrillen und verzinnen oder mit einer Aderendhülse versehen.</div></div>
 <div class="step"><b class="n">6</b><div><b>USB-C-Einbaubuchse und Antenne einbauen.</b> Die USB-C-Buchse von außen mit Dichtring in das 16-mm-Loch der Anschlussseite stecken
 und innen mit der Mutter festziehen; das Flachbandkabel zeigt nach innen. Die SMA-Buchse des Antennen-Pigtails (aus dem Antennen-Kit des
@@ -729,10 +729,10 @@ die Buchse am Modul drücken, bis er hörbar einrastet; das Flachbandkabel in di
 <path d='M255.0,451.0 h6 M258.0,448.0 v6' stroke='#5b6066' stroke-width='1.2'/>
 <circle cx='258.0' cy='465.0' r='5.0' fill='#dfe3e6' stroke='#7b8187' stroke-width='.8'/>
 <path d='M255.0,465.0 h6 M258.0,462.0 v6' stroke='#5b6066' stroke-width='1.2'/>
-<circle cx='258.0' cy='465.0' r='2.2' fill='#9a5b2e'/>
+<circle cx='258.0' cy='465.0' r='2.2' fill='#d62828'/>
 <circle cx='258.0' cy='479.0' r='5.0' fill='#dfe3e6' stroke='#7b8187' stroke-width='.8'/>
 <path d='M255.0,479.0 h6 M258.0,476.0 v6' stroke='#5b6066' stroke-width='1.2'/>
-<circle cx='258.0' cy='479.0' r='2.2' fill='#9a5b2e'/>
+<circle cx='258.0' cy='479.0' r='2.2' fill='#d62828'/>
 <circle cx='258.0' cy='493.0' r='5.0' fill='#dfe3e6' stroke='#7b8187' stroke-width='.8'/>
 <path d='M255.0,493.0 h6 M258.0,490.0 v6' stroke='#5b6066' stroke-width='1.2'/>
 <circle cx='258.0' cy='507.0' r='5.0' fill='#dfe3e6' stroke='#7b8187' stroke-width='.8'/>
@@ -987,7 +987,7 @@ und verzinnen oder mit Aderendhülsen versehen.</p>
 <figure><img loading="lazy" src="images/verdrahtung.svg"><figcaption>Abb. 6 – Verdrahtung. Das DevKit steckt im Breakout-Board; alle Leitungen kommen in die gleichnamigen Schraubklemmen.</figcaption></figure>
 <div class="warn"><b>Wichtig:</b> Klemme P0 (GPIO0) ist der BOOT-Taster – dort nichts anschließen. Das OLED an <b>3V3</b>,
 nicht an 5V. Das Modul -32U nie ohne Antenne im WLAN-Betrieb laufen lassen.</div>
-<div class="step"><b class="n">8</b><div><b>Pigtails anklemmen:</b> das freie Widerstandsbein von X in die Klemme <b>P25</b>, von Y in <b>P26</b>. Die beiden braunen Adern
+<div class="step"><b class="n">8</b><div><b>Pigtails anklemmen:</b> das freie Widerstandsbein von X in die Klemme <b>P25</b>, von Y in <b>P26</b>. Die beiden schwarzen Adern
 (Schirm) zusammen in die Klemme <b>GND der linken Reihe</b> – am besten miteinander verdrillt oder in einer Zwillings-Aderendhülse.</div></div>
 <div class="step"><b class="n">9</b><div><b>OLED anschließen.</b> Das Modul mit vier Abstandsbolzen M2,5 hinter dem Fenster im Deckel befestigen. Es ist ab Werk auf
 4-Draht-SPI eingestellt; nichts umlöten. Sieben Leitungen mit DuPont-Buchse auf die Stiftleiste stecken (VCC, GND, DIN, CLK, CS, DC,
@@ -1001,7 +1001,7 @@ einsetzen und vier Leitungen anschließen: VCC an <b>3V3</b>, GND an GND der rec
  <thead><tr><th>Klemme am Breakout-Board</th><th>Anschluss</th><th>Ziel</th><th>Funktion</th></tr></thead>
  <tr><td data-th="Klemme am Breakout-Board">P25 (GPIO25, DAC1)</td><td data-th="Anschluss">über 220 Ω</td><td data-th="Ziel">Pigtail „X“, rote Ader → Oszilloskop Kanal 1</td><td data-th="Funktion">Analogausgang DAC1: Spannung für die X-Ablenkung</td></tr>
  <tr><td data-th="Klemme am Breakout-Board">P26 (GPIO26, DAC2)</td><td data-th="Anschluss">über 220 Ω</td><td data-th="Ziel">Pigtail „Y“, rote Ader → Oszilloskop Kanal 2</td><td data-th="Funktion">Analogausgang DAC2: Spannung für die Y-Ablenkung</td></tr>
- <tr><td data-th="Klemme am Breakout-Board">GND (linke Reihe)</td><td data-th="Anschluss">direkt</td><td data-th="Ziel">braune Adern (Schirm) aller Pigtails</td><td data-th="Funktion">Masse – Bezug der Ablenkspannungen</td></tr>
+ <tr><td data-th="Klemme am Breakout-Board">GND (linke Reihe)</td><td data-th="Anschluss">direkt</td><td data-th="Ziel">schwarze Adern (Schirm) aller Pigtails</td><td data-th="Funktion">Masse – Bezug der Ablenkspannungen</td></tr>
  <tr><td data-th="Klemme am Breakout-Board">3V3</td><td data-th="Anschluss">direkt</td><td data-th="Ziel">OLED VCC</td><td data-th="Funktion">Versorgung 3,3 V für das OLED</td></tr>
  <tr><td data-th="Klemme am Breakout-Board">GND (rechte Reihe)</td><td data-th="Anschluss">direkt</td><td data-th="Ziel">OLED GND</td><td data-th="Funktion">Masse des OLED</td></tr>
  <tr><td data-th="Klemme am Breakout-Board">P23</td><td data-th="Anschluss">direkt</td><td data-th="Ziel">OLED DIN</td><td data-th="Funktion">SPI-Daten (VSPI MOSI): Bildinhalt zum Display</td></tr>
@@ -1039,7 +1039,7 @@ the holes several times from the outside with the utility knife along a ruler an
 module against the inside so that the active area sits centred in the window and mark the four mounting holes (hole spacing
 61.5 × 39.5 mm); drill them with <b>2.7 mm</b> for M2.5.</div></div>
 <h3>5.2 Fitting cables and sockets</h3>
-<div class="step"><b class="n">4</b><div><b>Lead the pigtails through the cable glands.</b> First confirm with the continuity tester that red goes to the centre pin and brown
+<div class="step"><b class="n">4</b><div><b>Lead the pigtails through the cable glands.</b> First confirm with the continuity tester that red goes to the centre pin and black
 to the outer contact of the BNC plug. <b>Cut off the DuPont plugs</b> – they do not fit through the gland; the stripped leads go into the
 screw terminals later. Screw the glands into the two threads of the connector side from the outside (or lock them with the M6 nut inside),
 loosen the dome nut and push the cable from the outside through the dome nut, seal and enclosure. Leave about <b>10 cm</b> of cable inside
@@ -1048,7 +1048,7 @@ then no longer pull through. Label the pigtails “X” and “Y”.</div></div>
 <div class="step"><b class="n">5</b><div><b>Strip the leads and solder on the resistors.</b> Only now, because with the resistor and heat-shrink tubing the cable no longer fits
 through the gland. Remove about 3 cm of the outer insulation and strip both leads by about 5 mm. Slide a piece of heat-shrink tubing
 (approx. 2 cm) over the red lead, solder the <b>220 Ω resistor</b> to the red lead (core), pull the tubing over the joint and shrink it.
-Shorten the free leg of the resistor to about 8 mm – it goes into the terminal later. Twist and tin the brown lead (shield) or fit a
+Shorten the free leg of the resistor to about 8 mm – it goes into the terminal later. Twist and tin the black lead (shield) or fit a
 wire-end ferrule.</div></div>
 <div class="step"><b class="n">6</b><div><b>Fit the USB-C panel socket and the antenna.</b> Insert the USB-C socket with its sealing ring from the outside into the 16 mm hole
 of the connector side and tighten the nut on the inside; the flat cable points inwards. Push the SMA socket of the antenna pigtail (from
@@ -1089,10 +1089,10 @@ module until it clicks audibly; plug the flat cable into the DevKit's USB-C sock
 <path d='M255.0,451.0 h6 M258.0,448.0 v6' stroke='#5b6066' stroke-width='1.2'/>
 <circle cx='258.0' cy='465.0' r='5.0' fill='#dfe3e6' stroke='#7b8187' stroke-width='.8'/>
 <path d='M255.0,465.0 h6 M258.0,462.0 v6' stroke='#5b6066' stroke-width='1.2'/>
-<circle cx='258.0' cy='465.0' r='2.2' fill='#9a5b2e'/>
+<circle cx='258.0' cy='465.0' r='2.2' fill='#d62828'/>
 <circle cx='258.0' cy='479.0' r='5.0' fill='#dfe3e6' stroke='#7b8187' stroke-width='.8'/>
 <path d='M255.0,479.0 h6 M258.0,476.0 v6' stroke='#5b6066' stroke-width='1.2'/>
-<circle cx='258.0' cy='479.0' r='2.2' fill='#9a5b2e'/>
+<circle cx='258.0' cy='479.0' r='2.2' fill='#d62828'/>
 <circle cx='258.0' cy='493.0' r='5.0' fill='#dfe3e6' stroke='#7b8187' stroke-width='.8'/>
 <path d='M255.0,493.0 h6 M258.0,490.0 v6' stroke='#5b6066' stroke-width='1.2'/>
 <circle cx='258.0' cy='507.0' r='5.0' fill='#dfe3e6' stroke='#7b8187' stroke-width='.8'/>
@@ -1347,7 +1347,7 @@ wire-end ferrules.</p>
 <figure><img loading="lazy" src="images/verdrahtung_en.svg"><figcaption>Fig. 6 – Wiring. The DevKit sits in the breakout board; all wires go into the screw terminals of the same name.</figcaption></figure>
 <div class="warn"><b>Important:</b> terminal P0 (GPIO0) is the BOOT button – do not connect anything there. Connect the OLED to
 <b>3V3</b>, not to 5V. Never run the -32U module on Wi-Fi without an antenna.</div>
-<div class="step"><b class="n">8</b><div><b>Connect the pigtails:</b> the free resistor leg of X into terminal <b>P25</b>, of Y into <b>P26</b>. Both brown leads (shield)
+<div class="step"><b class="n">8</b><div><b>Connect the pigtails:</b> the free resistor leg of X into terminal <b>P25</b>, of Y into <b>P26</b>. Both black leads (shield)
 together into the <b>GND terminal of the left row</b> – ideally twisted together or in a twin wire-end ferrule.</div></div>
 <div class="step"><b class="n">9</b><div><b>Connect the OLED.</b> Fix the module behind the window in the lid with four M2.5 standoffs. It comes set to 4-wire SPI; do not
 resolder anything. Plug seven wires with DuPont sockets onto the pin header (VCC, GND, DIN, CLK, CS, DC, RST), strip the other ends and
@@ -1360,7 +1360,7 @@ circuit does not charge the coin cell. The clock is switched on later in the web
  <thead><tr><th>Terminal on the breakout board</th><th>Connection</th><th>Target</th><th>Function</th></tr></thead>
  <tr><td data-th="Terminal on the breakout board">P25 (GPIO25, DAC1)</td><td data-th="Connection">via 220 Ω</td><td data-th="Target">pigtail “X”, red lead → oscilloscope channel 1</td><td data-th="Function">analogue output DAC1: voltage for the X deflection</td></tr>
  <tr><td data-th="Terminal on the breakout board">P26 (GPIO26, DAC2)</td><td data-th="Connection">via 220 Ω</td><td data-th="Target">pigtail “Y”, red lead → oscilloscope channel 2</td><td data-th="Function">analogue output DAC2: voltage for the Y deflection</td></tr>
- <tr><td data-th="Terminal on the breakout board">GND (left row)</td><td data-th="Connection">direct</td><td data-th="Target">brown leads (shield) of all pigtails</td><td data-th="Function">ground – reference of the deflection voltages</td></tr>
+ <tr><td data-th="Terminal on the breakout board">GND (left row)</td><td data-th="Connection">direct</td><td data-th="Target">black leads (shield) of all pigtails</td><td data-th="Function">ground – reference of the deflection voltages</td></tr>
  <tr><td data-th="Terminal on the breakout board">3V3</td><td data-th="Connection">direct</td><td data-th="Target">OLED VCC</td><td data-th="Function">3.3 V supply for the OLED</td></tr>
  <tr><td data-th="Terminal on the breakout board">GND (right row)</td><td data-th="Connection">direct</td><td data-th="Target">OLED GND</td><td data-th="Function">OLED ground</td></tr>
  <tr><td data-th="Terminal on the breakout board">P23</td><td data-th="Connection">direct</td><td data-th="Target">OLED DIN</td><td data-th="Function">SPI data (VSPI MOSI): image content to the display</td></tr>

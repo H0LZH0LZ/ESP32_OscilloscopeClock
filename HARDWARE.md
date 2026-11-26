@@ -10,7 +10,7 @@
 | [Waveshare 2,42inch OLED Display Module](https://www.amazon.de/dp/B0CL6WMHJN), weiß (SSD1309, 128×64, SPI/I²C), 61,5 × 39,5 mm – **optional**, im Prototyp verbaut | Lokale Textanzeige (die Uhr läuft auch ohne): Uhrzeit 24h und Datum/KW (7-Segment-Stil), SSID, Signal |
 | [WLAN-Antenne Bingfu](https://www.amazon.de/dp/B086JCJMSN) 2,4/5,8 GHz, 8 dBi, SMA-Stecker | Pflicht beim *-32U*: das Modul hat **keine** PCB-Antenne; SMA und RP-SMA nicht mischen |
 | [ESP32-Breakout-Board mit Schraubklemmen](https://www.amazon.de/dp/B0BCWBW4SR) | DevKit aufstecken, alle Leitungen in Schraubklemmen (Beschriftung P25, P26 …) – nichts am DevKit löten |
-| 2× [BNC-Pigtail](https://de.aliexpress.com/item/1005006318978533.html), BNC-Stecker auf 2,54-mm-DuPont-Stift, RG316 | X- und Y-Ausgang; der BNC-Stecker kommt direkt ins Oszilloskop (rot = Signal, braun = Schirm). Die DuPont-Stecker werden abgeschnitten |
+| 2× [BNC-Pigtail](https://de.aliexpress.com/item/1005006318978533.html), BNC-Stecker auf 2,54-mm-DuPont-Stift, RG316 | X- und Y-Ausgang; der BNC-Stecker kommt direkt ins Oszilloskop (rot = Signal, schwarz = Schirm). Die DuPont-Stecker werden abgeschnitten |
 | 2× [Kabelverschraubung Lapp SKINDICHT MINI](https://de.rs-online.com/web/p/kabelverschraubungen/4583953) M6×1 (52001860), Klemmbereich 2–3 mm | führt die Pigtails durch die Gehäusewand |
 | [USB-C-Einbauverlängerung](https://www.amazon.de/dp/B0FM7RLQTF) (IP67, 0,2 m, Einbauöffnung 16 mm) | Versorgung und Programmierung von außen |
 | [ABS-Abzweigdose 150 × 100 × 70 mm](https://www.amazon.de/dp/B0B5RGNNXV), IP67, Scharnierdeckel, Montageplatte | Gehäuse (funkdurchlässig) |
@@ -25,7 +25,7 @@ Klemme (Breakout-Board)  Ziel
 ─────────────            ──────────────────────────────────────────────
 P25 (DAC1) ──[220Ω]── Pigtail "X" rot (Innenleiter) ──> BNC-Stecker → Oszilloskop Kanal 1   (Spannung X-Ablenkung)
 P26 (DAC2) ──[220Ω]── Pigtail "Y" rot (Innenleiter) ──> BNC-Stecker → Oszilloskop Kanal 2   (Spannung Y-Ablenkung)
-GND ─────────────────── Pigtail "X" + "Y" braun (Schirm)                                       (Masse, Bezug)
+GND ─────────────────── Pigtail "X" + "Y" schwarz (Schirm)                                       (Masse, Bezug)
 
 3V3  ─────────────────── OLED VCC    Versorgung 3,3 V
 GND  ─────────────────── OLED GND    Masse
@@ -54,7 +54,7 @@ Die Pins stehen zentral in `ESP32_OscilloscopeClock_v2.0/config.h`. Fest vorgege
 | links | 1 | 3V3 | OLED VCC |
 | links | 9 | GPIO25 (DAC_1) | über 220 Ω → BNC „X“ Mitte |
 | links | 10 | GPIO26 (DAC_2) | über 220 Ω → BNC „Y“ Mitte |
-| links | 14 | GND | braune Adern (Schirm) aller Pigtails |
+| links | 14 | GND | schwarze Adern (Schirm) aller Pigtails |
 | rechts | 1 | GND | OLED GND |
 | rechts | 2 | GPIO23 | OLED DIN |
 | rechts | 9 | GPIO18 | OLED CLK |
@@ -126,8 +126,8 @@ der Leiste angeschlossen werden, die besser passt.
 - Deckel: Fenster für das OLED (aktive Fläche ca. 55 × 28 mm), Modul mit M2,5-Abstandsbolzen befestigen.
 - Pigtails: die DuPont-Stecker abschneiden (sie passen nicht durch die Verschraubung), das Kabel von außen durch die
   Kabelverschraubung führen, erst dann innen abisolieren und den 220-Ω-Widerstand an die rote Ader löten – mit Widerstand
-  und Schrumpfschlauch passt das Kabel nicht mehr durch. Das freie Widerstandsbein und die braune Ader kommen in die Klemmen.
-- Breakout-Board auf der Montageplatte; die Pigtails in die Klemmen P25/P26 (rot, über 220 Ω) und GND (braun).
+  und Schrumpfschlauch passt das Kabel nicht mehr durch. Das freie Widerstandsbein und die schwarze Ader kommen in die Klemmen.
+- Breakout-Board auf der Montageplatte; die Pigtails in die Klemmen P25/P26 (rot, über 220 Ω) und GND (schwarz).
 - Bohrplan 1:1 zum Ausdrucken auf DIN A4: die letzten beiden Seiten (Deckel, Seitenteile) von `docs/ESP32_Oscilloscope_Clock_Dokumentation.pdf`.
 
 ## Oszilloskop-Einstellungen

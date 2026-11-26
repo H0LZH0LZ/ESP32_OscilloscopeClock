@@ -322,7 +322,7 @@ oscilloscope input; no additional BNC cable is needed.</p>
  <tr><th>Qty</th><th>Part</th><th>Note</th></tr>
  <tr><td>1</td><td><b><a href="https://www.amazon.de/dp/B0F65G3V81">ESP32-WROOM-32U DevKitC V4</a></b> with USB-C and antenna kit (DUBEUYEW, “2 pcs ESP32-WROOM-32U ESP32 DevKitC V4 USB-C with antenna kit”), 48.5 × 28.5 mm</td><td>Classic ESP32 with two 8-bit DACs on GPIO25/26, USB-serial converter CP2102. The antenna kit contains the IPEX→SMA pigtail. Other ESP32 variants (S2, S3, C3) have no or different DACs and do not fit.</td></tr>
  <tr><td>1</td><td><b><a href="https://www.amazon.de/dp/B0BCWBW4SR">ESP32 breakout board with screw terminals</a></b> (XTVTX, “ESP32 breakout board expansion board GPIO 1 in 2”, pack of 2)</td><td>The DevKit is plugged in and all wires go into screw terminals – nothing is soldered on the DevKit. The terminals are labelled like the pins (3V3, GND, P25, P26, P23 …).</td></tr>
- <tr><td>2</td><td><b><a href="https://de.aliexpress.com/item/1005006318978533.html">BNC pigtail cable</a></b>, BNC plug to 2.54 mm DuPont pin, RG316 (TEJIATE, “SMA to DuPont BNC/Q9/N … RG316”, variant <b>BNC-J to J</b>)</td><td>X and Y. Choose the length to suit the distance to the oscilloscope (30–80 cm available; 50 cm is a good choice). Red = core (signal), brown = shield (ground) – confirm with a continuity tester. The DuPont plugs are cut off during assembly.</td></tr>
+ <tr><td>2</td><td><b><a href="https://de.aliexpress.com/item/1005006318978533.html">BNC pigtail cable</a></b>, BNC plug to 2.54 mm DuPont pin, RG316 (TEJIATE, “SMA to DuPont BNC/Q9/N … RG316”, variant <b>BNC-J to J</b>)</td><td>X and Y. Choose the length to suit the distance to the oscilloscope (30–80 cm available; 50 cm is a good choice). Red = core (signal), black = shield (ground) – confirm with a continuity tester. The DuPont plugs are cut off during assembly.</td></tr>
  <tr><td>2</td><td><b><a href="https://de.rs-online.com/web/p/kabelverschraubungen/4583953">Cable gland Lapp SKINDICHT MINI</a></b> M6×1, nickel-plated brass, clamping range 2–3 mm, IP68 (Lapp 52001860, RS 458-3953)</td><td>One per pigtail; holds and seals the RG316 (approx. Ø 2.5 mm) in the enclosure wall.</td></tr>
  <tr><td>1</td><td><b><a href="https://www.amazon.de/dp/B0FM7RLQTF">USB-C panel-mount extension</a></b> USB 3.1, IP67, 0.2 m, plug to socket, FPC flat cable, 16 mm cut-out (Plinkwirekb)</td><td>USB-C socket in the enclosure wall; the flat cable plugs into the DevKit inside. It powers and programs the clock.</td></tr>
  <tr><td>1</td><td><b><a href="https://www.amazon.de/dp/B0B5RGNNXV">ABS junction box 150 × 100 × 70 mm</a></b>, IP67, with hinged lid, stainless steel latches and mounting plate (Yunseity)</td><td>Plastic so that the Wi-Fi signal gets through. The breakout board is screwed onto the perforated mounting plate.</td></tr>
@@ -362,7 +362,7 @@ the holes several times from the outside with the utility knife along a ruler an
 module against the inside so that the active area sits centred in the window and mark the four mounting holes (hole spacing
 61.5 × 39.5 mm); drill them with <b>2.7 mm</b> for M2.5.</div></div>
 <h3>5.2 Fitting cables and sockets</h3>
-<div class="step"><b class="n">4</b><div><b>Lead the pigtails through the cable glands.</b> First confirm with the continuity tester that red goes to the centre pin and brown
+<div class="step"><b class="n">4</b><div><b>Lead the pigtails through the cable glands.</b> First confirm with the continuity tester that red goes to the centre pin and black
 to the outer contact of the BNC plug. <b>Cut off the DuPont plugs</b> – they do not fit through the gland; the stripped leads go into the
 screw terminals later. Screw the glands into the two threads of the connector side from the outside (or lock them with the M6 nut inside),
 loosen the dome nut and push the cable from the outside through the dome nut, seal and enclosure. Leave about <b>10 cm</b> of cable inside
@@ -371,7 +371,7 @@ then no longer pull through. Label the pigtails “X” and “Y”.</div></div>
 <div class="step"><b class="n">5</b><div><b>Strip the leads and solder on the resistors.</b> Only now, because with the resistor and heat-shrink tubing the cable no longer fits
 through the gland. Remove about 3 cm of the outer insulation and strip both leads by about 5 mm. Slide a piece of heat-shrink tubing
 (approx. 2 cm) over the red lead, solder the <b>220 Ω resistor</b> to the red lead (core), pull the tubing over the joint and shrink it.
-Shorten the free leg of the resistor to about 8 mm – it goes into the terminal later. Twist and tin the brown lead (shield) or fit a
+Shorten the free leg of the resistor to about 8 mm – it goes into the terminal later. Twist and tin the black lead (shield) or fit a
 wire-end ferrule.</div></div>
 <div class="step"><b class="n">6</b><div><b>Fit the USB-C panel socket and the antenna.</b> Insert the USB-C socket with its sealing ring from the outside into the 16 mm hole
 of the connector side and tighten the nut on the inside; the flat cable points inwards. Push the SMA socket of the antenna pigtail (from
@@ -412,10 +412,10 @@ module until it clicks audibly; plug the flat cable into the DevKit's USB-C sock
 <path d='M255.0,451.0 h6 M258.0,448.0 v6' stroke='#5b6066' stroke-width='1.2'/>
 <circle cx='258.0' cy='465.0' r='5.0' fill='#dfe3e6' stroke='#7b8187' stroke-width='.8'/>
 <path d='M255.0,465.0 h6 M258.0,462.0 v6' stroke='#5b6066' stroke-width='1.2'/>
-<circle cx='258.0' cy='465.0' r='2.2' fill='#9a5b2e'/>
+<circle cx='258.0' cy='465.0' r='2.2' fill='#d62828'/>
 <circle cx='258.0' cy='479.0' r='5.0' fill='#dfe3e6' stroke='#7b8187' stroke-width='.8'/>
 <path d='M255.0,479.0 h6 M258.0,476.0 v6' stroke='#5b6066' stroke-width='1.2'/>
-<circle cx='258.0' cy='479.0' r='2.2' fill='#9a5b2e'/>
+<circle cx='258.0' cy='479.0' r='2.2' fill='#d62828'/>
 <circle cx='258.0' cy='493.0' r='5.0' fill='#dfe3e6' stroke='#7b8187' stroke-width='.8'/>
 <path d='M255.0,493.0 h6 M258.0,490.0 v6' stroke='#5b6066' stroke-width='1.2'/>
 <circle cx='258.0' cy='507.0' r='5.0' fill='#dfe3e6' stroke='#7b8187' stroke-width='.8'/>
@@ -670,7 +670,7 @@ wire-end ferrules.</p>
 <figure><img src="images/verdrahtung_en.svg" style="width:100%"><figcaption>Fig. 6 – Wiring. The DevKit sits in the breakout board; all wires go into the screw terminals of the same name.</figcaption></figure>
 <div class="warn"><b>Important:</b> terminal P0 (GPIO0) is the BOOT button – do not connect anything there. Connect the OLED to
 <b>3V3</b>, not to 5V. Never run the -32U module on Wi-Fi without an antenna.</div>
-<div class="step"><b class="n">8</b><div><b>Connect the pigtails:</b> the free resistor leg of X into terminal <b>P25</b>, of Y into <b>P26</b>. Both brown leads (shield)
+<div class="step"><b class="n">8</b><div><b>Connect the pigtails:</b> the free resistor leg of X into terminal <b>P25</b>, of Y into <b>P26</b>. Both black leads (shield)
 together into the <b>GND terminal of the left row</b> – ideally twisted together or in a twin wire-end ferrule.</div></div>
 <div class="step"><b class="n">9</b><div><b>Connect the OLED.</b> Fix the module behind the window in the lid with four M2.5 standoffs. It comes set to 4-wire SPI; do not
 resolder anything. Plug seven wires with DuPont sockets onto the pin header (VCC, GND, DIN, CLK, CS, DC, RST), strip the other ends and
@@ -683,7 +683,7 @@ circuit does not charge the coin cell. The clock is switched on later in the web
  <thead><tr><th>Terminal on the breakout board</th><th>Connection</th><th>Target</th><th>Function</th></tr></thead>
  <tr><td>P25 (GPIO25, DAC1)</td><td>via 220 Ω</td><td>pigtail “X”, red lead → oscilloscope channel 1</td><td>analogue output DAC1: voltage for the X deflection</td></tr>
  <tr><td>P26 (GPIO26, DAC2)</td><td>via 220 Ω</td><td>pigtail “Y”, red lead → oscilloscope channel 2</td><td>analogue output DAC2: voltage for the Y deflection</td></tr>
- <tr><td>GND (left row)</td><td>direct</td><td>brown leads (shield) of all pigtails</td><td>ground – reference of the deflection voltages</td></tr>
+ <tr><td>GND (left row)</td><td>direct</td><td>black leads (shield) of all pigtails</td><td>ground – reference of the deflection voltages</td></tr>
  <tr><td>3V3</td><td>direct</td><td>OLED VCC</td><td>3.3 V supply for the OLED</td></tr>
  <tr><td>GND (right row)</td><td>direct</td><td>OLED GND</td><td>OLED ground</td></tr>
  <tr><td>P23</td><td>direct</td><td>OLED DIN</td><td>SPI data (VSPI MOSI): image content to the display</td></tr>
