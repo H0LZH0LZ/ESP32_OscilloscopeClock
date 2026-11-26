@@ -268,7 +268,7 @@ only about 1/24 as bright as a line. In the <b>DIGITAL</b> profile the beam jump
 otherwise show the intermediate values as dots. If your oscilloscope has a Z input you can additionally enable <b>Z blanking</b> on
 GPIO27: during a jump the beam is blanked, and after the jump the firmware waits 5 µs for the deflection to settle.</p>
 <h3>2.7 Time</h3>
-<p>The time comes from the internet via <b>NTP</b> (by default <code>de.pool.ntp.org</code>, plus two fallback servers) and is
+<p class="keep">The time comes from the internet via <b>NTP</b> (by default <code>de.pool.ntp.org</code>, plus two fallback servers) and is
 re-synchronised every hour. Time zone and daylight-saving rule are stored in a POSIX time-zone string, e.g.
 <code>CET-1CEST,M3.5.0,M10.5.0/3</code> for Central Europe – the change-over is therefore automatic. Without internet the time can
 be set by hand in the web interface. With the optional <b>DS3231 real-time clock</b> the clock takes the time from the module after

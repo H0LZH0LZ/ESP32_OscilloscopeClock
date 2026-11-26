@@ -271,7 +271,7 @@ ein digitales Oszilloskop würde sonst die Zwischenwerte als Punkte anzeigen. We
 die <b>Dunkeltastung</b> an GPIO27 einschalten: Während eines Sprungs wird der Strahl dunkelgeschaltet, nach dem Sprung wartet die
 Firmware 5 µs, bis die Ablenkung sich beruhigt hat.</p>
 <h3>2.7 Uhrzeit</h3>
-<p>Die Zeit kommt per <b>NTP</b> aus dem Internet (standardmäßig <code>de.pool.ntp.org</code>, dazu zwei Ersatzserver) und wird stündlich
+<p class="keep">Die Zeit kommt per <b>NTP</b> aus dem Internet (standardmäßig <code>de.pool.ntp.org</code>, dazu zwei Ersatzserver) und wird stündlich
 nachgestellt. Zeitzone und Sommerzeitregel stehen in einer POSIX-Zeitzonenangabe, etwa <code>CET-1CEST,M3.5.0,M10.5.0/3</code> für
 Mitteleuropa – die Umstellung passiert damit automatisch. Ohne Internet lässt sich die Zeit im Webinterface von Hand stellen. Mit der
 optionalen <b>Echtzeituhr DS3231</b> übernimmt die Uhr die Zeit nach dem Einschalten aus dem Modul (es läuft in UTC weiter, auch

@@ -32,11 +32,11 @@ const DOCS = {
       // Listen bleiben zusammen, außer sie füllen fast eine Seite
       for (const e of document.querySelectorAll('ul,ol'))
         e.style.breakInside = e.getBoundingClientRect().height > 0.85 * page ? 'auto' : 'avoid';
-      // Lange Absätze (ab 6 Zeilen) dürfen umbrechen – mindestens 3 Zeilen je Seite (orphans/widows);
+      // Lange Absätze (ab 6 Zeilen) dürfen umbrechen (außer class="keep") – mindestens 3 Zeilen je Seite (orphans/widows);
       // kurze Absätze bleiben zusammen. Verhindert große Lücken am Seitenende.
       for (const e of document.querySelectorAll('p')) {
         const lh = parseFloat(getComputedStyle(e).lineHeight) || 20;
-        if (e.getBoundingClientRect().height > 5.5 * lh) e.style.breakInside = 'auto';
+        if (!e.classList.contains('keep') && e.getBoundingClientRect().height > 5.5 * lh) e.style.breakInside = 'auto';   // class="keep": nie trennen
       }
     });
     await p.pdf({
