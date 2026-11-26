@@ -9,6 +9,7 @@
 Aufruf: python3 tools/gen_doc_svg.py
 """
 import os
+import re
 OUT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'docs', 'images')
 FONT = "font-family='Helvetica,Arial,sans-serif'"
 
@@ -17,9 +18,47 @@ EN_BOHRPLAN2 = {'Bohrplan Deckel – Abzweigdose 150 × 100 × 70': 'Drilling te
 EN_BOHRPLAN = {'Deckel – Draufsicht': 'Lid – top view', 'Fenster OLED': 'OLED window', 'Befestigungslöcher M2,5 des OLED-Moduls': 'M2.5 mounting holes of the OLED module', '(Lochabstand 61,5 × 39,5) nach dem Modul anreißen': '(hole spacing 61.5 × 39.5): mark them from the module', 'Prüfmaß 50': 'Test line 50', 'Mit 100 % drucken (nicht „an Seite anpassen“),': 'Print at 100 % (not “fit to page”),', 'Prüfmaß nachmessen, Schablonen ausschneiden.': 'measure the test line, cut out the templates.', 'Anschlussseite – Ansicht von außen (Ausschnitt)': 'Connector side – view from outside (detail)', '2× M6 (X, Y)': '2× M6 (X, Y)', 'M6: Kernloch Ø5 bohren und Gewinde schneiden – oder Ø6,2 mit Mutter M6 innen.': 'M6: drill tap hole Ø5 and cut the thread – or Ø6.2 with an M6 nut inside.', 'Höhe der Lochmitten: Mitte des Unterteils, am Gehäuse anreißen.': 'Height of the hole centres: middle of the base, mark it on the enclosure.', 'Gegenüberliegende Seite – Ansicht von außen (Ausschnitt)': 'Opposite side – view from outside (detail)', 'Lochmitte auf gleicher': 'Hole centre at same', 'Höhe wie Anschlussseite': 'height as connector side', 'Ø6,5': 'Ø6.5', '47,5': '47.5', 'Benennung': 'Title', 'Maßstab': 'Scale', 'Blatt': 'Sheet', 'Bohrplan Abzweigdose 150 × 100 × 70': 'Drilling template, junction box 150 × 100 × 70', 'Projekt · Werkstoff': 'Project · material', 'ESP32 Oscilloscope Clock v2.0 · Kunststoffgehäuse': 'ESP32 Oscilloscope Clock v2.0 · plastic enclosure', 'Allgemeintoleranz': 'General tolerance', 'Maße': 'Dimensions', 'in mm': 'in mm'}
 EN = {'Stiftleiste auf der Rückseite': 'Pin header on the back', 'DS3231 (optional) – SDA → P21, SCL → P22': 'DS3231 (optional) – SDA → P21, SCL → P22', 'Optional: Echtzeituhr DS3231 (ZS-042)': 'Optional: real-time clock DS3231 (ZS-042)', 'Knopfzelle CR2032 auf der Rückseite': 'Coin cell CR2032 on the back', 'P21 → SDA (RTC)': 'P21 → SDA (RTC)', 'optional': 'optional', 'OLED sitzt im Scharnierdeckel –': 'OLED sits in the hinged lid –', 'Das OLED sitzt im Scharnierdeckel – Leitungen lang genug lassen': 'The OLED sits in the hinged lid – leave the wires long enough', 'Leitungen lang genug lassen': 'leave the wires long enough', '47,5': '47.5', 'ESP32-Breakout-Board (Schraubklemmen), DevKit aufgesteckt': 'ESP32 breakout board (screw terminals), DevKit plugged in', 'USB-C ← Flachbandkabel ← USB-C-Einbaubuchse (Anschlussseite)': 'USB-C ← flat cable ← USB-C panel socket (connector side)', 'Gehäusewand': 'Enclosure wall', 'BNC-Stecker': 'BNC plug', '→ Oszilloskop Kanal 1': '→ oscilloscope channel 1', '→ Oszilloskop Kanal 2': '→ oscilloscope channel 2', '⏚ = Klemme GND': '⏚ = GND terminal', 'Pigtail: rot = Innenleiter (Signal),': 'Pigtail: red = core (signal),', 'braun = Schirm (Masse)': 'brown = shield (ground)', 'SMA-Buchse + WLAN-Antenne (Bingfu, SMA)': 'SMA socket + WiFi antenna (Bingfu, SMA)', '(IPEX→SMA-Pigtail aus dem Antennen-Kit)': '(IPEX→SMA pigtail from the antenna kit)', 'GND (Masse)': 'GND (ground)', 'Beschriftung wie auf dem Breakout-Board (P25 = GPIO25 …).': 'Labels as printed on the breakout board (P25 = GPIO25 …).', 'P0 = BOOT-Taster – dort nichts anschließen.': 'P0 = BOOT button – do not connect anything there.', '220 Ω in die rote Ader jedes Pigtails eingelötet.': '220 Ω soldered into the red lead of each pigtail.', 'Bohrplan Abzweigdose 150 × 100 × 70 mm – Maßstab 1:1': 'Drilling template, junction box 150 × 100 × 70 mm – scale 1:1', 'DIN A4 mit 100 % drucken (nicht „an Seite anpassen“), dann das Prüfmaß nachmessen': 'Print on A4 at 100 % (not “fit to page”), then measure the test line', 'Deckel (Draufsicht)': 'Lid (top view)', 'Fenster OLED 55 × 28': 'OLED window 55 × 28', 'Befestigungslöcher des OLED-Moduls (61,5 × 39,5 mm) nach dem Modul anzeichnen (M2,5)': 'Mark the mounting holes of the OLED module (61.5 × 39.5 mm) from the module itself (M2.5)', 'Prüfmaß 50 mm': 'Test line 50 mm', 'Nach dem Drucken nachmessen: die Linie muss genau 50 mm lang sein.': 'Measure after printing: the line must be exactly 50 mm long.', 'Schablonen ausschneiden und mit Klebeband auf Deckel und Seiten kleben.': 'Cut out the templates and tape them onto the lid and the sides.', 'Anschlussseite (kurze Seite, von außen gesehen)': 'Connector side (short side, seen from outside)', 'Pigtails: Ø 5,0 bohren + M6-Gewinde schneiden (gestrichelt: M6) – oder Ø 6,2 + M6-Mutter innen': 'Pigtails: drill Ø 5.0 + tap M6 (dashed: M6) – or Ø 6.2 + M6 nut inside', 'Alle drei Löcher auf gleicher Höhe, etwa Mitte des Unterteils': 'All three holes at the same height, about the middle of the base', 'Gegenüberliegende Seite – Antenne': 'Opposite side – antenna', 'SMA  Ø 6,5': 'SMA  Ø 6.5', 'Mittig, gleiche Höhe wie die Anschlüsse': 'Centred, same height as the connectors', 'Anordnung in der Abzweigdose (Draufsicht, Deckel offen)': 'Layout in the junction box (top view, lid open)', 'Breakout-Board samt DevKit um 180° gedreht': 'Breakout board with DevKit rotated by 180°', 'gestrichelt: USB- und Antennenkabel unter dem Board': 'dashed: USB and antenna cable under the board', 'Antenne (SMA)': 'Antenna (SMA)', 'Gegenüberliegende Seite': 'Opposite side', 'Pigtail X · USB-C · Pigtail Y (Kabelverschraubungen SKINDICHT MINI M6)': 'Pigtail X · USB-C · pigtail Y (cable glands SKINDICHT MINI M6)', 'Anschlussseite (kurze Seite)': 'Connector side (short side)', 'OLED (61,5 × 39,5 mm) sitzt im Scharnierdeckel –': 'OLED (61.5 × 39.5 mm) sits in the hinged lid –', 'Leitungen lang genug lassen': 'leave the wires long enough', 'Kern 1 – scopeTask': 'Core 1 – scopeTask', '• nur Strahlausgabe, ohne Pause': '• beam output only, without pause', '• DAC X/Y an GPIO25/26 (Register)': '• DAC X/Y on GPIO25/26 (registers)', '• Rundtour: Zifferblatt + Ziffern': '• round trip: dial + numerals', '• Zeiger nach der Uhrzeit': '• hands according to the time', '• gleich schnelle Linien = gleich hell': '• equally fast lines = equally bright', '• Profil ANALOG/DIGITAL, Testbild': '• profile ANALOG/DIGITAL, test pattern', '• ca. 200 Bilder pro Sekunde': '• approx. 200 frames per second', 'Kern 0 – uiTask + wifiTask': 'Core 0 – uiTask + wifiTask', '• WLAN (stärkstes bekanntes Netz)': '• WiFi (strongest known network)', '• Zeit per NTP, stündlich': '• time via NTP, hourly', '• Webserver, Setup-WLAN, mDNS': '• web server, setup network, mDNS', '• OLED-Anzeige (SPI)': '• OLED display (SPI)', '• BOOT-Taster, Einstellungen (NVS)': '• BOOT button, settings (NVS)', '• Protokoll (Ringpuffer 8 KB)': '• log (ring buffer 8 KB)', '• CPU-Last-Messung': '• CPU load measurement', 'Übergabe nur über wenige atomare Variablen (Uhrzeit, Zifferblatt, Helligkeit, Profil) – keine Sperren im Zeichenpfad': 'Hand-over only via a few atomic variables (time, dial, brightness, profile) – no locks in the drawing path'}
 
-def save(name, w, h, body, extra=''):
-    svg = (f"<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 {w} {h}' {extra} {FONT}>\n"
-           f"<rect x='0' y='0' width='{w}' height='{h}' fill='#fff'/>\n{body}</svg>\n")
+# Grafiken mit themed=True: ohne Hintergrund, Texte/Rahmen über Klassen (th-fg, th-mu, th-ac, th-enc, th-ol).
+#  - Datei (README, GitHub): feste helle Farben, dunkle per prefers-color-scheme
+#  - zusätzlich direkt in dokumentation.html / documentation.en.html eingebettet (Marke <!-- SVG name -->):
+#    Schrift und Farben kommen von der Seite (Projektseite hell/dunkel, im PDF die Rückfallwerte)
+TH_CSS = ('.{c} .th-fg{{fill:{fg}}}.{c} .th-mu{{fill:{mu}}}.{c} .th-ac{{fill:{ac}}}'
+          '.{c} .th-enc{{fill:{fg};fill-opacity:.04;stroke:{fg};stroke-opacity:.45}}'
+          '.{c} .th-ol{{stroke:{mu};stroke-opacity:.6;stroke-width:1}}')
+TH_FILE = (TH_CSS.format(c='th', fg='#111', mu='#5f6368', ac='#0a7d44') + '@media (prefers-color-scheme:dark){' +
+           TH_CSS.format(c='th', fg='#eee', mu='#a0a0a8', ac='#30d158') + '}')
+TH_PAGE = TH_CSS.format(c='thfig', fg='currentColor', mu='var(--mute,#5f6368)', ac='var(--acc,#0a7d44)')
+SVG_FONT = "font-family='Raleway,Helvetica Neue,Helvetica,Arial,sans-serif'"
+
+
+def embed(name, svg_inline):
+    """Setzt die Grafik in die Doku ein (ersetzt <img src=\"images/name\" …> bzw. den Inhalt der Marke)."""
+    lang_file = 'documentation.en.html' if name.endswith('_en.svg') else 'dokumentation.html'
+    doc = os.path.join(os.path.dirname(OUT), lang_file)
+    h = open(doc, encoding='utf-8').read()
+    a_, b_ = f'<!-- SVG {name} -->', '<!-- /SVG -->'
+    if f'<!-- SVG {name} ' not in h:
+        m = re.search(r'<img src="images/' + re.escape(name) + r'"(?: style="([^"]*)")?>', h)
+        if not m:
+            raise SystemExit(f'{doc}: Grafik {name} nicht gefunden')
+        h = h[:m.start()] + f'<!-- SVG {name} {m.group(1) or ""} -->' + b_ + h[m.end():]
+        a_ = f'<!-- SVG {name} {m.group(1) or ""} -->'
+    else:
+        k = h.index(f'<!-- SVG {name} ')
+        a_ = h[k:h.index('-->', k) + 3]
+    style = a_[len(f'<!-- SVG {name} '):-4].strip()
+    i = h.index(a_) + len(a_); j = h.index(b_, i)
+    h = h[:i] + svg_inline.replace('<svg ', f"<svg style='{style};height:auto' ", 1) + h[j:]
+    open(doc, 'w', encoding='utf-8').write(h)
+
+
+def save(name, w, h, body, extra='', themed=False):
+    if themed:
+        svg = (f"<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 {w} {h}' class='th' {extra} {SVG_FONT}>\n"
+               f"<style>{TH_FILE}</style>\n{body}</svg>\n")
+    else:
+        svg = (f"<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 {w} {h}' {extra} {FONT}>\n"
+               f"<rect x='0' y='0' width='{w}' height='{h}' fill='#fff'/>\n{body}</svg>\n")
     open(os.path.join(OUT, name), 'w', encoding='utf-8').write(svg)
     en = svg
     for de, tr in {**EN, **EN_BOHRPLAN, **EN_BOHRPLAN2}.items():
@@ -29,6 +68,10 @@ def save(name, w, h, body, extra=''):
         b64 = lambda f: base64.b64encode(open(os.path.join(OUT, f), 'rb').read()).decode()
         en = en.replace(b64('oled_pixel.png'), b64('oled_pixel_en.png'))
     open(os.path.join(OUT, name.replace('.svg', '_en.svg')), 'w', encoding='utf-8').write(en)
+    if themed:
+        for n, v in ((name, svg), (name.replace('.svg', '_en.svg'), en)):
+            body_ = v[v.index('</style>') + 9:v.rindex('</svg>')]
+            embed(n, f"<svg class='thfig' viewBox='0 0 {w} {h}' role='img'><style>{TH_PAGE}</style>{body_}</svg>")
 
 # ---------------------------------------------------------------- Verdrahtung
 def zs042(a, RX, RY, rw, rh, pinlen=30):
@@ -559,8 +602,8 @@ def aufbau():
     k = 4; X, Y = 150, 165; W, H = 100 * k, 150 * k
     s = []; a = s.append
     mm = lambda v: v * k
-    a(f"<text x='{X+W/2}' y='26' text-anchor='middle' font-size='17' font-weight='bold'>Anordnung in der Abzweigdose (Draufsicht, Deckel offen)</text>")
-    a(f"<rect x='{X}' y='{Y}' width='{W}' height='{H}' rx='16' fill='#f2f2f0' stroke='#888' stroke-width='3'/>")
+    a(f"<text class='th-fg' x='{X+W/2}' y='26' text-anchor='middle' font-size='17' font-weight='bold'>Anordnung in der Abzweigdose (Draufsicht, Deckel offen)</text>")
+    a(f"<rect x='{X}' y='{Y}' width='{W}' height='{H}' rx='16' class='th-enc' stroke-width='3'/>")
     yb = Y + H
     sx = X + mm(50)
     # Breakout-Board 63 × 77 mm mittig, samt DevKit um 180° gedreht
@@ -594,17 +637,17 @@ def aufbau():
     a(f"<path d='M{ax},{by_} C{ax},{Y+60} {sx},{Y+70} {sx},{Y+8}' fill='none' stroke='{ant}' stroke-width='3'/>")
     # SMA-Buchse in der Wand, außen die Bingfu-Antenne (flach, mit Gelenk und geriffelter Mutter)
     a(f"<path d='M{sx-10},{Y-4} h20 v12 h-20 Z' fill='#d8b14a' stroke='#8a6d1d'/>")
-    a(f"<rect x='{sx-9}' y='{Y-22}' width='18' height='18' rx='2' fill='#222'/>")
+    a(f"<rect x='{sx-9}' y='{Y-22}' width='18' height='18' rx='2' fill='#222' class='th-ol'/>")
     for q in range(5):
         a(f"<line x1='{sx-6+q*3}' y1='{Y-22}' x2='{sx-6+q*3}' y2='{Y-4}' stroke='#444'/>")
-    a(f"<circle cx='{sx}' cy='{Y-30}' r='9' fill='#262626'/>")
-    a(f"<path d='M{sx-8},{Y-36} L{sx-10},{Y-60} L{sx-10},{Y-88} Q{sx-10},{Y-98} {sx},{Y-98} Q{sx+10},{Y-98} {sx+10},{Y-88} L{sx+10},{Y-60} L{sx+8},{Y-36} Z' fill='#1f1f1f'/>")
-    a(f"<text x='{sx+18}' y='{Y-50}' font-size='12'>Antenne (SMA)</text>")
-    a(f"<text x='{X+W/2-30}' y='{Y-50}' text-anchor='end' font-size='13' fill='#555'>Gegenüberliegende Seite</text>")
+    a(f"<circle cx='{sx}' cy='{Y-30}' r='9' fill='#262626' class='th-ol'/>")
+    a(f"<path d='M{sx-8},{Y-36} L{sx-10},{Y-60} L{sx-10},{Y-88} Q{sx-10},{Y-98} {sx},{Y-98} Q{sx+10},{Y-98} {sx+10},{Y-88} L{sx+10},{Y-60} L{sx+8},{Y-36} Z' fill='#1f1f1f' class='th-ol'/>")
+    a(f"<text class='th-fg' x='{sx+18}' y='{Y-50}' font-size='12'>Antenne (SMA)</text>")
+    a(f"<text class='th-mu' x='{X+W/2-30}' y='{Y-50}' text-anchor='end' font-size='13'>Gegenüberliegende Seite</text>")
     # USB-C-Einbaubuchse mittig in der Anschlussseite: Mutter innen, Flansch außen
-    a(f"<rect x='{sx-30}' y='{yb-14}' width='60' height='10' rx='2' fill='#2b2b2b'/>")
-    a(f"<rect x='{sx-36}' y='{yb+2}' width='72' height='8' rx='2' fill='#2b2b2b'/><rect x='{sx-18}' y='{yb+10}' width='36' height='14' rx='3' fill='#3a3a3a'/><rect x='{sx-10}' y='{yb+14}' width='20' height='6' rx='3' fill='#999'/>")
-    a(f"<text x='{sx}' y='{yb+40}' text-anchor='middle' font-size='12'>USB-C</text>")
+    a(f"<rect x='{sx-30}' y='{yb-14}' width='60' height='10' rx='2' fill='#2b2b2b' class='th-ol'/>")
+    a(f"<rect x='{sx-36}' y='{yb+2}' width='72' height='8' rx='2' fill='#2b2b2b' class='th-ol'/><rect x='{sx-18}' y='{yb+10}' width='36' height='14' rx='3' fill='#3a3a3a' class='th-ol'/><rect x='{sx-10}' y='{yb+14}' width='20' height='6' rx='3' fill='#999'/>")
+    a(f"<text class='th-fg' x='{sx}' y='{yb+40}' text-anchor='middle' font-size='12'>USB-C</text>")
     # Pigtails X (28 mm) und Y (72 mm) zu P25/P26 – nach der Drehung rechte Klemmenleiste
     for n, (lab, d, i) in enumerate([('X', 28, 9), ('Y', 72, 10)]):
         px = X + mm(d)
@@ -615,41 +658,115 @@ def aufbau():
         a(f"<path d='M{px-11},{yb-12} h22 l-3,-6 h-16 Z' fill='#bfc4c8' stroke='#6d7378'/><rect x='{px-11}' y='{yb-12}' width='22' height='10' fill='#b3b8bd' stroke='#6d7378'/>")
         a(f"<line x1='{px}' y1='{yb+22}' x2='{px}' y2='{yb+56}' stroke='#b57452' stroke-width='6'/>")
         # BNC-Stecker (von oben): Knickschutz, Crimphülse, geriffelte Überwurfhülse, Steckerkopf
-        a(f"<path d='M{px-6},{yb+56} L{px-8},{yb+70} L{px+8},{yb+70} L{px+6},{yb+56} Z' fill='#2a2a2a'/>")
+        a(f"<path d='M{px-6},{yb+56} L{px-8},{yb+70} L{px+8},{yb+70} L{px+6},{yb+56} Z' fill='#2a2a2a' class='th-ol'/>")
         a(f"<rect x='{px-8}' y='{yb+70}' width='16' height='14' rx='2' fill='#c3c7cb' stroke='#6d7378'/>")
         a(f"<rect x='{px-12}' y='{yb+84}' width='24' height='24' rx='3' fill='#d5d9dd' stroke='#6d7378' stroke-width='1.5'/>")
         for q in range(5):
             a(f"<line x1='{px-11}' y1='{yb+87+q*4}' x2='{px+11}' y2='{yb+87+q*4}' stroke='#a3a9ae'/>")
         a(f"<rect x='{px-8}' y='{yb+108}' width='16' height='10' fill='#c9cdd1' stroke='#6d7378'/>")
-        a(f"<text x='{px+18}' y='{yb+100}' font-size='13' font-weight='bold'>{lab}</text>")
+        a(f"<text class='th-fg' x='{px+18}' y='{yb+100}' font-size='13' font-weight='bold'>{lab}</text>")
         a(f"<path d='M{px},{yb-18} C{px},{yb-60} {lx},{yb-50} {lx},{yb-90} L{lx},{ty}' fill='none' stroke='#b57452' stroke-width='3'/>")
         a(f"<line x1='{lx}' y1='{ty}' x2='{tx}' y2='{ty}' stroke='#d62828' stroke-width='3'/>")
-    a(f"<text x='{bx+bw+40}' y='{rot(pos[('L', 10)])[1]-6}' font-size='10' fill='#1d5e2c'>P26 (Y)</text>")
-    a(f"<text x='{bx+bw+40}' y='{rot(pos[('L', 9)])[1]+12}' font-size='10' fill='#1d5e2c'>P25 (X)</text>")
-    a(f"<text x='{X+W/2}' y='{yb+140}' text-anchor='middle' font-size='12'>Pigtail X · USB-C · Pigtail Y (Kabelverschraubungen SKINDICHT MINI M6)</text>")
-    a(f"<text x='{X+W/2}' y='{yb+160}' text-anchor='middle' font-size='13' fill='#555'>Anschlussseite (kurze Seite)</text>")
-    a(f"<text x='{X+W/2}' y='46' text-anchor='middle' font-size='11' fill='#555'>Das OLED sitzt im Scharnierdeckel – Leitungen lang genug lassen</text>")
-    a(f"<text x='{X-14}' y='{Y+H/2}' text-anchor='middle' font-size='12' fill='#06c' transform='rotate(-90 {X-14} {Y+H/2})'>150 mm</text>")
-    a(f"<text x='{X+W/2}' y='{yb+180}' text-anchor='middle' font-size='12' fill='#06c'>100 mm</text>")
+    a(f"<text x='{bx+bw+40}' y='{rot(pos[('L', 10)])[1]-6}' font-size='10' class='th-ac'>P26 (Y)</text>")
+    a(f"<text x='{bx+bw+40}' y='{rot(pos[('L', 9)])[1]+12}' font-size='10' class='th-ac'>P25 (X)</text>")
+    a(f"<text class='th-fg' x='{X+W/2}' y='{yb+140}' text-anchor='middle' font-size='12'>Pigtail X · USB-C · Pigtail Y (Kabelverschraubungen SKINDICHT MINI M6)</text>")
+    a(f"<text x='{X+W/2}' y='{yb+160}' text-anchor='middle' font-size='13' class='th-mu'>Anschlussseite (kurze Seite)</text>")
+    a(f"<text x='{X+W/2}' y='46' text-anchor='middle' font-size='11' class='th-mu'>Das OLED sitzt im Scharnierdeckel – Leitungen lang genug lassen</text>")
+    a(f"<text x='{X-14}' y='{Y+H/2}' text-anchor='middle' font-size='12' class='th-ac' transform='rotate(-90 {X-14} {Y+H/2})'>150 mm</text>")
+    a(f"<text x='{X+W/2}' y='{yb+180}' text-anchor='middle' font-size='12' class='th-ac'>100 mm</text>")
     # Hinweise unter der Zeichnung (nicht über Kabeln und Board)
-    a(f"<text x='{X+W/2}' y='{yb+206}' text-anchor='middle' font-size='12' fill='#1d5e2c'>Breakout-Board samt DevKit um 180° gedreht</text>")
-    a(f"<text x='{X+W/2}' y='{yb+224}' text-anchor='middle' font-size='12' fill='#555'>gestrichelt: USB- und Antennenkabel unter dem Board</text>")
-    save('aufbau.svg', X * 2 + W, yb + 236, '\n'.join(s))
+    a(f"<text x='{X+W/2}' y='{yb+206}' text-anchor='middle' font-size='12' class='th-ac'>Breakout-Board samt DevKit um 180° gedreht</text>")
+    a(f"<text x='{X+W/2}' y='{yb+224}' text-anchor='middle' font-size='12' class='th-mu'>gestrichelt: USB- und Antennenkabel unter dem Board</text>")
+    save('aufbau.svg', X * 2 + W, yb + 236, '\n'.join(s), themed=True)
 
 
 # ---------------------------------------------------------------- Software-Aufteilung
-def software():
+# Ohne Hintergrund, Farben über CSS-Klassen:
+#  - docs/images/software(_en).svg für README/GitHub: helle Farben, dunkle per prefers-color-scheme
+#  - in dokumentation.html / documentation.en.html direkt eingebettet (zwischen <!-- SVG software -->
+#    und <!-- /SVG -->): Schrift und Farben (--fg, --acc, --mute) kommen von der Seite, so passt die
+#    Grafik auf der Projektseite zu hellem und dunklem Design und zur Seitenschrift (Raleway)
+SW_TEXT = {
+    'de': dict(k1='Kern 1', t1='scopeTask', k0='Kern 0', t0='uiTask + wifiTask',
+               l1=['nur Strahlausgabe, ohne Pause', 'DAC X/Y an GPIO25/26 (Register)', 'Rundtour: Zifferblatt + Ziffern',
+                   'Zeiger nach der Uhrzeit', 'gleich schnelle Linien = gleich hell', 'Profil ANALOG/DIGITAL, Testbild',
+                   'ca. 200 Bilder pro Sekunde'],
+               l0=['WLAN (stärkstes bekanntes Netz)', 'Zeit per NTP, stündlich', 'Webserver, Setup-WLAN, mDNS',
+                   'OLED-Anzeige (SPI)', 'BOOT-Taster, Einstellungen (NVS)', 'Protokoll (Ringpuffer 8 KB)', 'CPU-Last-Messung'],
+               mid='atomare Variablen',
+               foot='Übergabe nur über wenige atomare Variablen (Uhrzeit, Zifferblatt, Helligkeit, Profil) – keine Sperren im Zeichenpfad',
+               aria='Aufteilung der Firmware auf die beiden Prozessorkerne'),
+    'en': dict(k1='Core 1', t1='scopeTask', k0='Core 0', t0='uiTask + wifiTask',
+               l1=['beam output only, without pause', 'DAC X/Y on GPIO25/26 (registers)', 'round trip: dial + numerals',
+                   'hands according to the time', 'equally fast lines = equally bright', 'profile ANALOG/DIGITAL, test pattern',
+                   'approx. 200 frames per second'],
+               l0=['Wi-Fi (strongest known network)', 'time via NTP, hourly', 'web server, setup network, mDNS',
+                   'OLED display (SPI)', 'BOOT button, settings (NVS)', 'log (ring buffer 8 KB)', 'CPU load measurement'],
+               mid='atomic variables',
+               foot='Hand-over only via a few atomic variables (time, dial, brightness, profile) – no locks in the drawing path',
+               aria='Distribution of the firmware over the two processor cores'),
+}
+
+
+def software_body(t):
     s = []; a = s.append
-    def box(x, y, w, h, title, lines, col):
-        a(f"<rect x='{x}' y='{y}' width='{w}' height='{h}' rx='12' fill='{col}' stroke='#555' stroke-width='1.5'/>")
-        a(f"<text x='{x+w/2}' y='{y+26}' text-anchor='middle' font-size='16' font-weight='bold'>{title}</text>")
+    def box(x, title, task, lines):
+        a(f"<rect class='sw-box' x='{x}' y='6' width='370' height='252' rx='8'/>")
+        a(f"<text class='sw-h' x='{x+22}' y='40'>{title}</text>")
+        a(f"<text class='sw-c' x='{x+22+len(title)*11.5+14}' y='40'>{task}</text>")
+        a(f"<line class='sw-l' x1='{x+22}' y1='54' x2='{x+348}' y2='54'/>")
         for k, l in enumerate(lines):
-            a(f"<text x='{x+18}' y='{y+52+k*21}' font-size='13'>• {l}</text>")
-    box(20, 20, 380, 250, 'Kern 1 – scopeTask', ['nur Strahlausgabe, ohne Pause', 'DAC X/Y an GPIO25/26 (Register)', 'Rundtour: Zifferblatt + Ziffern', 'Zeiger nach der Uhrzeit', 'gleich schnelle Linien = gleich hell', 'Profil ANALOG/DIGITAL, Testbild', 'ca. 200 Bilder pro Sekunde'], '#e8f5ec')
-    box(440, 20, 380, 250, 'Kern 0 – uiTask + wifiTask', ['WLAN (stärkstes bekanntes Netz)', 'Zeit per NTP, stündlich', 'Webserver, Setup-WLAN, mDNS', 'OLED-Anzeige (SPI)', 'BOOT-Taster, Einstellungen (NVS)', 'Protokoll (Ringpuffer 8 KB)', 'CPU-Last-Messung'], '#e8eef8')
-    a("<line x1='400' y1='145' x2='440' y2='145' stroke='#555' stroke-width='2'/>")
-    a("<text x='420' y='300' text-anchor='middle' font-size='13' fill='#333'>Übergabe nur über wenige atomare Variablen (Uhrzeit, Zifferblatt, Helligkeit, Profil) – keine Sperren im Zeichenpfad</text>")
-    save('software.svg', 840, 320, '\n'.join(s))
+            y = 82 + k * 25
+            a(f"<circle class='sw-d' cx='{x+27}' cy='{y-5}' r='3'/>")
+            a(f"<text class='sw-t' x='{x+40}' y='{y}'>{l}</text>")
+    box(6, t['k1'], t['t1'], t['l1'])
+    box(464, t['k0'], t['t0'], t['l0'])
+    # Pfeil in beide Richtungen zwischen den Kernen
+    a("<line class='sw-a' x1='386' y1='132' x2='454' y2='132'/>")
+    a("<path class='sw-p' d='M384,132 l10,-6 v12 z M456,132 l-10,-6 v12 z'/>")
+    a(f"<text class='sw-m' x='420' y='118' text-anchor='middle' font-size='11'>{t['mid'].split()[0]}</text>")
+    a(f"<text class='sw-m' x='420' y='154' text-anchor='middle' font-size='11'>{t['mid'].split()[1]}</text>")
+    a(f"<text class='sw-m' x='420' y='290' text-anchor='middle'>{t['foot']}</text>")
+    return '\n'.join(s)
+
+
+SW_W, SW_H = 840, 300
+SW_FONT = "font-family='Raleway,Helvetica Neue,Helvetica,Arial,sans-serif'"
+SW_CSS = ('.{c} text{{font-size:15px;font-weight:400}}.{c} .sw-h{{font-size:19px;font-weight:700;fill:{acc}}}'
+          '.{c} .sw-c{{font-size:15px;font-family:Menlo,Consolas,monospace;fill:{mute}}}'
+          '.{c} .sw-t{{fill:{fg}}}.{c} .sw-m{{fill:{mute};font-size:13px}}'
+          '.{c} .sw-box{{fill:{acc};fill-opacity:.07;stroke:{acc};stroke-opacity:.6;stroke-width:1.5}}'
+          '.{c} .sw-l{{stroke:{acc};stroke-opacity:.35;stroke-width:1}}.{c} .sw-d,.{c} .sw-p{{fill:{acc}}}'
+          '.{c} .sw-a{{stroke:{acc};stroke-width:2}}')
+
+
+def software():
+    for lang, t in SW_TEXT.items():
+        body = software_body(t)
+        # Datei (README, GitHub): eigene Farben, dunkles Design über prefers-color-scheme
+        css = (SW_CSS.format(c='sw', acc='#0a7d44', mute='#5f6368', fg='#111') +
+               '@media (prefers-color-scheme:dark){' + SW_CSS.format(c='sw', acc='#30d158', mute='#a0a0a8', fg='#eee') + '}')
+        svg = (f"<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 {SW_W} {SW_H}' class='sw' {SW_FONT}>\n"
+               f"<style>{css}</style>\n{body}\n</svg>\n")
+        name = 'software.svg' if lang == 'de' else 'software_en.svg'
+        open(os.path.join(OUT, name), 'w', encoding='utf-8').write(svg)
+        # eingebettet in die Doku: Farben der Seite (Projektseite: hell/dunkel), im PDF die Rückfallwerte
+        c = 'swfig'
+        css = SW_CSS.format(c=c, acc='var(--acc,#0a7d44)', mute='var(--mute,#5f6368)', fg='currentColor')
+        inl = (f"<svg class='{c}' viewBox='0 0 {SW_W} {SW_H}' role='img' aria-label='{t['aria']}' style='width:96%;height:auto;overflow:visible'>"
+               f"<style>{css}</style>{body}</svg>")
+        doc = os.path.join(os.path.dirname(OUT), 'dokumentation.html' if lang == 'de' else 'documentation.en.html')
+        h = open(doc, encoding='utf-8').read()
+        a_, b_ = '<!-- SVG software -->', '<!-- /SVG -->'
+        if a_ not in h:
+            img = f'<img src="images/{name}" style="width:96%">'
+            if img not in h:
+                raise SystemExit(f'{doc}: Grafik software nicht gefunden')
+            h = h.replace(img, a_ + b_)
+        i, j = h.index(a_) + len(a_), h.index(b_)
+        h = h[:i] + inl + h[j:]
+        open(doc, 'w', encoding='utf-8').write(h)
+
 
 if __name__ == '__main__':
     os.makedirs(OUT, exist_ok=True)
