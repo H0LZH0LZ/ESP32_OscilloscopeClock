@@ -363,7 +363,7 @@ def verdrahtung():
     a(f"<text x='{X1+272}' y='40' font-size='11' fill='#444'>(IPEX→SMA-Pigtail aus dem Antennen-Kit)</text>")
     # Legende
     # --- Optional: Echtzeituhr DS3231 (Modul ZS-042, 38 × 22 mm), gestrichelt angeschlossen
-    SDA, SCL = WHITE, '#9a9ea3'                                   # DuPont-Kabel: SDA weiß, SCL grau, VCC rot, GND schwarz
+    SDA, SCL = '#8b5a2b', '#9a9ea3'                               # DuPont-Kabel: SDA braun, SCL grau, VCC rot, GND schwarz
     RX, RY, rw, rh = 906, 668, 232, 134
     a(f"<rect x='{RX-28}' y='{RY-46}' width='{rw+42}' height='{rh+62}' rx='8' fill='none' stroke='#888' stroke-dasharray='6 5'/>")
     a(f"<text x='{RX-18}' y='{RY-28}' font-size='12' font-weight='bold' fill='#444'>Optional: Echtzeituhr DS3231 (ZS-042)</text>")
