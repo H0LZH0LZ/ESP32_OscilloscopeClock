@@ -97,7 +97,7 @@ German with the English label in parentheses. Code comments are in German.
 
 ## DS3231 real-time clock (optional)
 
-Off by default (`RTC_ENABLE 0`), switch on under Settings → Time (NVS key `rtc`). The DS3231 is connected
+On by default (`RTC_ENABLE 1`), can be switched off under Settings → Time (NVS key `rtc`). The DS3231 is connected
 via I²C (`RTC_SDA_PIN` 21, `RTC_SCL_PIN` 22, 100 kHz, address 0x68) and runs in **UTC**. The firmware talks
 to it directly via `Wire` (no extra library); all accesses run in the `uiTask`.
 

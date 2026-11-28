@@ -36,7 +36,7 @@
 // 5 V gedacht; an 3V3 kommen nach der Diode nur ca. 2,7 V an – unter der Zellspannung,
 // es fließt praktisch kein Ladestrom. Daher Modul NUR an 3V3 anschließen (an 5 V würde
 // eine CR2032 geladen – dann die Diode auslöten). Eine LIR2032 würde an 3V3 nie geladen.
-#define RTC_ENABLE   0          // Startwert: 0 = aus (Standard), 1 = an
+#define RTC_ENABLE   1          // Startwert: 1 = an (Standard), 0 = aus – ohne Modul im Webinterface ausschalten
 #define RTC_SDA_PIN 21
 #define RTC_SCL_PIN 22
 

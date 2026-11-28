@@ -93,7 +93,7 @@ Diese Datei beschreibt, wie die Firmware aufgebaut ist. Für Verdrahtung und Geh
 
 ## Echtzeituhr DS3231 (optional)
 
-Standardmäßig aus (`RTC_ENABLE 0`), einschaltbar unter Einstellungen → Uhrzeit (NVS-Schlüssel `rtc`).
+Standardmäßig an (`RTC_ENABLE 1`), ausschaltbar unter Einstellungen → Uhrzeit (NVS-Schlüssel `rtc`).
 Der DS3231 hängt an I²C (`RTC_SDA_PIN` 21, `RTC_SCL_PIN` 22, 100 kHz, Adresse 0x68) und läuft in **UTC**.
 Die Firmware spricht ihn direkt über `Wire` an (keine zusätzliche Bibliothek); alle Zugriffe laufen im `uiTask`.
 

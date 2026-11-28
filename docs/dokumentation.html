@@ -296,7 +296,7 @@ Die Pixelverschiebung versetzt die Anzeige jede Minute um einen Pixel, damit kei
 landen in einem 8-KB-Ringpuffer, den der Debug-Bereich anzeigt.</p>
 <p><b>Vektordaten:</b> Zifferblatt, Ziffern, Zeiger und Testbild sind eigene Zeichnungen, erzeugt mit <code>tools/gen_vectors.py</code>
 (Koordinaten 0–255, 8 Bit je Achse).</p>
-<p><b>Speicher:</b> Programmspeicher 1.251.954 Byte (95 % beim Standard-Partitionsschema, ca. 39 % mit „Huge APP“), globale Variablen
+<p><b>Speicher:</b> Programmspeicher 1.251.962 Byte (95 % beim Standard-Partitionsschema, ca. 39 % mit „Huge APP“), globale Variablen
 75.756 Byte (23 %). Die Webseite liegt gzip-komprimiert im Flash (26 KB), die Schrift (Raleway, auf die benötigten Zeichen reduziert) als WOFF2 (30 KB).</p>
 
 <h2>3 Stand der Technik</h2>
@@ -685,7 +685,7 @@ Reihe, DIN → P23, CLK → P18, CS → P5, DC → P17, RST → P4. Die Leitunge
 und mit einem Kabelbinder zu einem Strang bündeln.</div></div>
 <div class="step"><b class="n">10</b><div><b>Optional: Echtzeituhr DS3231.</b> Das Modul mit doppelseitigem Klebeband neben dem Board befestigen, eine Knopfzelle CR2032
 einsetzen und vier Leitungen anschließen: VCC an <b>3V3</b>, GND an GND der rechten Reihe, SDA → <b>P21</b>, SCL → P22. An
-3,3 V lädt die Ladeschaltung des Moduls die Knopfzelle nicht. Eingeschaltet wird die Uhr später im Webinterface.</div></div>
+3,3 V lädt die Ladeschaltung des Moduls die Knopfzelle nicht. Die Firmware fragt das Modul standardmäßig ab; ohne Modul zeigt der Status „Nicht gefunden“ – dann unter Einstellungen → Uhrzeit ausschalten.</div></div>
 <table style="font-size:8.2pt">
  <thead><tr><th>Klemme am Breakout-Board</th><th>Anschluss</th><th>Ziel</th><th>Funktion</th></tr></thead>
  <tr><td>P25 (GPIO25, DAC1)</td><td>über 220 Ω</td><td>Pigtail „X“, rote Ader → Oszilloskop Kanal 1</td><td>Analogausgang DAC1: Spannung für die X-Ablenkung</td></tr>
@@ -747,8 +747,8 @@ neue Version die ZIP-Datei erneut herunterladen und importieren.</p>
 <h3>6.4 Partitionsschema: zwei Varianten</h3>
 <table style="break-inside:avoid">
  <tr><th>Variante</th><th>Arduino IDE: Partition Scheme</th><th>PlatformIO</th><th>Programmspeicher</th></tr>
- <tr><td><b>A – Huge APP</b> (empfohlen)</td><td>„Huge APP (3MB No OTA/1MB SPIFFS)“</td><td><code>pio run -t upload</code></td><td>1.251.954 von 3.145.728 Byte (<b>39 %</b>)</td></tr>
- <tr><td><b>B – Standard</b></td><td>„Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)“ – Voreinstellung, nichts umstellen</td><td><code>pio run -e standard -t upload</code></td><td>1.251.954 von 1.310.720 Byte (<b>95 %</b>)</td></tr>
+ <tr><td><b>A – Huge APP</b> (empfohlen)</td><td>„Huge APP (3MB No OTA/1MB SPIFFS)“</td><td><code>pio run -t upload</code></td><td>1.251.962 von 3.145.728 Byte (<b>39 %</b>)</td></tr>
+ <tr><td><b>B – Standard</b></td><td>„Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)“ – Voreinstellung, nichts umstellen</td><td><code>pio run -e standard -t upload</code></td><td>1.251.962 von 1.310.720 Byte (<b>95 %</b>)</td></tr>
 </table>
 <p>Beide Varianten laufen gleich. A lässt rund 1,9 MB Platz für Erweiterungen; die Uhr nutzt weder OTA-Updates noch
 SPIFFS, deshalb fehlt dabei nichts. B funktioniert ohne Umstellen, hat aber nur noch etwa 64 KB Reserve. Ein Wechsel
@@ -974,7 +974,7 @@ beschrieben wird. Jede Gruppe hat „Auf Standardwerte zurücksetzen“; danach 
  Oszilloskop ist davon unabhängig, das Debug-Protokoll bleibt immer bei 24 h.</td></tr>
  <tr><td>Zeitzone</td><td>Liste (Mitteleuropa)</td><td>Bestimmt die Ortszeit einschließlich der Regeln für Sommer- und Winterzeit. Wirkt sofort auf Zeiger,
  OLED und Webseite. Geht die Uhr um ganze Stunden falsch, ist meist die Zeitzone falsch gewählt.</td></tr>
- <tr><td>Echtzeituhr (RTC)</td><td>an / aus (aus)</td><td>Nur mit DS3231-Modul (SDA GPIO21, SCL GPIO22): hält die Uhrzeit mit Knopfzelle auch nach einem Stromausfall ohne Internet. Status: „Läuft“, „Nicht gefunden“ oder „Zeit ungültig“.</td></tr>
+ <tr><td>Echtzeituhr (RTC)</td><td>an / aus (an)</td><td>Nur mit DS3231-Modul (SDA GPIO21, SCL GPIO22): hält die Uhrzeit mit Knopfzelle auch nach einem Stromausfall ohne Internet. Status: „Läuft“, „Nicht gefunden“ oder „Zeit ungültig“.</td></tr>
  <tr><td>Zeitserver (NTP)</td><td>Hostname (de.pool.ntp.org)</td><td>Server im Internet, von dem die Uhr die genaue Zeit holt – nach dem Start und danach stündlich.
  „Übernehmen“ speichert den Namen und gleicht sofort neu ab. Zwei weitere Server aus <code>config.h</code> dienen als Reserve.</td></tr>
 </table>
@@ -1125,7 +1125,7 @@ Teile ergeben Byte für Byte dasselbe Abbild wie die Arduino-Software. Inzwische
  <tr><td><code>DIAL_STYLE</code></td><td>0</td><td>0 = 1–12, 1 = 12/3/6/9, 2 = I–XII, 3 = XII/III/VI/IX, 4 = Bahnhof (Stundenbalken)</td></tr>
  <tr><td><code>DIAL_AUTO_MIN</code></td><td>0</td><td>Zifferblatt automatisch wechseln alle n Minuten (0 = aus; 1, 5, 15, 60)</td></tr>
  <tr><td><code>SCOPE_SHIFT</code>, <code>SCOPE_SHIFT_EVERY_S</code></td><td>1, 60</td><td>Bildverschiebung gegen Einbrennen an, alle n Sekunden weiter</td></tr>
- <tr><td><code>RTC_ENABLE</code>, <code>RTC_SDA_PIN</code>, <code>RTC_SCL_PIN</code></td><td>0, 21, 22</td><td>Optionale Echtzeituhr DS3231 (im Webinterface umschaltbar)</td></tr>
+ <tr><td><code>RTC_ENABLE</code>, <code>RTC_SDA_PIN</code>, <code>RTC_SCL_PIN</code></td><td>1, 21, 22</td><td>Optionale Echtzeituhr DS3231, standardmäßig an (im Webinterface umschaltbar)</td></tr>
  <tr><td><code>TZ_INFO</code>, <code>NTP_SERVER_1…3</code></td><td>Mitteleuropa, de.pool.ntp.org …</td><td>Zeitzone und Zeitserver</td></tr>
  <tr><td><code>FALLBACK_H/M/S</code></td><td>10:08:37</td><td>Startzeit ohne Zeitquelle</td></tr>
  <tr><td><code>OLED_BRIGHT_PCT</code>, <code>OLED_SECONDS</code>, <code>OLED_FLIP</code>, <code>OLED_SHIFT_EVERY_S</code></td><td>50, 1, 0, 60</td><td>OLED</td></tr>

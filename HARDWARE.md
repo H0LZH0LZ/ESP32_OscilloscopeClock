@@ -101,7 +101,7 @@ Hält Datum und Uhrzeit mit Knopfzelle auch nach einem Stromausfall ohne Interne
 Die 6-polige und die 4-polige Stiftleiste des Moduls sind durchverbunden – jede Leitung kann an
 der Leiste angeschlossen werden, die besser passt.
 
-- Einschalten im Webinterface: „Einstellungen“ → „Uhrzeit“ → „Echtzeituhr (RTC)“ (standardmäßig aus). Der Status
+- Im Webinterface unter „Einstellungen“ → „Uhrzeit“ → „Echtzeituhr (RTC)“ – standardmäßig an; ohne Modul dort ausschalten. Der Status
   zeigt dann „Läuft“, „Nicht gefunden“ oder „Zeit ungültig“.
 - **Knopfzelle: normale CR2032**, kein Ladegerät und kein Löten nötig. Die Ladeschaltung des ZS-042
   (Diode und 200 Ω) ist für 5 V gedacht. An **3V3** kommen nach der Diode nur etwa 2,7 V an – weniger als
@@ -258,7 +258,7 @@ am Oszilloskop. Die Werte in `config.h` sind dann nur die Startwerte.
 | `TZ_INFO` | Zeitzone inkl. Sommerzeitregel (Standard: Mitteleuropa) |
 | `DIAL_AUTO_MIN` | Zifferblatt automatisch wechseln alle n Minuten (0 = aus, Standard; 1, 5, 15, 60); läuft nach dem Einschalten weiter |
 | `SCOPE_SHIFT`, `SCOPE_SHIFT_EVERY_S` | Bildverschiebung gegen Einbrennen (Standard an, alle 60 s weiter) |
-| `RTC_ENABLE`, `RTC_SDA_PIN`, `RTC_SCL_PIN` | Optionale Echtzeituhr DS3231: Startwert aus, I²C an GPIO21/22 (im Webinterface umschaltbar) |
+| `RTC_ENABLE`, `RTC_SDA_PIN`, `RTC_SCL_PIN` | Optionale Echtzeituhr DS3231: Startwert an, I²C an GPIO21/22 (im Webinterface umschaltbar) |
 | `NTP_SERVER_1` … `_3` | Zeitserver (der erste ist im Webinterface änderbar) |
 | `FALLBACK_H`, `FALLBACK_M`, `FALLBACK_S` | Startzeit, ab der die Uhr zählt, solange weder Zeitserver noch Handeingabe eine Uhrzeit geliefert haben |
 | `OLED_SHIFT_EVERY_S` | Pixelverschiebung gegen OLED-Einbrennen: alle n Sekunden (0 = aus) |

@@ -101,7 +101,7 @@ Keeps date and time with its coin cell even after a power failure without intern
 The module's 6-pin and 4-pin headers are connected through – each wire can go to whichever header
 fits better.
 
-- Switch on in the web interface: „Einstellungen“ → „Uhrzeit“ → „Echtzeituhr (RTC)“ (off by default). The status
+- In the web interface under „Einstellungen“ → „Uhrzeit“ → „Echtzeituhr (RTC)“ – on by default; switch it off there without a module. The status
   then shows “Running”, “Not found” or “Time invalid”.
 - **Coin cell: normal CR2032**, no charger and no soldering needed. The ZS-042's charging circuit (diode
   and 200 Ω) is meant for 5 V. At **3V3** only about 2.7 V reach the cell after the diode – less than the cell
@@ -257,7 +257,7 @@ the oscilloscope. The values in `config.h` are then only the start values.
 | `TZ_INFO` | Time zone incl. daylight saving rule (default: Central Europe) |
 | `DIAL_AUTO_MIN` | change the dial automatically every n minutes (0 = off, default; 1, 5, 15, 60); continues after power-on |
 | `SCOPE_SHIFT`, `SCOPE_SHIFT_EVERY_S` | image shift against burn-in (on by default, next position every 60 s) |
-| `RTC_ENABLE`, `RTC_SDA_PIN`, `RTC_SCL_PIN` | Optional DS3231 real-time clock: start value off, I²C on GPIO21/22 (switchable in the web interface) |
+| `RTC_ENABLE`, `RTC_SDA_PIN`, `RTC_SCL_PIN` | Optional DS3231 real-time clock: start value on, I²C on GPIO21/22 (switchable in the web interface) |
 | `NTP_SERVER_1` … `_3` | Time servers (the first one can be changed in the web interface) |
 | `FALLBACK_H`, `FALLBACK_M`, `FALLBACK_S` | Start time from which the clock counts as long as neither a time server nor manual input has provided the time |
 | `OLED_SHIFT_EVERY_S` | Pixel shift against OLED burn-in: every n seconds (0 = off) |

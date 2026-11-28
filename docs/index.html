@@ -303,8 +303,8 @@ html{background:var(--card)}body{min-height:100vh}   /* Safari zeigt beim Herunt
 <div class="grp"><h2 id="downloads-h" class="coll" role="button" tabindex="0" aria-expanded="true"><span data-l="de">Links &amp; Dokumente</span><span data-l="en">Links &amp; documents</span></h2>
 <section>
  <a class="row" target="_blank" rel="noopener" href="https://github.com/H0LZH0LZ/ESP32_OscilloscopeClock"><span><span data-l="de">GitHub – Version 2.0</span><span data-l="en">GitHub – version 2.0</span><small class="note" data-l="de">Diese Firmware mit Quellcode, Anleitung und Werkzeugen</small><small class="note" data-l="en">This firmware with source code, guide and tools</small></span><span>›</span></a>
- <a class="row" target="_blank" rel="noopener" data-l="de" href="ESP32_Oscilloscope_Clock_Dokumentation.pdf?v=1f45d8cc"><span>Dokumentation (PDF)<small class="note">Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small></span><span>›</span></a>
- <a class="row" target="_blank" rel="noopener" data-l="en" href="ESP32_Oscilloscope_Clock_Documentation.pdf?v=cd120588"><span>Documentation (PDF)<small class="note">Assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
+ <a class="row" target="_blank" rel="noopener" data-l="de" href="ESP32_Oscilloscope_Clock_Dokumentation.pdf?v=0c68679c"><span>Dokumentation (PDF)<small class="note">Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small></span><span>›</span></a>
+ <a class="row" target="_blank" rel="noopener" data-l="en" href="ESP32_Oscilloscope_Clock_Documentation.pdf?v=00132e7d"><span>Documentation (PDF)<small class="note">Assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" href="demo/"><span><span data-l="de">Testseite</span><span data-l="en">Test page</span><small class="note" data-l="de">Das Webinterface der Uhr ausprobieren – läuft im Browser, alle Werte sind simuliert</small><small class="note" data-l="en">Try the clock's web interface – runs in the browser, all values are simulated</small></span><span>›</span></a>
  <a class="row" href="#kap6"><span><span data-l="de">Firmware installieren</span><span data-l="en">Install firmware</span><small class="note" data-l="de">Direkt im Browser auf den ESP32 schreiben – oder den Sketch mit Arduino Cloud hochladen</small><small class="note" data-l="en">Write it to the ESP32 straight from the browser – or upload the sketch with Arduino Cloud</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" href="https://github.com/maurohh/ESP32_OscilloscopeClock"><span><span data-l="de">GitHub – Original</span><span data-l="en">GitHub – original</span><small class="note" data-l="de">Die ursprüngliche ESP32 Oscilloscope Clock von Mauro Pintus (2018), nach deren Idee diese Version entstand</small><small class="note" data-l="en">The original ESP32 Oscilloscope Clock by Mauro Pintus (2018) that inspired this version</small></span><span>›</span></a>
@@ -484,7 +484,7 @@ Die Pixelverschiebung versetzt die Anzeige jede Minute um einen Pixel, damit kei
 landen in einem 8-KB-Ringpuffer, den der Debug-Bereich anzeigt.</p>
 <p><b>Vektordaten:</b> Zifferblatt, Ziffern, Zeiger und Testbild sind eigene Zeichnungen, erzeugt mit <code>tools/gen_vectors.py</code>
 (Koordinaten 0–255, 8 Bit je Achse).</p>
-<p><b>Speicher:</b> Programmspeicher 1.251.954 Byte (95 % beim Standard-Partitionsschema, ca. 39 % mit „Huge APP“), globale Variablen
+<p><b>Speicher:</b> Programmspeicher 1.251.962 Byte (95 % beim Standard-Partitionsschema, ca. 39 % mit „Huge APP“), globale Variablen
 75.756 Byte (23 %). Die Webseite liegt gzip-komprimiert im Flash (26 KB), die Schrift (Raleway, auf die benötigten Zeichen reduziert) als WOFF2 (30 KB).</p>
 </div><div data-l="en">
 <figure><!-- SVG software --><svg class='swfig' viewBox='0 0 840 300' role='img' aria-label='Distribution of the firmware over the two processor cores' style='width:96%;height:auto;overflow:visible'><style>.swfig text{font-size:15px;font-weight:400}.swfig .sw-h{font-size:19px;font-weight:700;fill:var(--acc,#0a7d44)}.swfig .sw-c{font-size:15px;font-family:Menlo,Consolas,monospace;fill:var(--mute,#5f6368)}.swfig .sw-t{fill:currentColor}.swfig .sw-m{fill:var(--mute,#5f6368);font-size:13px}.swfig .sw-box{fill:var(--acc,#0a7d44);fill-opacity:.07;stroke:var(--acc,#0a7d44);stroke-opacity:.6;stroke-width:1.5}.swfig .sw-l{stroke:var(--acc,#0a7d44);stroke-opacity:.35;stroke-width:1}.swfig .sw-d,.swfig .sw-p{fill:var(--acc,#0a7d44)}.swfig .sw-a{stroke:var(--acc,#0a7d44);stroke-width:2}</style><rect class='sw-box' x='6' y='6' width='370' height='252' rx='8'/>
@@ -601,7 +601,7 @@ its frames (frame rate in the status), an idle hook measures the load of core 0,
 the debug section.</p>
 <p><b>Vector data:</b> dial, numerals, hands and test pattern are original drawings, generated with <code>tools/gen_vectors.py</code>
 (coordinates 0–255, 8 bits per axis).</p>
-<p><b>Memory:</b> program memory 1,251,954 bytes (95 % with the default partition scheme, approx. 39 % with “Huge APP”), global variables
+<p><b>Memory:</b> program memory 1,251,962 bytes (95 % with the default partition scheme, approx. 39 % with “Huge APP”), global variables
 75,756 bytes (23 %). The web page is stored gzip-compressed in flash (26 KB), the font (Raleway, reduced to the characters needed) as WOFF2 (30 KB).</p>
 </div></section></div>
 
@@ -1039,7 +1039,7 @@ Reihe, DIN → P23, CLK → P18, CS → P5, DC → P17, RST → P4. Die Leitunge
 und mit einem Kabelbinder zu einem Strang bündeln.</div></div>
 <div class="step"><b class="n">10</b><div><b>Optional: Echtzeituhr DS3231.</b> Das Modul mit doppelseitigem Klebeband neben dem Board befestigen, eine Knopfzelle CR2032
 einsetzen und vier Leitungen anschließen: VCC an <b>3V3</b>, GND an GND der rechten Reihe, SDA → <b>P21</b>, SCL → P22. An
-3,3 V lädt die Ladeschaltung des Moduls die Knopfzelle nicht. Eingeschaltet wird die Uhr später im Webinterface.</div></div>
+3,3 V lädt die Ladeschaltung des Moduls die Knopfzelle nicht. Die Firmware fragt das Modul standardmäßig ab; ohne Modul zeigt der Status „Nicht gefunden“ – dann unter Einstellungen → Uhrzeit ausschalten.</div></div>
 <div class="tw"><table style="font-size:8.2pt">
  <thead><tr><th>Klemme am Breakout-Board</th><th>Anschluss</th><th>Ziel</th><th>Funktion</th></tr></thead>
  <tr><td data-th="Klemme am Breakout-Board">P25 (GPIO25, DAC1)</td><td data-th="Anschluss">über 220 Ω</td><td data-th="Ziel">Pigtail „X“, rote Ader → Oszilloskop Kanal 1</td><td data-th="Funktion">Analogausgang DAC1: Spannung für die X-Ablenkung</td></tr>
@@ -1400,7 +1400,7 @@ put them into the terminals according to the table: VCC to <b>3V3</b> (not 5V), 
 CS → P5, DC → P17, RST → P4. Leave the wires long enough for the hinged lid to open fully and bundle them with a cable tie.</div></div>
 <div class="step"><b class="n">10</b><div><b>Optional: DS3231 real-time clock.</b> Fix the module next to the board with double-sided tape, insert a CR2032 coin cell and
 connect four wires: VCC to <b>3V3</b>, GND to GND of the right row, SDA → P21, SCL → P22. At 3.3 V the module's charging
-circuit does not charge the coin cell. The clock is switched on later in the web interface.</div></div>
+circuit does not charge the coin cell. The firmware queries the module by default; without a module the status shows “Not found” – then switch it off under Settings → Time.</div></div>
 <div class="tw"><table style="font-size:8.2pt">
  <thead><tr><th>Terminal on the breakout board</th><th>Connection</th><th>Target</th><th>Function</th></tr></thead>
  <tr><td data-th="Terminal on the breakout board">P25 (GPIO25, DAC1)</td><td data-th="Connection">via 220 Ω</td><td data-th="Target">pigtail “X”, red lead → oscilloscope channel 1</td><td data-th="Function">analogue output DAC1: voltage for the X deflection</td></tr>
@@ -1468,8 +1468,8 @@ neue Version die ZIP-Datei erneut herunterladen und importieren.</p>
 <h3 id="kap6-4">6.4 Partitionsschema: zwei Varianten</h3>
 <div class="tw"><table style="break-inside:avoid">
  <tr><th>Variante</th><th>Arduino IDE: Partition Scheme</th><th>PlatformIO</th><th>Programmspeicher</th></tr>
- <tr><td data-th="Variante"><b>A – Huge APP</b> (empfohlen)</td><td data-th="Arduino IDE: Partition Scheme">„Huge APP (3MB No OTA/1MB SPIFFS)“</td><td data-th="PlatformIO"><code>pio run -t upload</code></td><td data-th="Programmspeicher">1.251.954 von 3.145.728 Byte (<b>39 %</b>)</td></tr>
- <tr><td data-th="Variante"><b>B – Standard</b></td><td data-th="Arduino IDE: Partition Scheme">„Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)“ – Voreinstellung, nichts umstellen</td><td data-th="PlatformIO"><code>pio run -e standard -t upload</code></td><td data-th="Programmspeicher">1.251.954 von 1.310.720 Byte (<b>95 %</b>)</td></tr>
+ <tr><td data-th="Variante"><b>A – Huge APP</b> (empfohlen)</td><td data-th="Arduino IDE: Partition Scheme">„Huge APP (3MB No OTA/1MB SPIFFS)“</td><td data-th="PlatformIO"><code>pio run -t upload</code></td><td data-th="Programmspeicher">1.251.962 von 3.145.728 Byte (<b>39 %</b>)</td></tr>
+ <tr><td data-th="Variante"><b>B – Standard</b></td><td data-th="Arduino IDE: Partition Scheme">„Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)“ – Voreinstellung, nichts umstellen</td><td data-th="PlatformIO"><code>pio run -e standard -t upload</code></td><td data-th="Programmspeicher">1.251.962 von 1.310.720 Byte (<b>95 %</b>)</td></tr>
 </table></div>
 <p>Beide Varianten laufen gleich. A lässt rund 1,9 MB Platz für Erweiterungen; die Uhr nutzt weder OTA-Updates noch
 SPIFFS, deshalb fehlt dabei nichts. B funktioniert ohne Umstellen, hat aber nur noch etwa 64 KB Reserve. Ein Wechsel
@@ -1519,8 +1519,8 @@ version download and import the ZIP file again.</p>
 <h3 id="kap6-4-en">6.4 Partition scheme: two variants</h3>
 <div class="tw"><table style="break-inside:avoid">
  <tr><th>Variant</th><th>Arduino IDE: Partition Scheme</th><th>PlatformIO</th><th>Program memory</th></tr>
- <tr><td data-th="Variant"><b>A – Huge APP</b> (recommended)</td><td data-th="Arduino IDE: Partition Scheme">“Huge APP (3MB No OTA/1MB SPIFFS)”</td><td data-th="PlatformIO"><code>pio run -t upload</code></td><td data-th="Program memory">1,251,954 of 3,145,728 bytes (<b>39 %</b>)</td></tr>
- <tr><td data-th="Variant"><b>B – Standard</b></td><td data-th="Arduino IDE: Partition Scheme">“Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)” – the default, nothing to change</td><td data-th="PlatformIO"><code>pio run -e standard -t upload</code></td><td data-th="Program memory">1,251,954 of 1,310,720 bytes (<b>95 %</b>)</td></tr>
+ <tr><td data-th="Variant"><b>A – Huge APP</b> (recommended)</td><td data-th="Arduino IDE: Partition Scheme">“Huge APP (3MB No OTA/1MB SPIFFS)”</td><td data-th="PlatformIO"><code>pio run -t upload</code></td><td data-th="Program memory">1,251,962 of 3,145,728 bytes (<b>39 %</b>)</td></tr>
+ <tr><td data-th="Variant"><b>B – Standard</b></td><td data-th="Arduino IDE: Partition Scheme">“Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)” – the default, nothing to change</td><td data-th="PlatformIO"><code>pio run -e standard -t upload</code></td><td data-th="Program memory">1,251,962 of 1,310,720 bytes (<b>95 %</b>)</td></tr>
 </table></div>
 <p>Both variants work the same. A leaves about 1.9 MB for extensions; the clock uses neither OTA updates nor SPIFFS,
 so nothing is lost. B works without changing anything but leaves only about 64 KB. You can switch at any time (choose
@@ -1918,7 +1918,7 @@ beschrieben wird. Jede Gruppe hat „Auf Standardwerte zurücksetzen“; danach 
  Oszilloskop ist davon unabhängig, das Debug-Protokoll bleibt immer bei 24 h.</td></tr>
  <tr><td data-th="Einstellung">Zeitzone</td><td data-th="Bereich (Standard)">Liste (Mitteleuropa)</td><td data-th="Wirkung">Bestimmt die Ortszeit einschließlich der Regeln für Sommer- und Winterzeit. Wirkt sofort auf Zeiger,
  OLED und Webseite. Geht die Uhr um ganze Stunden falsch, ist meist die Zeitzone falsch gewählt.</td></tr>
- <tr><td data-th="Einstellung">Echtzeituhr (RTC)</td><td data-th="Bereich (Standard)">an / aus (aus)</td><td data-th="Wirkung">Nur mit DS3231-Modul (SDA GPIO21, SCL GPIO22): hält die Uhrzeit mit Knopfzelle auch nach einem Stromausfall ohne Internet. Status: „Läuft“, „Nicht gefunden“ oder „Zeit ungültig“.</td></tr>
+ <tr><td data-th="Einstellung">Echtzeituhr (RTC)</td><td data-th="Bereich (Standard)">an / aus (an)</td><td data-th="Wirkung">Nur mit DS3231-Modul (SDA GPIO21, SCL GPIO22): hält die Uhrzeit mit Knopfzelle auch nach einem Stromausfall ohne Internet. Status: „Läuft“, „Nicht gefunden“ oder „Zeit ungültig“.</td></tr>
  <tr><td data-th="Einstellung">Zeitserver (NTP)</td><td data-th="Bereich (Standard)">Hostname (de.pool.ntp.org)</td><td data-th="Wirkung">Server im Internet, von dem die Uhr die genaue Zeit holt – nach dem Start und danach stündlich.
  „Übernehmen“ speichert den Namen und gleicht sofort neu ab. Zwei weitere Server aus <code>config.h</code> dienen als Reserve.</td></tr>
 </table></div>
@@ -2004,7 +2004,7 @@ group has “Reset to defaults”; the change can then be undone with “Undo”
  independent of this, the debug log always stays at 24 h.</td></tr>
  <tr><td data-th="Setting">Time zone</td><td data-th="Range (default)">list (Central Europe)</td><td data-th="Effect">Determines the local time including the rules for summer and winter time. Takes effect immediately
  on the hands, OLED and web page. If the clock is off by whole hours, the time zone is usually wrong.</td></tr>
- <tr><td data-th="Setting">Real-time clock (RTC)</td><td data-th="Range (default)">on / off (off)</td><td data-th="Effect">Only with a DS3231 module connected (SDA GPIO21, SCL GPIO22). Keeps date and time with its coin cell even after a power failure without internet; updated at every time sync and when the time is set by hand. The status shows “Running”, “Not found” or “Time invalid” (battery empty or new).</td></tr>
+ <tr><td data-th="Setting">Real-time clock (RTC)</td><td data-th="Range (default)">on / off (on)</td><td data-th="Effect">Only with a DS3231 module connected (SDA GPIO21, SCL GPIO22). Keeps date and time with its coin cell even after a power failure without internet; updated at every time sync and when the time is set by hand. The status shows “Running”, “Not found” or “Time invalid” (battery empty or new).</td></tr>
  <tr><td data-th="Setting">Time server (NTP)</td><td data-th="Range (default)">host name (de.pool.ntp.org)</td><td data-th="Effect">Server on the internet from which the clock fetches the exact time – after start-up and then every hour.
  “Apply” saves the name and synchronises immediately. Two more servers from <code>config.h</code> serve as a fallback.</td></tr>
 </table></div>
@@ -2268,7 +2268,7 @@ byte the same image as the Arduino software. The firmware now runs on the first 
  <tr><td data-th="Parameter"><code>DIAL_STYLE</code></td><td data-th="Standard">0</td><td data-th="Bedeutung">0 = 1–12, 1 = 12/3/6/9, 2 = I–XII, 3 = XII/III/VI/IX, 4 = Bahnhof (Stundenbalken)</td></tr>
  <tr><td data-th="Parameter"><code>DIAL_AUTO_MIN</code></td><td data-th="Standard">0</td><td data-th="Bedeutung">Zifferblatt automatisch wechseln alle n Minuten (0 = aus; 1, 5, 15, 60)</td></tr>
  <tr><td data-th="Parameter"><code>SCOPE_SHIFT</code>, <code>SCOPE_SHIFT_EVERY_S</code></td><td data-th="Standard">1, 60</td><td data-th="Bedeutung">Bildverschiebung gegen Einbrennen an, alle n Sekunden weiter</td></tr>
- <tr><td data-th="Parameter"><code>RTC_ENABLE</code>, <code>RTC_SDA_PIN</code>, <code>RTC_SCL_PIN</code></td><td data-th="Standard">0, 21, 22</td><td data-th="Bedeutung">Optionale Echtzeituhr DS3231 (im Webinterface umschaltbar)</td></tr>
+ <tr><td data-th="Parameter"><code>RTC_ENABLE</code>, <code>RTC_SDA_PIN</code>, <code>RTC_SCL_PIN</code></td><td data-th="Standard">1, 21, 22</td><td data-th="Bedeutung">Optionale Echtzeituhr DS3231, standardmäßig an (im Webinterface umschaltbar)</td></tr>
  <tr><td data-th="Parameter"><code>TZ_INFO</code>, <code>NTP_SERVER_1…3</code></td><td data-th="Standard">Mitteleuropa, de.pool.ntp.org …</td><td data-th="Bedeutung">Zeitzone und Zeitserver</td></tr>
  <tr><td data-th="Parameter"><code>FALLBACK_H/M/S</code></td><td data-th="Standard">10:08:37</td><td data-th="Bedeutung">Startzeit ohne Zeitquelle</td></tr>
  <tr><td data-th="Parameter"><code>OLED_BRIGHT_PCT</code>, <code>OLED_SECONDS</code>, <code>OLED_FLIP</code>, <code>OLED_SHIFT_EVERY_S</code></td><td data-th="Standard">50, 1, 0, 60</td><td data-th="Bedeutung">OLED</td></tr>
@@ -2326,7 +2326,7 @@ hier unter dem Namen „ScopeClock Sans“.</p>
  <tr><td data-th="Parameter"><code>DIAL_STYLE</code></td><td data-th="Default">0</td><td data-th="Meaning">0 = 1–12, 1 = 12/3/6/9, 2 = I–XII, 3 = XII/III/VI/IX, 4 = station clock (hour bars)</td></tr>
  <tr><td data-th="Parameter"><code>DIAL_AUTO_MIN</code></td><td data-th="Default">0</td><td data-th="Meaning">change the dial automatically every n minutes (0 = off; 1, 5, 15, 60)</td></tr>
  <tr><td data-th="Parameter"><code>SCOPE_SHIFT</code>, <code>SCOPE_SHIFT_EVERY_S</code></td><td data-th="Default">1, 60</td><td data-th="Meaning">image shift against burn-in on, next position every n seconds</td></tr>
- <tr><td data-th="Parameter"><code>RTC_ENABLE</code>, <code>RTC_SDA_PIN</code>, <code>RTC_SCL_PIN</code></td><td data-th="Default">0, 21, 22</td><td data-th="Meaning">Optional DS3231 real-time clock (switchable in the web interface)</td></tr>
+ <tr><td data-th="Parameter"><code>RTC_ENABLE</code>, <code>RTC_SDA_PIN</code>, <code>RTC_SCL_PIN</code></td><td data-th="Default">1, 21, 22</td><td data-th="Meaning">Optional DS3231 real-time clock, on by default (switchable in the web interface)</td></tr>
  <tr><td data-th="Parameter"><code>TZ_INFO</code>, <code>NTP_SERVER_1…3</code></td><td data-th="Default">Central Europe, de.pool.ntp.org …</td><td data-th="Meaning">Time zone and time servers</td></tr>
  <tr><td data-th="Parameter"><code>FALLBACK_H/M/S</code></td><td data-th="Default">10:08:37</td><td data-th="Meaning">Start time without a time source</td></tr>
  <tr><td data-th="Parameter"><code>OLED_BRIGHT_PCT</code>, <code>OLED_SECONDS</code>, <code>OLED_FLIP</code>, <code>OLED_SHIFT_EVERY_S</code></td><td data-th="Default">50, 1, 0, 60</td><td data-th="Meaning">OLED</td></tr>
