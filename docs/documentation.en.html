@@ -74,7 +74,7 @@ h3+ul>li:nth-child(2),h3+ol>li:nth-child(2),li:last-child{break-before:avoid}
   <li><span class="tn"></span>List of abbreviations</li>
   <li><span class="tn">1</span>Introduction<div class="tsub">1.1 Structure of this guide · 1.2 Features</div></li>
   <li><span class="tn">2</span>Fundamentals: how the clock works<div class="tsub">2.1 Two cores with separate jobs · 2.2 From number to deflection voltage · 2.3 Cycle-exact beam control · 2.4 Equal brightness · 2.5 One frame step by step · 2.6 Round trip and jumps · 2.7 Time · 2.8 Wi-Fi, web server and settings · 2.9 OLED and monitoring</div></li>
-  <li><span class="tn">3</span>State of the art<div class="tsub">3.1 The original Oscilloscope Clock · 3.2 Other oscilloscope clocks · 3.3 New in version 2.0</div></li>
+  <li><span class="tn">3</span>State of the art<div class="tsub">3.1 The original Oscilloscope Clock · 3.2 New in version 2.0</div></li>
   <li><span class="tn">4</span>Parts list and tools<div class="tsub">4.1 Tools</div></li>
   <li><span class="tn">5</span>Step-by-step assembly<div class="tsub">5.1 Preparing the enclosure · 5.2 Fitting cables and sockets · 5.3 Mounting the breakout board · 5.4 Wiring · 5.5 Checking before the first power-on</div></li>
   <li><span class="tn">6</span>Installing the firmware<div class="tsub">6.1 Without Arduino software: in the browser · 6.2 With Arduino Cloud (app.arduino.cc) · 6.3 With the Arduino IDE 2.x · 6.4 Partition scheme: two variants</div></li>
@@ -298,11 +298,7 @@ the debug section.</p>
 <p>The idea comes from Mauro Pintus (Milan, 2018) [<a class="ref" href="#q1">1</a>]: an ESP32 draws an analogue clock on an oscilloscope in X/Y mode via its two
 built-in digital-to-analogue converters [<a class="ref" href="#q2">2</a>], the time comes from the internet via NTP. Dial and hands are stored as tables of
 polylines which the beam traces one after another. Apart from the ESP32, the clock only needs two wires to the oscilloscope.</p>
-<h3>3.2 Other oscilloscope clocks</h3>
-<p>Clocks and graphics on the oscilloscope also exist as demonstration and kit boards. Usually a microcontroller generates the deflection
-voltages there via resistor networks (R-2R) and shows other graphics besides a clock. All these devices share the principle of <b>vector
-graphics</b>: the beam traces the lines directly instead of writing line by line like a TV set.</p>
-<h3>3.3 New in version 2.0</h3>
+<h3>3.2 New in version 2.0</h3>
 <ul>
  <li><b>Two processor cores:</b> core 1 draws without pause, core 0 handles Wi-Fi, time, web server and OLED (chapter 2) – based
  on the Arduino core for the ESP32 [<a class="ref" href="#q3">3</a>].</li>

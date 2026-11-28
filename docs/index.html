@@ -234,8 +234,7 @@ html{background:var(--card)}body{min-height:100vh}   /* Safari zeigt beim Herunt
  <a class="subnav" data-l="de" href="#kap2-9">2.9 OLED und Überwachung</a><a class="subnav" data-l="en" href="#kap2-9-en">2.9 OLED and monitoring</a>
  <a href="#kap3"><span data-l="de">3 Stand der Technik</span><span data-l="en">3 State of the art</span></a>
  <a class="subnav" data-l="de" href="#kap3-1">3.1 Die ursprüngliche Oscilloscope Clock</a><a class="subnav" data-l="en" href="#kap3-1-en">3.1 The original Oscilloscope Clock</a>
- <a class="subnav" data-l="de" href="#kap3-2">3.2 Andere Oszilloskop-Uhren</a><a class="subnav" data-l="en" href="#kap3-2-en">3.2 Other oscilloscope clocks</a>
- <a class="subnav" data-l="de" href="#kap3-3">3.3 Neu in Version 2.0</a><a class="subnav" data-l="en" href="#kap3-3-en">3.3 New in version 2.0</a>
+ <a class="subnav" data-l="de" href="#kap3-2">3.2 Neu in Version 2.0</a><a class="subnav" data-l="en" href="#kap3-2-en">3.2 New in version 2.0</a>
  <a href="#kap4"><span data-l="de">4 Teileliste und Werkzeug</span><span data-l="en">4 Parts list and tools</span></a>
  <a class="subnav" data-l="de" href="#kap4-1">4.1 Werkzeug</a><a class="subnav" data-l="en" href="#kap4-1-en">4.1 Tools</a>
  <a href="#kap5"><span data-l="de">5 Aufbauanleitung Schritt für Schritt</span><span data-l="en">5 Step-by-step assembly</span></a>
@@ -302,8 +301,8 @@ html{background:var(--card)}body{min-height:100vh}   /* Safari zeigt beim Herunt
 <div class="grp"><h2 id="downloads-h" class="coll" role="button" tabindex="0" aria-expanded="true"><span data-l="de">Links &amp; Dokumente</span><span data-l="en">Links &amp; documents</span></h2>
 <section>
  <a class="row" target="_blank" rel="noopener" href="https://github.com/H0LZH0LZ/ESP32_OscilloscopeClock"><span><span data-l="de">GitHub – Version 2.0</span><span data-l="en">GitHub – version 2.0</span><small class="note" data-l="de">Diese Firmware mit Quellcode, Anleitung und Werkzeugen</small><small class="note" data-l="en">This firmware with source code, guide and tools</small></span><span>›</span></a>
- <a class="row" target="_blank" rel="noopener" data-l="de" href="ESP32_Oscilloscope_Clock_Dokumentation.pdf?v=0ff50fa4"><span>Dokumentation (PDF)<small class="note">Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small></span><span>›</span></a>
- <a class="row" target="_blank" rel="noopener" data-l="en" href="ESP32_Oscilloscope_Clock_Documentation.pdf?v=80515f2d"><span>Documentation (PDF)<small class="note">Assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
+ <a class="row" target="_blank" rel="noopener" data-l="de" href="ESP32_Oscilloscope_Clock_Dokumentation.pdf?v=fc0a4622"><span>Dokumentation (PDF)<small class="note">Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small></span><span>›</span></a>
+ <a class="row" target="_blank" rel="noopener" data-l="en" href="ESP32_Oscilloscope_Clock_Documentation.pdf?v=0fefb72b"><span>Documentation (PDF)<small class="note">Assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" href="demo/"><span><span data-l="de">Testseite</span><span data-l="en">Test page</span><small class="note" data-l="de">Das Webinterface der Uhr ausprobieren – läuft im Browser, alle Werte sind simuliert</small><small class="note" data-l="en">Try the clock's web interface – runs in the browser, all values are simulated</small></span><span>›</span></a>
  <a class="row" href="#kap6"><span><span data-l="de">Firmware installieren</span><span data-l="en">Install firmware</span><small class="note" data-l="de">Direkt im Browser auf den ESP32 schreiben – oder den Sketch mit Arduino Cloud hochladen</small><small class="note" data-l="en">Write it to the ESP32 straight from the browser – or upload the sketch with Arduino Cloud</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" href="https://github.com/maurohh/ESP32_OscilloscopeClock"><span><span data-l="de">GitHub – Original</span><span data-l="en">GitHub – original</span><small class="note" data-l="de">Die ursprüngliche ESP32 Oscilloscope Clock von Mauro Pintus (2018), nach deren Idee diese Version entstand</small><small class="note" data-l="en">The original ESP32 Oscilloscope Clock by Mauro Pintus (2018) that inspired this version</small></span><span>›</span></a>
@@ -611,12 +610,7 @@ the debug section.</p>
 [<a class="ref" id="zq2-1" href="#q2">2</a>] eine analoge Uhr auf ein Oszilloskop im X/Y-Betrieb, die Uhrzeit kommt per NTP aus dem Internet. Zifferblatt und Zeiger liegen
 als Tabellen von Linienzügen vor, die der Strahl nacheinander abfährt. Die Uhr braucht dafür außer dem ESP32 nur zwei Leitungen
 zum Oszilloskop.</p>
-<h3 id="kap3-2">3.2 Andere Oszilloskop-Uhren</h3>
-<p>Uhren und Grafiken auf dem Oszilloskop gibt es auch als Demonstrations- und Bausatzplatinen. Meist erzeugt dort ein Mikrocontroller die
-Ablenkspannungen über Widerstandsnetzwerke (R-2R) und zeigt neben einer Uhr auch andere Motive. Gemeinsam ist allen
-diesen Geräten das Prinzip der <b>Vektorgrafik</b>: Der Strahl fährt die Linien direkt ab, statt wie beim Fernseher Zeile für
-Zeile zu schreiben.</p>
-<h3 id="kap3-3">3.3 Neu in Version 2.0</h3>
+<h3 id="kap3-2">3.2 Neu in Version 2.0</h3>
 <ul>
  <li><b>Zwei Prozessorkerne:</b> Kern 1 zeichnet ohne Pause, Kern 0 übernimmt WLAN, Zeit, Webserver und OLED (Kapitel 2) –
  auf Basis des Arduino-Cores für den ESP32 [<a class="ref" id="zq3-1" href="#q3">3</a>].</li>
@@ -632,11 +626,7 @@ Zeile zu schreiben.</p>
 <p>The idea comes from Mauro Pintus (Milan, 2018) [<a class="ref" id="zq1-1-en" href="#q1-en">1</a>]: an ESP32 draws an analogue clock on an oscilloscope in X/Y mode via its two
 built-in digital-to-analogue converters [<a class="ref" id="zq2-1-en" href="#q2-en">2</a>], the time comes from the internet via NTP. Dial and hands are stored as tables of
 polylines which the beam traces one after another. Apart from the ESP32, the clock only needs two wires to the oscilloscope.</p>
-<h3 id="kap3-2-en">3.2 Other oscilloscope clocks</h3>
-<p>Clocks and graphics on the oscilloscope also exist as demonstration and kit boards. Usually a microcontroller generates the deflection
-voltages there via resistor networks (R-2R) and shows other graphics besides a clock. All these devices share the principle of <b>vector
-graphics</b>: the beam traces the lines directly instead of writing line by line like a TV set.</p>
-<h3 id="kap3-3-en">3.3 New in version 2.0</h3>
+<h3 id="kap3-2-en">3.2 New in version 2.0</h3>
 <ul>
  <li><b>Two processor cores:</b> core 1 draws without pause, core 0 handles Wi-Fi, time, web server and OLED (chapter 2) – based
  on the Arduino core for the ESP32 [<a class="ref" id="zq3-1-en" href="#q3-en">3</a>].</li>
