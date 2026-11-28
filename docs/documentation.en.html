@@ -328,7 +328,7 @@ oscilloscope input; no additional BNC cable is needed.</p>
  <tr><td>1</td><td><b><a href="https://www.amazon.de/dp/B0B5RGNNXV">ABS junction box 150 × 100 × 70 mm</a></b>, IP67, with hinged lid, stainless steel latches and mounting plate (Yunseity)</td><td>Plastic so that the Wi-Fi signal gets through. The breakout board is screwed onto the perforated mounting plate.</td></tr>
  <tr><td>1</td><td><b><a href="https://www.amazon.de/dp/B0CL6WMHJN">Waveshare 2.42inch OLED display module</a></b>, white, 128 × 64 pixels, SPI/I²C (SSD1309); board 61.5 × 39.5 mm, active area 55.0 × 27.5 mm</td><td><b>Optional</b> – the clock also runs without a display. Use as delivered (4-wire SPI), no resoldering. Pin header from the bottom: VCC, GND, DIN, CLK, CS, DC, RST.</td></tr>
  <tr><td>1</td><td><b><a href="https://www.amazon.de/dp/B086JCJMSN">Wi-Fi antenna Bingfu</a></b> 2.4/5.8 GHz, 8 dBi, SMA plug (variant “SMA”), angled</td><td>Mandatory: the -32U module has no built-in antenna. It screws onto the SMA socket of the IPEX pigtail from the antenna kit – do not mix SMA and RP-SMA (the antenna plug must match the pigtail socket).</td></tr>
- <tr><td>2</td><td>Resistor <b>220 Ω</b>, 0.25 W (recommended)</td><td>Soldered into the red lead of each pigtail; protects the DAC outputs if the BNC plug is short-circuited.</td></tr>
+ <tr><td>2</td><td>Resistor <b>220 Ω</b>, 0.25 W (recommended)</td><td>Soldered into the red lead of each pigtail; protects the DAC outputs if the BNC plug is short-circuited. Colour bands 1 %: <b>red-red-black-black-brown</b>; 5 %: red-red-brown-gold.</td></tr>
  <tr><td>(1)</td><td><i>Optional:</i> real-time clock <b><a href="https://www.amazon.de/dp/B01H5NAFUY">DS3231</a></b>, module ZS-042 (e.g. WINGONEER “Tiny DS3231 AT24C32”)</td><td>Keeps the time after a power failure without internet. VCC → 3V3, GND → GND, SDA → P21, SCL → P22. Coin cell: normal CR2032 – connect the module to 3V3 only (at 5 V its charging circuit would charge it). Switch on in the web interface.</td></tr>
  <tr><td>–</td><td>Small parts</td><td>7 wires for the OLED (DuPont cables or stranded wire), heat-shrink tubing, wire-end ferrules 0.25–0.5 mm² (optional), standoffs M2.5 (OLED) and M3 (breakout board), possibly 2–3 M6 nuts</td></tr>
  <tr><td>1</td><td>USB power supply 5 V, ≥ 1 A, with USB-C cable</td><td>A normal, unearthed plug-in power supply avoids ground loops.</td></tr>
@@ -386,7 +386,7 @@ the wrong way round on its own, otherwise the terminal labels no longer match.
 board on it, mark the holes and drill them with 3.2 mm. Lay the two cables in place first: the antenna cable and the USB flat cable are a
 little too long and run <b>once underneath the board</b> to the opposite side. Press the small IPEX plug straight onto the socket on the
 module until it clicks audibly; plug the flat cable into the DevKit's USB-C socket and do not kink it sharply.</div></div>
-<figure><!-- SVG aufbau_en.svg width:48% --><svg style='width:48%;height:auto' class='thfig' viewBox='0 0 700 1001' role='img'><style>.thfig .th-fg{fill:currentColor}.thfig .th-mu{fill:var(--mute,#5f6368)}.thfig .th-ac{fill:var(--acc,#0a7d44)}.thfig .th-enc{fill:currentColor;fill-opacity:.04;stroke:currentColor;stroke-opacity:.45}.thfig .th-ol{stroke:var(--mute,#5f6368);stroke-opacity:.6;stroke-width:1}</style><text class='th-fg' x='350.0' y='26' text-anchor='middle' font-size='17' font-weight='bold'>Layout in the junction box (top view, lid open)</text>
+<figure><!-- SVG aufbau_en.svg width:100% --><svg style='width:100%;height:auto' class='thfig' viewBox='0 0 900 599' role='img'><style>.thfig .th-fg{fill:currentColor}.thfig .th-mu{fill:var(--mute,#5f6368)}.thfig .th-ac{fill:var(--acc,#0a7d44)}.thfig .th-enc{fill:currentColor;fill-opacity:.04;stroke:currentColor;stroke-opacity:.45}.thfig .th-ol{stroke:var(--mute,#5f6368);stroke-opacity:.6;stroke-width:1}</style><g transform='translate(900 -45) rotate(90)'>
 <rect x='150' y='165' width='400' height='600' rx='16' class='th-enc' stroke-width='3'/>
 <g transform='rotate(180 350.0 479.0)'><rect x='224.0' y='325' width='252' height='308' rx='4' fill='#22a54a' stroke='#17803a' stroke-width='2'/>
 <circle cx='234.4' cy='335.4' r='5.6' fill='#fff' stroke='#d7efd9'/>
@@ -619,11 +619,8 @@ module until it clicks audibly; plug the flat cable into the DevKit's USB-C sock
 <line x1='356' y1='143' x2='356' y2='161' stroke='#444'/>
 <circle cx='350' cy='135' r='9' fill='#262626' class='th-ol'/>
 <path d='M342,129 L340,105 L340,77 Q340,67 350,67 Q360,67 360,77 L360,105 L358,129 Z' fill='#1f1f1f' class='th-ol'/>
-<text class='th-fg' x='368' y='115' font-size='12'>Antenna (SMA)</text>
-<text class='th-mu' x='320.0' y='115' text-anchor='end' font-size='13'>Opposite side</text>
 <rect x='320' y='751' width='60' height='10' rx='2' fill='#2b2b2b' class='th-ol'/>
 <rect x='314' y='767' width='72' height='8' rx='2' fill='#2b2b2b' class='th-ol'/><rect x='332' y='775' width='36' height='14' rx='3' fill='#3a3a3a' class='th-ol'/><rect x='340' y='779' width='20' height='6' rx='3' fill='#999'/>
-<text class='th-fg' x='350' y='805' text-anchor='middle' font-size='12'>USB-C</text>
 <path d='M252,769 L255,783 Q262,789 269,783 L272,769 Z' fill='#cfd3d7' stroke='#6d7378'/>
 <path d='M251,753 h22 l-3,-6 h-16 Z' fill='#bfc4c8' stroke='#6d7378'/><rect x='251' y='753' width='22' height='10' fill='#b3b8bd' stroke='#6d7378'/>
 <line x1='262' y1='787' x2='262' y2='821' stroke='#b57452' stroke-width='6'/>
@@ -636,7 +633,6 @@ module until it clicks audibly; plug the flat cable into the DevKit's USB-C sock
 <line x1='251' y1='864' x2='273' y2='864' stroke='#a3a9ae'/>
 <line x1='251' y1='868' x2='273' y2='868' stroke='#a3a9ae'/>
 <rect x='254' y='873' width='16' height='10' fill='#c9cdd1' stroke='#6d7378'/>
-<text class='th-fg' x='280' y='865' font-size='13' font-weight='bold'>X</text>
 <path d='M262,747 C262,705 490.0,715 490.0,675 L490.0,493.0' fill='none' stroke='#b57452' stroke-width='3'/>
 <line x1='490.0' y1='493.0' x2='442.0' y2='493.0' stroke='#d62828' stroke-width='3'/>
 <path d='M428,769 L431,783 Q438,789 445,783 L448,769 Z' fill='#cfd3d7' stroke='#6d7378'/>
@@ -651,18 +647,24 @@ module until it clicks audibly; plug the flat cable into the DevKit's USB-C sock
 <line x1='427' y1='864' x2='449' y2='864' stroke='#a3a9ae'/>
 <line x1='427' y1='868' x2='449' y2='868' stroke='#a3a9ae'/>
 <rect x='430' y='873' width='16' height='10' fill='#c9cdd1' stroke='#6d7378'/>
-<text class='th-fg' x='456' y='865' font-size='13' font-weight='bold'>Y</text>
 <path d='M438,747 C438,705 500.0,715 500.0,675 L500.0,479.0' fill='none' stroke='#b57452' stroke-width='3'/>
 <line x1='500.0' y1='479.0' x2='442.0' y2='479.0' stroke='#d62828' stroke-width='3'/>
-<text x='516.0' y='473.0' font-size='10' class='th-ac'>P26 (Y)</text>
-<text x='516.0' y='505.0' font-size='10' class='th-ac'>P25 (X)</text>
-<text class='th-fg' x='350.0' y='905' text-anchor='middle' font-size='12'>Pigtail X · USB-C · pigtail Y (cable glands SKINDICHT MINI M6)</text>
-<text x='350.0' y='925' text-anchor='middle' font-size='13' class='th-mu'>Connector side (short side)</text>
-<text x='350.0' y='46' text-anchor='middle' font-size='11' class='th-mu'>The OLED sits in the hinged lid – leave the wires long enough</text>
-<text x='136' y='465.0' text-anchor='middle' font-size='12' class='th-ac' transform='rotate(-90 136 465.0)'>150 mm</text>
-<text x='350.0' y='945' text-anchor='middle' font-size='12' class='th-ac'>100 mm</text>
-<text x='350.0' y='971' text-anchor='middle' font-size='12' class='th-ac'>Breakout board with DevKit rotated by 180°</text>
-<text x='350.0' y='989' text-anchor='middle' font-size='12' class='th-mu'>dashed: USB and antenna cable under the board</text></svg><!-- /SVG --><figcaption>Fig. 5 – Layout in the junction box (to scale); dashed: cables under the board</figcaption></figure>
+</g>
+<text class='th-fg' x='450.0' y='24' text-anchor='middle' font-size='17' font-weight='bold'>Layout in the junction box (top view, lid open)</text>
+<text x='450.0' y='44' text-anchor='middle' font-size='11' class='th-mu'>The OLED sits in the hinged lid – leave the wires long enough</text>
+<text x='4' y='93' font-size='13' class='th-mu'>Connector side (short side)</text>
+<text x='896' y='93' text-anchor='end' font-size='13' class='th-mu'>Opposite side</text>
+<text class='th-fg' x='795' y='331' text-anchor='middle' font-size='12'>Antenna (SMA)</text>
+<text class='th-fg' x='87' y='309' text-anchor='middle' font-size='12'>USB-C</text>
+<text class='th-fg' x='39' y='249' text-anchor='middle' font-size='13' font-weight='bold'>X</text>
+<text class='th-fg' x='39' y='425' text-anchor='middle' font-size='13' font-weight='bold'>Y</text>
+<text x='421.0' y='483' text-anchor='middle' font-size='10' class='th-ac'>P26 (Y)</text>
+<text x='407.0' y='496' text-anchor='middle' font-size='10' class='th-ac'>P25 (X)</text>
+<text x='435.0' y='525' text-anchor='middle' font-size='12' class='th-ac'>150 mm</text>
+<text x='751' y='415.0' text-anchor='middle' font-size='12' class='th-ac' transform='rotate(-90 751 415.0)'>100 mm</text>
+<text class='th-fg' x='450.0' y='553' text-anchor='middle' font-size='12'>Pigtail X · USB-C · pigtail Y (cable glands SKINDICHT MINI M6)</text>
+<text x='450.0' y='571' text-anchor='middle' font-size='12' class='th-ac'>Breakout board with DevKit rotated by 180°</text>
+<text x='450.0' y='589' text-anchor='middle' font-size='12' class='th-mu'>dashed: USB and antenna cable under the board</text></svg><!-- /SVG --><figcaption>Fig. 5 – Layout in the junction box (to scale); dashed: cables under the board</figcaption></figure>
 <h3>5.4 Wiring</h3>
 <p>Fig. 6 shows all wires, the table at the end of this section the same connections terminal by terminal. Strip each wire by about 5 mm, open the
 terminal screw, insert the lead fully, tighten and check with a light pull that it holds. Twist and tin stranded wires first or fit

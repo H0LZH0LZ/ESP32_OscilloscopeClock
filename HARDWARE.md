@@ -14,7 +14,7 @@
 | 2× [Kabelverschraubung Lapp SKINDICHT MINI](https://de.rs-online.com/web/p/kabelverschraubungen/4583953) M6×1 (52001860), Klemmbereich 2–3 mm | führt die Pigtails durch die Gehäusewand |
 | [USB-C-Einbauverlängerung](https://www.amazon.de/dp/B0FM7RLQTF) (IP67, 0,2 m, Einbauöffnung 16 mm) | Versorgung und Programmierung von außen |
 | [ABS-Abzweigdose 150 × 100 × 70 mm](https://www.amazon.de/dp/B0B5RGNNXV), IP67, Scharnierdeckel, Montageplatte | Gehäuse (funkdurchlässig) |
-| Kleinteile | 2× 220 Ω (an die rote Ader der Pigtails), Aderendhülsen (optional), Abstandsbolzen M2,5/M3 |
+| Kleinteile | 2× 220 Ω (an die rote Ader der Pigtails; Farbcode 1 %: rot-rot-schwarz-schwarz-braun, 5 %: rot-rot-braun-gold), Aderendhülsen (optional), Abstandsbolzen M2,5/M3 |
 
 Ausführliche Aufbauanleitung mit Bohrplan: [docs/ESP32_Oscilloscope_Clock_Dokumentation.pdf](docs/ESP32_Oscilloscope_Clock_Dokumentation.pdf).
 

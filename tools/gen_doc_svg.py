@@ -268,10 +268,11 @@ def verdrahtung():
         a(f"<polyline points='{p}' fill='none' stroke='{col}' stroke-width='3' stroke-linejoin='round' {'stroke-dasharray=\"8 6\"' if dash else ''}/>")
     def res(x, yy, col):
         a(f"<line x1='{x-24}' y1='{yy}' x2='{x+24}' y2='{yy}' stroke='#9aa0a6' stroke-width='2'/>")
-        a(f"<rect x='{x-16}' y='{yy-7}' width='32' height='14' rx='6' fill='#e6cf9e' stroke='#9c7c45'/>")
-        for k, c in enumerate(('#d62828', '#d62828', '#7a4a2a')):
-            a(f"<rect x='{x-11+k*6}' y='{yy-7}' width='3.5' height='14' fill='{c}'/>")
-        a(f"<rect x='{x+8}' y='{yy-7}' width='3.5' height='14' fill='#c9a227'/>")
+        # Metallschichtwiderstand 1 % (blau), 5 Ringe: rot-rot-schwarz-schwarz | braun = 220 Ω ±1 %
+        a(f"<rect x='{x-17}' y='{yy-7}' width='34' height='14' rx='6' fill='#8fb4d9' stroke='#5b7fa6'/>")
+        for k, c in enumerate(('#d62828', '#d62828', '#111', '#111')):
+            a(f"<rect x='{x-12+k*5}' y='{yy-7}' width='3' height='14' fill='{c}'/>")
+        a(f"<rect x='{x+9}' y='{yy-7}' width='3' height='14' fill='#7a4a2a'/>")
         a(f"<text x='{x}' y='{yy+21}' text-anchor='middle' font-size='10'>220 Ω</text>")
     def gnd(x, yy):
         a(f"<line x1='{x}' y1='{yy}' x2='{x}' y2='{yy+8}' stroke='#111' stroke-width='2'/>")
@@ -682,7 +683,35 @@ def aufbau():
     # Hinweise unter der Zeichnung (nicht über Kabeln und Board)
     a(f"<text x='{X+W/2}' y='{yb+206}' text-anchor='middle' font-size='12' class='th-ac'>Breakout-Board samt DevKit um 180° gedreht</text>")
     a(f"<text x='{X+W/2}' y='{yb+224}' text-anchor='middle' font-size='12' class='th-mu'>gestrichelt: USB- und Antennenkabel unter dem Board</text>")
-    save('aufbau.svg', X * 2 + W, yb + 236, '\n'.join(s), themed=True)
+    # Querformat: Zeichnung 90° im Uhrzeigersinn gedreht (Anschlussseite links, Antenne rechts),
+    # die Beschriftungen außerhalb der Platine neu und waagerecht gesetzt
+    geo = [e for e in s if not (e.startswith('<text') and "th-" in e)]
+    TX, DY, WQ = 900, -45, 900                                    # (x, y) → (TX − y, x + DY)
+    q = lambda x_, y_: (TX - y_, x_ + DY)
+    t = []; T = t.append
+    T(f"<text class='th-fg' x='{WQ/2}' y='24' text-anchor='middle' font-size='17' font-weight='bold'>Anordnung in der Abzweigdose (Draufsicht, Deckel offen)</text>")
+    T(f"<text x='{WQ/2}' y='44' text-anchor='middle' font-size='11' class='th-mu'>Das OLED sitzt im Scharnierdeckel – Leitungen lang genug lassen</text>")
+    bx0, by0 = q(X, yb)                                           # Gehäuse: links oben
+    bx1, by1 = q(X + W, Y)                                        # rechts unten
+    T(f"<text x='4' y='{by0-12}' font-size='13' class='th-mu'>Anschlussseite (kurze Seite)</text>")
+    T(f"<text x='{WQ-4}' y='{by0-12}' text-anchor='end' font-size='13' class='th-mu'>Gegenüberliegende Seite</text>")
+    ax_, ay_ = q(sx, Y - 60)
+    T(f"<text class='th-fg' x='{ax_}' y='{ay_+26}' text-anchor='middle' font-size='12'>Antenne (SMA)</text>")
+    ux_, uy_ = q(sx, yb + 40)
+    T(f"<text class='th-fg' x='{ux_-8}' y='{uy_+4}' text-anchor='middle' font-size='12'>USB-C</text>")
+    for lab, d in (('X', 28), ('Y', 72)):
+        lx_, ly_ = q(X + mm(d), yb + 96)
+        T(f"<text class='th-fg' x='{lx_}' y='{ly_+32}' text-anchor='middle' font-size='13' font-weight='bold'>{lab}</text>")
+    for lab, i, dy_ in (('P26 (Y)', 10, -22), ('P25 (X)', 9, -9)):      # unter den roten Leitungen, im Gehäuse
+        px_, py_ = q(*rot(pos[('L', i)]))
+        T(f"<text x='{px_}' y='{by1+dy_}' text-anchor='middle' font-size='10' class='th-ac'>{lab}</text>")
+    T(f"<text x='{(bx0+bx1)/2}' y='{by1+20}' text-anchor='middle' font-size='12' class='th-ac'>150 mm</text>")
+    T(f"<text x='{bx1+16}' y='{(by0+by1)/2+110}' text-anchor='middle' font-size='12' class='th-ac' transform='rotate(-90 {bx1+16} {(by0+by1)/2+110})'>100 mm</text>")
+    T(f"<text class='th-fg' x='{WQ/2}' y='{by1+48}' text-anchor='middle' font-size='12'>Pigtail X · USB-C · Pigtail Y (Kabelverschraubungen SKINDICHT MINI M6)</text>")
+    T(f"<text x='{WQ/2}' y='{by1+66}' text-anchor='middle' font-size='12' class='th-ac'>Breakout-Board samt DevKit um 180° gedreht</text>")
+    T(f"<text x='{WQ/2}' y='{by1+84}' text-anchor='middle' font-size='12' class='th-mu'>gestrichelt: USB- und Antennenkabel unter dem Board</text>")
+    body = f"<g transform='translate({TX} {DY}) rotate(90)'>\n" + '\n'.join(geo) + "\n</g>\n" + '\n'.join(t)
+    save('aufbau.svg', WQ, by1 + 94, body, themed=True)
 
 
 # ---------------------------------------------------------------- Software-Aufteilung

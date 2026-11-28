@@ -14,7 +14,7 @@
 | 2× [cable gland Lapp SKINDICHT MINI](https://de.rs-online.com/web/p/kabelverschraubungen/4583953) M6×1 (52001860), clamping range 2–3 mm | leads the pigtails through the enclosure wall |
 | [USB-C panel-mount extension](https://www.amazon.de/dp/B0FM7RLQTF) (IP67, 0.2 m, 16 mm cut-out) | power and programming from outside |
 | [ABS junction box 150 × 100 × 70 mm](https://www.amazon.de/dp/B0B5RGNNXV), IP67, hinged lid, mounting plate | Enclosure (RF-transparent) |
-| Small parts | 2× 220 Ω (on the red lead of the pigtails), wire-end ferrules (optional), standoffs M2.5/M3 |
+| Small parts | 2× 220 Ω (on the red lead of the pigtails; colour code 1 %: red-red-black-black-brown, 5 %: red-red-brown-gold), wire-end ferrules (optional), standoffs M2.5/M3 |
 
 Detailed assembly guide with drilling template: [docs/ESP32_Oscilloscope_Clock_Documentation.pdf](docs/ESP32_Oscilloscope_Clock_Documentation.pdf).
 
