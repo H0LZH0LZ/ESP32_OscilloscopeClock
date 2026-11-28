@@ -882,8 +882,9 @@ figures are start values for section 8.4.</p>
  <li><b>HP 54200A</b> (digital, with CRT): check the X/Y options in the manual; infinite persistence collects the picture over several
  acquisitions. No intensity grading – hand brightness 100 %. Because of the CRT, leave the picture shift switched on.</li>
  <li><b>Digilent Analog Discovery 2</b> (USB instrument): the inputs are differential – 1+ to X, 1− to GND, 2+ to Y, 2− to GND, also
- connect GND. WaveForms: 500 mV/div, offset −1.6 V, Time → Base 2 ms/div, Samples 8 Ki (Rate 400 kHz), Mode Repeated, trigger Auto, View → XY – the capture window then holds several whole frames. Profile DIGITAL, hand brightness 100 %, dwell time 6–7 µs: the lines get more sample points, the single dots on the jumps between lines are less noticeable (without a Z input they do not disappear completely).</li>
+ connect GND. WaveForms: 500 mV/div, offset so that the picture is centred, Time → Base 2 ms/div, Samples 8 Ki (Rate 400 kHz), Mode Repeated, trigger Auto, View → XY – the capture window then holds several whole frames. Profile DIGITAL, hand brightness 100 %, dwell time 6–7 µs: the lines get more sample points, the single dots on the jumps between lines are less noticeable (without a Z input they do not disappear completely).</li>
 </ul>
+<figure><img src="images/ad2_waveforms.png" style="width:100%"><figcaption>Fig. 9 – Analog Discovery 2 in WaveForms: on the left the time course of X (orange) and Y (blue), on the right the XY view with the dial; settings on the right (base 2 ms/div, 8 Ki samples, 400 kHz). The single dots between the numerals are the jumps of the beam.</figcaption></figure>
 
 <h2>9 Operation</h2>
 <h3>9.1 Web interface</h3>
@@ -898,23 +899,23 @@ phones and can be added to the home screen like an app (“Add to home screen”
  <li><b>Debug:</b> messages of the clock with a filter (Wi-Fi, time, web, oscilloscope, warnings), “Refresh”, “Download” (text file) and “Clear”.</li>
  <li><b>Side menu (☰):</b> jumps to the sections, plus language (Deutsch/English), appearance (automatic/light/dark) and clock colour (shades of green or grey). The section you are currently in is highlighted in green; the thin green bar at the top edge of the screen shows how far you have scrolled.</li>
 </ul>
-<figure><img src="images/web_uebersicht_en.png" style="width:58%"><figcaption>Fig. 9 – Web interface: start view light and dark, side menu</figcaption></figure>
-<figure><img src="images/web_einstellungen_en.png" style="width:58%"><figcaption>Fig. 10 – Oscilloscope group, Wi-Fi group with network scan, debug section</figcaption></figure>
+<figure><img src="images/web_uebersicht_en.png" style="width:58%"><figcaption>Fig. 10 – Web interface: start view light and dark, side menu</figcaption></figure>
+<figure><img src="images/web_einstellungen_en.png" style="width:58%"><figcaption>Fig. 11 – Oscilloscope group, Wi-Fi group with network scan, debug section</figcaption></figure>
 <h3>9.2 OLED display</h3>
 <p>At the top the time in 7-segment style, below it the calendar week and date with small 7-segment digits, then the Wi-Fi network and the signal strength.
 Without a valid time it shows “No NTP connection”; in the setup network it shows the network name “ScopeClock-Setup” and the address.
 Brightness 0–100 %, seconds, rotation by 180° and pixel shifting against burn-in can be set.</p>
-<figure><img src="images/oled_englisch_12h.png" style="width:38%"><figcaption>Fig. 11 – OLED in English in 12-hour format</figcaption></figure>
+<figure><img src="images/oled_englisch_12h.png" style="width:38%"><figcaption>Fig. 12 – OLED in English in 12-hour format</figcaption></figure>
 <h3>9.3 BOOT button</h3>
 <p><b>Holding it for 3 seconds</b> switches the oscilloscope profile (DIGITAL ↔ ANALOG). The OLED shows the change with a countdown
-3, 2, 1; releasing earlier cancels (Fig. 12 and 13). <b>The oscilloscope shows the same:</b> instead of the clock the target
+3, 2, 1; releasing earlier cancels (Fig. 13 and 14). <b>The oscilloscope shows the same:</b> instead of the clock the target
 profile (“&gt; ANALOG” or “&gt; DIGITAL”) and the countdown, for the factory reset RESET and 5 … 1 – so the change is visible even without an
 OLED or with the display switched off. The setting is saved. <b>Do not press it while powering on</b> – otherwise the ESP32 starts in download mode.</p>
-<p><b>Factory reset: hold for 10 seconds.</b> From 5 s the OLED counts down 5 … 1 (Fig. 14), then <b>all settings and networks are erased</b> and the clock restarts with the setup network. Releasing earlier cancels.</p>
+<p><b>Factory reset: hold for 10 seconds.</b> From 5 s the OLED counts down 5 … 1 (Fig. 15), then <b>all settings and networks are erased</b> and the clock restarts with the setup network. Releasing earlier cancels.</p>
 <div class="two" style="width:62%;margin:0 auto">
- <figure><img src="images/oled_profil_en.png"><figcaption>Fig. 12 – Switching DIGITAL → ANALOG (BOOT button held, 2 s to go)</figcaption></figure>
- <figure><img src="images/oled_profil_analog_digital_en.png"><figcaption>Fig. 13 – Switching ANALOG → DIGITAL (back to the profile for digital oscilloscopes)</figcaption></figure>
- <figure><img src="images/oled_werksreset_en.png"><figcaption>Fig. 14 – OLED shortly before the factory reset (BOOT button held)</figcaption></figure>
+ <figure><img src="images/oled_profil_en.png"><figcaption>Fig. 13 – Switching DIGITAL → ANALOG (BOOT button held, 2 s to go)</figcaption></figure>
+ <figure><img src="images/oled_profil_analog_digital_en.png"><figcaption>Fig. 14 – Switching ANALOG → DIGITAL (back to the profile for digital oscilloscopes)</figcaption></figure>
+ <figure><img src="images/oled_werksreset_en.png"><figcaption>Fig. 15 – OLED shortly before the factory reset (BOOT button held)</figcaption></figure>
 </div>
 
 <h2>10 All settings at a glance</h2>

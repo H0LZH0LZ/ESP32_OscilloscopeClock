@@ -888,8 +888,9 @@ sind Startwerte für Abschnitt 8.4.</p>
  <li><b>HP 54200A</b> (digital, mit Bildröhre): X/Y-Möglichkeiten im Handbuch prüfen; unendliches Nachleuchten sammelt das Bild über
  mehrere Aufnahmen. Keine Helligkeitsabstufung – Zeigerhelligkeit 100 %. Wegen der Röhre die Bildverschiebung eingeschaltet lassen.</li>
  <li><b>Digilent Analog Discovery 2</b> (USB-Messgerät): Eingänge sind differenziell – 1+ an X, 1− an GND, 2+ an Y, 2− an GND,
- zusätzlich GND verbinden. WaveForms: 500 mV/Div, Offset −1,6 V, Time → Base 2 ms/Div, Samples 8 Ki (Rate 400 kHz), Mode Repeated, Trigger Auto, View → XY – das Messfenster umfasst so mehrere ganze Bilder. Profil DIGITAL, Zeigerhelligkeit 100 %, Verweilzeit 6–7 µs: Die Linien bekommen mehr Messpunkte, die einzelnen Punkte auf den Sprüngen zwischen den Linien fallen weniger auf (ganz verschwinden sie ohne Z-Eingang nicht).</li>
+ zusätzlich GND verbinden. WaveForms: 500 mV/Div, Offset so, dass das Bild mittig steht, Time → Base 2 ms/Div, Samples 8 Ki (Rate 400 kHz), Mode Repeated, Trigger Auto, View → XY – das Messfenster umfasst so mehrere ganze Bilder. Profil DIGITAL, Zeigerhelligkeit 100 %, Verweilzeit 6–7 µs: Die Linien bekommen mehr Messpunkte, die einzelnen Punkte auf den Sprüngen zwischen den Linien fallen weniger auf (ganz verschwinden sie ohne Z-Eingang nicht).</li>
 </ul>
+<figure><img src="images/ad2_waveforms.png" style="width:100%"><figcaption>Abb. 9 – Analog Discovery 2 in WaveForms: links der Zeitverlauf von X (orange) und Y (blau), rechts die XY-Ansicht mit dem Zifferblatt; Einstellungen rechts (Base 2 ms/Div, 8 Ki Samples, 400 kHz). Die vereinzelten Punkte zwischen den Ziffern sind die Sprünge des Strahls.</figcaption></figure>
 
 <h2>9 Bedienung</h2>
 <h3>9.1 Webinterface</h3>
@@ -904,23 +905,23 @@ Handy gemacht und lässt sich über „Zum Startbildschirm hinzufügen“ wie ei
  <li><b>Debug:</b> Meldungen der Uhr mit Filter (WLAN, Zeit, Web, Oszilloskop, Warnungen), „Aktualisieren“, „Herunterladen“ (Textdatei) und „Leeren“.</li>
  <li><b>Seitenmenü (☰):</b> springt in die Bereiche, dazu Sprache (Deutsch/English), Darstellung (automatisch/hell/dunkel) und Farbe der Uhr (Grüntöne oder Grau). Der Bereich, in dem man gerade ist, ist im Menü grün markiert; der schmale grüne Balken am oberen Bildschirmrand zeigt, wie weit man gescrollt hat.</li>
 </ul>
-<figure><img src="images/web_uebersicht.png" style="width:58%"><figcaption>Abb. 9 – Webinterface: Startansicht hell und dunkel, Seitenmenü</figcaption></figure>
-<figure><img src="images/web_einstellungen.png" style="width:58%"><figcaption>Abb. 10 – Gruppe Oszilloskop, Gruppe WLAN mit Netzsuche, Debug-Bereich</figcaption></figure>
+<figure><img src="images/web_uebersicht.png" style="width:58%"><figcaption>Abb. 10 – Webinterface: Startansicht hell und dunkel, Seitenmenü</figcaption></figure>
+<figure><img src="images/web_einstellungen.png" style="width:58%"><figcaption>Abb. 11 – Gruppe Oszilloskop, Gruppe WLAN mit Netzsuche, Debug-Bereich</figcaption></figure>
 <h3>9.2 OLED-Anzeige</h3>
 <p>Oben die Uhrzeit im 7-Segment-Stil, darunter Kalenderwoche und Datum mit kleinen 7-Segment-Ziffern, dann das WLAN und die Signalstärke. Ohne gültige Zeit steht
 dort „Keine NTP-Verbindung“, im Setup-WLAN der Netzname „ScopeClock-Setup“ und die Adresse. Helligkeit 0–100 %, Sekunden,
 Drehung um 180° und Pixelverschiebung gegen Einbrennen sind einstellbar.</p>
-<figure><img src="images/oled_englisch_12h.png" style="width:30%"><figcaption>Abb. 11 – OLED auf Englisch im 12-Stunden-Format</figcaption></figure>
+<figure><img src="images/oled_englisch_12h.png" style="width:30%"><figcaption>Abb. 12 – OLED auf Englisch im 12-Stunden-Format</figcaption></figure>
 <h3>9.3 BOOT-Taster</h3>
 <p><b>3 Sekunden halten</b> schaltet das Oszilloskop-Profil um (DIGITAL ↔ ANALOG). Das OLED zeigt den Wechsel mit Countdown 3, 2, 1;
-vorher loslassen bricht ab (Abb. 12 und 13). <b>Das Oszilloskop zeigt dasselbe:</b> statt der Uhr das Ziel-Profil („&gt; ANALOG“ bzw.
+vorher loslassen bricht ab (Abb. 13 und 14). <b>Das Oszilloskop zeigt dasselbe:</b> statt der Uhr das Ziel-Profil („&gt; ANALOG“ bzw.
 „&gt; DIGITAL“) und den Countdown, bei den Werkseinstellungen RESET und 5 … 1 – so sieht man den Wechsel auch ohne OLED oder bei
 ausgeschaltetem Display. Die Einstellung wird gespeichert. <b>Nicht beim Einschalten drücken</b> – sonst startet der ESP32 im Download-Modus.</p>
-<p><b>Werkseinstellungen: 10 Sekunden halten.</b> Ab 5 s zählt das OLED 5 … 1 herunter (Abb. 14), dann werden <b>alle Einstellungen und WLANs gelöscht</b> und die Uhr startet mit dem Setup-WLAN neu. Vorher loslassen bricht ab.</p>
+<p><b>Werkseinstellungen: 10 Sekunden halten.</b> Ab 5 s zählt das OLED 5 … 1 herunter (Abb. 15), dann werden <b>alle Einstellungen und WLANs gelöscht</b> und die Uhr startet mit dem Setup-WLAN neu. Vorher loslassen bricht ab.</p>
 <div class="two" style="width:62%;margin:0 auto">
- <figure><img src="images/oled_profil.png"><figcaption>Abb. 12 – Umschalten DIGITAL → ANALOG (BOOT-Taster gehalten, noch 2 s)</figcaption></figure>
- <figure><img src="images/oled_profil_analog_digital.png"><figcaption>Abb. 13 – Umschalten ANALOG → DIGITAL (zurück zum Profil für digitale Oszilloskope)</figcaption></figure>
- <figure><img src="images/oled_werksreset.png"><figcaption>Abb. 14 – OLED kurz vor den Werkseinstellungen (BOOT-Taster gehalten)</figcaption></figure>
+ <figure><img src="images/oled_profil.png"><figcaption>Abb. 13 – Umschalten DIGITAL → ANALOG (BOOT-Taster gehalten, noch 2 s)</figcaption></figure>
+ <figure><img src="images/oled_profil_analog_digital.png"><figcaption>Abb. 14 – Umschalten ANALOG → DIGITAL (zurück zum Profil für digitale Oszilloskope)</figcaption></figure>
+ <figure><img src="images/oled_werksreset.png"><figcaption>Abb. 15 – OLED kurz vor den Werkseinstellungen (BOOT-Taster gehalten)</figcaption></figure>
 </div>
 
 <h2>10 Alle Einstellungen im Überblick</h2>

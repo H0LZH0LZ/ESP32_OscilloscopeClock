@@ -209,7 +209,7 @@ Older digital instruments with a CRT (e.g. HP 54200A) should leave it switched o
 **Digilent Analog Discovery 2**
 - The inputs are **differential**: 1+ to GPIO25 (X), **1− to GND**; 2+ to GPIO26 (Y),
   **2− to GND**. Also connect the AD2's GND wire to the ESP32's GND.
-- WaveForms → Scope: range 500 mV/div, offset −1.6 V, Time → Base 2 ms/div, Samples 8 Ki
+- WaveForms → Scope: range 500 mV/div, offset so that the picture is centred, Time → Base 2 ms/div, Samples 8 Ki
   (Rate 400 kHz), Mode Repeated, trigger Auto, enable the XY view (View → XY). The 20 ms window
   holds about four whole frames – the picture hardly flickers any more.
 - In the web interface profile DIGITAL and dwell time 6–7 µs: at 400 kHz a good two samples fall on
