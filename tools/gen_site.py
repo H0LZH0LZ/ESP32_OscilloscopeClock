@@ -178,6 +178,20 @@ def main():
         strip = lambda t: html.unescape(re.sub(r'<[^>]+>', '', t))
         nav.append(f' <a href="#{cid}"><span data-l="de">{html.escape(strip(td))}</span>'
                    f'<span data-l="en">{html.escape(strip(te))}</span></a>')
+        # Unterkapitel (h3 „2.1 …“): ID für Sprünge, im Seitenmenü eingerückt darunter – je Sprache ein
+        # eigener Eintrag, weil beide Sprachfassungen auf der Seite stehen (englische IDs mit -en)
+        def subs(c, suf):
+            out_, n = [], 0
+            def h3(m):
+                nonlocal n
+                n += 1; out_.append((f'{cid}-{n}{suf}', strip(m.group(2)).strip()))
+                return f'<h3{m.group(1)} id="{cid}-{n}{suf}">{m.group(2)}</h3>'
+            return re.sub(r'<h3([^>]*)>(.*?)</h3>', h3, c, flags=re.S), out_
+        cd, sd = subs(cd, '')
+        ce, se = subs(ce, '-en')
+        for (idd, tdd), (ide, tee) in zip(sd, se):
+            nav.append(f' <a class="subnav" data-l="de" href="#{idd}">{html.escape(tdd)}</a>'
+                       f'<a class="subnav" data-l="en" href="#{ide}">{html.escape(tee)}</a>')
         body.append(f'<div class="grp"><h2 id="{cid}" class="coll" role="button" tabindex="0" aria-expanded="true">'
                     f'<span data-l="de">{td}</span><span data-l="en">{te}</span></h2>\n'
                     f'<section class="doc"><div data-l="de">\n{cd}\n</div><div data-l="en">\n{ce}\n</div></section></div>')

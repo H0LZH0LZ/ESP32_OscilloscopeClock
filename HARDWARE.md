@@ -8,7 +8,7 @@
 |---|---|
 | [ESP32-WROOM-32U DevKitC V4](https://www.amazon.de/dp/B0F65G3V81), USB-C, mit Antennen-Kit (DUBEUYEW), 48,5 × 28,5 mm | Klassischer Dual-Core-ESP32 mit zwei 8-Bit-DACs (GPIO25/26); das Kit enthält das IPEX→SMA-Pigtail |
 | [Waveshare 2,42inch OLED Display Module](https://www.amazon.de/dp/B0CL6WMHJN), weiß (SSD1309, 128×64, SPI/I²C), 61,5 × 39,5 mm – **optional**, im Prototyp verbaut | Lokale Textanzeige (die Uhr läuft auch ohne): Uhrzeit 24h und Datum/KW (7-Segment-Stil), SSID, Signal |
-| [WLAN-Antenne Bingfu](https://www.amazon.de/dp/B086JCJMSN) 2,4/5,8 GHz, 8 dBi, SMA-Stecker | Pflicht beim *-32U*: das Modul hat **keine** PCB-Antenne; SMA und RP-SMA nicht mischen |
+| *Optional:* [WLAN-Antenne Bingfu](https://www.amazon.de/dp/B086JCJMSN) 2,4/5,8 GHz, 8 dBi, SMA-Stecker | Ersetzt die Antenne aus dem Antennen-Kit nur für mehr Gewinn (Reichweite); eine Antenne braucht der *-32U* aber immer (keine PCB-Antenne). SMA und RP-SMA nicht mischen |
 | [ESP32-Breakout-Board mit Schraubklemmen](https://www.amazon.de/dp/B0BCWBW4SR) | DevKit aufstecken, alle Leitungen in Schraubklemmen (Beschriftung P25, P26 …) – nichts am DevKit löten |
 | 2× [BNC-Pigtail](https://de.aliexpress.com/item/1005006318978533.html), BNC-Stecker auf 2,54-mm-DuPont-Stift, RG316 | X- und Y-Ausgang; der BNC-Stecker kommt direkt ins Oszilloskop (rot = Signal, schwarz = Schirm). Die DuPont-Stecker werden abgeschnitten |
 | 2× [Kabelverschraubung Lapp SKINDICHT MINI](https://de.rs-online.com/web/p/kabelverschraubungen/4583953) M6×1 (52001860), Klemmbereich 2–3 mm | führt die Pigtails durch die Gehäusewand |
@@ -41,7 +41,7 @@ GND  ─────────────────── RTC GND     Masse
 GPIO21 (I²C SDA) ─────── RTC SDA     I²C-Daten
 GPIO22 (I²C SCL) ─────── RTC SCL     I²C-Takt
 
-IPEX/U.FL ── Pigtail (Antennen-Kit) ── SMA-Buchse in der gegenüberliegenden Seite ── Bingfu-Antenne (SMA)
+IPEX/U.FL ── Pigtail (Antennen-Kit) ── SMA-Buchse in der gegenüberliegenden Seite ── Antenne aus dem Kit oder optional Bingfu (SMA)
 ```
 
 Die Pins stehen zentral in `ESP32_OscilloscopeClock_v2.0/config.h`. Fest vorgegeben sind GPIO25/26
