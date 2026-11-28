@@ -30,6 +30,8 @@ figcaption{font-size:8.8pt;color:#555;margin-top:1.2mm}
 .warn{border-left:3px solid #b45309;background:#fdf6ec;padding:2mm 3mm;margin:2mm 0 3mm;break-inside:avoid}
 .step{display:flex;gap:3mm;margin:0 0 2.5mm;break-inside:avoid}
 .step b.n{flex:none;width:7mm;height:7mm;border-radius:1mm;background:#0a7d44;color:#fff;display:flex;align-items:center;justify-content:center;font-size:9.5pt}
+/* Bilder zwischen nummerierten Schritten: bündig mit dem Schritttext statt mit der Nummer */
+.step+figure,figure:has(+.step),.step+.two,.two:has(+.step){margin-left:10mm}
 .cover{height:250mm;display:flex;flex-direction:column;justify-content:center;text-align:center;break-after:page}
 .cover h1{font-size:30pt}
 .cover .sub{font-size:13pt;color:#444;margin-bottom:8mm}
@@ -343,25 +345,25 @@ oscilloscope input; no additional BNC cable is needed.</p>
 checking. Only the two resistors in the pigtails are soldered, everything else is plugged or screwed. With a little practice the
 assembly takes two to three hours.</p>
 <h3>5.1 Preparing the enclosure</h3>
-<div class="step"><b class="n">1</b><div><b>Print the drilling template.</b> Print the <b>last two pages of this documentation</b> (drilling template lid and side walls) on
+<div class="step"><b class="n">1</b><div><b>Print the drilling template.</b> Print the last two pages of this documentation (drilling template lid and side walls) on
 <b>A4 at 100 % (not “fit to page”)</b> and measure the test line on each sheet: it must be 50 mm long. Cut out the templates and tape
 them onto the lid, the connector side and the opposite side. For the side walls, first measure the height of the base (without lid) and
 place the template's centre line at half that height; the left edge of the template at the outer edge of the side wall.</div></div>
 <div class="step"><b class="n">2</b><div><b>Drill.</b> Mark all hole centres through the paper with a centre punch or a pointed screw, remove the templates and
-<b>pre-drill</b> all holes <b>with 3 mm</b>. Drill ABS at low speed without pressing, so that it neither melts nor tears.
+pre-drill all holes with 3 mm. Drill ABS at low speed without pressing, so that it neither melts nor tears.
 <b>Connector side</b> (short side, 100 mm): open the holes for pigtails X and Y at 28 and 72 mm <b>to 5.0 mm and tap an M6
 thread</b> (ABS holds the thread well) – or drill 6.2 mm and later screw an M6 nut on from the inside. In the middle (50 mm), use the step
-drill for <b>16 mm</b> for the USB-C socket. <b>Opposite side:</b> <b>6.5 mm</b> centred for the SMA socket. Deburr all holes inside and
+drill for 16 mm for the USB-C socket. <b>Opposite side:</b> 6.5 mm centred for the SMA socket. Deburr all holes inside and
 outside with a larger drill bit or the utility knife.</div></div>
 <div class="step"><b class="n">3</b><div><b>OLED window in the lid.</b> Drill a 3 mm hole into each of the four corners of the window (55 × 28 mm), score the edges between
 the holes several times from the outside with the utility knife along a ruler and cut through, then file them straight. Hold the OLED
 module against the inside so that the active area sits centred in the window and mark the four mounting holes (hole spacing
-61.5 × 39.5 mm); drill them with <b>2.7 mm</b> for M2.5.</div></div>
+61.5 × 39.5 mm); drill them with 2.7 mm for M2.5.</div></div>
 <h3>5.2 Fitting cables and sockets</h3>
 <div class="step"><b class="n">4</b><div><b>Lead the pigtails through the cable glands.</b> First confirm with the continuity tester that red goes to the centre pin and black
 to the outer contact of the BNC plug. <b>Cut off the DuPont plugs</b> – they do not fit through the gland; the stripped leads go into the
 screw terminals later. Screw the glands into the two threads of the connector side from the outside (or lock them with the M6 nut inside),
-loosen the dome nut and push the cable from the outside through the dome nut, seal and enclosure. Leave about <b>10 cm</b> of cable inside
+loosen the dome nut and push the cable from the outside through the dome nut, seal and enclosure. Leave about 10 cm of cable inside
 and pull the BNC plug out as far as needed. Tighten the dome nut with the spanner (9 mm) hand-tight plus a quarter turn – the cable must
 then no longer pull through. Label the pigtails “X” and “Y”.</div></div>
 <div class="step"><b class="n">5</b><div><b>Strip the leads and solder on the resistors.</b> Only now, because with the resistor and heat-shrink tubing the cable no longer fits
@@ -374,13 +376,13 @@ of the connector side and tighten the nut on the inside; the flat cable points i
 the DevKit's antenna kit) from the inside through the 6.5 mm hole of the opposite side, screw on the toothed washer and nut from the outside
 and screw on the antenna (from the kit or, optionally, the Bingfu antenna with more gain). Antenna plug and socket must match (SMA, not RP-SMA).</div></div>
 <h3>5.3 Mounting the breakout board</h3>
-<div class="step"><b class="n">7</b><div><b>Mount the breakout board.</b> Plug the DevKit in <b>the right way round</b>: DevKit pin “3V3” at the board's terminal “3V3”, all
+<div class="step"><b class="n">7</b><div><b>Mount the breakout board.</b> Plug the DevKit in the right way round: DevKit pin “3V3” at the board's terminal “3V3”, all
 pins fully inserted. The board is mounted <b>together with the DevKit rotated by 180°</b> – the module with the antenna socket faces the
 connector side, the DevKit's USB-C socket faces the antenna side, terminals P25/P26 are then on the right (fig. 5). Never plug the DevKit in
 the wrong way round on its own, otherwise the terminal labels no longer match.
-<br>Screw the board onto the perforated mounting plate with four <b>M3 standoffs</b>. If the holes of the plate do not match, lay the
+<br>Screw the board onto the perforated mounting plate with four M3 standoffs. If the holes of the plate do not match, lay the
 board on it, mark the holes and drill them with 3.2 mm. Lay the two cables in place first: the antenna cable and the USB flat cable are a
-little too long and run <b>once underneath the board</b> to the opposite side. Press the small IPEX plug straight onto the socket on the
+little too long and run once underneath the board to the opposite side. Press the small IPEX plug straight onto the socket on the
 module until it clicks audibly; plug the flat cable into the DevKit's USB-C socket and do not kink it sharply.</div></div>
 <figure><!-- SVG aufbau_en.svg width:100% --><svg style='width:100%;height:auto' class='thfig' viewBox='0 0 900 599' role='img'><style>.thfig .th-fg{fill:currentColor}.thfig .th-mu{fill:var(--mute,#5f6368)}.thfig .th-ac{fill:var(--acc,#0a7d44)}.thfig .th-enc{fill:currentColor;fill-opacity:.04;stroke:currentColor;stroke-opacity:.45}.thfig .th-ol{stroke:var(--mute,#5f6368);stroke-opacity:.6;stroke-width:1}</style><g transform='translate(900 -45) rotate(90)'>
 <rect x='150' y='165' width='400' height='600' rx='16' class='th-enc' stroke-width='3'/>
@@ -668,14 +670,14 @@ wire-end ferrules.</p>
 <figure><img src="images/verdrahtung_en.svg" style="width:100%"><figcaption>Fig. 6 – Wiring. The DevKit sits in the breakout board; all wires go into the screw terminals of the same name.</figcaption></figure>
 <div class="warn"><b>Important:</b> terminal P0 (GPIO0) is the BOOT button – do not connect anything there. Connect the OLED to
 <b>3V3</b>, not to 5V. Never run the -32U module on Wi-Fi without an antenna.</div>
-<div class="step"><b class="n">8</b><div><b>Connect the pigtails:</b> the free resistor leg of X into terminal <b>P25</b>, of Y into <b>P26</b>. Both black leads (shield)
-together into the <b>GND terminal of the left row</b> – ideally twisted together or in a twin wire-end ferrule.</div></div>
+<div class="step"><b class="n">8</b><div><b>Connect the pigtails:</b> the free resistor leg of X into terminal P25, of Y into P26. Both black leads (shield)
+together into the GND terminal of the left row – ideally twisted together or in a twin wire-end ferrule.</div></div>
 <div class="step"><b class="n">9</b><div><b>Connect the OLED.</b> Fix the module behind the window in the lid with four M2.5 standoffs. It comes set to 4-wire SPI; do not
 resolder anything. Plug seven wires with DuPont sockets onto the pin header (VCC, GND, DIN, CLK, CS, DC, RST), strip the other ends and
 put them into the terminals according to the table: VCC to <b>3V3</b> (not 5V), GND to GND of the right row, DIN → P23, CLK → P18,
 CS → P5, DC → P17, RST → P4. Leave the wires long enough for the hinged lid to open fully and bundle them with a cable tie.</div></div>
 <div class="step"><b class="n">10</b><div><b>Optional: DS3231 real-time clock.</b> Fix the module next to the board with double-sided tape, insert a CR2032 coin cell and
-connect four wires: VCC to <b>3V3</b>, GND to GND of the right row, SDA → <b>P21</b>, SCL → <b>P22</b>. At 3.3 V the module's charging
+connect four wires: VCC to <b>3V3</b>, GND to GND of the right row, SDA → P21, SCL → P22. At 3.3 V the module's charging
 circuit does not charge the coin cell. The clock is switched on later in the web interface.</div></div>
 <table style="font-size:8.2pt">
  <thead><tr><th>Terminal on the breakout board</th><th>Connection</th><th>Target</th><th>Function</th></tr></thead>
@@ -713,7 +715,7 @@ variant B in section 6.4).</p>
 </ol>
 <!-- FIRMWARE-KNOPF -->
 <p>If no port appears, the USB driver (CP210x or CH340) is usually missing or the cable only charges. If the connection drops, hold the
-<b>BOOT button</b> when the installation starts. If the installation reports “Failed to write compressed data to flash …” or “Invalid head of packet …”, the ESP32 usually still hangs in download mode: close the window, <b>unplug the USB cable briefly</b> (or press the EN button) and click <b>“Install firmware”</b> again – such transmission errors happen occasionally, the second attempt usually completes. Hold the <b>BOOT button</b> while doing so (then the running clock sends nothing in between) and <b>unplug the cables to the oscilloscope</b> first – interference can reach the USB line through the ground of oscilloscope and PC.</p>
+<b>BOOT button</b> when the installation starts. If the installation reports “Failed to write compressed data to flash …” or “Invalid head of packet …”, the ESP32 usually still hangs in download mode: close the window, <b>unplug the USB cable briefly</b> (or press the EN button) and click “Install firmware” again – such transmission errors happen occasionally, the second attempt usually completes. Hold the BOOT button while doing so (then the running clock sends nothing in between) and <b>unplug the cables to the oscilloscope</b> first – interference can reach the USB line through the ground of oscilloscope and PC.</p>
 <p><b>Several clocks on the same Wi-Fi:</b> all clocks start with the name <code>scope-clock</code>. If the name is already taken on the
 network, the next clock automatically uses <code>scope-clock-2</code>, then <code>scope-clock-3</code> etc.; the actual address is shown in
 the log (“reachable at …”) and in the status under “Network address”. A clearer option is a name of its own for each clock, e.g.
@@ -741,8 +743,8 @@ version download and import the ZIP file again.</p>
  <tr><td><b>A – Huge APP</b> (recommended)</td><td>“Huge APP (3MB No OTA/1MB SPIFFS)”</td><td><code>pio run -t upload</code></td><td>1,249,238 of 3,145,728 bytes (<b>39 %</b>)</td></tr>
  <tr><td><b>B – Standard</b></td><td>“Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)” – the default, nothing to change</td><td><code>pio run -e standard -t upload</code></td><td>1,249,238 of 1,310,720 bytes (<b>95 %</b>)</td></tr>
 </table>
-<p>Both variants work the same. <b>A</b> leaves about 1.9 MB for extensions; the clock uses neither OTA updates nor SPIFFS,
-so nothing is lost. <b>B</b> works without changing anything but leaves only about 64 KB. You can switch at any time (choose
+<p>Both variants work the same. A leaves about 1.9 MB for extensions; the clock uses neither OTA updates nor SPIFFS,
+so nothing is lost. B works without changing anything but leaves only about 64 KB. You can switch at any time (choose
 the scheme, upload again) – saved networks and settings are stored at the same place in both and are kept. If the IDE reports
 “Sketch too big” when uploading, variant B is selected: switch to A.</p>
 <div class="note"><b>Credentials are never stored in the source code.</b> Wi-Fi networks are entered in the web interface after
@@ -1075,7 +1077,7 @@ possible without programming skills.</p>
 warnings count as errors. Beam path and dials were computed and rendered on a PC from the same vector data (the oscilloscope
 pictures in this guide), the OLED content was simulated with the same U8g2 library. The web interface was tested in the browser
 with simulated interfaces (test page), the installation in the browser without a connected device: the four parts give byte for
-byte the same image as the Arduino software. <b>The test on real hardware is still pending.</b></p>
+byte the same image as the Arduino software. The firmware now runs on the first clocks that have been built.</p>
 <h3>12.2 Limitations</h3>
 <ul>
  <li><b>Brightness:</b> the firmware only distributes the beam's time. The picture only gets darker with the oscilloscope's
