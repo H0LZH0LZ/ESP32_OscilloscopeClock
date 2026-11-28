@@ -2393,12 +2393,8 @@ static void drawSegDigit(int x, int y, int digit, int w, int h, int t)
   const int vUp = mid - (y + t);                   // Höhe der oberen Senkrechten (f, b)
   const int vLo = (y + h - t) - (mid + t);         // Höhe der unteren Senkrechten (e, c)
   if (m & 0x01) u8g2.drawBox(x + t,     y,         w - 2 * t, t);    // a
-  // Die "1" hat oben und unten kein Quersegment und wirkt dadurch kleiner als die anderen
-  // Ziffern: ihre beiden Striche um die Segmentstärke länger (b nach oben, c nach unten) –
-  // dann ist sie genauso hoch wie die übrigen Ziffern (große Ziffern 2 px, kleine 1 px)
-  const int one = (digit % 10 == 1) ? t : 0;
-  if (m & 0x02) u8g2.drawBox(x + w - t, y + t - one, t, vUp + one);  // b
-  if (m & 0x04) u8g2.drawBox(x + w - t, mid + t,   t, vLo + one);    // c
+  if (m & 0x02) u8g2.drawBox(x + w - t, y + t,     t, vUp);          // b
+  if (m & 0x04) u8g2.drawBox(x + w - t, mid + t,   t, vLo);          // c
   if (m & 0x08) u8g2.drawBox(x + t,     y + h - t, w - 2 * t, t);    // d
   if (m & 0x10) u8g2.drawBox(x,         mid + t,   t, vLo);          // e
   if (m & 0x20) u8g2.drawBox(x,         y + t,     t, vUp);          // f
