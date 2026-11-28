@@ -213,7 +213,7 @@ Ein Bild dauert ca. 4,9 ms, mit römischen Ziffern ca. 5,6 ms.
 - WaveForms → Scope: Range 500 mV/Div, Offset −1,6 V, Time → Base 2 ms/Div, Samples 8 Ki
   (Rate 400 kHz), Mode Repeated, Trigger Auto, XY-Ansicht einschalten (View → XY). Das Fenster von
   20 ms enthält rund vier ganze Bilder – das Bild flackert kaum noch.
-- Im Webinterface Profil DIGITAL und Verweilzeit 6 µs: Bei 400 kHz fallen so gut zwei Messwerte auf
+- Im Webinterface Profil DIGITAL und Verweilzeit 6–7 µs: Bei 400 kHz fallen so gut zwei Messwerte auf
   jeden Schritt der Uhr; die einzelnen Punkte auf den Sprüngen zwischen den Linien werden seltener
   (ganz verschwinden sie ohne Z-Eingang nicht). Mehr Punkte liefert die Gerätekonfiguration mit
   2 × 16k Scope-Puffer (WaveForms → Device Manager).

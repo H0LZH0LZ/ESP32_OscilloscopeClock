@@ -212,7 +212,7 @@ Older digital instruments with a CRT (e.g. HP 54200A) should leave it switched o
 - WaveForms → Scope: range 500 mV/div, offset −1.6 V, Time → Base 2 ms/div, Samples 8 Ki
   (Rate 400 kHz), Mode Repeated, trigger Auto, enable the XY view (View → XY). The 20 ms window
   holds about four whole frames – the picture hardly flickers any more.
-- In the web interface profile DIGITAL and dwell time 6 µs: at 400 kHz a good two samples fall on
+- In the web interface profile DIGITAL and dwell time 6–7 µs: at 400 kHz a good two samples fall on
   every step of the clock; the single dots on the jumps between the lines become rarer (without a
   Z input they do not disappear completely). More points are available with the device
   configuration with 2 × 16k scope buffer (WaveForms → Device Manager).
