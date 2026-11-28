@@ -387,7 +387,7 @@ Both show the same lines, with a timestamp (`+<s>s` until the time is valid):
 +3s [WiFi] verbunden mit "Gastzugang", IP 192.168.1.23, RSSI -61 dBm
 +3s [Web] erreichbar unter http://scope-clock.local und http://192.168.1.23
 21:15:06 [NTP] Sync 15.11.2026 21:15:06
-21:40:12 [WiFi] Verbindung verloren – versuche erneut
+21:40:12 [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut
 21:41:12 [Web] Setup-WLAN "ScopeClock-Setup" aktiv – Einrichtung unter http://192.168.4.1
 22:02:30 [Web] WLAN "Werkstatt" gespeichert
 22:05:10 [Zeit] von Hand gestellt (vom Handy): 15.11.2026 22:05:10
@@ -396,7 +396,7 @@ Both show the same lines, with a timestamp (`+<s>s` until the time is valid):
 ```
 
 (Shown in German here; with the language set to English the lines read e.g. “[WiFi] connected to …”,
-“[WiFi] connection lost – retrying”, “[Time] set by hand …”.)
+“[WiFi] connection lost (reason 200: BEACON_TIMEOUT) – retrying”, “[Time] set by hand …”.)
 Passwords are never printed.
 
 ## OLED display

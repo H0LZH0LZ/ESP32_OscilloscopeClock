@@ -303,8 +303,8 @@ html{background:var(--card)}body{min-height:100vh}   /* Safari zeigt beim Herunt
 <div class="grp"><h2 id="downloads-h" class="coll" role="button" tabindex="0" aria-expanded="true"><span data-l="de">Links &amp; Dokumente</span><span data-l="en">Links &amp; documents</span></h2>
 <section>
  <a class="row" target="_blank" rel="noopener" href="https://github.com/H0LZH0LZ/ESP32_OscilloscopeClock"><span><span data-l="de">GitHub – Version 2.0</span><span data-l="en">GitHub – version 2.0</span><small class="note" data-l="de">Diese Firmware mit Quellcode, Anleitung und Werkzeugen</small><small class="note" data-l="en">This firmware with source code, guide and tools</small></span><span>›</span></a>
- <a class="row" target="_blank" rel="noopener" data-l="de" href="ESP32_Oscilloscope_Clock_Dokumentation.pdf?v=4502de35"><span>Dokumentation (PDF)<small class="note">Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small></span><span>›</span></a>
- <a class="row" target="_blank" rel="noopener" data-l="en" href="ESP32_Oscilloscope_Clock_Documentation.pdf?v=6bff8ca2"><span>Documentation (PDF)<small class="note">Assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
+ <a class="row" target="_blank" rel="noopener" data-l="de" href="ESP32_Oscilloscope_Clock_Dokumentation.pdf?v=cba6fad9"><span>Dokumentation (PDF)<small class="note">Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small></span><span>›</span></a>
+ <a class="row" target="_blank" rel="noopener" data-l="en" href="ESP32_Oscilloscope_Clock_Documentation.pdf?v=062ae1e3"><span>Documentation (PDF)<small class="note">Assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" href="demo/"><span><span data-l="de">Testseite</span><span data-l="en">Test page</span><small class="note" data-l="de">Das Webinterface der Uhr ausprobieren – läuft im Browser, alle Werte sind simuliert</small><small class="note" data-l="en">Try the clock's web interface – runs in the browser, all values are simulated</small></span><span>›</span></a>
  <a class="row" href="#kap6"><span><span data-l="de">Firmware installieren</span><span data-l="en">Install firmware</span><small class="note" data-l="de">Direkt im Browser auf den ESP32 schreiben – oder den Sketch mit Arduino Cloud hochladen</small><small class="note" data-l="en">Write it to the ESP32 straight from the browser – or upload the sketch with Arduino Cloud</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" href="https://github.com/maurohh/ESP32_OscilloscopeClock"><span><span data-l="de">GitHub – Original</span><span data-l="en">GitHub – original</span><small class="note" data-l="de">Die ursprüngliche ESP32 Oscilloscope Clock von Mauro Pintus (2018), nach deren Idee diese Version entstand</small><small class="note" data-l="en">The original ESP32 Oscilloscope Clock by Mauro Pintus (2018) that inspired this version</small></span><span>›</span></a>
@@ -484,7 +484,7 @@ Die Pixelverschiebung versetzt die Anzeige jede Minute um einen Pixel, damit kei
 landen in einem 8-KB-Ringpuffer, den der Debug-Bereich anzeigt.</p>
 <p><b>Vektordaten:</b> Zifferblatt, Ziffern, Zeiger und Testbild sind eigene Zeichnungen, erzeugt mit <code>tools/gen_vectors.py</code>
 (Koordinaten 0–255, 8 Bit je Achse).</p>
-<p><b>Speicher:</b> Programmspeicher 1.249.238 Byte (95 % beim Standard-Partitionsschema, ca. 39 % mit „Huge APP“), globale Variablen
+<p><b>Speicher:</b> Programmspeicher 1.251.922 Byte (95 % beim Standard-Partitionsschema, ca. 39 % mit „Huge APP“), globale Variablen
 75.756 Byte (23 %). Die Webseite liegt gzip-komprimiert im Flash (26 KB), die Schrift (Raleway, auf die benötigten Zeichen reduziert) als WOFF2 (30 KB).</p>
 </div><div data-l="en">
 <figure><!-- SVG software --><svg class='swfig' viewBox='0 0 840 300' role='img' aria-label='Distribution of the firmware over the two processor cores' style='width:96%;height:auto;overflow:visible'><style>.swfig text{font-size:15px;font-weight:400}.swfig .sw-h{font-size:19px;font-weight:700;fill:var(--acc,#0a7d44)}.swfig .sw-c{font-size:15px;font-family:Menlo,Consolas,monospace;fill:var(--mute,#5f6368)}.swfig .sw-t{fill:currentColor}.swfig .sw-m{fill:var(--mute,#5f6368);font-size:13px}.swfig .sw-box{fill:var(--acc,#0a7d44);fill-opacity:.07;stroke:var(--acc,#0a7d44);stroke-opacity:.6;stroke-width:1.5}.swfig .sw-l{stroke:var(--acc,#0a7d44);stroke-opacity:.35;stroke-width:1}.swfig .sw-d,.swfig .sw-p{fill:var(--acc,#0a7d44)}.swfig .sw-a{stroke:var(--acc,#0a7d44);stroke-width:2}</style><rect class='sw-box' x='6' y='6' width='370' height='252' rx='8'/>
@@ -601,7 +601,7 @@ its frames (frame rate in the status), an idle hook measures the load of core 0,
 the debug section.</p>
 <p><b>Vector data:</b> dial, numerals, hands and test pattern are original drawings, generated with <code>tools/gen_vectors.py</code>
 (coordinates 0–255, 8 bits per axis).</p>
-<p><b>Memory:</b> program memory 1,249,238 bytes (95 % with the default partition scheme, approx. 39 % with “Huge APP”), global variables
+<p><b>Memory:</b> program memory 1,251,922 bytes (95 % with the default partition scheme, approx. 39 % with “Huge APP”), global variables
 75,756 bytes (23 %). The web page is stored gzip-compressed in flash (26 KB), the font (Raleway, reduced to the characters needed) as WOFF2 (30 KB).</p>
 </div></section></div>
 
@@ -1468,8 +1468,8 @@ neue Version die ZIP-Datei erneut herunterladen und importieren.</p>
 <h3 id="kap6-4">6.4 Partitionsschema: zwei Varianten</h3>
 <div class="tw"><table style="break-inside:avoid">
  <tr><th>Variante</th><th>Arduino IDE: Partition Scheme</th><th>PlatformIO</th><th>Programmspeicher</th></tr>
- <tr><td data-th="Variante"><b>A – Huge APP</b> (empfohlen)</td><td data-th="Arduino IDE: Partition Scheme">„Huge APP (3MB No OTA/1MB SPIFFS)“</td><td data-th="PlatformIO"><code>pio run -t upload</code></td><td data-th="Programmspeicher">1.249.238 von 3.145.728 Byte (<b>39 %</b>)</td></tr>
- <tr><td data-th="Variante"><b>B – Standard</b></td><td data-th="Arduino IDE: Partition Scheme">„Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)“ – Voreinstellung, nichts umstellen</td><td data-th="PlatformIO"><code>pio run -e standard -t upload</code></td><td data-th="Programmspeicher">1.249.238 von 1.310.720 Byte (<b>95 %</b>)</td></tr>
+ <tr><td data-th="Variante"><b>A – Huge APP</b> (empfohlen)</td><td data-th="Arduino IDE: Partition Scheme">„Huge APP (3MB No OTA/1MB SPIFFS)“</td><td data-th="PlatformIO"><code>pio run -t upload</code></td><td data-th="Programmspeicher">1.251.922 von 3.145.728 Byte (<b>39 %</b>)</td></tr>
+ <tr><td data-th="Variante"><b>B – Standard</b></td><td data-th="Arduino IDE: Partition Scheme">„Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)“ – Voreinstellung, nichts umstellen</td><td data-th="PlatformIO"><code>pio run -e standard -t upload</code></td><td data-th="Programmspeicher">1.251.922 von 1.310.720 Byte (<b>95 %</b>)</td></tr>
 </table></div>
 <p>Beide Varianten laufen gleich. A lässt rund 1,9 MB Platz für Erweiterungen; die Uhr nutzt weder OTA-Updates noch
 SPIFFS, deshalb fehlt dabei nichts. B funktioniert ohne Umstellen, hat aber nur noch etwa 64 KB Reserve. Ein Wechsel
@@ -1519,8 +1519,8 @@ version download and import the ZIP file again.</p>
 <h3 id="kap6-4-en">6.4 Partition scheme: two variants</h3>
 <div class="tw"><table style="break-inside:avoid">
  <tr><th>Variant</th><th>Arduino IDE: Partition Scheme</th><th>PlatformIO</th><th>Program memory</th></tr>
- <tr><td data-th="Variant"><b>A – Huge APP</b> (recommended)</td><td data-th="Arduino IDE: Partition Scheme">“Huge APP (3MB No OTA/1MB SPIFFS)”</td><td data-th="PlatformIO"><code>pio run -t upload</code></td><td data-th="Program memory">1,249,238 of 3,145,728 bytes (<b>39 %</b>)</td></tr>
- <tr><td data-th="Variant"><b>B – Standard</b></td><td data-th="Arduino IDE: Partition Scheme">“Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)” – the default, nothing to change</td><td data-th="PlatformIO"><code>pio run -e standard -t upload</code></td><td data-th="Program memory">1,249,238 of 1,310,720 bytes (<b>95 %</b>)</td></tr>
+ <tr><td data-th="Variant"><b>A – Huge APP</b> (recommended)</td><td data-th="Arduino IDE: Partition Scheme">“Huge APP (3MB No OTA/1MB SPIFFS)”</td><td data-th="PlatformIO"><code>pio run -t upload</code></td><td data-th="Program memory">1,251,922 of 3,145,728 bytes (<b>39 %</b>)</td></tr>
+ <tr><td data-th="Variant"><b>B – Standard</b></td><td data-th="Arduino IDE: Partition Scheme">“Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)” – the default, nothing to change</td><td data-th="PlatformIO"><code>pio run -e standard -t upload</code></td><td data-th="Program memory">1,251,922 of 1,310,720 bytes (<b>95 %</b>)</td></tr>
 </table></div>
 <p>Both variants work the same. A leaves about 1.9 MB for extensions; the clock uses neither OTA updates nor SPIFFS,
 so nothing is lost. B works without changing anything but leaves only about 64 KB. You can switch at any time (choose
@@ -1887,7 +1887,7 @@ beschrieben wird. Jede Gruppe hat „Auf Standardwerte zurücksetzen“; danach 
  <tr><td data-th="Einstellung">Zifferblatt</td><td data-th="Bereich (Standard)">5 Stile (Ziffern 1–12)</td><td data-th="Wirkung">Ziffern 1–12, nur 12·3·6·9, Bahnhof (Stundenbalken statt Ziffern), römisch XII·III·VI·IX oder römisch I–XII. Wechselt
  sofort am Oszilloskop; auch durch Wischen über die Vorschau. Weniger Ziffern bedeuten ein kürzeres Bild und damit
  eine höhere Bildrate (weniger Flimmern).</td></tr>
- <tr><td data-th="Einstellung">Zifferblatt automatisch wechseln</td><td data-th="Bereich (Standard)">aus, jede Minute, alle 5 / 15 Minuten, jede Stunde (aus)</td><td data-th="Wirkung">Zeigt nacheinander alle fünf Zifferblätter.
+ <tr><td data-th="Einstellung">Zifferblatt automatisch wechseln</td><td data-th="Bereich (Standard)">aus, jede Minute, alle 5 / 15 Minuten, jede Stunde (aus)</td><td data-th="Wirkung">Zeigt nacheinander alle fünf Zifferblätter. Der automatische Wechsel erscheint nicht im Protokoll, damit es nicht jede Minute zwei Zeilen werden.
  Einstellung und gezeigtes Zifferblatt bleiben gespeichert: Nach dem Einschalten geht der Wechsel beim zuletzt gezeigten weiter.</td></tr>
  <tr><td data-th="Einstellung">Bildverschiebung gegen Einbrennen</td><td data-th="Bereich (Standard)">an / aus (an)</td><td data-th="Wirkung">Das ganze Bild wandert jede Minute um bis zu 2 Stufen (etwa 0,4 mm)
  auf einem kleinen Kreis weiter. So nutzt sich die Leuchtschicht einer Röhre nicht an immer denselben Stellen ab – auch bei
@@ -1974,7 +1974,7 @@ group has “Reset to defaults”; the change can then be undone with “Undo”
  size, equal gain of X and Y (circle round instead of oval) and focus. Not saved; appears automatically for 10 seconds after power-on.</td></tr>
  <tr><td data-th="Setting">Dial</td><td data-th="Range (default)">5 styles (numerals 1–12)</td><td data-th="Effect">Numerals 1–12, only 12·3·6·9, station clock (hour bars instead of numerals), Roman XII·III·VI·IX or Roman I–XII. Changes immediately
  on the oscilloscope; also by swiping over the preview. Fewer numerals mean a shorter frame and therefore a higher frame rate (less flicker).</td></tr>
- <tr><td data-th="Setting">Change dial automatically</td><td data-th="Range (default)">off, every minute, every 5 / 15 minutes, every hour (off)</td><td data-th="Effect">Shows all five dials one after the other.
+ <tr><td data-th="Setting">Change dial automatically</td><td data-th="Range (default)">off, every minute, every 5 / 15 minutes, every hour (off)</td><td data-th="Effect">Shows all five dials one after the other. The automatic change does not appear in the log, so it does not grow by two lines every minute.
  The setting and the dial shown are saved: after power-on the change continues with the dial shown last.</td></tr>
  <tr><td data-th="Setting">Image shift against burn-in</td><td data-th="Range (default)">on / off (on)</td><td data-th="Effect">Every minute the whole picture moves on by up to 2 steps (about 0.4 mm)
  on a small circle, so that the phosphor of a CRT does not always wear at the same spots – also on digital instruments with a CRT;
@@ -2097,7 +2097,7 @@ Klammern steht der Teil der Firmware, von dem die Meldung kommt:</p>
  <li><b>[Scope]</b> – Bildausgabe: Profil, berechnete Rundtour, Zifferblatt- und Profilwechsel.</li>
  <li><b>[UI]</b> – Bedienung auf Kern 0: BOOT-Taster, OLED, Uhrzeit.</li>
  <li><b>[RTC]</b> – Echtzeituhr DS3231: gefunden, nicht gefunden oder Uhrzeit ungültig (Batterie leer oder neu).</li>
- <li><b>[WiFi]</b> – Verbindungsaufbau, Signalstärke (RSSI; besser als −70 dBm ist gut) und Verbindungsabbrüche.</li>
+ <li><b>[WiFi]</b> – Verbindungsaufbau, Signalstärke (RSSI; besser als −70 dBm ist gut) und Verbindungsabbrüche mit dem Grund aus dem WLAN-Treiber, z. B. „BEACON_TIMEOUT“ (Router nicht mehr zu hören, Funk), „AUTH_EXPIRE“ oder „ASSOC_LEAVE“ (Router hat getrennt).</li>
  <li><b>[Web]</b> – Adresse des Webinterface und jede Änderung, die über das Webinterface gemacht wird.</li>
  <li><b>[NTP]</b> – jeder Zeitabgleich; eine Warnung, wenn der letzte Abgleich mehr als zwei Intervalle zurückliegt.</li>
 </ul>
@@ -2159,7 +2159,7 @@ firmware the message comes from is shown in square brackets:</p>
  <li><b>[Scope]</b> – picture output: profile, computed round trip, changes of dial and profile.</li>
  <li><b>[UI]</b> – operation on core 0: BOOT button, OLED, time.</li>
  <li><b>[RTC]</b> – DS3231 real-time clock: found, not found or time invalid (battery empty or new).</li>
- <li><b>[WiFi]</b> – connecting, signal strength (RSSI; better than −70 dBm is good) and lost connections.</li>
+ <li><b>[WiFi]</b> – connecting, signal strength (RSSI; better than −70 dBm is good) and lost connections with the reason from the Wi-Fi driver, e.g. “BEACON_TIMEOUT” (router no longer heard, radio), “AUTH_EXPIRE” or “ASSOC_LEAVE” (router disconnected).</li>
  <li><b>[Web]</b> – address of the web interface and every change made through the web interface.</li>
  <li><b>[NTP]</b> – every time sync; a warning if the last sync is more than two intervals ago.</li>
 </ul>

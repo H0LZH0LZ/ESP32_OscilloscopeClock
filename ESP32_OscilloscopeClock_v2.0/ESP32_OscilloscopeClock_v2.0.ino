@@ -164,6 +164,7 @@ static volatile uint8_t g_scopeProfile = SCOPE_PROFILE;
 // Flash (NVS), im Betrieb über das Webinterface umschaltbar (Wischen über die
 // Vorschau). Schreiber: uiTask, Leser: scopeTask (baut dann die Rundtour neu).
 static volatile uint8_t g_dialStyle = DIAL_STYLE;
+static volatile bool    g_dialQuiet = false;   // nächster Zifferblattwechsel kommt vom automatischen Wechsel: ohne Protokollzeilen
 
 // Weitere Laufzeit-Einstellungen für die Strahlausgabe (Webinterface →
 // "Einstellungen", gespeichert im Flash; config.h liefert nur die Startwerte).
@@ -701,7 +702,7 @@ static void tourAdd(const byte *table, int size)
 static void reverseStroke(Stroke &st) { const int16_t tmp = st.a; st.a = st.b; st.b = tmp; }
 
 // Rundtour aus Zifferblatt + Ziffern bauen und sortieren (siehe Erklärung oben)
-static void buildTour(const uint8_t *digits, int digitsSize)
+static void buildTour(const uint8_t *digits, int digitsSize, bool quiet)
 {
   s_tourLen = 0;
   tourAdd(DialData, sizeof(DialData));           // Minutenstriche: bei allen Zifferblättern gleich
@@ -754,7 +755,8 @@ static void buildTour(const uint8_t *digits, int digitsSize)
 
   float total = 0;
   for (int k = 0; k < n; k++) total += tourGap(s_tour[k], s_tour[(k + 1) % n]);
-  logMsg(tr("[Scope] Rundtour: %d Linienzuege, Spruenge gesamt %d DAC-Einheiten", "[Scope] round trip: %d polylines, jumps total %d DAC units"), n, (int)(total + 0.5f));
+  if (!quiet)                              // beim automatischen Zifferblattwechsel nicht jede Minute protokollieren
+    logMsg(tr("[Scope] Rundtour: %d Linienzuege, Spruenge gesamt %d DAC-Einheiten", "[Scope] round trip: %d polylines, jumps total %d DAC units"), n, (int)(total + 0.5f));
 }
 
 //*****************************************************************************
@@ -877,11 +879,13 @@ static void IRAM_ATTR scopeTask(void *)
     // Zifferblatt gewechselt (Webinterface)? Rundtour zwischen zwei Bildern neu
     // berechnen. Dauert einige ms – der Strahl steht so lange (einmaliger Punkt).
     const int dial = g_dialStyle;
-    bool newLimit = false;
+    bool newLimit = false, quiet = false;
     if (dial != builtDial) {
       int size;
       const uint8_t *digits = dialDigits(dial, size);
-      buildTour(digits, size);
+      quiet = g_dialQuiet && builtDial >= 0;   // automatischer Wechsel: Rundtour und Flimmerschutz still neu rechnen
+      g_dialQuiet = false;
+      buildTour(digits, size, quiet);
       builtDial = dial;
       newLimit = true;
     }
@@ -908,7 +912,8 @@ static void IRAM_ATTR scopeTask(void *)
     const uint16_t limited = setNs > limitNs ? limitNs : 0;
     if (limited != loggedLimit) {
       loggedLimit = limited;
-      if (limited) logMsg(tr("[Scope] Flimmerschutz: Verweilzeit %u statt %u ns (mind. %d Bilder/s)",
+      if (quiet) {}                                       // automatischer Zifferblattwechsel: nicht protokollieren
+      else if (limited) logMsg(tr("[Scope] Flimmerschutz: Verweilzeit %u statt %u ns (mind. %d Bilder/s)",
                              "[Scope] flicker guard: dwell time %u instead of %u ns (at least %d frames/s)"),
                           (unsigned)limited, (unsigned)setNs, FLICKER_MIN_FPS);
       else         logMsg(tr("[Scope] Flimmerschutz: eingestellte Verweilzeit gilt wieder",
@@ -1266,8 +1271,13 @@ static void oledSetFlip(bool flip);         // siehe Abschnitt "OLED"
 // Initialisiert WLAN, NTP und das Webinterface. Muss vom uiTask (Core 0) aus
 // aufgerufen werden: Der WLAN-Treiber legt seine Interrupts auf dem
 // aufrufenden Kern an, und sie sollen den Zeichenpfad auf Core 1 nicht stören.
+static volatile uint8_t s_discReason = 0;   // Grund der letzten WLAN-Trennung (wifi_err_reason_t), 0 = unbekannt
+
 static void wifiStart()
 {
+  // Grund jeder Trennung merken – erscheint im Protokoll bei „Verbindung verloren“
+  WiFi.onEvent([](WiFiEvent_t, WiFiEventInfo_t info) { s_discReason = info.wifi_sta_disconnected.reason; },
+               ARDUINO_EVENT_WIFI_STA_DISCONNECTED);
   WiFi.mode(WIFI_STA);                 // Client; das Setup-WLAN kommt bei Bedarf dazu
   WiFi.setHostname(s_host);            // Name in der Geräteliste des Routers (Einstellungen → System)
 
@@ -1369,7 +1379,9 @@ static void wifiLogChanges()
              WiFi.SSID().c_str(), WiFi.localIP().toString().c_str(), WiFi.RSSI());
       if (!mdnsStarted) { mdnsStarted = true; mdnsStart(); }
     } else if (last == WL_CONNECTED) {
-      logMsg(tr("[WiFi] Verbindung verloren – versuche erneut", "[WiFi] connection lost – retrying"));
+      const uint8_t r = s_discReason;
+      logMsg(tr("[WiFi] Verbindung verloren (Grund %u: %s) – versuche erneut", "[WiFi] connection lost (reason %u: %s) – retrying"),
+             (unsigned)r, WiFi.disconnectReasonName((wifi_err_reason_t)r));
     }
     last = st;
   }
@@ -2784,6 +2796,7 @@ static void dialAutoUpdate()
   if (!s_dialAutoMin) { last = now; return; }
   if (now - last < (uint32_t)s_dialAutoMin * 60000UL) return;
   last = now;
+  g_dialQuiet = true;                      // vor dem Wechsel setzen: der scopeTask liest es beim neuen Zifferblatt
   g_dialStyle = (uint8_t)((g_dialStyle + 1) % DIAL_STYLES);
   saveSetting("dial", g_dialStyle);
 }

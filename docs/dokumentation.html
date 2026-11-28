@@ -296,7 +296,7 @@ Die Pixelverschiebung versetzt die Anzeige jede Minute um einen Pixel, damit kei
 landen in einem 8-KB-Ringpuffer, den der Debug-Bereich anzeigt.</p>
 <p><b>Vektordaten:</b> Zifferblatt, Ziffern, Zeiger und Testbild sind eigene Zeichnungen, erzeugt mit <code>tools/gen_vectors.py</code>
 (Koordinaten 0–255, 8 Bit je Achse).</p>
-<p><b>Speicher:</b> Programmspeicher 1.249.238 Byte (95 % beim Standard-Partitionsschema, ca. 39 % mit „Huge APP“), globale Variablen
+<p><b>Speicher:</b> Programmspeicher 1.251.922 Byte (95 % beim Standard-Partitionsschema, ca. 39 % mit „Huge APP“), globale Variablen
 75.756 Byte (23 %). Die Webseite liegt gzip-komprimiert im Flash (26 KB), die Schrift (Raleway, auf die benötigten Zeichen reduziert) als WOFF2 (30 KB).</p>
 
 <h2>3 Stand der Technik</h2>
@@ -747,8 +747,8 @@ neue Version die ZIP-Datei erneut herunterladen und importieren.</p>
 <h3>6.4 Partitionsschema: zwei Varianten</h3>
 <table style="break-inside:avoid">
  <tr><th>Variante</th><th>Arduino IDE: Partition Scheme</th><th>PlatformIO</th><th>Programmspeicher</th></tr>
- <tr><td><b>A – Huge APP</b> (empfohlen)</td><td>„Huge APP (3MB No OTA/1MB SPIFFS)“</td><td><code>pio run -t upload</code></td><td>1.249.238 von 3.145.728 Byte (<b>39 %</b>)</td></tr>
- <tr><td><b>B – Standard</b></td><td>„Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)“ – Voreinstellung, nichts umstellen</td><td><code>pio run -e standard -t upload</code></td><td>1.249.238 von 1.310.720 Byte (<b>95 %</b>)</td></tr>
+ <tr><td><b>A – Huge APP</b> (empfohlen)</td><td>„Huge APP (3MB No OTA/1MB SPIFFS)“</td><td><code>pio run -t upload</code></td><td>1.251.922 von 3.145.728 Byte (<b>39 %</b>)</td></tr>
+ <tr><td><b>B – Standard</b></td><td>„Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)“ – Voreinstellung, nichts umstellen</td><td><code>pio run -e standard -t upload</code></td><td>1.251.922 von 1.310.720 Byte (<b>95 %</b>)</td></tr>
 </table>
 <p>Beide Varianten laufen gleich. A lässt rund 1,9 MB Platz für Erweiterungen; die Uhr nutzt weder OTA-Updates noch
 SPIFFS, deshalb fehlt dabei nichts. B funktioniert ohne Umstellen, hat aber nur noch etwa 64 KB Reserve. Ein Wechsel
@@ -943,7 +943,7 @@ beschrieben wird. Jede Gruppe hat „Auf Standardwerte zurücksetzen“; danach 
  <tr><td>Zifferblatt</td><td>5 Stile (Ziffern 1–12)</td><td>Ziffern 1–12, nur 12·3·6·9, Bahnhof (Stundenbalken statt Ziffern), römisch XII·III·VI·IX oder römisch I–XII. Wechselt
  sofort am Oszilloskop; auch durch Wischen über die Vorschau. Weniger Ziffern bedeuten ein kürzeres Bild und damit
  eine höhere Bildrate (weniger Flimmern).</td></tr>
- <tr><td>Zifferblatt automatisch wechseln</td><td>aus, jede Minute, alle 5 / 15 Minuten, jede Stunde (aus)</td><td>Zeigt nacheinander alle fünf Zifferblätter.
+ <tr><td>Zifferblatt automatisch wechseln</td><td>aus, jede Minute, alle 5 / 15 Minuten, jede Stunde (aus)</td><td>Zeigt nacheinander alle fünf Zifferblätter. Der automatische Wechsel erscheint nicht im Protokoll, damit es nicht jede Minute zwei Zeilen werden.
  Einstellung und gezeigtes Zifferblatt bleiben gespeichert: Nach dem Einschalten geht der Wechsel beim zuletzt gezeigten weiter.</td></tr>
  <tr><td>Bildverschiebung gegen Einbrennen</td><td>an / aus (an)</td><td>Das ganze Bild wandert jede Minute um bis zu 2 Stufen (etwa 0,4 mm)
  auf einem kleinen Kreis weiter. So nutzt sich die Leuchtschicht einer Röhre nicht an immer denselben Stellen ab – auch bei
@@ -1060,7 +1060,7 @@ Klammern steht der Teil der Firmware, von dem die Meldung kommt:</p>
  <li><b>[Scope]</b> – Bildausgabe: Profil, berechnete Rundtour, Zifferblatt- und Profilwechsel.</li>
  <li><b>[UI]</b> – Bedienung auf Kern 0: BOOT-Taster, OLED, Uhrzeit.</li>
  <li><b>[RTC]</b> – Echtzeituhr DS3231: gefunden, nicht gefunden oder Uhrzeit ungültig (Batterie leer oder neu).</li>
- <li><b>[WiFi]</b> – Verbindungsaufbau, Signalstärke (RSSI; besser als −70 dBm ist gut) und Verbindungsabbrüche.</li>
+ <li><b>[WiFi]</b> – Verbindungsaufbau, Signalstärke (RSSI; besser als −70 dBm ist gut) und Verbindungsabbrüche mit dem Grund aus dem WLAN-Treiber, z. B. „BEACON_TIMEOUT“ (Router nicht mehr zu hören, Funk), „AUTH_EXPIRE“ oder „ASSOC_LEAVE“ (Router hat getrennt).</li>
  <li><b>[Web]</b> – Adresse des Webinterface und jede Änderung, die über das Webinterface gemacht wird.</li>
  <li><b>[NTP]</b> – jeder Zeitabgleich; eine Warnung, wenn der letzte Abgleich mehr als zwei Intervalle zurückliegt.</li>
 </ul>

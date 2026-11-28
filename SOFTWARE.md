@@ -381,7 +381,7 @@ Beide zeigen dieselben Zeilen, mit Zeitstempel (`+<s>s` bis zum ersten NTP-Sync)
 +3s [WiFi] verbunden mit "Gastzugang", IP 192.168.1.23, RSSI -61 dBm
 +3s [Web] erreichbar unter http://scope-clock.local und http://192.168.1.23
 21:15:06 [NTP] Sync 15.11.2026 21:15:06
-21:40:12 [WiFi] Verbindung verloren – versuche erneut
+21:40:12 [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut
 21:41:12 [Web] Setup-WLAN "ScopeClock-Setup" aktiv – Einrichtung unter http://192.168.4.1
 22:02:30 [Web] WLAN "Werkstatt" gespeichert
 22:05:10 [Zeit] von Hand gestellt (vom Handy): 15.11.2026 22:05:10

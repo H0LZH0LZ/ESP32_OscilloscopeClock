@@ -16,421 +16,421 @@ log.push(f(0)+'ESP32 Oscilloscope Clock v2.0 (Idee nach Mauro Pintus 2018)',f(0)
  f(3)+'[WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -61 dBm',f(3)+'[Web] erreichbar unter http://scope-clock.local und http://192.168.178.42',
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
 ...(()=>{const a=[];for(let h=40;h>=1;h--){const d=new Date(t0-h*3600000+137000);
  a.push(hms(d)+' [NTP] Sync '+pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+hms(d));
- if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren – versuche erneut');
+ if(h%9===0){a.push(hms(new Date(d.getTime()+600000))+' [WiFi] Verbindung verloren (Grund 200: BEACON_TIMEOUT) – versuche erneut');
   a.push(hms(new Date(d.getTime()+612000))+' [WiFi] verbunden mit "Heimnetz", IP 192.168.178.42, RSSI -63 dBm')}
  if(h===20)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: I-XII');
  if(h===19)a.push(hms(new Date(d.getTime()+900000))+' [Web] Zifferblatt: 1-12')}return a})(),
