@@ -530,7 +530,7 @@
 <path d='M836,20 Q839,26 836,32' fill='none' stroke='#444' stroke-width='1'/>
 <path d='M842,20 Q845,26 842,32' fill='none' stroke='#444' stroke-width='1'/>
 <path d='M848,20 Q851,26 848,32' fill='none' stroke='#444' stroke-width='1'/>
-<text x='942' y='24' font-size='12'>SMA socket + Wi-Fi antenna (from the kit or optional Bingfu)</text>
+<text x='942' y='24' font-size='12'>SMA socket + Wi-Fi antenna (kit or optional Bingfu)</text>
 <text x='942' y='40' font-size='11' fill='#444'>(IPEX→SMA pigtail from the antenna kit)</text>
 <rect x='878' y='622' width='274' height='196' rx='8' fill='none' stroke='#888' stroke-dasharray='6 5'/>
 <text x='888' y='640' font-size='12' font-weight='bold' fill='#444'>Optional: real-time clock DS3231 (ZS-042)</text>
