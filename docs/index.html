@@ -303,8 +303,8 @@ html{background:var(--card)}body{min-height:100vh}   /* Safari zeigt beim Herunt
 <div class="grp"><h2 id="downloads-h" class="coll" role="button" tabindex="0" aria-expanded="true"><span data-l="de">Links &amp; Dokumente</span><span data-l="en">Links &amp; documents</span></h2>
 <section>
  <a class="row" target="_blank" rel="noopener" href="https://github.com/H0LZH0LZ/ESP32_OscilloscopeClock"><span><span data-l="de">GitHub – Version 2.0</span><span data-l="en">GitHub – version 2.0</span><small class="note" data-l="de">Diese Firmware mit Quellcode, Anleitung und Werkzeugen</small><small class="note" data-l="en">This firmware with source code, guide and tools</small></span><span>›</span></a>
- <a class="row" target="_blank" rel="noopener" data-l="de" href="ESP32_Oscilloscope_Clock_Dokumentation.pdf?v=0031ff97"><span>Dokumentation (PDF)<small class="note">Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small></span><span>›</span></a>
- <a class="row" target="_blank" rel="noopener" data-l="en" href="ESP32_Oscilloscope_Clock_Documentation.pdf?v=35a5d2bd"><span>Documentation (PDF)<small class="note">Assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
+ <a class="row" target="_blank" rel="noopener" data-l="de" href="ESP32_Oscilloscope_Clock_Dokumentation.pdf?v=d78739a9"><span>Dokumentation (PDF)<small class="note">Aufbauanleitung, Bohrplan 1:1, Bedienung, Fehlersuche</small></span><span>›</span></a>
+ <a class="row" target="_blank" rel="noopener" data-l="en" href="ESP32_Oscilloscope_Clock_Documentation.pdf?v=522f3e1b"><span>Documentation (PDF)<small class="note">Assembly guide, 1:1 drilling template, operation, troubleshooting</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" href="demo/"><span><span data-l="de">Testseite</span><span data-l="en">Test page</span><small class="note" data-l="de">Das Webinterface der Uhr ausprobieren – läuft im Browser, alle Werte sind simuliert</small><small class="note" data-l="en">Try the clock's web interface – runs in the browser, all values are simulated</small></span><span>›</span></a>
  <a class="row" href="#kap6"><span><span data-l="de">Firmware installieren</span><span data-l="en">Install firmware</span><small class="note" data-l="de">Direkt im Browser auf den ESP32 schreiben – oder den Sketch mit Arduino Cloud hochladen</small><small class="note" data-l="en">Write it to the ESP32 straight from the browser – or upload the sketch with Arduino Cloud</small></span><span>›</span></a>
  <a class="row" target="_blank" rel="noopener" href="https://github.com/maurohh/ESP32_OscilloscopeClock"><span><span data-l="de">GitHub – Original</span><span data-l="en">GitHub – original</span><small class="note" data-l="de">Die ursprüngliche ESP32 Oscilloscope Clock von Mauro Pintus (2018), nach deren Idee diese Version entstand</small><small class="note" data-l="en">The original ESP32 Oscilloscope Clock by Mauro Pintus (2018) that inspired this version</small></span><span>›</span></a>
@@ -1676,7 +1676,7 @@ sind Startwerte für Abschnitt 8.4.</p>
  <li><b>HP 54200A</b> (digital, mit Bildröhre): X/Y-Möglichkeiten im Handbuch prüfen; unendliches Nachleuchten sammelt das Bild über
  mehrere Aufnahmen. Keine Helligkeitsabstufung – Zeigerhelligkeit 100 %. Wegen der Röhre die Bildverschiebung eingeschaltet lassen.</li>
  <li><b>Digilent Analog Discovery 2</b> (USB-Messgerät): Eingänge sind differenziell – 1+ an X, 1− an GND, 2+ an Y, 2− an GND,
- zusätzlich GND verbinden. WaveForms: 500 mV/Div, Offset −1,6 V, 1 ms/Div, Trigger Auto, View → XY. Zeigerhelligkeit 100 %.</li>
+ zusätzlich GND verbinden. WaveForms: 500 mV/Div, Offset −1,6 V, Time → Base 2 ms/Div, Samples 8 Ki (Rate 400 kHz), Mode Repeated, Trigger Auto, View → XY – das Messfenster umfasst so mehrere ganze Bilder. Profil DIGITAL, Zeigerhelligkeit 100 %, Verweilzeit 6 µs: Die Linien bekommen mehr Messpunkte, die einzelnen Punkte auf den Sprüngen zwischen den Linien fallen weniger auf (ganz verschwinden sie ohne Z-Eingang nicht).</li>
 </ul>
 </div><div data-l="en">
 <h3 id="kap8-1-en">8.1 Connecting</h3>
@@ -1796,7 +1796,7 @@ figures are start values for section 8.4.</p>
  <li><b>HP 54200A</b> (digital, with CRT): check the X/Y options in the manual; infinite persistence collects the picture over several
  acquisitions. No intensity grading – hand brightness 100 %. Because of the CRT, leave the picture shift switched on.</li>
  <li><b>Digilent Analog Discovery 2</b> (USB instrument): the inputs are differential – 1+ to X, 1− to GND, 2+ to Y, 2− to GND, also
- connect GND. WaveForms: 500 mV/div, offset −1.6 V, 1 ms/div, trigger Auto, View → XY. Hand brightness 100 %.</li>
+ connect GND. WaveForms: 500 mV/div, offset −1.6 V, Time → Base 2 ms/div, Samples 8 Ki (Rate 400 kHz), Mode Repeated, trigger Auto, View → XY – the capture window then holds several whole frames. Profile DIGITAL, hand brightness 100 %, dwell time 6 µs: the lines get more sample points, the single dots on the jumps between lines are less noticeable (without a Z input they do not disappear completely).</li>
 </ul>
 </div></section></div>
 

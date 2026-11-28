@@ -210,10 +210,12 @@ Ein Bild dauert ca. 4,9 ms, mit römischen Ziffern ca. 5,6 ms.
 **Digilent Analog Discovery 2**
 - Die Eingänge sind **differenziell**: 1+ an GPIO25 (X), **1− an GND**; 2+ an GPIO26 (Y),
   **2− an GND**. Zusätzlich das GND-Kabel des AD2 an GND des ESP32.
-- WaveForms → Scope: Range 500 mV/Div, Offset −1,6 V, Zeitbasis 1 ms/Div, Trigger Auto,
-  XY-Ansicht einschalten (View → XY).
-- Standardpuffer 8.192 Abtastwerte pro Kanal: Bei 10 ms Fenster ist das ca. 1 Wert pro 1,2 µs,
-  also 2–3 Werte pro Schritt der Uhr. Mehr Punkte liefert die Gerätekonfiguration mit
+- WaveForms → Scope: Range 500 mV/Div, Offset −1,6 V, Time → Base 2 ms/Div, Samples 8 Ki
+  (Rate 400 kHz), Mode Repeated, Trigger Auto, XY-Ansicht einschalten (View → XY). Das Fenster von
+  20 ms enthält rund vier ganze Bilder – das Bild flackert kaum noch.
+- Im Webinterface Profil DIGITAL und Verweilzeit 6 µs: Bei 400 kHz fallen so gut zwei Messwerte auf
+  jeden Schritt der Uhr; die einzelnen Punkte auf den Sprüngen zwischen den Linien werden seltener
+  (ganz verschwinden sie ohne Z-Eingang nicht). Mehr Punkte liefert die Gerätekonfiguration mit
   2 × 16k Scope-Puffer (WaveForms → Device Manager).
 - Verbindet die XY-Ansicht die Abtastwerte mit Linien, sind auch die Sprünge als Linien zu sehen.
   Dann in den Ansichtsoptionen auf Punktdarstellung umstellen, falls angeboten.
